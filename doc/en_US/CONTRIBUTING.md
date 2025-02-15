@@ -2,6 +2,14 @@
 
 <br>
 
+## To Contributors
+
+We warmly welcome developers familiar with various scientific computing libraries related to numerical calculus to join the project, contribute code, and share their valuable experiences. At the same time, we encourage beginners to learn and master numerical methods related to calculus by participating in development and improving documentation. In this project, we hope that both experienced developers and beginners can find contribution goals that interest them by reviewing the project's documentation, tables, and code examples.
+
+We sincerely thank all the developers who have contributed to this project. Whether through submitting code, improving documentation, or providing valuable feedback, every effort you make helps to make this project better. Your enthusiasm and wisdom in the development process continually drive the project forward, and bring more opportunities for collaboration within the community. We appreciate your support and dedication, and we look forward to achieving more together, driving this project toward an even brighter future!
+
+<br>
+
 ## Table of Contents
 
 1. [Code Style](#1-code-style)

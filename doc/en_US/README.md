@@ -2,8 +2,6 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-MIT-blue)](https://github.com/moonbit-community/calculus-numerical/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-**See the README.md in other languages here: [zh_CN](https://github.com/Luna-Flow/linear-algebra/blob/main/doc/zh_CN/README.md) | [ja_JP](https://github.com/Luna-Flow/linear-algebra/blob/main/doc/ja_JP/README.md)**
-
 # Contents
 
 - [Introduction](#Introduction)
@@ -35,4 +33,3 @@ We welcome contributions from the community, external developers, and individual
 5. We will review your PR and may suggest improvements to ensure code quality. After approval, your contributions will be merged into the main branch.
 
 Thank you again for your participation and contributions! Every effort helps make this project better. We look forward to seeing your great code!
-
