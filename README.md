@@ -22,7 +22,7 @@ __*Starting from the first official release, both English and Chinese documentat
 
 **[Latest]** 25.01.29: Mutable Matrix implementation
 
-- **24.01.29**: Mutable Vector implementation
+- **25.01.29**: Mutable Vector implementation
 
 # How to Contribute
 
