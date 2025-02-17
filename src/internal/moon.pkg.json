@@ -1,1 +1,8 @@
-{}
+{
+    "import": [
+        {
+            "path": "KCN-judu/luna-complex/complex",
+            "alias": "luna_complex"
+        }
+    ]
+}
