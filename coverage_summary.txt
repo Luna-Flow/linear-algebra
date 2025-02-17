@@ -1,4 +1,0 @@
-src/immut/matrix.mbt: 28/42
-src/internal/algebra.mbt: 3/5
-src/mutable/vector.mbt: 111/111
-Total: 142/158
