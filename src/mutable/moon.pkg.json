@@ -1,8 +1,8 @@
 {
   "import": [
     {
-      "path": "KCN-judu/luna-utils",
-      "alias": "luna_utils"
-    }
+			"path": "KCN-judu/linear-algebra/internal",
+			"alias": "internal"
+		}
   ]
 }

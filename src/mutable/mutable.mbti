@@ -1,49 +1,25 @@
 package KCN-judu/linear-algebra/mutable
 
+alias @KCN-judu/linear-algebra/internal as @internal
+
 // Values
 
 // Types and methods
-pub(all) struct Vector {
-  data : Array[Double]
-  size : Int
-  stride : Int
-}
+type Vector[A]
 impl Vector {
-  add_constant(Self, Double) -> Unit
-  add_inplace(Self, Self) -> Unit
-  at(Self, Int) -> Double
-  ax_plus_by(Self, Self, Double, Double) -> Self
-  ax_plus_by_inplace(Self, Self, Double, Double) -> Unit
-  copy(Self) -> Self
-  div_inplace(Self, Self) -> Unit
-  filled_vector(Int, Double) -> Self
-  is_neg(Self) -> Bool
-  is_non_neg(Self) -> Bool
-  is_null(Self) -> Bool
-  is_pos(Self) -> Bool
-  map(Self, (Double) -> Double) -> Self
-  map_inplace(Self, (Double) -> Double) -> Unit
-  mul_inplace(Self, Self) -> Unit
-  new(Int, stride~ : Int = ..) -> Self
-  op_add(Self, Self) -> Self
-  op_div(Self, Self) -> Self
-  op_get(Self, Int) -> Double
-  op_mul(Self, Self) -> Self
-  op_sub(Self, Self) -> Self
-  reverse(Self) -> Unit
-  scale(Self, Double) -> Unit
-  set_all(Self, Double) -> Unit
-  set_at(Self, Int, Double) -> Unit
-  set_basis(Self, Int) -> Unit
-  set_zero(Self) -> Unit
-  sub_inplace(Self, Self) -> Unit
-  sum(Self) -> Double
-  swap(Self, Self) -> Unit
-  swap_elements(Self, Int, Int) -> Unit
-  zero_vector(Int) -> Self
+  left_scale[A : @internal.Mul](Self[A], A) -> Self[A]
+  left_scale_inplace[A : @internal.Mul](Self[A], A) -> Unit
+  length[A](Self[A]) -> Int
+  make[A](Int, A) -> Self[A]
+  makei[A](Int, (Int) -> A) -> Self[A]
+  map[A, B](Self[A], (A) -> B) -> Self[B]
+  map_inplace[A](Self[A], (A) -> A) -> Unit
+  op_get[A](Self[A], Int) -> A
+  op_set[A](Self[A], Int, A) -> Unit
+  right_scale[A : @internal.Mul](A, Self[A]) -> Self[A]
+  right_scale_inplace[A : @internal.Mul](A, Self[A]) -> Unit
+  zip_with[A, U, V](Self[A], Self[U], (A, U) -> V) -> Self[V]
 }
-impl Eq for Vector
-impl Show for Vector
 
 // Type aliases
 
