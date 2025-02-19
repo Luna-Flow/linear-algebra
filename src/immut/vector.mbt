@@ -43,12 +43,15 @@ pub fn Vector::set[T](self : Vector[T], i : Int, x : T) -> Vector[T] {
 }
 
 ///|
-pub fn left_scale[T : @internal.Mul](self : Vector[T], scalar : T) -> Vector[T] {
+pub fn left_scale[T : @luna_generic.Mul](
+  self : Vector[T],
+  scalar : T
+) -> Vector[T] {
   self.map(fn { x => x * scalar })
 }
 
 ///|
-pub fn right_scale[T : @internal.Mul](
+pub fn right_scale[T : @luna_generic.Mul](
   self : Vector[T],
   scalar : T
 ) -> Vector[T] {
@@ -61,7 +64,7 @@ pub fn Vector::from_array[T](arr : Array[T]) -> Vector[T] {
 }
 
 ///|
-pub fn Vector::op_add[T : @internal.Add](
+pub fn Vector::op_add[T : @luna_generic.Add](
   self : Vector[T],
   other : Vector[T]
 ) -> Vector[T] {
@@ -69,7 +72,7 @@ pub fn Vector::op_add[T : @internal.Add](
 }
 
 ///|
-pub fn Vector::op_mul[T : @internal.Mul](
+pub fn Vector::op_mul[T : @luna_generic.Mul](
   self : Vector[T],
   other : Vector[T]
 ) -> Vector[T] {
@@ -77,7 +80,7 @@ pub fn Vector::op_mul[T : @internal.Mul](
 }
 
 ///| Linearly interpolate between two vectors
-pub fn lerp[T : @internal.One + @internal.Mul + @internal.Add + @internal.Neg](
+pub fn lerp[T : @luna_generic.One + @luna_generic.Mul + @luna_generic.Add + @luna_generic.Neg](
   self : Vector[T],
   other : Vector[T],
   alpha : T
@@ -103,7 +106,7 @@ impl[T : Show] Show for Vector[T] with output(s, l) {
 }
 
 ///| Produce a diagonal (scale) matrix from a vector
-pub fn scaled_matrix[T : @internal.Mul + @internal.Zero](
+pub fn scaled_matrix[T : @luna_generic.Mul + @luna_generic.Zero](
   self : Vector[T]
 ) -> Matrix[T] {
   let n = self.length()
@@ -111,7 +114,7 @@ pub fn scaled_matrix[T : @internal.Mul + @internal.Zero](
 }
 
 ///| Tensor product of two vectors
-pub fn tensor_product[T : @internal.Mul](
+pub fn tensor_product[T : @luna_generic.Mul](
   self : Vector[T],
   other : Vector[T]
 ) -> Matrix[T] {

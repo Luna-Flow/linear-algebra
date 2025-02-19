@@ -1,11 +1,11 @@
 package KCN-judu/linear-algebra/mutable
 
-alias @KCN-judu/linear-algebra/internal as @internal
+alias @Luna-Flow/luna-generic as @luna-generic
 
 // Values
-fn identity[T : @internal.One + @internal.Zero](Int) -> Matrix[T]
+fn identity[T : @luna-generic.One + @luna-generic.Zero](Int) -> Matrix[T]
 
-fn lin_comb[T : @internal.Add + @internal.Mul](T, Vector[T], T, Vector[T]) -> Vector[T]
+fn lin_comb[T : @luna-generic.Add + @luna-generic.Mul](T, Vector[T], T, Vector[T]) -> Vector[T]
 
 // Types and methods
 type Indexed[T]
@@ -15,19 +15,19 @@ impl Indexed {
 
 type Matrix[T]
 impl Matrix {
-  add_constant[T : @internal.Add](Self[T], T) -> Self[T]
-  adjoint[T : @internal.Conjugate](Self[T]) -> Self[T]
+  add_constant[T : @luna-generic.Add](Self[T], T) -> Self[T]
+  adjoint[T : @luna-generic.Conjugate](Self[T]) -> Self[T]
   from_2d_array[T](Array[Array[T]]) -> Self[T]
   make[A](Int, Int, (Int, Int) -> A) -> Self[A]
   map[T, U](Self[T], (T) -> U) -> Self[U]
   new[T](Int, Int, T) -> Self[T]
-  null[T : Compare + @internal.Zero](Self[T]) -> Bool
-  op_add[T : @internal.Add](Self[T], Self[T]) -> Self[T]
+  null[T : Compare + @luna-generic.Zero](Self[T]) -> Bool
+  op_add[T : @luna-generic.Add](Self[T], Self[T]) -> Self[T]
   op_get[T](Self[T], Int) -> Indexed[T]
-  op_mul[T : @internal.Mul + @internal.Add](Self[T], Self[T]) -> Self[T]
-  op_neg[T : @internal.Neg](Self[T]) -> Self[T]
-  op_sub[T : @internal.Add + @internal.Neg](Self[T], Self[T]) -> Self[T]
-  scale[T : @internal.Mul](Self[T], T) -> Self[T]
+  op_mul[T : @luna-generic.Mul + @luna-generic.Add](Self[T], Self[T]) -> Self[T]
+  op_neg[T : @luna-generic.Neg](Self[T]) -> Self[T]
+  op_sub[T : @luna-generic.Add + @luna-generic.Neg](Self[T], Self[T]) -> Self[T]
+  scale[T : @luna-generic.Mul](Self[T], T) -> Self[T]
   set[T](Self[T], Int, Int, T) -> Unit
   transpose[T](Self[T]) -> Self[T]
 }
@@ -36,26 +36,26 @@ impl[T : Show] Show for Matrix[T]
 
 type Vector[A]
 impl Vector {
-  add_constant[T : @internal.Add](Self[T], T) -> Self[T]
+  add_constant[T : @luna-generic.Add](Self[T], T) -> Self[T]
   copy[A](Self[A]) -> Self[A]
   from_array[T](Array[T]) -> Self[T]
-  left_scale[A : @internal.Mul](Self[A], A) -> Self[A]
-  left_scale_inplace[A : @internal.Mul](Self[A], A) -> Unit
+  left_scale[A : @luna-generic.Mul](Self[A], A) -> Self[A]
+  left_scale_inplace[A : @luna-generic.Mul](Self[A], A) -> Unit
   length[A](Self[A]) -> Int
-  lerp[T : @internal.One + @internal.Mul + @internal.Add + @internal.Neg](Self[T], Self[T], T) -> Self[T]
+  lerp[T : @luna-generic.One + @luna-generic.Mul + @luna-generic.Add + @luna-generic.Neg](Self[T], Self[T], T) -> Self[T]
   make[A](Int, A) -> Self[A]
   makei[A](Int, (Int) -> A) -> Self[A]
   map[A, B](Self[A], (A) -> B) -> Self[B]
   map_inplace[A](Self[A], (A) -> A) -> Unit
-  op_add[T : @internal.Add](Self[T], Self[T]) -> Self[T]
+  op_add[T : @luna-generic.Add](Self[T], Self[T]) -> Self[T]
   op_get[A](Self[A], Int) -> A
-  op_mul[T : @internal.Mul](Self[T], Self[T]) -> Self[T]
-  op_neg[T : @internal.Neg](Self[T]) -> Self[T]
+  op_mul[T : @luna-generic.Mul](Self[T], Self[T]) -> Self[T]
+  op_neg[T : @luna-generic.Neg](Self[T]) -> Self[T]
   op_set[A](Self[A], Int, A) -> Unit
-  right_scale[A : @internal.Mul](A, Self[A]) -> Self[A]
-  right_scale_inplace[A : @internal.Mul](A, Self[A]) -> Unit
-  scaled_matrix[T : @internal.Mul + @internal.Zero](Self[T]) -> Matrix[T]
-  tensor_product[T : @internal.Mul](Self[T], Self[T]) -> Matrix[T]
+  right_scale[A : @luna-generic.Mul](A, Self[A]) -> Self[A]
+  right_scale_inplace[A : @luna-generic.Mul](A, Self[A]) -> Unit
+  scaled_matrix[T : @luna-generic.Mul + @luna-generic.Zero](Self[T]) -> Matrix[T]
+  tensor_product[T : @luna-generic.Mul](Self[T], Self[T]) -> Matrix[T]
   zip_with[A, U, V](Self[A], Self[U], (A, U) -> V) -> Self[V]
 }
 impl[T : Show] Show for Vector[T]

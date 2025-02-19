@@ -1,8 +1,8 @@
 {
   "import": [
     {
-			"path": "KCN-judu/linear-algebra/internal",
-			"alias": "internal"
+			"path": "Luna-Flow/luna-generic",
+			"alias": "luna_generic"
 		}
   ]
 }

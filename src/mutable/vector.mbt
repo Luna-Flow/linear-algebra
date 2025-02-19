@@ -80,7 +80,7 @@ pub fn Vector::map_inplace[A](self : Vector[A], f : (A) -> A) -> Unit {
 }
 
 ///|
-pub fn Vector::left_scale[A : @internal.Mul](
+pub fn Vector::left_scale[A : @luna_generic.Mul](
   self : Vector[A],
   scalar : A
 ) -> Vector[A] {
@@ -88,7 +88,7 @@ pub fn Vector::left_scale[A : @internal.Mul](
 }
 
 ///|
-pub fn Vector::right_scale[A : @internal.Mul](
+pub fn Vector::right_scale[A : @luna_generic.Mul](
   scalar : A,
   self : Vector[A]
 ) -> Vector[A] {
@@ -96,7 +96,7 @@ pub fn Vector::right_scale[A : @internal.Mul](
 }
 
 ///|
-pub fn Vector::left_scale_inplace[A : @internal.Mul](
+pub fn Vector::left_scale_inplace[A : @luna_generic.Mul](
   self : Vector[A],
   scalar : A
 ) -> Unit {
@@ -104,7 +104,7 @@ pub fn Vector::left_scale_inplace[A : @internal.Mul](
 }
 
 ///|
-pub fn Vector::right_scale_inplace[A : @internal.Mul](
+pub fn Vector::right_scale_inplace[A : @luna_generic.Mul](
   scalar : A,
   self : Vector[A]
 ) -> Unit {
@@ -117,7 +117,7 @@ pub fn Vector::from_array[T](a : Array[T]) -> Vector[T] {
 }
 
 ///|
-pub fn Vector::op_add[T : @internal.Add](
+pub fn Vector::op_add[T : @luna_generic.Add](
   self : Vector[T],
   other : Vector[T]
 ) -> Vector[T] {
@@ -125,7 +125,7 @@ pub fn Vector::op_add[T : @internal.Add](
 }
 
 ///|
-pub fn Vector::op_mul[T : @internal.Mul](
+pub fn Vector::op_mul[T : @luna_generic.Mul](
   self : Vector[T],
   other : Vector[T]
 ) -> Vector[T] {
@@ -133,12 +133,12 @@ pub fn Vector::op_mul[T : @internal.Mul](
 }
 
 ///|
-pub fn Vector::op_neg[T : @internal.Neg](self : Vector[T]) -> Vector[T] {
+pub fn Vector::op_neg[T : @luna_generic.Neg](self : Vector[T]) -> Vector[T] {
   self.map(T::op_neg)
 }
 
 ///|
-pub fn lerp[T : @internal.One + @internal.Mul + @internal.Add + @internal.Neg](
+pub fn lerp[T : @luna_generic.One + @luna_generic.Mul + @luna_generic.Add + @luna_generic.Neg](
   self : Vector[T],
   other : Vector[T],
   alpha : T
@@ -147,7 +147,7 @@ pub fn lerp[T : @internal.One + @internal.Mul + @internal.Add + @internal.Neg](
 }
 
 ///|
-pub fn scaled_matrix[T : @internal.Mul + @internal.Zero](
+pub fn scaled_matrix[T : @luna_generic.Mul + @luna_generic.Zero](
   self : Vector[T]
 ) -> Matrix[T] {
   let n = self.length()
@@ -155,7 +155,7 @@ pub fn scaled_matrix[T : @internal.Mul + @internal.Zero](
 }
 
 ///|
-pub fn tensor_product[T : @internal.Mul](
+pub fn tensor_product[T : @luna_generic.Mul](
   self : Vector[T],
   other : Vector[T]
 ) -> Matrix[T] {
@@ -165,7 +165,7 @@ pub fn tensor_product[T : @internal.Mul](
 }
 
 ///|
-pub fn Vector::add_constant[T : @internal.Add](
+pub fn Vector::add_constant[T : @luna_generic.Add](
   self : Vector[T],
   cst : T
 ) -> Vector[T] {
@@ -173,7 +173,7 @@ pub fn Vector::add_constant[T : @internal.Add](
 }
 
 ///|
-pub fn lin_comb[T : @internal.Add + @internal.Mul](
+pub fn lin_comb[T : @luna_generic.Add + @luna_generic.Mul](
   scalar_a : T,
   self : Vector[T],
   scalar_b : T,

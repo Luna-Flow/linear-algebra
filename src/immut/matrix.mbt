@@ -95,7 +95,7 @@ test {
 }
 
 ///|
-pub fn op_mul[T : @internal.Mul + @internal.Add](
+pub fn op_mul[T : @luna_generic.Mul + @luna_generic.Add](
   self : Matrix[T],
   other : Matrix[T]
 ) -> Matrix[T] {
@@ -116,7 +116,7 @@ pub fn op_mul[T : @internal.Mul + @internal.Add](
 }
 
 ///|
-pub fn op_add[T : @internal.Add](
+pub fn op_add[T : @luna_generic.Add](
   self : Matrix[T],
   other : Matrix[T]
 ) -> Matrix[T] {
@@ -130,12 +130,12 @@ pub fn op_add[T : @internal.Add](
 }
 
 ///|
-pub fn op_neg[T : @internal.Neg](self : Matrix[T]) -> Matrix[T] {
+pub fn op_neg[T : @luna_generic.Neg](self : Matrix[T]) -> Matrix[T] {
   self.map(T::op_neg)
 }
 
 ///|
-pub fn op_sub[T : @internal.Add + @internal.Neg](
+pub fn op_sub[T : @luna_generic.Add + @luna_generic.Neg](
   self : Matrix[T],
   other : Matrix[T]
 ) -> Matrix[T] {
@@ -143,17 +143,22 @@ pub fn op_sub[T : @internal.Add + @internal.Neg](
 }
 
 ///|
-pub fn scale[T : @internal.Mul](self : Matrix[T], cst : T) -> Matrix[T] {
+pub fn scale[T : @luna_generic.Mul](self : Matrix[T], cst : T) -> Matrix[T] {
   self.map(fn(x) { x * cst })
 }
 
 ///|
-pub fn add_constant[T : @internal.Add](self : Matrix[T], cst : T) -> Matrix[T] {
+pub fn add_constant[T : @luna_generic.Add](
+  self : Matrix[T],
+  cst : T
+) -> Matrix[T] {
   self.map(fn(x) { x + cst })
 }
 
 ///|
-pub fn identity[T : @internal.One + @internal.Zero](size : Int) -> Matrix[T] {
+pub fn identity[T : @luna_generic.One + @luna_generic.Zero](
+  size : Int
+) -> Matrix[T] {
   Matrix::make(size, size, fn(i, j) {
     guard i == j else { T::zero() }
     T::one()
@@ -161,7 +166,7 @@ pub fn identity[T : @internal.One + @internal.Zero](size : Int) -> Matrix[T] {
 }
 
 ///|
-pub fn null[T : Compare + @internal.Zero](self : Matrix[T]) -> Bool {
+pub fn null[T : Compare + @luna_generic.Zero](self : Matrix[T]) -> Bool {
   for x in self.data {
     if x != T::zero() {
       break false
@@ -172,7 +177,7 @@ pub fn null[T : Compare + @internal.Zero](self : Matrix[T]) -> Bool {
 }
 
 ///|
-pub fn adjoint[T : @internal.Conjugate](self : Matrix[T]) -> Matrix[T] {
+pub fn adjoint[T : @luna_generic.Conjugate](self : Matrix[T]) -> Matrix[T] {
   self.map(T::conjugate)
 }
 
@@ -182,7 +187,7 @@ pub fn transpose[T](self : Matrix[T]) -> Matrix[T] {
 }
 
 ///| Compute the determinant of a matrix
-pub fn determinant[T : @internal.Mul + @internal.Add + @internal.One + @internal.Neg + @internal.Zero](
+pub fn determinant[T : @luna_generic.Mul + @luna_generic.Add + @luna_generic.One + @luna_generic.Neg + @luna_generic.Zero](
   self : Matrix[T]
 ) -> T {
   let n = self.row

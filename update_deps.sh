@@ -1,3 +1,3 @@
 moon update
-moon remove KCN-judu/luna-utils
-moon add KCN-judu/luna-utils
+moon remove Luna-Flow/luna-generic
+moon add Luna-Flow/luna-generic
