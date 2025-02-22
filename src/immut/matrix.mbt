@@ -207,6 +207,24 @@ pub fn determinant[T : @luna_generic.Mul + @luna_generic.Add + @luna_generic.One
 
   go(fn { i, j => self[i][j] }, n)
 }
+///|
+pub fn matrix_pow[T : @luna_generic.One + @luna_generic.Zero + @luna_generic.Mul + @luna_generic.Add](
+  self : Matrix[T],
+  power : Int
+) -> Matrix[T] {
+  let mut p = power
+  let mut temp_matrix = self
+  let mut res = identity(self.col)
+  while p >= 1 {
+    let flag = p % 2
+    p = p / 2
+    if flag == 1 {
+      res = res * temp_matrix
+    }
+    temp_matrix = temp_matrix * temp_matrix
+  }
+  res
+}
 
 pub fn horizontal_combine[T](self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
   let r1 = self.row
@@ -295,4 +313,14 @@ test {
   inspect!(m4.determinant(), content="4")
   inspect!(m1.determinant(), content="-2")
   inspect!(m5.determinant(), content="1")
+  
+  let m = Matrix::make(3,3,fn (i,_) -> Int {i}).matrix_pow(10)
+  inspect!(
+    m,
+    content = 
+      #||0, 0, 0|
+      #||19683, 19683, 19683|
+      #||39366, 39366, 39366|
+    ,
+  )
 }

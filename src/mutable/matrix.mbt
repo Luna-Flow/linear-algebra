@@ -160,3 +160,21 @@ pub fn adjoint[T : @luna_generic.Conjugate](self : Matrix[T]) -> Matrix[T] {
 pub fn transpose[T](self : Matrix[T]) -> Matrix[T] {
   Matrix::make(self.col, self.row, fn(i, j) { self[j][i] })
 }
+///|
+pub fn matrix_pow[T : @luna_generic.One + @luna_generic.Zero + @luna_generic.Mul + @luna_generic.Add](
+  self : Matrix[T],
+  power : Int
+) -> Matrix[T] {
+  let mut p = power
+  let mut temp_matrix = self
+  let mut res = identity(self.col)
+  while p >= 1 {
+    let flag = p % 2
+    p = p / 2
+    if flag == 1 {
+      res = res * temp_matrix
+    }
+    temp_matrix = temp_matrix * temp_matrix
+  }
+  res
+}
