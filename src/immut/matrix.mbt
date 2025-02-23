@@ -255,6 +255,9 @@ test "matrix_combine" {
 
 ///|
 pub fn swap_rows[T](self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
+  guard r1 < self.row && r2 < self.row
+  guard r1 >= 0 && r2 >= 0
+  guard r1 != r2
   let new_matrix = Matrix::make(self.row, self.col, fn(i, j) {
     if i == r1 {
       self[r2][j]
