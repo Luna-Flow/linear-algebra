@@ -208,34 +208,88 @@ pub fn determinant[T : @luna_generic.Mul + @luna_generic.Add + @luna_generic.One
   go(fn { i, j => self[i][j] }, n)
 }
 
+///|
 pub fn horizontal_combine[T](self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
   let r1 = self.row
   let c1 = self.col
   let r2 = other.row
   let c2 = other.col
   guard r1 == r2
-  Matrix::make(r1, c1 + c2, fn(i, j){if j < c1 {self[i][j]} else {other[i][j - c1]}})
+  Matrix::make(r1, c1 + c2, fn(i, j) {
+    if j < c1 {
+      self[i][j]
+    } else {
+      other[i][j - c1]
+    }
+  })
 }
 
+///|
 pub fn vertical_combine[T](self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
   Matrix::horizontal_combine(self.transpose(), other.transpose()).transpose()
 }
 
+///|
 test "matrix_combine" {
   let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
   let m2 = Matrix::from_2d_array([[1, 0], [0, 1]])
   let m3 = horizontal_combine(m1, m2)
   let m4 = vertical_combine(m1, m2)
-  inspect!(m3, content=
+  inspect!(
+    m3,
+    content=
       #||1, 2, 1, 0|
       #||3, 4, 0, 1|
     ,
   )
-  inspect!(m4, content=
+  inspect!(
+    m4,
+    content=
       #||1, 2|
       #||3, 4|
       #||1, 0|
       #||0, 1|
+    ,
+  )
+}
+
+///|
+pub fn swap_rows[T](self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
+  let new_matrix = Matrix::make(self.row, self.col, fn(i, j) {
+    if i == r1 {
+      self[r2][j]
+    } else if i == r2 {
+      self[r1][j]
+    } else {
+      self[i][j]
+    }
+  })
+  new_matrix
+}
+
+///|
+pub fn swap_cols[T](self : Matrix[T], c1 : Int, c2 : Int) -> Matrix[T] {
+  self.transpose().swap_rows(c1, c2).transpose()
+}
+
+///|
+test "swap_matrix" {
+  let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let m2 = Matrix::from_2d_array([[1, 0], [0, 1]])
+  let m3 = swap_rows(m1, 0, 1)
+  let m4 = swap_cols(m2, 0, 1)
+  inspect!(
+    m3,
+    content=
+      #||3, 4|
+      #||1, 2|
+    ,
+  )
+  inspect!(
+    m4,
+    content=
+      #||0, 1|
+      #||1, 0|
     ,
   )
 }
