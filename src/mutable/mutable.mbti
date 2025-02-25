@@ -8,8 +8,8 @@ fn identity[T : @luna-generic.One + @luna-generic.Zero](Int) -> Matrix[T]
 fn lin_comb[T : @luna-generic.Add + @luna-generic.Mul](T, Vector[T], T, Vector[T]) -> Vector[T]
 
 // Types and methods
-type Indexed[T]
-impl Indexed {
+type Lens[T]
+impl Lens {
   op_get[T](Self[T], Int) -> T
   op_set[T](Self[T], Int, T) -> Unit
 }
@@ -24,13 +24,12 @@ impl Matrix {
   new[T](Int, Int, T) -> Self[T]
   null[T : Compare + @luna-generic.Zero](Self[T]) -> Bool
   op_add[T : @luna-generic.Add](Self[T], Self[T]) -> Self[T]
-  op_get[T](Self[T], Int) -> Indexed[T]
+  op_get[T](Self[T], Int) -> Lens[T]
   op_mul[T : @luna-generic.Mul + @luna-generic.Add](Self[T], Self[T]) -> Self[T]
   op_neg[T : @luna-generic.Neg](Self[T]) -> Self[T]
   op_sub[T : @luna-generic.Add + @luna-generic.Neg](Self[T], Self[T]) -> Self[T]
   pow[T : @luna-generic.Semiring](Self[T], Int) -> Self[T]
   scale[T : @luna-generic.Mul](Self[T], T) -> Self[T]
-  set[T](Self[T], Int, Int, T) -> Unit
   transpose[T](Self[T]) -> Self[T]
 }
 impl[T : Eq] Eq for Matrix[T]
@@ -58,6 +57,8 @@ impl Vector {
   right_scale_inplace[A : @luna-generic.Mul](A, Self[A]) -> Unit
   scaled_matrix[T : @luna-generic.Mul + @luna-generic.Zero](Self[T]) -> Matrix[T]
   tensor_product[T : @luna-generic.Mul](Self[T], Self[T]) -> Matrix[T]
+  to_col_matrix[T](Self[T]) -> Matrix[T]
+  to_row_matrix[T](Self[T]) -> Matrix[T]
   zip_with[A, U, V](Self[A], Self[U], (A, U) -> V) -> Self[V]
 }
 impl[T : Show] Show for Vector[T]
