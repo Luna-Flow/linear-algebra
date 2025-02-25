@@ -41,6 +41,7 @@ impl[T : Show] Show for Matrix[T]
 type Vector[T]
 impl Vector {
   from_array[T](Array[T]) -> Self[T]
+  iter[T](Self[T]) -> Iter[T]
   left_scale[T : @luna-generic.Mul](Self[T], T) -> Self[T]
   length[T](Self[T]) -> Int
   lerp[T : @luna-generic.One + @luna-generic.Mul + @luna-generic.Add + @luna-generic.Neg](Self[T], Self[T], T) -> Self[T]
@@ -54,8 +55,11 @@ impl Vector {
   scaled_matrix[T : @luna-generic.Mul + @luna-generic.Zero](Self[T]) -> Matrix[T]
   set[T](Self[T], Int, T) -> Self[T]
   tensor_product[T : @luna-generic.Mul](Self[T], Self[T]) -> Matrix[T]
+  to_col_matrix[T](Self[T]) -> Matrix[T]
+  to_row_matrix[T](Self[T]) -> Matrix[T]
   zip_with[T, U, V](Self[T], Self[U], (T, U) -> V) -> Self[V]
 }
+impl[T : Eq] Eq for Vector[T]
 
 // Type aliases
 
