@@ -2,8 +2,8 @@
   "name": "Luna-Flow/linear-algebra",
   "version": "0.0.2-alpha-1",
   "deps": {
-    "Luna-Flow/luna-generic": "0.1.2-alpha-3",
-    "moonbitlang/quickcheck": "0.8.4"
+    "moonbitlang/quickcheck": "0.8.4",
+    "Luna-Flow/luna-generic": "0.1.2-alpha-4"
   },
   "readme": "README.md",
   "repository": "https://github.com/Luna-Flow/linear-algebra",
