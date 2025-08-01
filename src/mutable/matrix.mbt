@@ -1808,3 +1808,88 @@ pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] determinant
   }
   det
 }
+
+///|
+/// Computes the inverse of a square matrix using the Gauss-Jordan elimination method.
+///
+/// This method constructs an augmented matrix by horizontally combining the original
+/// matrix with an identity matrix of the same size, then applies row elimination to
+/// reduce it to reduced row echelon form (RREF). If successful, the right half of
+/// the resulting matrix contains the inverse.
+///
+/// Parameters:
+///
+/// * `self` : The square matrix to compute the inverse of.
+///
+/// Returns an `Option[Matrix[T]]` where:
+/// * `Some(inverse_matrix)` if the matrix is invertible
+/// * `None` if the matrix is singular (non-invertible)
+///
+/// Panics if the matrix is not square.
+/// 
+///
+pub fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] inverse(
+  self : Matrix[T],
+) -> Matrix[T]? {
+  guard self.is_square() else {
+    abort("Matrix must be square to compute inverse")
+  }
+  
+  let n = self.row
+  if n == 0 {
+    return Some(Matrix::new(0, 0, T::zero()))
+  }
+  
+  if not(self.is_invertible()) {
+    return None
+  }
+
+  // Create augmented matrix [A | I]
+  let identity_matrix = identity(n)
+  let augmented = self.horizontal_combine(identity_matrix)
+  
+  // Apply Gauss-Jordan elimination
+  let reduced = augmented.reduce_row_elimination()
+
+  // Extract the inverse from the right half of the augmented matrix
+  let inverse_matrix = Matrix::make(n, n, fn(i, j) { reduced[i][j + n] })
+  return Some(inverse_matrix)
+}
+///|
+/// Checks if a matrix is invertible (non-singular).
+///
+/// A matrix is invertible if its determinant is non-zero.
+///
+/// Parameters:
+///
+/// * `self` : The square matrix to check for invertibility.
+///
+/// Returns `true` if the matrix is invertible, `false` otherwise.
+///
+/// Panics if the matrix is not square.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m1 = @mutable.Matrix::from_2d_array([
+///   [1.0, 2.0],
+///   [3.0, 4.0]
+/// ])
+/// let m2 = @mutable.Matrix::from_2d_array([
+///   [1.0, 2.0],
+///   [2.0, 4.0]  // This is singular (second row is 2 times first row)
+/// ])
+/// inspect(m1.is_invertible(), content="true")
+/// inspect(m2.is_invertible(), content="false")
+/// ```
+///
+pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] is_invertible(
+  self : Matrix[T],
+) -> Bool {
+  guard self.is_square() else {
+    abort("Matrix must be square to check invertibility")
+  }
+  
+  let det = self.determinant()
+  return det.abs() > T::tolerance()
+}
