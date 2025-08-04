@@ -469,3 +469,85 @@ test "determinant calculation" {
     content="true",
   )
 }
+///|
+test "Matrix::is_invertible" {
+  // Test clearly invertible matrices
+  let invertible_2x2 = Matrix::from_2d_array([[2.0, 1.0], [1.0, 1.0]])
+  inspect(invertible_2x2.is_invertible(), content="true")
+  let invertible_3x3 = Matrix::from_2d_array([
+    [1.0, 0.0, 0.0],
+    [0.0, 2.0, 0.0],
+    [0.0, 0.0, 3.0],
+  ])
+  inspect(invertible_3x3.is_invertible(), content="true")
+
+  // Test clearly non-invertible (singular) matrices
+  let singular_2x2 = Matrix::from_2d_array([[1.0, 2.0], [2.0, 4.0]])
+  inspect(singular_2x2.is_invertible(), content="false")
+  let zero_matrix = Matrix::from_2d_array([[0.0, 0.0], [0.0, 0.0]])
+  inspect(zero_matrix.is_invertible(), content="false")
+}
+///|
+test "Matrix::is_invertible/edge_cases" {
+  // Test 1x1 matrices
+  let invertible_1x1 = Matrix::from_2d_array([[5.0]])
+  inspect(invertible_1x1.is_invertible(), content="true")
+  let zero_1x1 = Matrix::from_2d_array([[0.0]])
+  inspect(zero_1x1.is_invertible(), content="false")
+
+  // Test matrix with determinant very close to zero (should be non-invertible)
+  let nearly_singular = Matrix::from_2d_array([
+    [1.0, 1.0],
+    [1.0, 1.000000000001],
+  ])
+  inspect(nearly_singular.is_invertible(), content="false")
+}
+///|
+test "panic Matrix::is_invertible/non_square" {
+  let non_square = Matrix::from_2d_array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+  ignore(non_square.is_invertible())
+}
+
+///|
+test "Matrix::inverse" {
+  // Test 2x2 invertible matrix
+  let m1 = Matrix::from_2d_array([[2.0, 1.0], [1.0, 1.0]])
+  let inv1 = m1.inverse()
+  inspect(inv1.is_empty(), content="false")
+
+  // Test 3x3 identity matrix (should return itself)
+  let identity = Matrix::from_2d_array([
+    [1.0, 0.0, 0.0],
+    [0.0, 1.0, 0.0],
+    [0.0, 0.0, 1.0],
+  ])
+  let inv_identity = identity.inverse()
+  inspect(inv_identity.is_empty(), content="false")
+
+  // Test singular (non-invertible) matrix
+  let singular = Matrix::from_2d_array([[1.0, 2.0], [2.0, 4.0]])
+  let inv_singular = singular.inverse()
+  inspect(inv_singular.is_empty(), content="true")
+}
+///|
+test "Matrix::inverse/edge_cases" {
+  // Test 0x0 matrix
+  let empty_matrix = Matrix::new(0, 0, 0.0)
+  let inv_empty = empty_matrix.inverse()
+  inspect(inv_empty.is_empty(), content="false")
+
+  // Test 1x1 invertible matrix
+  let one_by_one = Matrix::from_2d_array([[5.0]])
+  let inv_one = one_by_one.inverse()
+  inspect(inv_one.is_empty(), content="false")
+
+  // Test 1x1 singular matrix (zero)
+  let zero_matrix = Matrix::from_2d_array([[0.0]])
+  let inv_zero = zero_matrix.inverse()
+  inspect(inv_zero.is_empty(), content="true")
+}
+///|
+test "panic Matrix::inverse/non_square" {
+  let non_square = Matrix::from_2d_array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+  ignore(non_square.inverse())
+}
