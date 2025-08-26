@@ -794,6 +794,284 @@ struct Matrix[T] {
       let min_val = m.min_element()  // 找到最小值：1
       ```
 
+  ---
+
+  - **`fn[T : Compare + Num + Sub + Inverse] Matrix::rank(self) -> Int`**
+    - **描述**
+        使用行约化计算矩阵的秩
+
+    - **参数**
+      - `self: Matrix[T]` - 要计算秩的矩阵
+
+    - **返回值**
+      `Int` - 矩阵的秩，即其行向量或列向量张成的向量空间的维度
+
+    - **示例**
+
+      ```moonbit
+      let m = Matrix::from_2d_array([[1.0, 2.0, 3.0], [2.0, 4.0, 6.0], [7.0, 8.0, 9.0]])
+      let rank = m.rank()
+      inspect(rank, content="2")  // 矩阵的秩为2
+      ```
+
+  ---
+
+  - **`fn[T : Add + Zero] trace(self) -> T`**
+    - **描述**
+        计算方阵的迹（主对角线元素之和）
+
+    - **参数**
+      - `self: Matrix[T]` - 要计算迹的方阵
+
+    - **返回值**
+      `T` - 矩阵的迹
+
+    - **异常**
+      如果矩阵不是方阵则会终止程序
+
+    - **示例**
+
+      ```moonbit
+      let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+      let trace = m.trace()
+      inspect(trace, content="15")  // 1 + 5 + 9 = 15
+      ```
+
+  ---
+
+  - **`fn[T] Matrix::is_square(self) -> Bool`**
+    - **描述**
+        检查矩阵是否为方阵（行数等于列数）
+
+    - **参数**
+      - `self: Matrix[T]` - 要检查的矩阵
+
+    - **返回值**
+      `Bool` - 如果是方阵返回true，否则返回false
+
+    - **示例**
+
+      ```moonbit
+      let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
+      let m2 = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+      inspect(m1.is_square(), content="true")  // 2x2矩阵是方阵
+      inspect(m2.is_square(), content="false") // 2x3矩阵不是方阵
+      ```
+
+  ---
+
+  - **`fn[T] iter(self) -> Iter[T]`**
+    - **描述**
+        创建矩阵元素的迭代器
+
+    - **参数**
+      - `self: Matrix[T]` - 要迭代的矩阵
+
+    - **返回值**
+      `Iter[T]` - 按行优先顺序产生每个元素的迭代器
+
+    - **示例**
+
+      ```moonbit
+      let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+      let iter = m.iter()
+      inspect(iter.collect(), content="[1, 2, 3, 4]") // 按行优先顺序收集所有元素
+      ```
+
+  ---
+
+  - **`fn[T] iter_row(self, row) -> Iter[T]`**
+    - **描述**
+        创建矩阵指定行的元素迭代器
+
+    - **参数**
+      - `self: Matrix[T]` - 要迭代的矩阵
+      - `row: Int` - 要迭代的行的零基索引
+
+    - **返回值**
+      `Iter[T]` - 从左到右产生指定行中每个元素的迭代器
+
+    - **异常**
+      如果`row`为负数或大于等于行数则会终止程序
+
+    - **示例**
+
+      ```moonbit
+      let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+      let row_iter = m.iter_row(1)
+      for elem in row_iter {
+        println(elem) // 打印: 4, 5, 6
+      }
+      ```
+
+  ---
+
+  - **`fn[T] iter_col(self, col) -> Iter[T]`**
+    - **描述**
+        创建矩阵指定列的元素迭代器
+
+    - **参数**
+      - `self: Matrix[T]` - 要迭代的矩阵
+      - `col: Int` - 要迭代的列的零基索引
+
+    - **返回值**
+      `Iter[T]` - 从上到下产生指定列中每个元素的迭代器
+
+    - **异常**
+      如果`col`为负数或大于等于列数则会终止程序
+
+    - **示例**
+
+      ```moonbit
+      let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+      let col_iter = m.iter_col(1)
+      for elem in col_iter {
+        println(elem) // 打印: 2, 5
+      }
+      ```
+
+  ---
+
+  - **`fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] eigen(self) -> (Vector[T], Matrix[T])`**
+    - **描述**
+        使用QR算法计算方阵的特征值和特征向量
+
+    - **参数**
+      - `self: Matrix[T]` - 要计算特征值和特征向量的方阵
+
+    - **返回值**
+      `(Vector[T], Matrix[T])` - 包含特征值的向量和特征向量矩阵
+
+    - **异常**
+      如果矩阵不是方阵则会终止程序
+
+    - **示例**
+
+      ```moonbit
+      let m = Matrix::from_2d_array([[4.0, -2.0], [1.0, 1.0]])
+      let (eigenvals, eigenvecs) = m.eigen()
+      // eigenvals 应该接近 [3.0, 2.0]
+      // eigenvecs 包含对应的特征向量作为列
+      ```
+
+  ---
+
+  - **`fn[T : Compare + Add + Mul + Sub + Div + Num + Tolerance] power_method(self, max_iterations) -> (T, Vector[T])`**
+    - **描述**
+        使用幂法计算矩阵的主导特征值和对应的特征向量
+
+    - **参数**
+      - `self: Matrix[T]` - 要计算的方阵
+      - `max_iterations: Int` - 要执行的最大迭代次数
+
+    - **返回值**
+      `(T, Vector[T])` - 包含主导特征值和对应特征向量的元组
+
+    - **异常**
+      如果矩阵不是方阵则会终止程序
+
+    - **示例**
+
+      ```moonbit
+      let m = Matrix::from_2d_array([[4.0, -2.0], [1.0, 1.0]])
+      let (lambda, v) = m.power_method(100)
+      // lambda 是主导特征值，v 是对应的特征向量
+      ```
+
+  ---
+
+  - **`fn[T : Compare + Add + Mul + Sub + Num + Div + Sqrt + SMul] eigen_2x2(self) -> Vector[T]`**
+    - **描述**
+        使用解析方法计算2x2矩阵的特征值
+
+    - **参数**
+      - `self: Matrix[T]` - 要计算特征值的2x2矩阵
+
+    - **返回值**
+      `Vector[T]` - 包含两个特征值的向量
+
+    - **异常**
+      如果矩阵不是2x2则会终止程序
+
+    - **示例**
+
+      ```moonbit
+      let m = Matrix::from_2d_array([[6.0, -2.0], [-2.0, 9.0]])
+      let eigenvals = m.eigen_2x2()
+      // 返回包含两个特征值的向量
+      ```
+
+  ---
+
+  - **`fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] determinant(self) -> T`**
+    - **描述**
+        使用基于LU分解和部分选主元的高效算法计算方阵的行列式
+
+    - **参数**
+      - `self: Matrix[T]` - 要计算行列式的方阵
+
+    - **返回值**
+      `T` - 矩阵的行列式值
+
+    - **异常**
+      如果矩阵不是方阵则会终止程序
+
+    - **示例**
+
+      ```moonbit
+      let m = Matrix::from_2d_array([[4.0, 3.0], [6.0, 3.0]])
+      inspect(m.determinant(), content="-6.0")
+      ```
+
+  ---
+
+  - **`fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] inverse(self) -> Matrix[T]?`**
+    - **描述**
+        使用高斯-约旦消元法计算方阵的逆矩阵
+
+    - **参数**
+      - `self: Matrix[T]` - 要计算逆矩阵的方阵
+
+    - **返回值**
+      `Matrix[T]?` - 如果矩阵可逆则返回`Some(逆矩阵)`，如果矩阵奇异（不可逆）则返回`None`
+
+    - **异常**
+      如果矩阵不是方阵则会终止程序
+
+    - **示例**
+
+      ```moonbit
+      let m = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
+      match m.inverse() {
+        Some(inv) => println("矩阵可逆")
+        None => println("矩阵奇异")
+      }
+      ```
+
+  ---
+
+  - **`fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] is_invertible(self) -> Bool`**
+    - **描述**
+        检查矩阵是否可逆（非奇异）
+
+    - **参数**
+      - `self: Matrix[T]` - 要检查可逆性的方阵
+
+    - **返回值**
+      `Bool` - 如果矩阵可逆返回true，否则返回false
+
+    - **异常**
+      如果矩阵不是方阵则会终止程序
+
+    - **示例**
+
+      ```moonbit
+      let m1 = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
+      let m2 = Matrix::from_2d_array([[1.0, 2.0], [2.0, 4.0]])  // 奇异矩阵
+      inspect(m1.is_invertible(), content="true")
+      inspect(m2.is_invertible(), content="false")
+      ```
+
 ---
 
 ## 数值特征定义
