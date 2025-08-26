@@ -17,7 +17,7 @@
 /// let scaled = v2.left_scale(2.0)
 /// ```
 ///
-type Vector[A] Array[A]
+struct Vector[A](Array[A])
 
 ///|
 /// Implements the `Arbitrary` trait for `Vector[T]`, enabling the generation of

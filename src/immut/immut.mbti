@@ -8,6 +8,8 @@ import(
 
 // Values
 
+// Errors
+
 // Types and methods
 type Indexed[T]
 fn[T] Indexed::op_get(Self[T], Int) -> T

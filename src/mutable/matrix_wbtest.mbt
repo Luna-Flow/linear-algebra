@@ -469,6 +469,7 @@ test "determinant calculation" {
     content="true",
   )
 }
+
 ///|
 test "Matrix::is_invertible" {
   // Test clearly invertible matrices
@@ -487,6 +488,7 @@ test "Matrix::is_invertible" {
   let zero_matrix = Matrix::from_2d_array([[0.0, 0.0], [0.0, 0.0]])
   inspect(zero_matrix.is_invertible(), content="false")
 }
+
 ///|
 test "Matrix::is_invertible/edge_cases" {
   // Test 1x1 matrices
@@ -502,6 +504,7 @@ test "Matrix::is_invertible/edge_cases" {
   ])
   inspect(nearly_singular.is_invertible(), content="false")
 }
+
 ///|
 test "panic Matrix::is_invertible/non_square" {
   let non_square = Matrix::from_2d_array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
@@ -529,6 +532,7 @@ test "Matrix::inverse" {
   let inv_singular = singular.inverse()
   inspect(inv_singular.is_empty(), content="true")
 }
+
 ///|
 test "Matrix::inverse/edge_cases" {
   // Test 0x0 matrix
@@ -546,6 +550,7 @@ test "Matrix::inverse/edge_cases" {
   let inv_zero = zero_matrix.inverse()
   inspect(inv_zero.is_empty(), content="true")
 }
+
 ///|
 test "panic Matrix::inverse/non_square" {
   let non_square = Matrix::from_2d_array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
