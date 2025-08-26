@@ -700,7 +700,6 @@ pub fn[T] vertical_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
   })
 }
 
-
 ///|
 /// Swaps two rows of a matrix.
 /// 

@@ -1766,7 +1766,6 @@ pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] determinant
   guard self.is_square() else {
     abort("Matrix must be square to calculate determinant")
   }
-
   let m = self.copy()
   let n = m.row
   if n == 0 {
@@ -1834,12 +1833,10 @@ pub fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] inverse
   guard self.is_square() else {
     abort("Matrix must be square to compute inverse")
   }
-  
   let n = self.row
   if n == 0 {
     return Some(Matrix::new(0, 0, T::zero()))
   }
-  
   if not(self.is_invertible()) {
     return None
   }
@@ -1847,7 +1844,7 @@ pub fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] inverse
   // Create augmented matrix [A | I]
   let identity_matrix = identity(n)
   let augmented = self.horizontal_combine(identity_matrix)
-  
+
   // Apply Gauss-Jordan elimination
   let reduced = augmented.reduce_row_elimination()
 
@@ -1855,6 +1852,7 @@ pub fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] inverse
   let inverse_matrix = Matrix::make(n, n, fn(i, j) { reduced[i][j + n] })
   return Some(inverse_matrix)
 }
+
 ///|
 /// Checks if a matrix is invertible (non-singular).
 ///
@@ -1889,7 +1887,6 @@ pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] is_invertib
   guard self.is_square() else {
     abort("Matrix must be square to check invertibility")
   }
-  
   let det = self.determinant()
   return det.abs() > T::tolerance()
 }
