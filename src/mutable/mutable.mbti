@@ -11,6 +11,8 @@ fn[T : @luna-generic.One + @luna-generic.Zero] identity(Int) -> Matrix[T]
 
 fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]
 
+// Errors
+
 // Types and methods
 type Lens[T]
 fn[T] Lens::op_get(Self[T], Int) -> T
@@ -37,6 +39,8 @@ fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
 fn[T] Matrix::from_array(Int, Int, Array[T]) -> Self[T]
 fn[T : @internal.HomomorphismNat] Matrix::from_nat_matrix(Self[Int]) -> Self[T]
 fn[T] Matrix::horizontal_combine(Self[T], Self[T]) -> Self[T]
+fn[T : Compare + @luna-generic.Num + Sub + @luna-generic.Inverse + @luna-generic.Zero + @luna-generic.One + Tolerance + Div] Matrix::inverse(Self[T]) -> Self[T]?
+fn[T : Compare + Sub + Mul + Div + @luna-generic.Zero + @luna-generic.One + @luna-generic.Num + Tolerance] Matrix::is_invertible(Self[T]) -> Bool
 fn[T] Matrix::is_square(Self[T]) -> Bool
 fn[T] Matrix::iter(Self[T]) -> Iter[T]
 fn[T] Matrix::iter_col(Self[T], Int) -> Iter[T]
