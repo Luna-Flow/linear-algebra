@@ -641,7 +641,7 @@ pub fn[T] Lens::op_set(self : Lens[T], col : Int, elem : T) -> Unit {
 /// inspect(result, content="|19, 22|\n|43, 50|")
 /// ```
 ///
-pub impl[T : Mul + Add] Mul for Matrix[T] with op_mul(
+pub impl[T : Mul + Add] Mul for Matrix[T] with mul(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
@@ -684,7 +684,7 @@ pub impl[T : Mul + Add] Mul for Matrix[T] with op_mul(
 /// inspect(result, content="|6, 8|\n|10, 12|")
 /// ```
 ///
-pub impl[T : Add] Add for Matrix[T] with op_add(
+pub impl[T : Add] Add for Matrix[T] with add(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
@@ -714,8 +714,8 @@ pub impl[T : Add] Add for Matrix[T] with op_add(
 /// inspect(negated.to_string(), content="|-1, 2|\n|-3, 4|")
 /// ```
 ///
-pub impl[T : Neg] Neg for Matrix[T] with op_neg(self : Matrix[T]) -> Matrix[T] {
-  self.map(T::op_neg)
+pub impl[T : Neg] Neg for Matrix[T] with neg(self : Matrix[T]) -> Matrix[T] {
+  self.map(T::neg)
 }
 
 ///|
@@ -739,7 +739,7 @@ pub impl[T : Neg] Neg for Matrix[T] with op_neg(self : Matrix[T]) -> Matrix[T] {
 /// //           |6, 7|
 /// ```
 ///
-pub impl[T : Add + Neg] Sub for Matrix[T] with op_sub(
+pub impl[T : Add + Neg] Sub for Matrix[T] with sub(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
