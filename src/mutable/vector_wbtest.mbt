@@ -88,7 +88,7 @@ test "a * b * c = a * (b * c)" {
   fn prop(a : Vector[Int], b, c) {
     a * b * c == a * (b * c)
   }
-  
+
   fn check(x : (Vector[Int], Vector[Int], Vector[Int])) {
     let (a, b, c) = x
     guard a.length() == b.length() && b.length() == c.length() else { true }

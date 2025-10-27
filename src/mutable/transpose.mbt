@@ -11,7 +11,7 @@
 /// inspect(t.col(), content="2")  // Original matrix rows become cols
 /// ```
 ///
-type Transpose[T] Matrix[T]
+struct Transpose[T](Matrix[T])
 
 ///|
 /// Adds two transposed matrices element-wise.
