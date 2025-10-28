@@ -331,11 +331,11 @@ pub fn[T] Vector::iter(self : Vector[T]) -> Iter[T] {
 /// inspect(v1 + v2, content="|5, 7, 9|")
 /// ```
 ///
-pub impl[T : Add] Add for Vector[T] with op_add(
+pub impl[T : Add] Add for Vector[T] with add(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {
-  self.zip_with(other, T::op_add)
+  self.zip_with(other, T::add)
 }
 
 ///|
@@ -357,11 +357,11 @@ pub impl[T : Add] Add for Vector[T] with op_add(
 /// inspect(v1 * v2, content="|4, 10, 18|")
 /// ```
 ///
-pub impl[T : Mul] Mul for Vector[T] with op_mul(
+pub impl[T : Mul] Mul for Vector[T] with mul(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {
-  self.zip_with(other, T::op_mul)
+  self.zip_with(other, T::mul)
 }
 
 ///|

@@ -56,7 +56,7 @@ impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
 /// assert_eq(v1.to_string() != v3.to_string(), true)
 /// ```
 ///
-impl[T : Eq] Eq for Vector[T] with op_equal(self, other) {
+impl[T : Eq] Eq for Vector[T] with equal(self, other) {
   self.inner() == other.inner()
 }
 
@@ -526,11 +526,11 @@ pub fn[T] Vector::from_array(a : Array[T]) -> Vector[T] {
 /// inspect(result, content="|5, 7, 9|")
 /// ```
 ///
-pub impl[T : Add] Add for Vector[T] with op_add(
+pub impl[T : Add] Add for Vector[T] with add(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {
-  self.zip_with(other, T::op_add)
+  self.zip_with(other, T::add)
 }
 
 ///|
@@ -553,11 +553,11 @@ pub impl[T : Add] Add for Vector[T] with op_add(
 /// inspect(result, content="|4, 10, 18|")
 /// ```
 ///
-pub impl[T : Mul] Mul for Vector[T] with op_mul(
+pub impl[T : Mul] Mul for Vector[T] with mul(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {
-  self.zip_with(other, T::op_mul)
+  self.zip_with(other, T::mul)
 }
 
 ///|
@@ -576,8 +576,8 @@ pub impl[T : Mul] Mul for Vector[T] with op_mul(
 /// inspect(-v, content="|-1, -2, 3|")
 /// ```
 ///
-pub impl[T : Neg] Neg for Vector[T] with op_neg(self : Vector[T]) -> Vector[T] {
-  self.map(T::op_neg)
+pub impl[T : Neg] Neg for Vector[T] with neg(self : Vector[T]) -> Vector[T] {
+  self.map(T::neg)
 }
 
 ///|

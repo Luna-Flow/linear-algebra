@@ -367,7 +367,7 @@ pub fn[T] Matrix::set(
 ///   #||3, 7|
 /// )
 /// ```
-pub impl[T : Mul + Add] Mul for Matrix[T] with op_mul(
+pub impl[T : Mul + Add] Mul for Matrix[T] with mul(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
@@ -404,14 +404,14 @@ pub impl[T : Mul + Add] Mul for Matrix[T] with op_mul(
 ///   #||3, 5|
 /// )
 /// ```
-pub impl[T : Add] Add for Matrix[T] with op_add(
+pub impl[T : Add] Add for Matrix[T] with add(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
   guard self.col == other.col
   guard self.row == other.row
   {
-    data: array_zip_with(self.data, other.data, T::op_add),
+    data: array_zip_with(self.data, other.data, T::add),
     row: self.row,
     col: self.col,
   }
@@ -432,8 +432,8 @@ pub impl[T : Add] Add for Matrix[T] with op_add(
 ///   #||-3, -4|
 /// )
 /// ```
-pub impl[T : Neg] Neg for Matrix[T] with op_neg(self : Matrix[T]) -> Matrix[T] {
-  self.map(T::op_neg)
+pub impl[T : Neg] Neg for Matrix[T] with neg(self : Matrix[T]) -> Matrix[T] {
+  self.map(T::neg)
 }
 
 ///|
@@ -453,7 +453,7 @@ pub impl[T : Neg] Neg for Matrix[T] with op_neg(self : Matrix[T]) -> Matrix[T] {
 ///   #||3, 3|
 /// )
 /// ```
-pub impl[T : Add + Neg] Sub for Matrix[T] with op_sub(
+pub impl[T : Add + Neg] Sub for Matrix[T] with sub(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
