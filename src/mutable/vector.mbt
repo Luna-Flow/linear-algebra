@@ -56,7 +56,7 @@ pub impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
 /// assert_eq(v1.to_string() != v3.to_string(), true)
 /// ```
 ///
-pub impl[T : Eq] Eq for Vector[T] with equal(self, other) {
+impl[T : Eq] Eq for Vector[T] with equal(self, other) {
   self.inner() == other.inner()
 }
 
@@ -530,7 +530,7 @@ pub impl[T : Add] Add for Vector[T] with add(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {
-  self.zip_with(other, T::op_add)
+  self.zip_with(other, T::add)
 }
 
 ///|
@@ -557,7 +557,7 @@ pub impl[T : Mul] Mul for Vector[T] with mul(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {
-  self.zip_with(other, T::op_mul)
+  self.zip_with(other, T::mul)
 }
 
 ///|
@@ -577,7 +577,7 @@ pub impl[T : Mul] Mul for Vector[T] with mul(
 /// ```
 ///
 pub impl[T : Neg] Neg for Vector[T] with neg(self : Vector[T]) -> Vector[T] {
-  self.map(T::op_neg)
+  self.map(T::neg)
 }
 
 ///|

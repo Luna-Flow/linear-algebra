@@ -411,7 +411,7 @@ pub impl[T : Add] Add for Matrix[T] with add(
   guard self.col == other.col
   guard self.row == other.row
   {
-    data: array_zip_with(self.data, other.data, T::op_add),
+    data: array_zip_with(self.data, other.data, T::add),
     row: self.row,
     col: self.col,
   }
@@ -433,7 +433,7 @@ pub impl[T : Add] Add for Matrix[T] with add(
 /// )
 /// ```
 pub impl[T : Neg] Neg for Matrix[T] with neg(self : Matrix[T]) -> Matrix[T] {
-  self.map(T::op_neg)
+  self.map(T::neg)
 }
 
 ///|

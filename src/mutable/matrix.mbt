@@ -715,7 +715,7 @@ pub impl[T : Add] Add for Matrix[T] with add(
 /// ```
 ///
 pub impl[T : Neg] Neg for Matrix[T] with neg(self : Matrix[T]) -> Matrix[T] {
-  self.map(T::op_neg)
+  self.map(T::neg)
 }
 
 ///|

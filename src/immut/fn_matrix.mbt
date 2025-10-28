@@ -55,7 +55,7 @@ pub fn[T] MatrixFn::op_get(self : MatrixFn[T], i : Int) -> Indexed[T] {
 /// Panics if the matrices have different dimensions during the `zip_with`
 /// operation.
 pub impl[T : Eq] Eq for MatrixFn[T] with equal(self, other) {
-  self.zip_with(other, T::op_equal).fold(init=true, fn(acc, x) { acc && x })
+  self.zip_with(other, T::equal).fold(init=true, fn(acc, x) { acc && x })
 }
 
 ///|

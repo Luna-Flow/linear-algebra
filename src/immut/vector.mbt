@@ -335,7 +335,7 @@ pub impl[T : Add] Add for Vector[T] with add(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {
-  self.zip_with(other, T::op_add)
+  self.zip_with(other, T::add)
 }
 
 ///|
@@ -361,7 +361,7 @@ pub impl[T : Mul] Mul for Vector[T] with mul(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {
-  self.zip_with(other, T::op_mul)
+  self.zip_with(other, T::mul)
 }
 
 ///|
