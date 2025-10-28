@@ -1,0 +1,18 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/linear-algebra/internal"
+
+// Values
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+pub trait HomomorphismNat {
+  from_nat(Int) -> Self
+}
+impl HomomorphismNat for Float
+impl HomomorphismNat for Double
+

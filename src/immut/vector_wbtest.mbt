@@ -1,4 +1,9 @@
 ///|
+impl[T] @qc.Shrink for Vector[T] with shrink(_) -> Iter[Vector[T]] {
+  Iter::empty()
+}
+
+///|
 /// Tests the conversion of a vector to both column and row matrix
 /// representations.
 ///
@@ -62,7 +67,7 @@ test "from . to = identity" {
     v == Vector::from_array(v.iter().to_array())
   }
 
-  quick_check_fn(prop)
+  @qc.quick_check_fn(prop)
 }
 
 ///|
@@ -93,7 +98,7 @@ test "a + a = 2 * a" {
     v + v == v.left_scale(2)
   }
 
-  quick_check_fn(prop)
+  @qc.quick_check_fn(prop)
 }
 
 ///|
@@ -130,7 +135,7 @@ test "a + b = b + a" {
     prop(a, b)
   }
 
-  quick_check_fn(check)
+  @qc.quick_check_fn(check)
 }
 
 ///|
@@ -161,7 +166,7 @@ test "a * b * c = a * (b * c)" {
     prop(a, b, c)
   }
 
-  quick_check_fn(check)
+  @qc.quick_check_fn(check)
 }
 
 ///|
@@ -194,7 +199,7 @@ test "S_v * p = v * p" {
     prop(a, b)
   }
 
-  quick_check_fn(check)
+  @qc.quick_check_fn(check)
 }
 
 ///|
