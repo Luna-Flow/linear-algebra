@@ -32,7 +32,7 @@ struct Vector[T] {
 ///
 /// Returns an arbitrary `Vector[T]` where each element is generated using the
 /// `Arbitrary` implementation of type `T`.
-impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
+pub impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
   Vector::{ data: @immut/array.makei(size, i => T::arbitrary(i, rng)) }
 }
 
@@ -331,7 +331,7 @@ pub fn[T] Vector::iter(self : Vector[T]) -> Iter[T] {
 /// inspect(v1 + v2, content="|5, 7, 9|")
 /// ```
 ///
-pub impl[T : Add] Add for Vector[T] with op_add(
+pub impl[T : Add] Add for Vector[T] with add(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {
@@ -357,7 +357,7 @@ pub impl[T : Add] Add for Vector[T] with op_add(
 /// inspect(v1 * v2, content="|4, 10, 18|")
 /// ```
 ///
-pub impl[T : Mul] Mul for Vector[T] with op_mul(
+pub impl[T : Mul] Mul for Vector[T] with mul(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {

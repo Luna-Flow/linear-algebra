@@ -11,7 +11,7 @@
 /// inspect(t.col(), content="2")  // Original matrix rows become cols
 /// ```
 ///
-type Transpose[T] Matrix[T]
+struct Transpose[T](Matrix[T])
 
 ///|
 /// Adds two transposed matrices element-wise.
@@ -34,7 +34,7 @@ type Transpose[T] Matrix[T]
 /// let sum = t1 + t2
 /// ```
 ///
-pub impl[T : Add] Add for Transpose[T] with op_add(a, b) {
+pub impl[T : Add] Add for Transpose[T] with add(a, b) {
   a.inner() + b.inner()
 }
 
@@ -111,7 +111,7 @@ pub impl[T : Show] Show for Transpose[T] with output(s, l) {
 /// let result = t1 * t2
 /// ```
 ///
-pub impl[T : Add + Mul] Mul for Transpose[T] with op_mul(a, b) {
+pub impl[T : Add + Mul] Mul for Transpose[T] with mul(a, b) {
   b.inner() * a.inner()
 }
 
@@ -133,7 +133,7 @@ pub impl[T : Add + Mul] Mul for Transpose[T] with op_mul(a, b) {
 /// let neg_t = -t
 /// ```
 ///
-pub impl[T : Neg] Neg for Transpose[T] with op_neg(a) {
+pub impl[T : Neg] Neg for Transpose[T] with neg(a) {
   -a.inner()
 }
 
@@ -147,7 +147,7 @@ pub impl[T : Neg] Neg for Transpose[T] with op_neg(a) {
 ///
 /// Returns a new transpose matrix that is the result of the subtraction.
 ///
-pub impl[T : Add + Neg] Sub for Transpose[T] with op_sub(a, b) {
+pub impl[T : Add + Neg] Sub for Transpose[T] with sub(a, b) {
   a.inner() - b.inner()
 }
 
@@ -161,7 +161,7 @@ pub impl[T : Add + Neg] Sub for Transpose[T] with op_sub(a, b) {
 ///
 /// Returns `true` if the two transposed matrices are equal, `false` otherwise.
 ///
-pub impl[T : Eq] Eq for Transpose[T] with op_equal(a, b) {
+pub impl[T : Eq] Eq for Transpose[T] with equal(a, b) {
   a.inner() == b.inner()
 }
 

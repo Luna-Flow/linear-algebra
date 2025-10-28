@@ -54,7 +54,7 @@ pub fn[T] MatrixFn::op_get(self : MatrixFn[T], i : Int) -> Indexed[T] {
 ///
 /// Panics if the matrices have different dimensions during the `zip_with`
 /// operation.
-pub impl[T : Eq] Eq for MatrixFn[T] with op_equal(self, other) {
+pub impl[T : Eq] Eq for MatrixFn[T] with equal(self, other) {
   self.zip_with(other, T::op_equal).fold(init=true, fn(acc, x) { acc && x })
 }
 
@@ -364,8 +364,8 @@ pub fn[T] MatrixFn::from_2d_array(arr : Array[Array[T]]) -> MatrixFn[T] {
 /// elements from the input matrices.
 ///
 /// Panics if the dimensions of the two matrices do not match.
-pub impl[T : Add] Add for MatrixFn[T] with op_add(self, other) {
-  self.zip_with(other, Add::op_add)
+pub impl[T : Add] Add for MatrixFn[T] with add(self, other) {
+  self.zip_with(other, Add::add)
 }
 
 ///|
@@ -377,7 +377,7 @@ pub impl[T : Add] Add for MatrixFn[T] with op_add(self, other) {
 ///
 /// Returns a new MatrixFn where each element is the negation of the
 /// corresponding element in the input matrix.
-pub impl[T : Neg] Neg for MatrixFn[T] with op_neg(self) {
+pub impl[T : Neg] Neg for MatrixFn[T] with neg(self) {
   self.map(T::op_neg)
 }
 
@@ -396,7 +396,7 @@ pub impl[T : Neg] Neg for MatrixFn[T] with op_neg(self) {
 /// two matrices.
 ///
 /// Panics if the dimensions of the two matrices do not match.
-pub impl[T : Add + Neg] Sub for MatrixFn[T] with op_sub(self, other) {
+pub impl[T : Add + Neg] Sub for MatrixFn[T] with sub(self, other) {
   self + -other
 }
 
@@ -574,7 +574,7 @@ pub fn[T] MatrixFn::swap_rows(
 ///
 /// Panics if the number of columns in the left matrix does not equal the number
 /// of rows in the right matrix.
-impl[T : Mul + Add] Mul for MatrixFn[T] with op_mul(self, other) {
+impl[T : Mul + Add] Mul for MatrixFn[T] with mul(self, other) {
   let (r1, c1) = self.grid
   let (r2, c2) = other.grid
   guard c1 == r2
