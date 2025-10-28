@@ -30,7 +30,7 @@ struct Vector[A](Array[A])
 ///
 /// Returns a randomly generated vector of the specified size, where each
 /// element is generated using the `Arbitrary` instance of type `T`.
-impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
+pub impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
   Vector::makei(size, i => T::arbitrary(i, rng))
 }
 

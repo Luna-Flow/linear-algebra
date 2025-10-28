@@ -4,6 +4,8 @@ package "Luna-Flow/linear-algebra/mutable"
 import(
   "Luna-Flow/linear-algebra/internal"
   "Luna-Flow/luna-generic"
+  "moonbitlang/core/quickcheck"
+  "moonbitlang/core/quickcheck/splitmix"
 )
 
 // Values
@@ -19,6 +21,7 @@ fn[T] Lens::op_get(Self[T], Int) -> T
 fn[T] Lens::op_set(Self[T], Int, T) -> Unit
 
 type Matrix[T]
+fn[T : Add] Matrix::add(Self[T], Self[T]) -> Self[T] // from trait `Add`
 fn[T : Add] Matrix::add_constant(Self[T], T) -> Self[T]
 fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]
 fn[T] Matrix::col(Self[T]) -> Int
@@ -35,6 +38,7 @@ fn[T] Matrix::eachi_col(Self[T], Int, (Int, T) -> Unit) -> Unit
 fn[T] Matrix::eachi_row(Self[T], Int, (Int, T) -> Unit) -> Unit
 fn[T : Compare + Add + Mul + Sub + Neg + @luna-generic.Num + Div + Sqrt + Tolerance] Matrix::eigen(Self[T]) -> (Vector[T], Self[T])
 fn[T : Compare + Add + Mul + Sub + @luna-generic.Num + Div + Sqrt + SMul] Matrix::eigen_2x2(Self[T]) -> Vector[T]
+fn[T : Eq] Matrix::equal(Self[T], Self[T]) -> Bool // from trait `Eq`
 fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
 fn[T] Matrix::from_array(Int, Int, Array[T]) -> Self[T]
 fn[T : @internal.HomomorphismNat] Matrix::from_nat_matrix(Self[Int]) -> Self[T]
@@ -50,9 +54,22 @@ fn[T, U] Matrix::map(Self[T], (T) -> U) -> Self[U]
 fn[T] Matrix::map_col_inplace(Self[T], Int, (T) -> T) -> Unit
 fn[T] Matrix::map_inplace(Self[T], (T) -> T) -> Unit
 fn[T] Matrix::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
+fn[T : Mul + Add] Matrix::mul(Self[T], Self[T]) -> Self[T] // from trait `Mul`
+fn[T : Neg] Matrix::neg(Self[T]) -> Self[T] // from trait `Neg`
 fn[T] Matrix::new(Int, Int, T) -> Self[T]
 fn[T : Compare + @luna-generic.Zero] Matrix::null(Self[T]) -> Bool
+#deprecated
+fn[T : Add] Matrix::op_add(Self[T], Self[T]) -> Self[T] // from trait `Add`
+#deprecated
+fn[T : Eq] Matrix::op_equal(Self[T], Self[T]) -> Bool // from trait `Eq`
 fn[T] Matrix::op_get(Self[T], Int) -> Lens[T]
+#deprecated
+fn[T : Mul + Add] Matrix::op_mul(Self[T], Self[T]) -> Self[T] // from trait `Mul`
+#deprecated
+fn[T : Neg] Matrix::op_neg(Self[T]) -> Self[T] // from trait `Neg`
+#deprecated
+fn[T : Add + Neg] Matrix::op_sub(Self[T], Self[T]) -> Self[T] // from trait `Sub`
+fn[T : Show] Matrix::output(Self[T], &Logger) -> Unit // from trait `Show`
 fn[T : @luna-generic.Semiring] Matrix::pow(Self[T], Int) -> Self[T]
 fn[T : Compare + Add + Mul + Sub + Div + @luna-generic.Num + Tolerance] Matrix::power_method(Self[T], Int) -> (T, Vector[T])
 fn[T : Compare + @luna-generic.Num + @luna-generic.Inverse + Sub] Matrix::rank(Self[T]) -> Int
@@ -61,10 +78,12 @@ fn[T] Matrix::row(Self[T]) -> Int
 fn[T] Matrix::row_to_array(Self[T], Int) -> Array[T]
 fn[T] Matrix::row_to_vector(Self[T], Int) -> Vector[T]
 fn[T : Mul] Matrix::scale(Self[T], T) -> Self[T]
+fn[T : Add + Neg] Matrix::sub(Self[T], Self[T]) -> Self[T] // from trait `Sub`
 fn[T] Matrix::swap_cols(Self[T], Int, Int) -> Unit
 fn[T] Matrix::swap_rows(Self[T], Int, Int) -> Unit
 fn[T] Matrix::to_2d_array(Self[T]) -> Array[Array[T]]
 fn[T] Matrix::to_array(Self[T]) -> Array[T]
+fn[T : Show] Matrix::to_string(Self[T]) -> String // from trait `Show`
 fn[T] Matrix::to_transpose(Self[T]) -> Transpose[T]
 fn[T] Matrix::to_vector(Self[T]) -> Vector[T]
 fn[T : Add + @luna-generic.Zero] Matrix::trace(Self[T]) -> T
@@ -78,6 +97,7 @@ impl[T : Show] Show for Matrix[T]
 impl[T : Add + Neg] Sub for Matrix[T]
 
 type Transpose[T]
+fn[T : Add] Transpose::add(Self[T], Self[T]) -> Self[T] // from trait `Add`
 fn[T : Add] Transpose::add_constant(Self[T], T) -> Self[T]
 fn[T] Transpose::col(Self[T]) -> Int
 fn[T] Transpose::col_to_array(Self[T], Int) -> Array[T]
@@ -90,18 +110,34 @@ fn[T] Transpose::each_row_col(Self[T], (Int, Int, T) -> Unit) -> Unit
 fn[T] Transpose::eachi(Self[T], (Int, T) -> Unit) -> Unit
 fn[T] Transpose::eachi_col(Self[T], Int, (Int, T) -> Unit) -> Unit
 fn[T] Transpose::eachi_row(Self[T], Int, (Int, T) -> Unit) -> Unit
+fn[T : Eq] Transpose::equal(Self[T], Self[T]) -> Bool // from trait `Eq`
 fn[T] Transpose::horizontal_combine(Self[T], Self[T]) -> Self[T]
 fn[T] Transpose::map(Self[T], (T) -> T) -> Self[T]
 fn[T] Transpose::map_col_inplace(Self[T], Int, (T) -> T) -> Unit
 fn[T] Transpose::map_inplace(Self[T], (T) -> T) -> Unit
 fn[T] Transpose::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
 fn[T] Transpose::materialize(Self[T]) -> Matrix[T]
+fn[T : Add + Mul] Transpose::mul(Self[T], Self[T]) -> Self[T] // from trait `Mul`
+fn[T : Neg] Transpose::neg(Self[T]) -> Self[T] // from trait `Neg`
+#deprecated
+fn[T : Add] Transpose::op_add(Self[T], Self[T]) -> Self[T] // from trait `Add`
+#deprecated
+fn[T : Eq] Transpose::op_equal(Self[T], Self[T]) -> Bool // from trait `Eq`
+#deprecated
+fn[T : Add + Mul] Transpose::op_mul(Self[T], Self[T]) -> Self[T] // from trait `Mul`
+#deprecated
+fn[T : Neg] Transpose::op_neg(Self[T]) -> Self[T] // from trait `Neg`
+#deprecated
+fn[T : Add + Neg] Transpose::op_sub(Self[T], Self[T]) -> Self[T] // from trait `Sub`
+fn[T : Show] Transpose::output(Self[T], &Logger) -> Unit // from trait `Show`
 fn[T] Transpose::row(Self[T]) -> Int
 fn[T] Transpose::row_to_array(Self[T], Int) -> Array[T]
 fn[T] Transpose::row_to_vector(Self[T], Int) -> Vector[T]
 fn[T : Mul] Transpose::scale(Self[T], T) -> Self[T]
+fn[T : Add + Neg] Transpose::sub(Self[T], Self[T]) -> Self[T] // from trait `Sub`
 fn[T] Transpose::swap_cols(Self[T], Int, Int) -> Unit
 fn[T] Transpose::swap_rows(Self[T], Int, Int) -> Unit
+fn[T : Show] Transpose::to_string(Self[T]) -> String // from trait `Show`
 fn[T] Transpose::transpose(Self[T]) -> Matrix[T]
 fn[T] Transpose::vertical_combine(Self[T], Self[T]) -> Self[T]
 impl[T : Add] Add for Transpose[T]
@@ -112,8 +148,11 @@ impl[T : Show] Show for Transpose[T]
 impl[T : Add + Neg] Sub for Transpose[T]
 
 type Vector[A]
+fn[T : Add] Vector::add(Self[T], Self[T]) -> Self[T] // from trait `Add`
 fn[T : Add] Vector::add_constant(Self[T], T) -> Self[T]
+fn[T : @quickcheck.Arbitrary] Vector::arbitrary(Int, @splitmix.RandomState) -> Self[T] // from trait `@quickcheck.Arbitrary`
 fn[A] Vector::copy(Self[A]) -> Self[A]
+fn[T : Eq] Vector::equal(Self[T], Self[T]) -> Bool // from trait `Eq`
 fn[T] Vector::from_array(Array[T]) -> Self[T]
 fn[A : Mul] Vector::left_scale(Self[A], A) -> Self[A]
 fn[A : Mul] Vector::left_scale_inplace(Self[A], A) -> Unit
@@ -123,19 +162,33 @@ fn[A] Vector::make(Int, A) -> Self[A]
 fn[A] Vector::makei(Int, (Int) -> A) -> Self[A]
 fn[A, B] Vector::map(Self[A], (A) -> B) -> Self[B]
 fn[A] Vector::map_inplace(Self[A], (A) -> A) -> Unit
+fn[T : Mul] Vector::mul(Self[T], Self[T]) -> Self[T] // from trait `Mul`
+fn[T : Neg] Vector::neg(Self[T]) -> Self[T] // from trait `Neg`
+#deprecated
+fn[T : Add] Vector::op_add(Self[T], Self[T]) -> Self[T] // from trait `Add`
+#deprecated
+fn[T : Eq] Vector::op_equal(Self[T], Self[T]) -> Bool // from trait `Eq`
 fn[A] Vector::op_get(Self[A], Int) -> A
+#deprecated
+fn[T : Mul] Vector::op_mul(Self[T], Self[T]) -> Self[T] // from trait `Mul`
+#deprecated
+fn[T : Neg] Vector::op_neg(Self[T]) -> Self[T] // from trait `Neg`
 fn[A] Vector::op_set(Self[A], Int, A) -> Unit
+fn[T : Show] Vector::output(Self[T], &Logger) -> Unit // from trait `Show`
 fn[A : Mul] Vector::right_scale(A, Self[A]) -> Self[A]
 fn[A : Mul] Vector::right_scale_inplace(A, Self[A]) -> Unit
 fn[T : @luna-generic.Zero] Vector::scaled_matrix(Self[T]) -> Matrix[T]
 fn[T : Mul] Vector::tensor_product(Self[T], Self[T]) -> Matrix[T]
 fn[T] Vector::to_col_matrix(Self[T]) -> Matrix[T]
 fn[T] Vector::to_row_matrix(Self[T]) -> Matrix[T]
+fn[T : Show] Vector::to_string(Self[T]) -> String // from trait `Show`
 fn[A, U, V] Vector::zip_with(Self[A], Self[U], (A, U) -> V) -> Self[V]
 impl[T : Add] Add for Vector[T]
+impl[T : Eq] Eq for Vector[T]
 impl[T : Mul] Mul for Vector[T]
 impl[T : Neg] Neg for Vector[T]
 impl[T : Show] Show for Vector[T]
+impl[T : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[T]
 
 // Type aliases
 
