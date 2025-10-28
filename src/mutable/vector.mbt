@@ -56,7 +56,7 @@ pub impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
 /// assert_eq(v1.to_string() != v3.to_string(), true)
 /// ```
 ///
-impl[T : Eq] Eq for Vector[T] with equal(self, other) {
+pub impl[T : Eq] Eq for Vector[T] with equal(self, other) {
   self.inner() == other.inner()
 }
 
