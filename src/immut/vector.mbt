@@ -112,9 +112,17 @@ pub fn[T, U, V] Vector::zip_with(
 /// // |1|
 /// // |2|
 /// // |3|
+/// inspect(
+///   col_matrix,
+///   content=
+///     #||1|
+///     #||2|
+///     #||3|
+///   ,
+/// )
 /// ```
 ///
-pub fn[T] to_col_matrix(self : Vector[T]) -> Matrix[T] {
+pub fn[T] Vector::to_col_matrix(self : Vector[T]) -> Matrix[T] {
   Matrix::make(self.length(), 1, fn(i, _) { self[i] })
 }
 
@@ -135,9 +143,15 @@ pub fn[T] to_col_matrix(self : Vector[T]) -> Matrix[T] {
 /// let v = Vector::from_array([1, 2, 3])
 /// let row_matrix = v.to_row_matrix()
 /// // Results in a 1×3 matrix: |1, 2, 3|
+/// inspect(
+///   row_matrix,
+///   content=
+///     #||1, 2, 3|
+///   ,
+/// )
 /// ```
 ///
-pub fn[T] to_row_matrix(self : Vector[T]) -> Matrix[T] {
+pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
   { data: self.data, row: 1, col: self.length() }
 }
 
@@ -158,6 +172,7 @@ pub fn[T] to_row_matrix(self : Vector[T]) -> Matrix[T] {
 /// ```moonbit
 /// let v = Vector::makei(5, fn(i) { i * 2 })
 /// // Creates a vector |0, 2, 4, 6, 8|
+/// inspect(v, content="|0, 2, 4, 6, 8|")
 /// ```
 ///
 pub fn[T] Vector::makei(n : Int, f : (Int) -> T) -> Vector[T] {
@@ -252,7 +267,7 @@ pub fn[T] Vector::set(self : Vector[T], i : Int, x : T) -> Vector[T] {
 /// inspect(scaled, content="|5, 10, 15|")
 /// ```
 ///
-pub fn[T : Mul] left_scale(self : Vector[T], scalar : T) -> Vector[T] {
+pub fn[T : Mul] Vector::left_scale(self : Vector[T], scalar : T) -> Vector[T] {
   self.map(x => scalar * x)
 }
 
@@ -274,7 +289,7 @@ pub fn[T : Mul] left_scale(self : Vector[T], scalar : T) -> Vector[T] {
 /// inspect(v.right_scale(5), content="|5, 10, 15|")
 /// ```
 ///
-pub fn[T : Mul] right_scale(self : Vector[T], scalar : T) -> Vector[T] {
+pub fn[T : Mul] Vector::right_scale(self : Vector[T], scalar : T) -> Vector[T] {
   self.map(x => x * scalar)
 }
 
@@ -386,7 +401,7 @@ pub impl[T : Mul] Mul for Vector[T] with mul(
 /// inspect(result, content="|2.5, 3.5, 4.5|")
 /// ```
 ///
-pub fn[T : One + Mul + Add + Neg] lerp(
+pub fn[T : One + Mul + Add + Neg] Vector::lerp(
   self : Vector[T],
   other : Vector[T],
   alpha : T,
@@ -444,9 +459,17 @@ pub impl[T : Show] Show for Vector[T] with output(s, l) {
 /// // |1, 0, 0|
 /// // |0, 2, 0|
 /// // |0, 0, 3|
+/// inspect(
+///   diagonal_matrix,
+///   content=
+///     #||1, 0, 0|
+///     #||0, 2, 0|
+///     #||0, 0, 3|
+///   ,
+/// )
 /// ```
 ///
-pub fn[T : Zero] scaled_matrix(self : Vector[T]) -> Matrix[T] {
+pub fn[T : Zero] Vector::scaled_matrix(self : Vector[T]) -> Matrix[T] {
   let n = self.length()
   Matrix::make(n, n, fn(i, j) { if i == j { self[i] } else { T::zero() } })
 }
@@ -481,7 +504,7 @@ pub fn[T : Zero] scaled_matrix(self : Vector[T]) -> Matrix[T] {
 /// // |6, 8, 10|
 /// ```
 ///
-pub fn[T : Mul] tensor_product(
+pub fn[T : Mul] Vector::tensor_product(
   self : Vector[T],
   other : Vector[T],
 ) -> Matrix[T] {

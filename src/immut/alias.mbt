@@ -1,5 +1,5 @@
 ///|
-traitalias @lg.(One, Zero, Conjugate, Semiring)
+using @lg {trait One, trait Zero, trait Conjugate, trait Semiring}
 
 ///|
-traitalias @quickcheck.Arbitrary
+using @quickcheck {trait Arbitrary}

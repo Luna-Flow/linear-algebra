@@ -113,6 +113,13 @@ pub fn[T, U] MatrixFn::fold(
 /// ```moonbit
 /// let matrix : @immut.MatrixFn[Int] = @immut.MatrixFn::new(2, 3)
 /// // Creates a 2x3 matrix with all elements initialized to 0 (default value for Int)
+/// inspect(
+///   matrix,
+///   content=
+///     #||0, 0, 0|
+///     #||0, 0, 0|
+///   ,
+/// )
 /// ```
 ///
 pub fn[T : Default] MatrixFn::new(row : Int, col : Int) -> MatrixFn[T] {
@@ -214,7 +221,10 @@ pub impl[T : Show] Show for MatrixFn[T] with output(s, l) {
 /// ```moonbit
 /// let matrix = @immut.MatrixFn::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let result = matrix.map_row(0, fn(x) { x * 2 })
-/// inspect(result, content="|2, 4, 6|\n|4, 5, 6|")
+/// inspect(result, content=
+///   #||2, 4, 6|
+///   #||4, 5, 6|
+/// )
 /// ```
 ///
 pub fn[T] MatrixFn::map_row(
@@ -251,6 +261,7 @@ pub fn[T] MatrixFn::map_row(
 /// let doubled_col = m.map_col(1, fn(x) { x * 2 })
 /// // Column 1 elements (2, 5) become (4, 10)
 /// // Result: [[1, 4, 3], [4, 10, 6]]
+/// inspect(doubled_col, content="|1, 4, 3|\n|4, 10, 6|")
 /// ```
 ///
 pub fn[T] MatrixFn::map_col(
@@ -313,9 +324,17 @@ pub fn[T] MatrixFn::transpose(self : MatrixFn[T]) -> MatrixFn[T] {
 /// // Create a 3x3 matrix where each element equals i + j
 /// let matrix = @immut.MatrixFn::make(3, 3, fn(i, j) { i + j })
 /// // matrix[0][0] = 0, matrix[0][1] = 1, matrix[1][0] = 1, etc.
-///
+/// inspect(matrix, content =
+///   #||0, 1, 2|
+///   #||1, 2, 3|
+///   #||2, 3, 4|
+/// )
 /// // Create a 2x2 identity-like matrix
 /// let identity = @immut.MatrixFn::make(2, 2, fn(i, j) { if i == j { 1 } else { 0 } })
+/// inspect(identity, content =
+///   #||1, 0|
+///   #||0, 1|
+/// )
 /// ```
 ///
 pub fn[T] MatrixFn::make(
@@ -418,6 +437,7 @@ pub impl[T : Add + Neg] Sub for MatrixFn[T] with sub(self, other) {
 /// let m = @immut.MatrixFn::from_2d_array([[1, 2], [3, 4]])
 /// let scaled = m.scale(2)
 /// // Result: [[2, 4], [6, 8]]
+/// inspect(scaled, content="|2, 4|\n|6, 8|")
 /// ```
 ///
 pub fn[T : Mul] MatrixFn::scale(self : MatrixFn[T], cst : T) -> MatrixFn[T] {
@@ -610,6 +630,10 @@ impl[T : Mul + Add] Mul for MatrixFn[T] with mul(self, other) {
 /// let m2 = @immut.MatrixFn::from_2d_array([[5, 6], [7, 8]])
 /// let result = m1.zip_with(m2, fn(a, b) { a + b })
 /// // Result: [[6, 8], [10, 12]]
+/// inspect(result, content=
+///   #||6, 8|
+///   #||10, 12|
+/// )
 /// ```
 ///
 pub fn[T, U, W] MatrixFn::zip_with(
@@ -678,6 +702,10 @@ pub fn[T : Mul + Add + One + Neg + Zero] MatrixFn::determinant(
 /// let m2 = @immut.MatrixFn::from_2d_array([[5, 6], [7, 8]])
 /// let result = m1.horizontal_combine(m2)
 /// // result is [[1, 2, 5, 6], [3, 4, 7, 8]]
+/// inspect(result, content=
+///   #||1, 2, 5, 6|
+///   #||3, 4, 7, 8|
+/// )
 /// ```
 ///
 pub fn[T] MatrixFn::horizontal_combine(
@@ -720,6 +748,12 @@ pub fn[T] MatrixFn::horizontal_combine(
 /// // |3, 4|
 /// // |5, 6|
 /// // |7, 8|
+/// inspect(result, content=
+///   #||1, 2|
+///   #||3, 4|
+///   #||5, 6|
+///   #||7, 8|
+/// )
 /// ```
 ///
 pub fn[T] MatrixFn::vertical_combine(

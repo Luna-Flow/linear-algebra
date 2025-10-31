@@ -62,7 +62,7 @@ struct Indexed[T] {
 /// inspect(m.row(), content="2")
 /// ```
 ///
-pub fn[T] row(self : Matrix[T]) -> Int {
+pub fn[T] Matrix::row(self : Matrix[T]) -> Int {
   self.row
 }
 
@@ -82,7 +82,7 @@ pub fn[T] row(self : Matrix[T]) -> Int {
 /// inspect(m.col(), content="3")
 /// ```
 ///
-pub fn[T] col(self : Matrix[T]) -> Int {
+pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
   self.col
 }
 
@@ -101,8 +101,6 @@ pub fn[T] col(self : Matrix[T]) -> Int {
 /// Example:
 ///
 /// ```moonbit
-/// ///|
-/// test "Matrix::to_string" {
 ///   let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 ///   inspect(
 ///     m.to_string(),
@@ -111,7 +109,6 @@ pub fn[T] col(self : Matrix[T]) -> Int {
 ///       #||3, 4|
 ///     ,
 ///   )
-/// }
 /// ```
 pub impl[T : Show] Show for Matrix[T] with to_string(s) {
   let mut res = ""
@@ -143,8 +140,6 @@ pub impl[T : Show] Show for Matrix[T] with to_string(s) {
 /// Example:
 ///
 /// ```moonbit
-/// ///|
-/// test "Matrix::output" {
 ///   let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 ///   let buf = @buffer.new(size_hint=0)
 ///   m.output(buf)
@@ -155,7 +150,6 @@ pub impl[T : Show] Show for Matrix[T] with to_string(s) {
 ///       #||3, 4|
 ///     ,
 ///   )
-/// }
 /// ```
 pub impl[T : Show] Show for Matrix[T] with output(s, l) {
   l.write_string(s.to_string())
@@ -178,7 +172,7 @@ pub impl[T : Show] Show for Matrix[T] with output(s, l) {
 /// )
 /// ```
 /// 
-pub fn[T, U] map(self : Matrix[T], f : (T) -> U) -> Matrix[U] {
+pub fn[T, U] Matrix::map(self : Matrix[T], f : (T) -> U) -> Matrix[U] {
   { row: self.row, col: self.col, data: self.data.map(f) }
 }
 
@@ -238,8 +232,11 @@ pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
 /// Example
 /// ```moonbit
 /// let m = Matrix::from_2d_array([[2, 3, 4], [1, 2, 3]])
+/// inspect(m, content =
+///   #||2, 3, 4|
+///   #||1, 2, 3|
+/// )
 /// ```
-/// 
 pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
   Matrix::make(arr.length(), arr[0].length(), fn(i, j) { arr[i][j] })
 }
@@ -307,7 +304,7 @@ pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Indexed[T] {
 /// inspect(m[0][1], content="3")
 /// ```
 /// 
-pub fn[T] op_get(self : Indexed[T], col : Int) -> T {
+pub fn[T] Indexed::op_get(self : Indexed[T], col : Int) -> T {
   (self.index)(col)
 }
 
@@ -328,8 +325,6 @@ pub fn[T] op_get(self : Indexed[T], col : Int) -> T {
 /// Example:
 ///
 /// ```moonbit
-/// ///|
-/// test "Matrix::set" {
 ///   let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 ///   let m2 = m.set(0, 1, 5)
 ///   inspect(
@@ -339,7 +334,6 @@ pub fn[T] op_get(self : Indexed[T], col : Int) -> T {
 ///       #||3, 4|
 ///     ,
 ///   )
-/// }
 /// ```
 pub fn[T] Matrix::set(
   self : Matrix[T],
@@ -476,7 +470,7 @@ pub impl[T : Add + Neg] Sub for Matrix[T] with sub(
 ///   #||30, 40|
 /// )
 /// ```
-pub fn[T : Mul] scale(self : Matrix[T], cst : T) -> Matrix[T] {
+pub fn[T : Mul] Matrix::scale(self : Matrix[T], cst : T) -> Matrix[T] {
   self.map(fn(x) { x * cst })
 }
 
@@ -496,7 +490,7 @@ pub fn[T : Mul] scale(self : Matrix[T], cst : T) -> Matrix[T] {
 ///   #||13, 14|
 /// )
 /// ```
-pub fn[T : Add] add_constant(self : Matrix[T], cst : T) -> Matrix[T] {
+pub fn[T : Add] Matrix::add_constant(self : Matrix[T], cst : T) -> Matrix[T] {
   self.map(fn(x) { x + cst })
 }
 
@@ -533,7 +527,7 @@ pub fn[T : One + Zero] Matrix::identity(size : Int) -> Matrix[T] {
 /// let m = Matrix::from_2d_array([[0, 0], [0, 0]])
 /// inspect(m.null(), content="true")
 /// ```
-pub fn[T : Compare + Zero] null(self : Matrix[T]) -> Bool {
+pub fn[T : Compare + Zero] Matrix::null(self : Matrix[T]) -> Bool {
   not(self.data.iter().any(fn(x) { x != T::zero() }))
 }
 
@@ -542,7 +536,7 @@ pub fn[T : Compare + Zero] null(self : Matrix[T]) -> Bool {
 /// 
 /// Parameters
 /// - `self`: The matrix to compute the adjoint of.
-pub fn[T : Conjugate] adjoint(self : Matrix[T]) -> Matrix[T] {
+pub fn[T : Conjugate] Matrix::adjoint(self : Matrix[T]) -> Matrix[T] {
   self.map(T::conjugate)
 }
 
@@ -561,8 +555,6 @@ pub fn[T : Conjugate] adjoint(self : Matrix[T]) -> Matrix[T] {
 /// Example:
 ///
 /// ```moonbit
-/// ///|
-/// test "transpose" {
 ///   let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 ///   inspect(
 ///     m.transpose(),
@@ -572,9 +564,8 @@ pub fn[T : Conjugate] adjoint(self : Matrix[T]) -> Matrix[T] {
 ///       #||3, 6|
 ///     ,
 ///   )
-/// }
 /// ```
-pub fn[T] transpose(self : Matrix[T]) -> Matrix[T] {
+pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
   Matrix::make(self.col, self.row, fn(i, j) { self[j][i] })
 }
 
@@ -589,7 +580,9 @@ pub fn[T] transpose(self : Matrix[T]) -> Matrix[T] {
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// inspect(m.determinant(), content="-2")
 /// ```
-pub fn[T : Mul + Add + One + Neg + Zero] determinant(self : Matrix[T]) -> T {
+pub fn[T : Mul + Add + One + Neg + Zero] Matrix::determinant(
+  self : Matrix[T],
+) -> T {
   let n = self.row
   guard n == self.col
   letrec view = (f, j) => match j {
@@ -624,7 +617,7 @@ pub fn[T : Mul + Add + One + Neg + Zero] determinant(self : Matrix[T]) -> T {
 ///   #||15, 22|
 /// )
 /// ```
-pub fn[T : Semiring] pow(self : Matrix[T], power : Int) -> Matrix[T] {
+pub fn[T : Semiring] Matrix::pow(self : Matrix[T], power : Int) -> Matrix[T] {
   loop (Matrix::identity(self.col), power, self) {
     (s, 0, _) => s
     (s, 1, m) => s * m
@@ -650,7 +643,10 @@ pub fn[T : Semiring] pow(self : Matrix[T], power : Int) -> Matrix[T] {
 ///   #||3, 4, 0, 1|
 /// )
 /// ```
-pub fn[T] horizontal_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
+pub fn[T] Matrix::horizontal_combine(
+  self : Matrix[T],
+  other : Matrix[T],
+) -> Matrix[T] {
   let r1 = self.row
   let c1 = self.col
   let r2 = other.row
@@ -685,7 +681,10 @@ pub fn[T] horizontal_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
 ///   #||0, 1|
 /// )
 /// ```
-pub fn[T] vertical_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
+pub fn[T] Matrix::vertical_combine(
+  self : Matrix[T],
+  other : Matrix[T],
+) -> Matrix[T] {
   let r1 = self.row
   let r2 = other.row
   let c1 = self.col
@@ -717,7 +716,7 @@ pub fn[T] vertical_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
 ///   #||1, 2|
 /// )
 /// ```
-pub fn[T] swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
+pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
   guard r1 < self.row && r2 < self.row
   guard r1 >= 0 && r2 >= 0
   guard r1 != r2
@@ -751,6 +750,6 @@ pub fn[T] swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
 ///   #||4, 3|
 /// )
 /// ```
-pub fn[T] swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Matrix[T] {
+pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Matrix[T] {
   self.transpose().swap_rows(c1, c2).transpose()
 }

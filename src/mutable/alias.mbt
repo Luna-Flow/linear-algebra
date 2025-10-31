@@ -1,5 +1,12 @@
 ///|
-traitalias @lg.(One, Zero, Conjugate, Inverse, Semiring, Num)
+using @lg {
+  trait One,
+  trait Zero,
+  trait Conjugate,
+  trait Inverse,
+  trait Semiring,
+  trait Num,
+}
 
 ///|
-traitalias @quickcheck.Arbitrary
+using @quickcheck {trait Arbitrary}
