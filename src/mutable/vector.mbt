@@ -9,15 +9,18 @@
 /// let v3 = @mutable.Vector::from_array([1.0, 2.0, 3.0])
 ///
 /// // Access elements
-/// inspect(v2[0], content="0")
-/// inspect(v2[1], content="1")
+/// inspect(v1, content="|0, 0, 0|")
+/// inspect(v2, content="|0, 1, 2|")
+/// inspect(v3, content="|1, 2, 3|")
 ///
 /// // Vector operations
 /// let sum = v2 + v3
 /// let scaled = v2.left_scale(2.0)
+/// 
+/// inspect(sum.to_string(), content="|1, 3, 5|")
+/// inspect(scaled.to_string(), content="|0, 2, 4|")
 /// ```
-///
-struct Vector[A](Array[A])
+pub struct Vector[A](Array[A])
 
 ///|
 /// Implements the `Arbitrary` trait for `Vector[T]`, enabling the generation of
@@ -57,7 +60,7 @@ pub impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
 /// ```
 ///
 pub impl[T : Eq] Eq for Vector[T] with equal(self, other) {
-  self.inner() == other.inner()
+  self.0 == other.0
 }
 
 ///|
@@ -80,7 +83,7 @@ pub impl[T : Eq] Eq for Vector[T] with equal(self, other) {
 ///
 pub impl[T : Show] Show for Vector[T] with to_string(self) {
   let sep = ", "
-  "|\{self.inner().map(T::to_string).join(sep)}|"
+  "|\{self.0.map(T::to_string).join(sep)}|"
 }
 
 ///|
@@ -158,7 +161,7 @@ pub fn[A, U, V] Vector::zip_with(
   other : Vector[U],
   f : (A, U) -> V,
 ) -> Vector[V] {
-  array_zip_with(self.inner(), other.inner(), f)
+  array_zip_with(self.0, other.0, f)
 }
 
 ///|
@@ -181,9 +184,15 @@ pub fn[A, U, V] Vector::zip_with(
 /// // |1|
 /// // |2|
 /// // |3|
+/// inspect(col_matrix, content=(
+///   #||1|
+///   #||2|
+///   #||3|
+///   )
+/// )
 /// ```
 ///
-pub fn[T] to_col_matrix(self : Vector[T]) -> Matrix[T] {
+pub fn[T] Vector::to_col_matrix(self : Vector[T]) -> Matrix[T] {
   Matrix::make(self.length(), 1, fn(i, _) { self[i] })
 }
 
@@ -203,10 +212,14 @@ pub fn[T] to_col_matrix(self : Vector[T]) -> Matrix[T] {
 /// let v = Vector::from_array([1, 2, 3, 4])
 /// let row_matrix = v.to_row_matrix()
 /// // Creates a 1x4 matrix: |1 2 3 4|
+/// inspect(row_matrix, content=(
+///   #||1, 2, 3, 4|
+///   )
+/// )
 /// ```
 ///
-pub fn[T] to_row_matrix(self : Vector[T]) -> Matrix[T] {
-  { data: self.inner(), row: 1, col: self.length() }
+pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
+  { data: self.0, row: 1, col: self.length() }
 }
 
 ///|
@@ -226,7 +239,7 @@ pub fn[T] to_row_matrix(self : Vector[T]) -> Matrix[T] {
 /// ```
 ///
 pub fn[A] Vector::length(self : Vector[A]) -> Int {
-  self.inner().length()
+  self.0.length()
 }
 
 ///|
@@ -246,9 +259,10 @@ pub fn[A] Vector::length(self : Vector[A]) -> Int {
 /// ```moonbit
 /// // Create a vector [0, 1, 4, 9, 16] (squares of indices)
 /// let squares = @mutable.Vector::makei(5, fn(i) { i * i })
-///
+/// inspect(squares, content="|0, 1, 4, 9, 16|")
 /// // Create a vector [2, 4, 6, 8] (even numbers starting from 2)
 /// let evens = @mutable.Vector::makei(4, fn(i) { 2 * (i + 1) })
+/// inspect(evens, content="|2, 4, 6, 8|")
 /// ```
 ///
 pub fn[A] Vector::makei(n : Int, f : (Int) -> A) -> Vector[A] {
@@ -296,7 +310,7 @@ pub fn[A] Vector::make(n : Int, elem : A) -> Vector[A] {
 /// ```
 ///
 pub fn[A] Vector::copy(self : Vector[A]) -> Vector[A] {
-  self.inner().copy()
+  self.0.copy()
 }
 
 ///|
@@ -320,7 +334,7 @@ pub fn[A] Vector::copy(self : Vector[A]) -> Vector[A] {
 /// ```
 ///
 pub fn[A] Vector::op_get(self : Vector[A], index : Int) -> A {
-  self.inner()[index]
+  self.0[index]
 }
 
 ///|
@@ -344,7 +358,7 @@ pub fn[A] Vector::op_get(self : Vector[A], index : Int) -> A {
 /// ```
 ///
 pub fn[A] Vector::op_set(self : Vector[A], index : Int, value : A) -> Unit {
-  self.inner()[index] = value
+  self.0[index] = value
 }
 
 ///|
@@ -366,7 +380,7 @@ pub fn[A] Vector::op_set(self : Vector[A], index : Int, value : A) -> Unit {
 /// ```
 ///
 pub fn[A, B] Vector::map(self : Vector[A], f : (A) -> B) -> Vector[B] {
-  self.inner().map(f)
+  self.0.map(f)
 }
 
 ///|
@@ -388,7 +402,7 @@ pub fn[A, B] Vector::map(self : Vector[A], f : (A) -> B) -> Vector[B] {
 /// ```
 ///
 pub fn[A] Vector::map_inplace(self : Vector[A], f : (A) -> A) -> Unit {
-  self.inner().map_inplace(f)
+  self.0.map_inplace(f)
 }
 
 ///|
@@ -407,6 +421,7 @@ pub fn[A] Vector::map_inplace(self : Vector[A], f : (A) -> A) -> Unit {
 /// ```moonbit
 /// let v = Vector::from_array([1, 2, 3])
 /// let scaled = v.left_scale(2)
+/// inspect(scaled, content="|2, 4, 6|")
 /// // scaled is now equivalent to Vector::from_array([2, 4, 6])
 /// ```
 ///
@@ -602,7 +617,7 @@ pub impl[T : Neg] Neg for Vector[T] with neg(self : Vector[T]) -> Vector[T] {
 /// inspect(result, content="|2.5, 3.5, 4.5|")
 /// ```
 ///
-pub fn[T : One + Mul + Add + Neg] lerp(
+pub fn[T : One + Mul + Add + Neg] Vector::lerp(
   self : Vector[T],
   other : Vector[T],
   alpha : T,
@@ -634,7 +649,7 @@ pub fn[T : One + Mul + Add + Neg] lerp(
 /// ))
 /// ```
 ///
-pub fn[T : Zero] scaled_matrix(self : Vector[T]) -> Matrix[T] {
+pub fn[T : Zero] Vector::scaled_matrix(self : Vector[T]) -> Matrix[T] {
   let n = self.length()
   Matrix::make(n, n, fn(i, j) { if i == j { self[i] } else { T::zero() } })
 }
@@ -662,7 +677,7 @@ pub fn[T : Zero] scaled_matrix(self : Vector[T]) -> Matrix[T] {
 /// ))
 /// ```
 ///
-pub fn[T : Mul] tensor_product(
+pub fn[T : Mul] Vector::tensor_product(
   self : Vector[T],
   other : Vector[T],
 ) -> Matrix[T] {

@@ -12,10 +12,10 @@
 /// ```moonbit
 /// // Create a 2x3 matrix filled with zeros
 /// let m = @mutable.Matrix::new(2, 3, 0)
-///
+/// inspect(m, content="|0, 0, 0|\n|0, 0, 0|")
 /// // Create from a 2D array
 /// let m2 = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-///
+/// inspect(m2, content="|1, 2, 3|\n|4, 5, 6|") 
 /// // Access and modify elements
 /// m2[0][1] = 10
 /// inspect(m2[0][1], content="10")
@@ -26,6 +26,7 @@
 ///
 /// // Create identity matrix
 /// let id : Matrix[Int] = @mutable.identity(3)
+/// inspect(id, content= "|1, 0, 0|\n|0, 1, 0|\n|0, 0, 1|")
 /// ```
 ///
 struct Matrix[T] {
@@ -71,11 +72,11 @@ struct Lens[T] {
 /// Example:
 ///
 /// ```moonbit
-/// let matrix =Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+/// let matrix = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// inspect(matrix.row(), content="2")
 /// ```
 ///
-pub fn[T] row(self : Matrix[T]) -> Int {
+pub fn[T] Matrix::row(self : Matrix[T]) -> Int {
   self.row
 }
 
@@ -97,7 +98,7 @@ pub fn[T] row(self : Matrix[T]) -> Int {
 /// inspect(m.col(), content="3")
 /// ```
 ///
-pub fn[T] col(self : Matrix[T]) -> Int {
+pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
   self.col
 }
 
@@ -214,11 +215,11 @@ pub fn[T] Matrix::map_inplace(self : Matrix[T], f : (T) -> T) -> Unit {
 ///
 /// ```moonbit
 /// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// let t = m.to_transpose()
+/// inspect(m.to_transpose(), content="|1, 4|\n|2, 5|\n|3, 6|")
 /// // The transpose has 3 rows and 2 columns (original was 2x3)
 /// ```
 ///
-pub fn[T] to_transpose(self : Matrix[T]) -> Transpose[T] {
+pub fn[T] Matrix::to_transpose(self : Matrix[T]) -> Transpose[T] {
   self
 }
 
@@ -468,9 +469,10 @@ pub fn[T] Matrix::copy(self : Matrix[T]) -> Matrix[T] {
 /// ```moonbit
 /// // Create a 3x3 identity matrix
 /// let identity = Matrix::make(3, 3, fn(i, j) { if i == j { 1 } else { 0 } })
-///
+/// inspect(identity, content="|1, 0, 0|\n|0, 1, 0|\n|0, 0, 1|")
 /// // Create a matrix where each element equals its row index plus column index
 /// let sum_matrix = Matrix::make(2, 3, fn(i, j) { i + j })
+/// inspect(sum_matrix, content="|0, 1, 2|\n|1, 2, 3|")
 /// ```
 ///
 pub fn[A] Matrix::make(row : Int, col : Int, f : (Int, Int) -> A) -> Matrix[A] {
@@ -593,7 +595,7 @@ pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Lens[T] {
 ///
 /// Returns the value at the specified column index.
 ///
-pub fn[T] op_get(self : Lens[T], col : Int) -> T {
+pub fn[T] Lens::op_get(self : Lens[T], col : Int) -> T {
   (self.get)(col)
 }
 
@@ -737,6 +739,7 @@ pub impl[T : Neg] Neg for Matrix[T] with neg(self : Matrix[T]) -> Matrix[T] {
 /// let result = m1 - m2
 /// // result is |4, 5|
 /// //           |6, 7|
+/// inspect(result, content="|4, 5|\n|6, 7|")
 /// ```
 ///
 pub impl[T : Add + Neg] Sub for Matrix[T] with sub(
@@ -765,7 +768,7 @@ pub impl[T : Add + Neg] Sub for Matrix[T] with sub(
 /// inspect(scaled, content="|2, 4|\n|6, 8|")
 /// ```
 ///
-pub fn[T : Mul] scale(self : Matrix[T], cst : T) -> Matrix[T] {
+pub fn[T : Mul] Matrix::scale(self : Matrix[T], cst : T) -> Matrix[T] {
   self.map(x => x * cst)
 }
 
@@ -788,7 +791,7 @@ pub fn[T : Mul] scale(self : Matrix[T], cst : T) -> Matrix[T] {
 /// inspect(result, content="|6, 7|\n|8, 9|")
 /// ```
 ///
-pub fn[T : Add] add_constant(self : Matrix[T], cst : T) -> Matrix[T] {
+pub fn[T : Add] Matrix::add_constant(self : Matrix[T], cst : T) -> Matrix[T] {
   self.map(x => x + cst)
 }
 
@@ -837,7 +840,7 @@ pub fn[T : One + Zero] identity(size : Int) -> Matrix[T] {
 /// inspect(non_zero_matrix.null(), content="false")
 /// ```
 ///
-pub fn[T : Compare + Zero] null(self : Matrix[T]) -> Bool {
+pub fn[T : Compare + Zero] Matrix::null(self : Matrix[T]) -> Bool {
   not(self.data.iter().any(fn(x) { x != T::zero() }))
 }
 
@@ -851,7 +854,7 @@ pub fn[T : Compare + Zero] null(self : Matrix[T]) -> Bool {
 ///
 /// Returns a new matrix where each element is the conjugate of the
 /// corresponding element in the original matrix.
-pub fn[T : Conjugate] adjoint(self : Matrix[T]) -> Matrix[T] {
+pub fn[T : Conjugate] Matrix::adjoint(self : Matrix[T]) -> Matrix[T] {
   self.map(T::conjugate)
 }
 
@@ -874,7 +877,7 @@ pub fn[T : Conjugate] adjoint(self : Matrix[T]) -> Matrix[T] {
 /// inspect(transposed, content="|1, 4|\n|2, 5|\n|3, 6|")
 /// ```
 ///
-pub fn[T] transpose(self : Matrix[T]) -> Matrix[T] {
+pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
   Matrix::make(self.col, self.row, fn(i, j) { self[j][i] })
 }
 
@@ -898,7 +901,7 @@ pub fn[T] transpose(self : Matrix[T]) -> Matrix[T] {
 /// inspect(m.to_string(), content="|4, 5, 6|\n|1, 2, 3|")
 /// ```
 ///
-pub fn[T] swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Unit {
+pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Unit {
   let r = self.row
   let c = self.col
   guard r1 < r && r2 < r && r1 >= 0 && r2 >= 0
@@ -934,7 +937,7 @@ pub fn[T] swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Unit {
 /// inspect(m, content="|3, 2, 1|\n|6, 5, 4|")
 /// ```
 ///
-pub fn[T] swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Unit {
+pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Unit {
   let r = self.row
   let c = self.col
   guard c1 < c && c2 < c && c1 >= 0 && c2 >= 0
@@ -966,9 +969,10 @@ pub fn[T] swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Unit {
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m_squared = m.pow(2)
 /// // Equivalent to m * m
+/// inspect(m_squared, content="|7, 10|\n|15, 22|")
 /// ```
 ///
-pub fn[T : Semiring] pow(self : Matrix[T], power : Int) -> Matrix[T] {
+pub fn[T : Semiring] Matrix::pow(self : Matrix[T], power : Int) -> Matrix[T] {
   loop (identity(self.col), power, self) {
     (s, 0, _) => s
     (s, 1, m) => s * m
@@ -1013,9 +1017,10 @@ pub fn[T : Semiring] pow(self : Matrix[T], power : Int) -> Matrix[T] {
 /// // |1, 0, 0, 1|
 /// // |0, 1, 0, -3|
 /// // |0, 0, 1, 4|
+/// inspect(result, content="|1, 0, 0, 1|\n|0, 1, 0, -3|\n|0, 0, 1, 4|")
 /// ```
 ///
-pub fn[T : Compare + Num + Sub + Inverse] reduce_row_elimination(
+pub fn[T : Compare + Num + Sub + Inverse] Matrix::reduce_row_elimination(
   self : Matrix[T],
 ) -> Matrix[T] {
   let r = self.row
@@ -1074,7 +1079,10 @@ pub fn[T : Compare + Num + Sub + Inverse] reduce_row_elimination(
 /// inspect(result, content="|1, 2, 5, 6|\n|3, 4, 7, 8|")
 /// ```
 ///
-pub fn[T] horizontal_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
+pub fn[T] Matrix::horizontal_combine(
+  self : Matrix[T],
+  other : Matrix[T],
+) -> Matrix[T] {
   guard self.row == other.row
   Matrix::make(self.row, self.col + other.col, fn(i, j) {
     if j < self.col {
@@ -1106,9 +1114,13 @@ pub fn[T] horizontal_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
 /// let m2 = Matrix::from_2d_array([[5, 6], [7, 8]])
 /// let result = m1.vertical_combine(m2)
 /// // Result is a 4x2 matrix: [[1, 2], [3, 4], [5, 6], [7, 8]]
+/// inspect(result, content="|1, 2|\n|3, 4|\n|5, 6|\n|7, 8|")
 /// ```
 ///
-pub fn[T] vertical_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
+pub fn[T] Matrix::vertical_combine(
+  self : Matrix[T],
+  other : Matrix[T],
+) -> Matrix[T] {
   guard self.col == other.col
   let array = self.data
   array.push_iter(other.data.iter())
@@ -1137,7 +1149,7 @@ pub fn[T] vertical_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T] {
 /// inspect(row_array, content="[4, 5, 6]")
 /// ```
 ///
-pub fn[T] row_to_array(self : Matrix[T], row : Int) -> Array[T] {
+pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int) -> Array[T] {
   guard row >= 0 && row < self.row
   let start = row * self.col
   let end = start + self.col
@@ -1166,7 +1178,7 @@ pub fn[T] row_to_array(self : Matrix[T], row : Int) -> Array[T] {
 /// inspect(col1, content="[2, 5]")
 /// ```
 ///
-pub fn[T] col_to_array(self : Matrix[T], col : Int) -> Array[T] {
+pub fn[T] Matrix::col_to_array(self : Matrix[T], col : Int) -> Array[T] {
   guard col >= 0 && col < self.col
   let arr = []
   for i in 0..<self.row {
@@ -1193,7 +1205,7 @@ pub fn[T] col_to_array(self : Matrix[T], col : Int) -> Array[T] {
 /// inspect(array, content="[1, 2, 3, 4, 5, 6]")
 /// ```
 ///
-pub fn[T] to_array(self : Matrix[T]) -> Array[T] {
+pub fn[T] Matrix::to_array(self : Matrix[T]) -> Array[T] {
   self.data.copy()
 }
 
@@ -1217,7 +1229,7 @@ pub fn[T] to_array(self : Matrix[T]) -> Array[T] {
 /// inspect(array_2d, content="[[1, 2, 3], [4, 5, 6]]")
 /// ```
 ///
-pub fn[T] to_2d_array(self : Matrix[T]) -> Array[Array[T]] {
+pub fn[T] Matrix::to_2d_array(self : Matrix[T]) -> Array[Array[T]] {
   let row = self.row
   let arr_2d = []
   for i in 0..<row {
@@ -1246,9 +1258,10 @@ pub fn[T] to_2d_array(self : Matrix[T]) -> Array[Array[T]] {
 /// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let row_vector = m.row_to_vector(1)
 /// // row_vector contains [4, 5, 6]
+/// inspect(row_vector, content="|4, 5, 6|")
 /// ```
 ///
-pub fn[T] row_to_vector(self : Matrix[T], row : Int) -> Vector[T] {
+pub fn[T] Matrix::row_to_vector(self : Matrix[T], row : Int) -> Vector[T] {
   self.row_to_array(row)
 }
 
@@ -1269,9 +1282,10 @@ pub fn[T] row_to_vector(self : Matrix[T], row : Int) -> Vector[T] {
 /// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let col1 = m.col_to_vector(1)
 /// // col1 is a Vector containing [2, 5]
+/// inspect(col1, content="|2, 5|")
 /// ```
 ///
-pub fn[T] col_to_vector(self : Matrix[T], col : Int) -> Vector[T] {
+pub fn[T] Matrix::col_to_vector(self : Matrix[T], col : Int) -> Vector[T] {
   self.col_to_array(col)
 }
 
@@ -1294,7 +1308,7 @@ pub fn[T] col_to_vector(self : Matrix[T], col : Int) -> Vector[T] {
 /// inspect(vector, content="|1, 2, 3, 4, 5, 6|")
 /// ```
 ///
-pub fn[T] to_vector(self : Matrix[T]) -> Vector[T] {
+pub fn[T] Matrix::to_vector(self : Matrix[T]) -> Vector[T] {
   self.data.copy()
 }
 
@@ -1358,7 +1372,7 @@ pub fn[T : @internal.HomomorphismNat] Matrix::from_nat_matrix(
 /// let trace = m.trace()
 /// inspect(trace, content="15")  // 1 + 5 + 9 = 15
 /// ```
-pub fn[T : Add + Zero] trace(self : Matrix[T]) -> T {
+pub fn[T : Add + Zero] Matrix::trace(self : Matrix[T]) -> T {
   guard self.is_square() else {
     abort("Matrix must be square to calculate trace")
   }
@@ -1402,7 +1416,7 @@ pub fn[T] Matrix::is_square(self : Matrix[T]) -> Bool {
 /// let iter = m.iter()
 /// inspect(iter.collect(), content="[1, 2, 3, 4]") // Collects all elements in row-major order
 /// ```
-pub fn[T] iter(self : Matrix[T]) -> Iter[T] {
+pub fn[T] Matrix::iter(self : Matrix[T]) -> Iter[T] {
   self.data.iter()
 }
 
@@ -1425,7 +1439,7 @@ pub fn[T] iter(self : Matrix[T]) -> Iter[T] {
 ///   println(elem) // prints: 4, 5, 6
 /// }
 /// ```
-pub fn[T] iter_row(self : Matrix[T], row : Int) -> Iter[T] {
+pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
   guard row >= 0 && row < self.row else { abort("Row index out of bounds") }
   let start = row * self.col
   let end = start + self.col
@@ -1451,7 +1465,7 @@ pub fn[T] iter_row(self : Matrix[T], row : Int) -> Iter[T] {
 ///   println(elem) // prints: 2, 5
 /// }
 /// ```
-pub fn[T] iter_col(self : Matrix[T], col : Int) -> Iter[T] {
+pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
   guard col >= 0 && col < self.col else { abort("Column index out of bounds") }
   self.transpose().iter_row(col)
 }
@@ -1479,12 +1493,17 @@ pub fn[T] iter_col(self : Matrix[T], col : Int) -> Iter[T] {
 /// Example:
 /// 
 /// ```moonbit
-/// let m = @mutable.Matrix::from_2d_array([[4.0, -2.0], [1.0, 1.0]])
-/// let (eigenvals, eigenvecs) = m.eigen()
-/// // eigenvals should be close to [3.0, 2.0]
-/// // eigenvecs contains the corresponding eigenvectors as columns
+/// let m = Matrix::from_2d_array([[6.0, -2.0], [-2.0, 9.0]])
+/// let (eigenvals, _) = m.eigen()
+/// // eigenvals should be close to [5.0, 10.0]
+/// // eigenvecs should be close to [[1.0, 0.0], [0.0, 1.0]]
+///  let v1_ok = (eigenvals[0] - 5.0).abs() < Tolerance::tolerance() &&
+///    (eigenvals[1] - 10.0).abs() < Tolerance::tolerance()
+///  let v2_ok = (eigenvals[0] - 10.0).abs() < Tolerance::tolerance() &&
+///    (eigenvals[1] - 5.0).abs() < Tolerance::tolerance()
+///  assert_true(v1_ok || v2_ok)
 /// ```
-pub fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] eigen(
+pub fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] Matrix::eigen(
   self : Matrix[T],
 ) -> (Vector[T], Matrix[T]) {
   guard self.is_square() else {
@@ -1608,7 +1627,7 @@ fn[T : Compare + Num + Tolerance] is_upper_triangular(
 /// * The corresponding eigenvector as a normalized vector.
 /// 
 /// Panics if the matrix is not square.
-pub fn[T : Compare + Add + Mul + Sub + Div + Num + Tolerance] power_method(
+pub fn[T : Compare + Add + Mul + Sub + Div + Num + Tolerance] Matrix::power_method(
   self : Matrix[T],
   max_iterations : Int,
 ) -> (T, Vector[T]) {
@@ -1668,7 +1687,7 @@ fn[T : Add + Mul + Zero] matrix_vector_multiply(
 /// Returns a vector containing the two eigenvalues.
 /// 
 /// Panics if the matrix is not 2x2.
-pub fn[T : Compare + Add + Mul + Sub + Num + Div + Sqrt + SMul] eigen_2x2(
+pub fn[T : Compare + Add + Mul + Sub + Num + Div + Sqrt + SMul] Matrix::eigen_2x2(
   self : Matrix[T],
 ) -> Vector[T] {
   guard self.row == 2 && self.col == 2 else {
@@ -1760,7 +1779,7 @@ pub impl Sqrt for Float with sqrt(a) -> Float {
 /// let m = @mutable.Matrix::from_2d_array([[4.0, 3.0], [6.0, 3.0]])
 /// inspect(m.determinant(), content="-6")
 /// ```
-pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] determinant(
+pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] Matrix::determinant(
   self : Matrix[T],
 ) -> T {
   guard self.is_square() else {
@@ -1827,7 +1846,7 @@ pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] determinant
 /// Panics if the matrix is not square.
 /// 
 ///
-pub fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] inverse(
+pub fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] Matrix::inverse(
   self : Matrix[T],
 ) -> Matrix[T]? {
   guard self.is_square() else {
@@ -1881,7 +1900,7 @@ pub fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] inverse
 /// inspect(m2.is_invertible(), content="false")
 /// ```
 ///
-pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] is_invertible(
+pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] Matrix::is_invertible(
   self : Matrix[T],
 ) -> Bool {
   guard self.is_square() else {

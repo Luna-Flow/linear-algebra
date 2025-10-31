@@ -11,7 +11,7 @@
 /// inspect(t.col(), content="2")  // Original matrix rows become cols
 /// ```
 ///
-struct Transpose[T](Matrix[T])
+pub struct Transpose[T](Matrix[T])
 
 ///|
 /// Adds two transposed matrices element-wise.
@@ -32,10 +32,15 @@ struct Transpose[T](Matrix[T])
 /// let t1 = m1.to_transpose()
 /// let t2 = m2.to_transpose()
 /// let sum = t1 + t2
+/// inspect(sum, content=
+///   #||0, 1|
+///   #||1, 3|
+///   #||2, 5|
+/// )
 /// ```
 ///
 pub impl[T : Add] Add for Transpose[T] with add(a, b) {
-  a.inner() + b.inner()
+  Transpose(a.0 + b.0)
 }
 
 ///|
@@ -109,10 +114,15 @@ pub impl[T : Show] Show for Transpose[T] with output(s, l) {
 /// let t1 = m1.to_transpose()
 /// let t2 = m2.to_transpose()
 /// let result = t1 * t2
+/// inspect(result, content=
+///   #||1, 2, 3|
+///   #||3, 5, 7|
+///   #||5, 8, 11|
+/// )
 /// ```
 ///
 pub impl[T : Add + Mul] Mul for Transpose[T] with mul(a, b) {
-  b.inner() * a.inner()
+  b.0 * a.0
 }
 
 ///|
@@ -131,10 +141,11 @@ pub impl[T : Add + Mul] Mul for Transpose[T] with mul(a, b) {
 /// let m = Matrix::make(2, 2, (i, j) => i + j)
 /// let t = m.to_transpose()
 /// let neg_t = -t
+/// inspect(neg_t, content="|0, -1|\n|-1, -2|")
 /// ```
 ///
 pub impl[T : Neg] Neg for Transpose[T] with neg(a) {
-  -a.inner()
+  -a.0
 }
 
 ///|
@@ -148,7 +159,7 @@ pub impl[T : Neg] Neg for Transpose[T] with neg(a) {
 /// Returns a new transpose matrix that is the result of the subtraction.
 ///
 pub impl[T : Add + Neg] Sub for Transpose[T] with sub(a, b) {
-  a.inner() - b.inner()
+  a.0 - b.0
 }
 
 ///|
@@ -162,7 +173,7 @@ pub impl[T : Add + Neg] Sub for Transpose[T] with sub(a, b) {
 /// Returns `true` if the two transposed matrices are equal, `false` otherwise.
 ///
 pub impl[T : Eq] Eq for Transpose[T] with equal(a, b) {
-  a.inner() == b.inner()
+  a.0 == b.0
 }
 
 ///|
@@ -184,7 +195,7 @@ pub impl[T : Eq] Eq for Transpose[T] with equal(a, b) {
 /// ```
 ///
 pub fn[T] Transpose::row(self : Transpose[T]) -> Int {
-  self.inner().col
+  self.0.col
 }
 
 ///|
@@ -206,7 +217,7 @@ pub fn[T] Transpose::row(self : Transpose[T]) -> Int {
 /// ```
 ///
 pub fn[T] Transpose::col(self : Transpose[T]) -> Int {
-  self.inner().row
+  self.0.row
 }
 
 ///|
@@ -224,10 +235,11 @@ pub fn[T] Transpose::col(self : Transpose[T]) -> Int {
 /// ```moonbit
 /// let matrix = @mutable.Matrix::make(2, 3, (i, j) => i + j)
 /// let transpose = matrix.to_transpose()
+/// inspect(transpose, content="|0, 1|\n|1, 2|\n|2, 3|")
 /// ```
 ///
 pub fn[T] Transpose::each(self : Transpose[T], f : (T) -> Unit) -> Unit {
-  self.inner().each(f)
+  self.0.each(f)
 }
 
 ///|
@@ -240,7 +252,7 @@ pub fn[T] Transpose::each(self : Transpose[T], f : (T) -> Unit) -> Unit {
 ///   linear index is calculated in row-major order of the transpose (which
 ///   corresponds to column-major order of the underlying matrix).
 pub fn[T] Transpose::eachi(self : Transpose[T], f : (Int, T) -> Unit) -> Unit {
-  self.inner().each_row_col((i, j, v) => f(j * self.col + i, v))
+  self.0.each_row_col((i, j, v) => f(j * self.col + i, v))
 }
 
 ///|
@@ -260,7 +272,7 @@ pub fn[T] Transpose::each_row(
   row : Int,
   f : (T) -> Unit,
 ) -> Unit {
-  self.inner().each_col(row, f)
+  self.0.each_col(row, f)
 }
 
 ///|
@@ -283,7 +295,7 @@ pub fn[T] Transpose::eachi_row(
   row : Int,
   f : (Int, T) -> Unit,
 ) -> Unit {
-  self.inner().eachi_col(row, f)
+  self.0.eachi_col(row, f)
 }
 
 ///|
@@ -303,7 +315,7 @@ pub fn[T] Transpose::each_col(
   col : Int,
   f : (T) -> Unit,
 ) -> Unit {
-  self.inner().each_row(col, f)
+  self.0.each_row(col, f)
 }
 
 ///|
@@ -324,7 +336,7 @@ pub fn[T] Transpose::eachi_col(
   col : Int,
   f : (Int, T) -> Unit,
 ) -> Unit {
-  self.inner().eachi_row(col, f)
+  self.0.eachi_row(col, f)
 }
 
 ///|
@@ -340,7 +352,7 @@ pub fn[T] Transpose::each_row_col(
   self : Transpose[T],
   f : (Int, Int, T) -> Unit,
 ) -> Unit {
-  self.inner().each_row_col((i, j, v) => f(j, i, v))
+  self.0.each_row_col((i, j, v) => f(j, i, v))
 }
 
 ///|
@@ -359,10 +371,11 @@ pub fn[T] Transpose::each_row_col(
 /// let t = m.to_transpose()
 /// let t_copy = t.copy()
 /// // t_copy is a separate copy of t
+/// inspect(t_copy, content="|0, 1|\n|1, 2|\n|2, 3|")
 /// ```
 ///
 pub fn[T] Transpose::copy(self : Transpose[T]) -> Transpose[T] {
-  self.inner().copy()
+  self.0.copy()
 }
 
 ///|
@@ -391,7 +404,7 @@ pub fn[T] Transpose::horizontal_combine(
   self : Transpose[T],
   other : Transpose[T],
 ) -> Transpose[T] {
-  self.inner().vertical_combine(other.inner())
+  self.0.vertical_combine(other.0)
 }
 
 ///|
@@ -421,7 +434,7 @@ pub fn[T] Transpose::vertical_combine(
   self : Transpose[T],
   other : Transpose[T],
 ) -> Transpose[T] {
-  self.inner().horizontal_combine(other.inner())
+  self.0.horizontal_combine(other.0)
 }
 
 ///|
@@ -442,10 +455,11 @@ pub fn[T] Transpose::vertical_combine(
 /// let m = Matrix::make(2, 3, (i, j) => i + j)
 /// let t = m.to_transpose()
 /// let doubled = t.map(x => x * 2)
+/// inspect(doubled, content="|0, 2|\n|2, 4|\n|4, 6|")
 /// ```
 ///
 pub fn[T] Transpose::map(self : Transpose[T], f : (T) -> T) -> Transpose[T] {
-  self.inner().map(f)
+  self.0.map(f)
 }
 
 ///|
@@ -459,7 +473,7 @@ pub fn[T] Transpose::map(self : Transpose[T], f : (T) -> T) -> Transpose[T] {
 ///   returns a new element of the same type.
 ///
 pub fn[T] Transpose::map_inplace(self : Transpose[T], f : (T) -> T) -> Unit {
-  self.inner().map_inplace(f)
+  self.0.map_inplace(f)
 }
 
 ///|
@@ -489,7 +503,7 @@ pub fn[T] Transpose::map_col_inplace(
   col : Int,
   f : (T) -> T,
 ) -> Unit {
-  self.inner().map_row_inplace(col, f)
+  self.0.map_row_inplace(col, f)
 }
 
 ///|
@@ -519,7 +533,7 @@ pub fn[T] Transpose::map_row_inplace(
   row : Int,
   f : (T) -> T,
 ) -> Unit {
-  self.inner().map_col_inplace(row, f)
+  self.0.map_col_inplace(row, f)
 }
 
 ///|
@@ -537,7 +551,7 @@ pub fn[T] Transpose::map_row_inplace(
 ///
 ///
 pub fn[T] Transpose::row_to_array(self : Transpose[T], row : Int) -> Array[T] {
-  self.inner().col_to_array(row)
+  self.0.col_to_array(row)
 }
 
 ///|
@@ -554,7 +568,7 @@ pub fn[T] Transpose::row_to_array(self : Transpose[T], row : Int) -> Array[T] {
 /// Panics if the column index is out of bounds.
 ///
 pub fn[T] Transpose::col_to_array(self : Transpose[T], col : Int) -> Array[T] {
-  self.inner().row_to_array(col)
+  self.0.row_to_array(col)
 }
 
 ///|
@@ -570,7 +584,7 @@ pub fn[T] Transpose::col_to_array(self : Transpose[T], col : Int) -> Array[T] {
 /// transposed matrix.
 ///
 pub fn[T] Transpose::row_to_vector(self : Transpose[T], row : Int) -> Vector[T] {
-  self.inner().col_to_vector(row)
+  self.0.col_to_vector(row)
 }
 
 ///|
@@ -587,13 +601,23 @@ pub fn[T] Transpose::row_to_vector(self : Transpose[T], row : Int) -> Vector[T] 
 ///
 /// ```moonbit
 /// let m = @mutable.Matrix::make(3, 2, (i, j) => i + j)
+/// inspect(m, content=
+///   #||0, 1|
+///   #||1, 2|
+///   #||2, 3|
+/// )
 /// let t = m.to_transpose()
+/// inspect(t, content=
+///   #||0, 1, 2|
+///   #||1, 2, 3|
+/// )
 /// let col_vec = t.col_to_vector(0)
 /// // col_vec contains the first column of the transposed matrix
+/// inspect(col_vec, content="|0, 1|")
 /// ```
 ///
 pub fn[T] Transpose::col_to_vector(self : Transpose[T], col : Int) -> Vector[T] {
-  self.inner().row_to_vector(col)
+  self.0.row_to_vector(col)
 }
 
 ///|
@@ -611,16 +635,30 @@ pub fn[T] Transpose::col_to_vector(self : Transpose[T], col : Int) -> Vector[T] 
 ///
 /// ```moonbit
 /// let matrix = Matrix::make(2, 3, (i, j) => i + j)
+/// inspect(matrix, content=
+///   #||0, 1, 2|
+///   #||1, 2, 3|
+/// )
 /// let transpose = matrix.to_transpose()
+/// inspect(transpose, content=
+///   #||0, 1|
+///   #||1, 2|
+///   #||2, 3|
+/// ) 
 /// let result = transpose.add_constant(5)
 /// // Each element in the result will be 5 more than the corresponding element in the original transpose
+/// inspect(result, content=
+///   #||5, 6|
+///   #||6, 7|
+///   #||7, 8|
+/// )
 /// ```
 ///
 pub fn[T : Add] Transpose::add_constant(
   self : Transpose[T],
   cst : T,
 ) -> Transpose[T] {
-  self.inner().map(v => v + cst)
+  self.0.map(v => v + cst)
 }
 
 ///|
@@ -638,13 +676,27 @@ pub fn[T : Add] Transpose::add_constant(
 ///
 /// ```moonbit
 /// let matrix = Matrix::make(2, 3, (i, j) => i + j)
+/// inspect(matrix, content=
+///   #||0, 1, 2|
+///   #||1, 2, 3|
+/// )
 /// let transpose = matrix.to_transpose()
+/// inspect(transpose, content=
+///   #||0, 1|
+///   #||1, 2|
+///   #||2, 3|
+/// )
 /// let scaled = transpose.scale(3)
+/// inspect(scaled, content=
+///   #||0, 3|
+///   #||3, 6|
+///   #||6, 9|
+/// )
 /// // Each element in the result will be 3 times the corresponding element in the original transpose
 /// ```
 ///
 pub fn[T : Mul] Transpose::scale(self : Transpose[T], cst : T) -> Transpose[T] {
-  self.inner().map(v => v * cst)
+  self.0.map(v => v * cst)
 }
 
 ///|
@@ -657,7 +709,7 @@ pub fn[T : Mul] Transpose::scale(self : Transpose[T], cst : T) -> Transpose[T] {
 /// * `r2` : The index of the second row to swap.
 ///
 pub fn[T] Transpose::swap_rows(self : Transpose[T], r1 : Int, r2 : Int) -> Unit {
-  self.inner().swap_cols(r1, r2)
+  self.0.swap_cols(r1, r2)
 }
 
 ///|
@@ -670,7 +722,7 @@ pub fn[T] Transpose::swap_rows(self : Transpose[T], r1 : Int, r2 : Int) -> Unit 
 /// * `c2` : The index of the second column to swap.
 ///
 pub fn[T] Transpose::swap_cols(self : Transpose[T], c1 : Int, c2 : Int) -> Unit {
-  self.inner().swap_rows(c1, c2)
+  self.0.swap_rows(c1, c2)
 }
 
 ///|
@@ -694,7 +746,7 @@ pub fn[T] Transpose::swap_cols(self : Transpose[T], c1 : Int, c2 : Int) -> Unit 
 /// ```
 ///
 pub fn[T] Transpose::transpose(self : Transpose[T]) -> Matrix[T] {
-  self.inner()
+  self.0
 }
 
 ///|
@@ -712,11 +764,19 @@ pub fn[T] Transpose::transpose(self : Transpose[T]) -> Matrix[T] {
 ///
 /// ```moonbit
 /// let original = Matrix::make(2, 3, (i, j) => i * 3 + j)
+/// inspect(original, content=
+///   #||0, 1, 2|
+///   #||3, 4, 5|
+/// )
 /// let transposed = original.to_transpose()
 /// let materialized = transposed.materialize()
 /// // materialized is now a 3x2 matrix with transposed layout
+/// inspect(materialized, content=
+///   #||0, 3|
+///   #||1, 4|
+///   #||2, 5|
+/// )
 /// ```
-///
 pub fn[T] Transpose::materialize(self : Transpose[T]) -> Matrix[T] {
-  Matrix::make(self.row(), self.col(), (i, j) => self.inner()[j][i])
+  Matrix::make(self.row(), self.col(), (i, j) => self.0[j][i])
 }

@@ -241,7 +241,7 @@ test "rank of matrix" {
 }
 
 ///|
-test "rank of matrix" {
+test "rank of matrix 2" {
   let m1 : Matrix[Float] = Matrix::from_2d_array([[1, 2], [3, 4]]).from_nat_matrix()
   let m2 : Matrix[Double] = Matrix::from_2d_array([[1, 2], [2, 4]]).from_nat_matrix()
   let m3 : Matrix[Float] = Matrix::from_2d_array([[0, 0], [0, 0]]).from_nat_matrix()
