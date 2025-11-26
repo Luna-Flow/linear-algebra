@@ -516,7 +516,7 @@ test "Matrix::inverse" {
   // Test 2x2 invertible matrix
   let m1 = Matrix::from_2d_array([[2.0, 1.0], [1.0, 1.0]])
   let inv1 = m1.inverse()
-  inspect(inv1.is_empty(), content="false")
+  inspect(inv1 is None, content="false")
 
   // Test 3x3 identity matrix (should return itself)
   let identity = Matrix::from_2d_array([
@@ -525,12 +525,12 @@ test "Matrix::inverse" {
     [0.0, 0.0, 1.0],
   ])
   let inv_identity = identity.inverse()
-  inspect(inv_identity.is_empty(), content="false")
+  inspect(inv_identity is None, content="false")
 
   // Test singular (non-invertible) matrix
   let singular = Matrix::from_2d_array([[1.0, 2.0], [2.0, 4.0]])
   let inv_singular = singular.inverse()
-  inspect(inv_singular.is_empty(), content="true")
+  inspect(inv_singular is None, content="true")
 }
 
 ///|
@@ -538,17 +538,17 @@ test "Matrix::inverse/edge_cases" {
   // Test 0x0 matrix
   let empty_matrix = Matrix::new(0, 0, 0.0)
   let inv_empty = empty_matrix.inverse()
-  inspect(inv_empty.is_empty(), content="false")
+  inspect(inv_empty is None, content="false")
 
   // Test 1x1 invertible matrix
   let one_by_one = Matrix::from_2d_array([[5.0]])
   let inv_one = one_by_one.inverse()
-  inspect(inv_one.is_empty(), content="false")
+  inspect(inv_one is None, content="false")
 
   // Test 1x1 singular matrix (zero)
   let zero_matrix = Matrix::from_2d_array([[0.0]])
   let inv_zero = zero_matrix.inverse()
-  inspect(inv_zero.is_empty(), content="true")
+  inspect(inv_zero is None, content="true")
 }
 
 ///|
