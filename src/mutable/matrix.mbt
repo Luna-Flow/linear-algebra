@@ -1521,23 +1521,71 @@ fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] qr_algori
   matrix : Matrix[T],
 ) -> (Vector[T], Matrix[T]) {
   let n = matrix.row
-  let mut a = matrix.copy()
-  let mut q_total = identity(n)
-  let max_iterations = 100
-  for _ in 0..<max_iterations {
-    // Apply QR decomposition
-    let (q, r) = qr_decomposition(a)
+  let a = matrix.copy()
+  let q_total = identity(n)
+  let mut m = n
+  let max_iterations = 1000
+  while m > 1 {
+    let mut iter = 0
+    while iter < max_iterations {
+      // Check for convergence
+      if a[m - 1][m - 2].abs() <= T::tolerance() {
+        break
+      }
 
-    // Update A = RQ
-    a = r * q
+      // Compute Wilkinson shift
+      let two = T::one() + T::one()
+      let d = (a[m - 2][m - 2] - a[m - 1][m - 1]) / two
+      let mut sgn = T::one()
+      if d < T::zero() {
+        sgn = -T::one()
+      }
+      let num = sgn * a[m - 1][m - 2] * a[m - 1][m - 2]
+      let den = d.abs() + (d * d + a[m - 1][m - 2] * a[m - 1][m - 2]).sqrt()
+      let mu = a[m - 1][m - 1] - num / den
 
-    // Accumulate Q matrices for eigenvectors
-    q_total = q_total * q
+      // Apply shift: A - mu * I
+      for i in 0..<m {
+        a[i][i] -= mu
+      }
 
-    // Check for convergence (off-diagonal elements should be small)
-    if is_upper_triangular(a) {
-      break
+      // QR decomposition of the active submatrix
+      let sub_a = Matrix::new(m, m, T::zero())
+      for i in 0..<m {
+        for j in 0..<m {
+          sub_a[i][j] = a[i][j]
+        }
+      }
+      let (sub_q, sub_r) = qr_decomposition(sub_a)
+
+      // A = R Q + mu * I
+      let new_sub_a = sub_r * sub_q
+      for i in 0..<m {
+        for j in 0..<m {
+          a[i][j] = new_sub_a[i][j]
+        }
+        a[i][i] += mu
+      }
+
+      // Update Q_total
+      let temp_cols = Matrix::new(n, m, T::zero())
+      for i in 0..<n {
+        for j in 0..<m {
+          let mut sum = T::zero()
+          for k in 0..<m {
+            sum += q_total[i][k] * sub_q[k][j]
+          }
+          temp_cols[i][j] = sum
+        }
+      }
+      for i in 0..<n {
+        for j in 0..<m {
+          q_total[i][j] = temp_cols[i][j]
+        }
+      }
+      iter += 1
     }
+    m -= 1
   }
 
   // Extract eigenvalues from diagonal
@@ -1596,22 +1644,6 @@ fn[T : Compare + Add + Mul + Sub + Num + Div + Tolerance + Sqrt] qr_decompositio
     }
   }
   (q, r)
-}
-
-///|
-/// Checks if a matrix is approximately upper triangular within a given tolerance.
-fn[T : Compare + Num + Tolerance] is_upper_triangular(
-  matrix : Matrix[T],
-) -> Bool {
-  let n = matrix.row
-  for i in 0..<n {
-    for j in 0..<i {
-      if matrix[i][j].abs() > T::tolerance() {
-        return false
-      }
-    }
-  }
-  true
 }
 
 ///|
