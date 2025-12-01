@@ -2,7 +2,7 @@
 /// Create a new type called IArray, which is an alias for 
 /// the immutable array type.
 /// 
-typealias @immut/array.T as IArray
+using @immut/array {type T as IArray}
 
 ///|
 /// Define a new type called Matrix, which is a 2D array of 
