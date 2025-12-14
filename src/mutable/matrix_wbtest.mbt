@@ -610,3 +610,76 @@ test "is_square" {
   let m2 = Matrix::new(2, 3, 0)
   inspect(m2.is_square(), content="false")
 }
+
+///|
+test "mean_variance_std_dev" {
+  let m = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
+  // Mean: (1+2+3+4)/4 = 2.5
+  inspect(m.mean(), content="2.5")
+
+  // Variance: ((1-2.5)^2 + (2-2.5)^2 + (3-2.5)^2 + (4-2.5)^2) / 4
+  // = (2.25 + 0.25 + 0.25 + 2.25) / 4 = 5.0 / 4 = 1.25
+  inspect(m.variance(), content="1.25")
+
+  // Std Dev: sqrt(1.25) ≈ 1.1180339887
+  let std = m.std_dev()
+  let diff = (std - 1.1180339887).abs()
+  assert_true(diff < 1.0e-6)
+}
+
+///|
+test "is_symmetric" {
+  let m1 = Matrix::from_2d_array([[1.0, 2.0], [2.0, 1.0]])
+  inspect(m1.is_symmetric(), content="true")
+  let m2 = Matrix::from_2d_array([[1.0, 2.0], [3.0, 1.0]])
+  inspect(m2.is_symmetric(), content="false")
+  let m3 = Matrix::from_2d_array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+  inspect(m3.is_symmetric(), content="false")
+}
+
+///|
+test "is_positive_definite" {
+  // Symmetric and positive eigenvalues
+  let m1 = Matrix::from_2d_array([[2.0, 0.0], [0.0, 2.0]])
+  inspect(m1.is_positive_definite(), content="true")
+
+  // Symmetric but negative eigenvalue
+  let m2 = Matrix::from_2d_array([[-2.0, 0.0], [0.0, -2.0]])
+  inspect(m2.is_positive_definite(), content="false")
+
+  // Not symmetric
+  let m3 = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
+  inspect(m3.is_positive_definite(), content="false")
+}
+
+///|
+test "matrix_power" {
+  let m = Matrix::from_2d_array([[1, 1], [1, 0]]) // Fibonacci matrix
+  let m2 = m.matrix_power(2)
+  inspect(m2.to_string(), content="|2, 1|\n|1, 1|")
+  let m3 = m.matrix_power(3)
+  inspect(m3.to_string(), content="|3, 2|\n|2, 1|")
+  let m5 = m.matrix_power(5)
+  inspect(m5.to_string(), content="|8, 5|\n|5, 3|")
+  let id = m.matrix_power(0)
+  inspect(id.to_string(), content="|1, 0|\n|0, 1|")
+}
+
+///|
+test "frobenius_norm" {
+  let m = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
+  // sqrt(1^2 + 2^2 + 3^2 + 4^2) = sqrt(1 + 4 + 9 + 16) = sqrt(30) ≈ 5.477225575
+  let norm = m.frobenius_norm()
+  let diff = (norm - 5.477225575).abs()
+  assert_true(diff < 1.0e-6)
+}
+
+///|
+test "min_max_element" {
+  let m = Matrix::from_2d_array([[1, 5, 3], [2, 8, 1]])
+  inspect(m.max_element(), content="8")
+  inspect(m.min_element(), content="1")
+  let m2 = Matrix::from_2d_array([[-5, -2], [-8, -1]])
+  inspect(m2.max_element(), content="-1")
+  inspect(m2.min_element(), content="-8")
+}

@@ -282,3 +282,99 @@ test "matrix_swap_cols_optimized" {
     ),
   )
 }
+
+///|
+test "matrix_creation_methods" {
+  // Test Matrix::new
+  let m1 = Matrix::new(2, 2, 5)
+  inspect(m1, content="|5, 5|\n|5, 5|")
+
+  // Test Matrix::make
+  let m2 = Matrix::make(2, 2, fn(i, j) { i + j })
+  inspect(m2, content="|0, 1|\n|1, 2|")
+
+  // Test Matrix::from_array
+  let arr = @immut/array.from_array([1, 2, 3, 4])
+  let m3 = Matrix::from_array(2, 2, arr)
+  inspect(m3, content="|1, 2|\n|3, 4|")
+}
+
+///|
+test "matrix_conversion" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+
+  // Test to_array
+  let arr = m.to_array()
+  inspect(arr, content="[1, 2, 3, 4]")
+
+  // Test to_2d_array
+  let arr_2d = m.to_2d_array()
+  inspect(arr_2d, content="[[1, 2], [3, 4]]")
+}
+
+///|
+test "matrix_transpose" {
+  let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  let t = m.transpose()
+  inspect(t, content="|1, 4|\n|2, 5|\n|3, 6|")
+
+  // Transpose of transpose is original
+  inspect(t.transpose() == m, content="true")
+}
+
+///|
+test "matrix_properties" {
+  let m_sq = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let m_rect = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  let m_null = Matrix::new(2, 2, 0)
+
+  // Test is_square
+  inspect(m_sq.is_square(), content="true")
+  inspect(m_rect.is_square(), content="false")
+
+  // Test null
+  inspect(m_null.null(), content="true")
+  inspect(m_sq.null(), content="false")
+}
+
+///|
+test "matrix_iteration" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+
+  // Test iter
+  let all_elems = m.iter().collect()
+  inspect(all_elems, content="[1, 2, 3, 4]")
+
+  // Test iter_row
+  let row1 = m.iter_row(1).collect()
+  inspect(row1, content="[3, 4]")
+
+  // Test iter_col
+  let col1 = m.iter_col(1).collect()
+  inspect(col1, content="[2, 4]")
+}
+
+///|
+test "matrix_modification" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+
+  // Test set (immutable update)
+  let m2 = m.set(0, 1, 99)
+  inspect(m2, content="|1, 99|\n|3, 4|")
+  inspect(m, content="|1, 2|\n|3, 4|") // Original should be unchanged
+}
+
+///|
+test "matrix_map" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let m2 = m.map(fn(x) { x * 10 })
+  inspect(m2, content="|10, 20|\n|30, 40|")
+}
+
+///|
+test "matrix_subtraction" {
+  let m1 = Matrix::from_2d_array([[5, 5], [5, 5]])
+  let m2 = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let m3 = m1 - m2
+  inspect(m3, content="|4, 3|\n|2, 1|")
+}

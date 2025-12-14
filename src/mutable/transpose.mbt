@@ -252,7 +252,7 @@ pub fn[T] Transpose::each(self : Transpose[T], f : (T) -> Unit) -> Unit {
 ///   linear index is calculated in row-major order of the transpose (which
 ///   corresponds to column-major order of the underlying matrix).
 pub fn[T] Transpose::eachi(self : Transpose[T], f : (Int, T) -> Unit) -> Unit {
-  self.0.each_row_col((i, j, v) => f(j * self.col + i, v))
+  self.0.each_row_col((i, j, v) => f(j * self.0.row + i, v))
 }
 
 ///|
