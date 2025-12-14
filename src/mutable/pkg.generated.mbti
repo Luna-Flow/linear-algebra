@@ -9,141 +9,161 @@ import(
 )
 
 // Values
-fn[T : @luna-generic.One + @luna-generic.Zero] identity(Int) -> Matrix[T]
+pub fn[T : @luna-generic.One + @luna-generic.Zero] identity(Int) -> Matrix[T]
 
-fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]
+pub fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]
 
 // Errors
 
 // Types and methods
 type Lens[T]
-fn[T] Lens::op_get(Self[T], Int) -> T
-fn[T] Lens::op_set(Self[T], Int, T) -> Unit
+pub fn[T] Lens::op_get(Self[T], Int) -> T
+pub fn[T] Lens::op_set(Self[T], Int, T) -> Unit
 
 type Matrix[T]
-fn[T : Add] Matrix::add_constant(Self[T], T) -> Self[T]
-fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]
-fn[T] Matrix::col(Self[T]) -> Int
-fn[T] Matrix::col_to_array(Self[T], Int) -> Array[T]
-fn[T] Matrix::col_to_vector(Self[T], Int) -> Vector[T]
-fn[T] Matrix::copy(Self[T]) -> Self[T]
-fn[T : Compare + Sub + Mul + Div + @luna-generic.Zero + @luna-generic.One + @luna-generic.Num + Tolerance] Matrix::determinant(Self[T]) -> T
-fn[T] Matrix::each(Self[T], (T) -> Unit) -> Unit
-fn[T] Matrix::each_col(Self[T], Int, (T) -> Unit) -> Unit
-fn[T] Matrix::each_row(Self[T], Int, (T) -> Unit) -> Unit
-fn[T] Matrix::each_row_col(Self[T], (Int, Int, T) -> Unit) -> Unit
-fn[T] Matrix::eachi(Self[T], (Int, T) -> Unit) -> Unit
-fn[T] Matrix::eachi_col(Self[T], Int, (Int, T) -> Unit) -> Unit
-fn[T] Matrix::eachi_row(Self[T], Int, (Int, T) -> Unit) -> Unit
-fn[T : Compare + Add + Mul + Sub + Neg + @luna-generic.Num + Div + Sqrt + Tolerance] Matrix::eigen(Self[T]) -> (Vector[T], Self[T])
-fn[T : Compare + Add + Mul + Sub + @luna-generic.Num + Div + Sqrt + SMul] Matrix::eigen_2x2(Self[T]) -> Vector[T]
-fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
-fn[T] Matrix::from_array(Int, Int, Array[T]) -> Self[T]
-fn[T : @internal.HomomorphismNat] Matrix::from_nat_matrix(Self[Int]) -> Self[T]
-fn[T] Matrix::horizontal_combine(Self[T], Self[T]) -> Self[T]
-fn[T : Compare + @luna-generic.Num + Sub + @luna-generic.Inverse + @luna-generic.Zero + @luna-generic.One + Tolerance + Div] Matrix::inverse(Self[T]) -> Self[T]?
-fn[T : Compare + Sub + Mul + Div + @luna-generic.Zero + @luna-generic.One + @luna-generic.Num + Tolerance] Matrix::is_invertible(Self[T]) -> Bool
-fn[T] Matrix::is_square(Self[T]) -> Bool
-fn[T] Matrix::iter(Self[T]) -> Iter[T]
-fn[T] Matrix::iter_col(Self[T], Int) -> Iter[T]
-fn[T] Matrix::iter_row(Self[T], Int) -> Iter[T]
-fn[A] Matrix::make(Int, Int, (Int, Int) -> A) -> Self[A]
-fn[T, U] Matrix::map(Self[T], (T) -> U) -> Self[U]
-fn[T] Matrix::map_col_inplace(Self[T], Int, (T) -> T) -> Unit
-fn[T] Matrix::map_inplace(Self[T], (T) -> T) -> Unit
-fn[T] Matrix::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
-fn[T] Matrix::new(Int, Int, T) -> Self[T]
-fn[T : Compare + @luna-generic.Zero] Matrix::null(Self[T]) -> Bool
-fn[T] Matrix::op_get(Self[T], Int) -> Lens[T]
-fn[T : @luna-generic.Semiring] Matrix::pow(Self[T], Int) -> Self[T]
-fn[T : Compare + Add + Mul + Sub + Div + @luna-generic.Num + Tolerance] Matrix::power_method(Self[T], Int) -> (T, Vector[T])
-fn[T : Compare + @luna-generic.Num + @luna-generic.Inverse + Sub] Matrix::rank(Self[T]) -> Int
-fn[T : Compare + @luna-generic.Num + Sub + @luna-generic.Inverse] Matrix::reduce_row_elimination(Self[T]) -> Self[T]
-fn[T] Matrix::row(Self[T]) -> Int
-fn[T] Matrix::row_to_array(Self[T], Int) -> Array[T]
-fn[T] Matrix::row_to_vector(Self[T], Int) -> Vector[T]
-fn[T : Mul] Matrix::scale(Self[T], T) -> Self[T]
-fn[T] Matrix::swap_cols(Self[T], Int, Int) -> Unit
-fn[T] Matrix::swap_rows(Self[T], Int, Int) -> Unit
-fn[T] Matrix::to_2d_array(Self[T]) -> Array[Array[T]]
-fn[T] Matrix::to_array(Self[T]) -> Array[T]
-fn[T] Matrix::to_transpose(Self[T]) -> Transpose[T]
-fn[T] Matrix::to_vector(Self[T]) -> Vector[T]
-fn[T : Add + @luna-generic.Zero] Matrix::trace(Self[T]) -> T
-fn[T] Matrix::transpose(Self[T]) -> Self[T]
-fn[T] Matrix::vertical_combine(Self[T], Self[T]) -> Self[T]
-impl[T : Add] Add for Matrix[T]
-impl[T : Eq] Eq for Matrix[T]
-impl[T : Mul + Add] Mul for Matrix[T]
-impl[T : Neg] Neg for Matrix[T]
-impl[T : Show] Show for Matrix[T]
-impl[T : Add + Neg] Sub for Matrix[T]
+pub fn[T : Add] Matrix::add_constant(Self[T], T) -> Self[T]
+pub fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]
+pub fn[T] Matrix::col(Self[T]) -> Int
+pub fn[T] Matrix::col_to_array(Self[T], Int) -> Array[T]
+pub fn[T] Matrix::col_to_vector(Self[T], Int) -> Vector[T]
+pub fn[T] Matrix::copy(Self[T]) -> Self[T]
+pub fn[T : Compare + Sub + Mul + Div + @luna-generic.Zero + @luna-generic.One + @luna-generic.Num + Tolerance] Matrix::determinant(Self[T]) -> T
+pub fn[T] Matrix::each(Self[T], (T) -> Unit) -> Unit
+pub fn[T] Matrix::each_col(Self[T], Int, (T) -> Unit) -> Unit
+pub fn[T] Matrix::each_row(Self[T], Int, (T) -> Unit) -> Unit
+pub fn[T] Matrix::each_row_col(Self[T], (Int, Int, T) -> Unit) -> Unit
+pub fn[T] Matrix::eachi(Self[T], (Int, T) -> Unit) -> Unit
+pub fn[T] Matrix::eachi_col(Self[T], Int, (Int, T) -> Unit) -> Unit
+pub fn[T] Matrix::eachi_row(Self[T], Int, (Int, T) -> Unit) -> Unit
+pub fn[T : Compare + Add + Mul + Sub + Neg + @luna-generic.Num + Div + Sqrt + Tolerance] Matrix::eigen(Self[T]) -> (Vector[T], Self[T])
+pub fn[T : Compare + Add + Mul + Sub + @luna-generic.Num + Div + Sqrt + SMul] Matrix::eigen_2x2(Self[T]) -> Vector[T]
+pub fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
+pub fn[T] Matrix::from_array(Int, Int, Array[T]) -> Self[T]
+pub fn[T : @internal.HomomorphismNat] Matrix::from_nat_matrix(Self[Int]) -> Self[T]
+pub fn[T] Matrix::horizontal_combine(Self[T], Self[T]) -> Self[T]
+pub fn[T : Compare + @luna-generic.Num + Sub + @luna-generic.Inverse + @luna-generic.Zero + @luna-generic.One + Tolerance + Div] Matrix::inverse(Self[T]) -> Self[T]?
+pub fn[T : Compare + Sub + Mul + Div + @luna-generic.Zero + @luna-generic.One + @luna-generic.Num + Tolerance] Matrix::is_invertible(Self[T]) -> Bool
+pub fn[T] Matrix::is_square(Self[T]) -> Bool
+pub fn[T] Matrix::iter(Self[T]) -> Iter[T]
+pub fn[T] Matrix::iter_col(Self[T], Int) -> Iter[T]
+pub fn[T] Matrix::iter_row(Self[T], Int) -> Iter[T]
+pub fn[A] Matrix::make(Int, Int, (Int, Int) -> A) -> Self[A]
+pub fn[T, U] Matrix::map(Self[T], (T) -> U) -> Self[U]
+pub fn[T] Matrix::map_col_in_place(Self[T], Int, (T) -> T) -> Unit
+#deprecated
+pub fn[T] Matrix::map_col_inplace(Self[T], Int, (T) -> T) -> Unit
+pub fn[T] Matrix::map_in_place(Self[T], (T) -> T) -> Unit
+#deprecated
+pub fn[T] Matrix::map_inplace(Self[T], (T) -> T) -> Unit
+pub fn[T] Matrix::map_row_in_place(Self[T], Int, (T) -> T) -> Unit
+#deprecated
+pub fn[T] Matrix::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
+pub fn[T, U] Matrix::mapi(Self[T], (Int, Int, T) -> U) -> Self[U]
+pub fn[T] Matrix::new(Int, Int, T) -> Self[T]
+pub fn[T : Compare + @luna-generic.Zero] Matrix::null(Self[T]) -> Bool
+pub fn[T] Matrix::op_get(Self[T], Int) -> Lens[T]
+pub fn[T : @luna-generic.Semiring] Matrix::pow(Self[T], Int) -> Self[T]
+pub fn[T : Compare + Add + Mul + Sub + Div + @luna-generic.Num + Tolerance] Matrix::power_method(Self[T], Int) -> (T, Vector[T])
+pub fn[T : Compare + @luna-generic.Num + @luna-generic.Inverse + Sub] Matrix::rank(Self[T]) -> Int
+pub fn[T : Compare + @luna-generic.Num + Sub + @luna-generic.Inverse] Matrix::reduce_row_elimination(Self[T]) -> Self[T]
+pub fn[T] Matrix::row(Self[T]) -> Int
+pub fn[T] Matrix::row_to_array(Self[T], Int) -> Array[T]
+pub fn[T] Matrix::row_to_vector(Self[T], Int) -> Vector[T]
+pub fn[T : Mul] Matrix::scale(Self[T], T) -> Self[T]
+pub fn[T] Matrix::swap_cols(Self[T], Int, Int) -> Unit
+pub fn[T] Matrix::swap_rows(Self[T], Int, Int) -> Unit
+pub fn[T] Matrix::to_2d_array(Self[T]) -> Array[Array[T]]
+pub fn[T] Matrix::to_array(Self[T]) -> Array[T]
+pub fn[T] Matrix::to_transpose(Self[T]) -> Transpose[T]
+pub fn[T] Matrix::to_vector(Self[T]) -> Vector[T]
+pub fn[T : Add + @luna-generic.Zero] Matrix::trace(Self[T]) -> T
+pub fn[T] Matrix::transpose(Self[T]) -> Self[T]
+pub fn[T] Matrix::vertical_combine(Self[T], Self[T]) -> Self[T]
+pub impl[T : Add] Add for Matrix[T]
+pub impl[T : Eq] Eq for Matrix[T]
+pub impl[T : Mul + Add] Mul for Matrix[T]
+pub impl[T : Neg] Neg for Matrix[T]
+pub impl[T : Show] Show for Matrix[T]
+pub impl[T : Add + Neg] Sub for Matrix[T]
 
 pub struct Transpose[T](Matrix[T])
-fn[T : Add] Transpose::add_constant(Self[T], T) -> Self[T]
-fn[T] Transpose::col(Self[T]) -> Int
-fn[T] Transpose::col_to_array(Self[T], Int) -> Array[T]
-fn[T] Transpose::col_to_vector(Self[T], Int) -> Vector[T]
-fn[T] Transpose::copy(Self[T]) -> Self[T]
-fn[T] Transpose::each(Self[T], (T) -> Unit) -> Unit
-fn[T] Transpose::each_col(Self[T], Int, (T) -> Unit) -> Unit
-fn[T] Transpose::each_row(Self[T], Int, (T) -> Unit) -> Unit
-fn[T] Transpose::each_row_col(Self[T], (Int, Int, T) -> Unit) -> Unit
-fn[T] Transpose::eachi(Self[T], (Int, T) -> Unit) -> Unit
-fn[T] Transpose::eachi_col(Self[T], Int, (Int, T) -> Unit) -> Unit
-fn[T] Transpose::eachi_row(Self[T], Int, (Int, T) -> Unit) -> Unit
-fn[T] Transpose::horizontal_combine(Self[T], Self[T]) -> Self[T]
+pub fn[T : Add] Transpose::add_constant(Self[T], T) -> Self[T]
+pub fn[T] Transpose::col(Self[T]) -> Int
+pub fn[T] Transpose::col_to_array(Self[T], Int) -> Array[T]
+pub fn[T] Transpose::col_to_vector(Self[T], Int) -> Vector[T]
+pub fn[T] Transpose::copy(Self[T]) -> Self[T]
+pub fn[T] Transpose::each(Self[T], (T) -> Unit) -> Unit
+pub fn[T] Transpose::each_col(Self[T], Int, (T) -> Unit) -> Unit
+pub fn[T] Transpose::each_row(Self[T], Int, (T) -> Unit) -> Unit
+pub fn[T] Transpose::each_row_col(Self[T], (Int, Int, T) -> Unit) -> Unit
+pub fn[T] Transpose::eachi(Self[T], (Int, T) -> Unit) -> Unit
+pub fn[T] Transpose::eachi_col(Self[T], Int, (Int, T) -> Unit) -> Unit
+pub fn[T] Transpose::eachi_row(Self[T], Int, (Int, T) -> Unit) -> Unit
+pub fn[T] Transpose::horizontal_combine(Self[T], Self[T]) -> Self[T]
 #deprecated
-fn[T] Transpose::inner(Self[T]) -> Matrix[T]
-fn[T] Transpose::map(Self[T], (T) -> T) -> Self[T]
-fn[T] Transpose::map_col_inplace(Self[T], Int, (T) -> T) -> Unit
-fn[T] Transpose::map_inplace(Self[T], (T) -> T) -> Unit
-fn[T] Transpose::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
-fn[T] Transpose::materialize(Self[T]) -> Matrix[T]
-fn[T] Transpose::row(Self[T]) -> Int
-fn[T] Transpose::row_to_array(Self[T], Int) -> Array[T]
-fn[T] Transpose::row_to_vector(Self[T], Int) -> Vector[T]
-fn[T : Mul] Transpose::scale(Self[T], T) -> Self[T]
-fn[T] Transpose::swap_cols(Self[T], Int, Int) -> Unit
-fn[T] Transpose::swap_rows(Self[T], Int, Int) -> Unit
-fn[T] Transpose::transpose(Self[T]) -> Matrix[T]
-fn[T] Transpose::vertical_combine(Self[T], Self[T]) -> Self[T]
-impl[T : Add] Add for Transpose[T]
-impl[T : Eq] Eq for Transpose[T]
-impl[T : Add + Mul] Mul for Transpose[T]
-impl[T : Neg] Neg for Transpose[T]
-impl[T : Show] Show for Transpose[T]
-impl[T : Add + Neg] Sub for Transpose[T]
+pub fn[T] Transpose::inner(Self[T]) -> Matrix[T]
+pub fn[T] Transpose::map(Self[T], (T) -> T) -> Self[T]
+pub fn[T] Transpose::map_col_in_place(Self[T], Int, (T) -> T) -> Unit
+#deprecated
+pub fn[T] Transpose::map_col_inplace(Self[T], Int, (T) -> T) -> Unit
+pub fn[T] Transpose::map_in_place(Self[T], (T) -> T) -> Unit
+#deprecated
+pub fn[T] Transpose::map_inplace(Self[T], (T) -> T) -> Unit
+pub fn[T] Transpose::map_row_in_place(Self[T], Int, (T) -> T) -> Unit
+#deprecated
+pub fn[T] Transpose::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
+pub fn[T] Transpose::materialize(Self[T]) -> Matrix[T]
+pub fn[T] Transpose::row(Self[T]) -> Int
+pub fn[T] Transpose::row_to_array(Self[T], Int) -> Array[T]
+pub fn[T] Transpose::row_to_vector(Self[T], Int) -> Vector[T]
+pub fn[T : Mul] Transpose::scale(Self[T], T) -> Self[T]
+pub fn[T] Transpose::swap_cols(Self[T], Int, Int) -> Unit
+pub fn[T] Transpose::swap_rows(Self[T], Int, Int) -> Unit
+pub fn[T] Transpose::transpose(Self[T]) -> Matrix[T]
+pub fn[T] Transpose::vertical_combine(Self[T], Self[T]) -> Self[T]
+pub impl[T : Add] Add for Transpose[T]
+pub impl[T : Eq] Eq for Transpose[T]
+pub impl[T : Add + Mul] Mul for Transpose[T]
+pub impl[T : Neg] Neg for Transpose[T]
+pub impl[T : Show] Show for Transpose[T]
+pub impl[T : Add + Neg] Sub for Transpose[T]
 
 pub struct Vector[A](Array[A])
-fn[T : Add] Vector::add_constant(Self[T], T) -> Self[T]
-fn[A] Vector::copy(Self[A]) -> Self[A]
-fn[T] Vector::from_array(Array[T]) -> Self[T]
+pub fn[T : Add] Vector::add_constant(Self[T], T) -> Self[T]
+pub fn[A] Vector::copy(Self[A]) -> Self[A]
+pub fn[T] Vector::from_array(Array[T]) -> Self[T]
 #deprecated
-fn[A] Vector::inner(Self[A]) -> Array[A]
-fn[A : Mul] Vector::left_scale(Self[A], A) -> Self[A]
-fn[A : Mul] Vector::left_scale_inplace(Self[A], A) -> Unit
-fn[A] Vector::length(Self[A]) -> Int
-fn[T : @luna-generic.One + Mul + Add + Neg] Vector::lerp(Self[T], Self[T], T) -> Self[T]
-fn[A] Vector::make(Int, A) -> Self[A]
-fn[A] Vector::makei(Int, (Int) -> A) -> Self[A]
-fn[A, B] Vector::map(Self[A], (A) -> B) -> Self[B]
-fn[A] Vector::map_inplace(Self[A], (A) -> A) -> Unit
-fn[A] Vector::op_get(Self[A], Int) -> A
-fn[A] Vector::op_set(Self[A], Int, A) -> Unit
-fn[A : Mul] Vector::right_scale(A, Self[A]) -> Self[A]
-fn[A : Mul] Vector::right_scale_inplace(A, Self[A]) -> Unit
-fn[T : @luna-generic.Zero] Vector::scaled_matrix(Self[T]) -> Matrix[T]
-fn[T : Mul] Vector::tensor_product(Self[T], Self[T]) -> Matrix[T]
-fn[T] Vector::to_col_matrix(Self[T]) -> Matrix[T]
-fn[T] Vector::to_row_matrix(Self[T]) -> Matrix[T]
-fn[A, U, V] Vector::zip_with(Self[A], Self[U], (A, U) -> V) -> Self[V]
-impl[T : Add] Add for Vector[T]
-impl[T : Eq] Eq for Vector[T]
-impl[T : Mul] Mul for Vector[T]
-impl[T : Neg] Neg for Vector[T]
-impl[T : Show] Show for Vector[T]
-impl[T : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[T]
+pub fn[A] Vector::inner(Self[A]) -> Array[A]
+pub fn[T] Vector::iter(Self[T]) -> Iter[T]
+pub fn[A : Mul] Vector::left_scale(Self[A], A) -> Self[A]
+pub fn[A : Mul] Vector::left_scale_in_place(Self[A], A) -> Unit
+#deprecated
+pub fn[A : Mul] Vector::left_scale_inplace(Self[A], A) -> Unit
+pub fn[A] Vector::length(Self[A]) -> Int
+pub fn[T : @luna-generic.One + Mul + Add + Neg] Vector::lerp(Self[T], Self[T], T) -> Self[T]
+pub fn[A] Vector::make(Int, A) -> Self[A]
+pub fn[A] Vector::makei(Int, (Int) -> A) -> Self[A]
+pub fn[A, B] Vector::map(Self[A], (A) -> B) -> Self[B]
+pub fn[A] Vector::map_in_place(Self[A], (A) -> A) -> Unit
+#deprecated
+pub fn[A] Vector::map_inplace(Self[A], (A) -> A) -> Unit
+pub fn[A] Vector::op_get(Self[A], Int) -> A
+pub fn[A] Vector::op_set(Self[A], Int, A) -> Unit
+pub fn[A : Mul] Vector::right_scale(A, Self[A]) -> Self[A]
+pub fn[A : Mul] Vector::right_scale_in_place(A, Self[A]) -> Unit
+#deprecated
+pub fn[A : Mul] Vector::right_scale_inplace(A, Self[A]) -> Unit
+pub fn[T : @luna-generic.Zero] Vector::scaled_matrix(Self[T]) -> Matrix[T]
+pub fn[T : Mul] Vector::tensor_product(Self[T], Self[T]) -> Matrix[T]
+pub fn[T] Vector::to_col_matrix(Self[T]) -> Matrix[T]
+pub fn[T] Vector::to_row_matrix(Self[T]) -> Matrix[T]
+pub fn[A, U, V] Vector::zip_with(Self[A], Self[U], (A, U) -> V) -> Self[V]
+pub impl[T : Add] Add for Vector[T]
+pub impl[T : Eq] Eq for Vector[T]
+pub impl[T : Mul] Mul for Vector[T]
+pub impl[T : Neg] Neg for Vector[T]
+pub impl[T : Show] Show for Vector[T]
+pub impl[T : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[T]
 
 // Type aliases
 
@@ -151,18 +171,18 @@ impl[T : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[T]
 pub trait SMul {
   scalar(Self, Double) -> Self
 }
-impl SMul for Float
-impl SMul for Double
+pub impl SMul for Float
+pub impl SMul for Double
 
 pub trait Sqrt {
   sqrt(Self) -> Self
 }
-impl Sqrt for Float
-impl Sqrt for Double
+pub impl Sqrt for Float
+pub impl Sqrt for Double
 
 pub trait Tolerance {
   tolerance() -> Self
 }
-impl Tolerance for Float
-impl Tolerance for Double
+pub impl Tolerance for Float
+pub impl Tolerance for Double
 

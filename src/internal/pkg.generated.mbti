@@ -13,6 +13,6 @@ package "Luna-Flow/linear-algebra/internal"
 pub trait HomomorphismNat {
   from_nat(Int) -> Self
 }
-impl HomomorphismNat for Float
-impl HomomorphismNat for Double
+pub impl HomomorphismNat for Float
+pub impl HomomorphismNat for Double
 
