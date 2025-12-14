@@ -472,8 +472,39 @@ pub fn[T] Transpose::map(self : Transpose[T], f : (T) -> T) -> Transpose[T] {
 /// * `f` : The function to apply to each element, which takes an element and
 ///   returns a new element of the same type.
 ///
+#deprecated("Use Matrix::map_in_place instead")
 pub fn[T] Transpose::map_inplace(self : Transpose[T], f : (T) -> T) -> Unit {
-  self.0.map_inplace(f)
+  self.0.map_in_place(f)
+}
+
+///|
+/// Applies a function to each element of the transpose matrix in-place,
+/// modifying the original matrix.
+///
+/// Parameters:
+///
+/// * `self` : The transpose matrix to modify.
+/// * `f` : The function to apply to each element, which takes an element and
+///   returns a new element of the same type.
+///
+/// Example:
+/// ```moonbit
+/// let matrix = @mutable.Matrix::make(2, 3, fn(i, j) { i + j })
+/// inspect(matrix, content=>
+///   #||0, 1, 2|
+///   #||1, 2, 3|
+/// )
+/// let transpose = matrix.to_transpose()
+/// transpose.map_inplace(fn(x) { x + 1 })
+/// inspect(transpose, content=>
+///   #||1, 2|
+///   #||2, 3|
+///   #||3, 4|
+/// )
+/// ```
+/// 
+pub fn[T] Transpose::map_in_place(self : Transpose[T], f : (T) -> T) -> Unit {
+  self.0.map_in_place(f)
 }
 
 ///|
@@ -498,12 +529,43 @@ pub fn[T] Transpose::map_inplace(self : Transpose[T], f : (T) -> T) -> Unit {
 /// transpose.map_col_inplace(1, fn(x) { x * 2 })
 /// ```
 ///
+#deprecated("Use Matrix::map_col_in_place instead")
 pub fn[T] Transpose::map_col_inplace(
   self : Transpose[T],
   col : Int,
   f : (T) -> T,
 ) -> Unit {
-  self.0.map_row_inplace(col, f)
+  self.0.map_row_in_place(col, f)
+}
+
+///|
+/// Applies a transformation function to each element in the specified column of
+/// the transpose matrix in-place.
+///
+/// Parameters:
+///
+/// * `self` : The transpose matrix to modify.
+/// * `col` : The zero-based index of the column to transform.
+/// * `f` : The transformation function to apply to each element in the column.
+///
+/// Panics if `col` is out of bounds (negative or greater than or equal to the
+/// number of columns).
+///
+/// Example:
+///
+/// ```moonbit
+/// let matrix = @mutable.Matrix::make(2, 3, fn(i, j) { i + j })
+/// let transpose = matrix.to_transpose()
+/// // Double all elements in column 1
+/// transpose.map_col_inplace(1, fn(x) { x * 2 })
+/// ```
+///
+pub fn[T] Transpose::map_col_in_place(
+  self : Transpose[T],
+  col : Int,
+  f : (T) -> T,
+) -> Unit {
+  self.0.map_row_in_place(col, f)
 }
 
 ///|
@@ -528,12 +590,43 @@ pub fn[T] Transpose::map_col_inplace(
 /// transposed.map_row_inplace(1, (x) => x * 2)
 /// ```
 ///
+#deprecated("Use Matrix::map_col_in_place instead")
 pub fn[T] Transpose::map_row_inplace(
   self : Transpose[T],
   row : Int,
   f : (T) -> T,
 ) -> Unit {
-  self.0.map_col_inplace(row, f)
+  self.0.map_col_in_place(row, f)
+}
+
+///|
+/// Applies a transformation function to each element in the specified row of
+/// the transposed matrix in-place.
+///
+/// Parameters:
+///
+/// * `self` : The transposed matrix to modify.
+/// * `row` : The index of the row to transform.
+/// * `f` : The transformation function to apply to each element in the row.
+///
+/// Panics if `row` is out of bounds (less than 0 or greater than or equal to
+/// the number of rows).
+///
+/// Example:
+///
+/// ```moonbit
+/// let matrix = @mutable.Matrix::make(3, 2, (i, j) => i + j)
+/// let transposed = matrix.to_transpose()
+/// // Double all elements in row 1
+/// transposed.map_row_inplace(1, (x) => x * 2)
+/// ```
+///
+pub fn[T] Transpose::map_row_in_place(
+  self : Transpose[T],
+  row : Int,
+  f : (T) -> T,
+) -> Unit {
+  self.0.map_col_in_place(row, f)
 }
 
 ///|
