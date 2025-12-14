@@ -23,8 +23,11 @@
 ///
 /// ```moonbit
 /// let m1 = MatrixFn::from_2d_array([[1, 2], [3, 4]])
+///
 /// let m2 = MatrixFn::from_2d_array([[1, 0], [0, 1]])
+///
 /// let horizontal = MatrixFn::horizontal_combine(m1, m2)
+///
 /// let vertical = MatrixFn::vertical_combine(m1, m2)
 /// ```
 ///
