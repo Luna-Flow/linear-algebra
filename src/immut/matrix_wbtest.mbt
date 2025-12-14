@@ -248,3 +248,37 @@ test {
     ),
   )
 }
+
+///|
+test "matrix_trace" {
+  let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+  inspect(m.trace(), content="15")
+  let m2 = Matrix::from_2d_array([[1, 2], [3, 4], [5, 6]])
+  inspect(m2.trace(), content="5")
+}
+
+///|
+test "matrix_mapi" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let m2 = m.mapi(fn(i, j, x) { x + i + j })
+  inspect(
+    m2,
+    content=(
+      #||1, 3|
+      #||4, 6|
+    ),
+  )
+}
+
+///|
+test "matrix_swap_cols_optimized" {
+  let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  let m1 = m.swap_cols(0, 2)
+  inspect(
+    m1,
+    content=(
+      #||3, 2, 1|
+      #||6, 5, 4|
+    ),
+  )
+}

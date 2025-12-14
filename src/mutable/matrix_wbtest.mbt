@@ -32,16 +32,23 @@ test "map_function" {
   let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
   let m1 = {
     let m_ = m.copy()
-    m_.map_row_inplace(0, fn(x) { x * 2 })
+    m_.map_row_in_place(0, fn(x) { x * 2 })
     m_
   }
   let m2 = {
     let m_ = m.copy()
-    m_.map_col_inplace(0, fn(x) { x * 2 })
+    m_.map_col_in_place(0, fn(x) { x * 2 })
     m_
   }
   inspect(m1.to_string(), content="|2, 4, 6|\n|4, 5, 6|")
   inspect(m2.to_string(), content="|2, 2, 3|\n|8, 5, 6|")
+}
+
+///|
+test "mapi" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let m2 = m.mapi(fn(i, j, x) { x + i + j })
+  inspect(m2.to_string(), content="|1, 3|\n|4, 6|")
 }
 
 ///|
@@ -58,9 +65,9 @@ test "map_function" {
 /// ```moonbit
 /// test {
 ///   let m = Matrix::from_2d_array([[2, 3, 4], [1, 2, 3]])
-///   inspect(m[0][1], content="3")  // Read element at row 0, column 1
-///   m[0][1] = 4                    // Modify element at row 0, column 1
-///   inspect(m[0][1], content="4")  // Verify the modification
+///   inspect(m[0][1], content="3") // Read element at row 0, column 1
+///   m[0][1] = 4 // Modify element at row 0, column 1
+///   inspect(m[0][1], content="4") // Verify the modification
 /// }
 /// ```
 ///
@@ -142,6 +149,7 @@ test "swap" {
 ///   [1.0, 1.0, 1.0, 2.0],
 ///   [2.0, 3.0, 3.0, 5.0],
 /// ])
+///
 /// let result = m.reduce_row_elimination()
 /// // result should be in reduced row echelon form:
 /// // |1, 0, 0, 1|
@@ -555,4 +563,50 @@ test "Matrix::inverse/edge_cases" {
 test "panic Matrix::inverse/non_square" {
   let non_square = Matrix::from_2d_array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
   ignore(non_square.inverse())
+}
+
+///|
+test "iter" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let arr = m.iter().to_array()
+  inspect(arr, content="[1, 2, 3, 4]")
+}
+
+///|
+test "iter_row" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let row0 = m.iter_row(0).to_array()
+  inspect(row0, content="[1, 2]")
+  let row1 = m.iter_row(1).to_array()
+  inspect(row1, content="[3, 4]")
+}
+
+///|
+test "iter_col" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let col0 = m.iter_col(0).to_array()
+  inspect(col0, content="[1, 3]")
+  let col1 = m.iter_col(1).to_array()
+  inspect(col1, content="[2, 4]")
+}
+
+///|
+test "to_array" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  inspect(m.to_array(), content="[1, 2, 3, 4]")
+}
+
+///|
+test "to_2d_array" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let arr = m.to_2d_array()
+  inspect(arr, content="[[1, 2], [3, 4]]")
+}
+
+///|
+test "is_square" {
+  let m1 = Matrix::new(2, 2, 0)
+  inspect(m1.is_square(), content="true")
+  let m2 = Matrix::new(2, 3, 0)
+  inspect(m2.is_square(), content="false")
 }
