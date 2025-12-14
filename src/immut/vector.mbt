@@ -62,6 +62,29 @@ pub fn[T, U] Vector::map(self : Vector[T], f : (T) -> U) -> Vector[U] {
 }
 
 ///|
+/// Adds a constant value to each element of the vector.
+///
+/// Parameters:
+///
+/// * `self` : The vector to which the constant will be added.
+/// * `cst` : The constant value to add to each element.
+///
+/// Returns a new vector with the constant added to each element of the original
+/// vector.
+///
+/// Example:
+///
+/// ```moonbit
+/// let v = Vector::from_array([1, 2, 3])
+/// let result = v.add_constant(5)
+/// inspect(result, content="|6, 7, 8|")
+/// ```
+///
+pub fn[T : Add] Vector::add_constant(self : Vector[T], cst : T) -> Vector[T] {
+  self.map(fn(x) { x + cst })
+}
+
+///|
 /// Applies a function to corresponding elements from two vectors, producing a
 /// new vector.
 ///
@@ -153,6 +176,28 @@ pub fn[T] Vector::to_col_matrix(self : Vector[T]) -> Matrix[T] {
 ///
 pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
   { data: self.data, row: 1, col: self.length() }
+}
+
+///|
+/// Creates a new vector of the specified length with all elements initialized
+/// to the same value.
+///
+/// Parameters:
+///
+/// * `n` : The length of the vector to create.
+/// * `elem` : The value to initialize all elements with.
+///
+/// Returns a new vector of length `n` where each element is `elem`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let v = Vector::make(3, 42)
+/// inspect(v, content="|42, 42, 42|")
+/// ```
+///
+pub fn[T] Vector::make(n : Int, elem : T) -> Vector[T] {
+  Vector::{ data: @immut/array.make(n, elem) }
 }
 
 ///|
@@ -380,6 +425,26 @@ pub impl[T : Mul] Mul for Vector[T] with mul(
 }
 
 ///|
+/// Computes the negation of a vector by negating each element.
+///
+/// Parameters:
+///
+/// * `self` : The vector to negate.
+///
+/// Returns a new vector with each element negated.
+///
+/// Example:
+///
+/// ```moonbit
+/// let v = Vector::from_array([1, 2, -3])
+/// inspect(-v, content="|-1, -2, 3|")
+/// ```
+///
+pub impl[T : Neg] Neg for Vector[T] with neg(self : Vector[T]) -> Vector[T] {
+  self.map(T::neg)
+}
+
+///|
 /// Performs linear interpolation between two vectors.
 ///
 /// Parameters:
@@ -534,4 +599,35 @@ fn[X, Y, Z] array_zip_with(
   let n = a1.length()
   guard n == a2.length()
   @immut/array.makei(n, i => f(a1[i], a2[i]))
+}
+
+///|
+/// Computes a linear combination of two vectors.
+///
+/// Parameters:
+///
+/// * `scalar_a` : The scalar coefficient for the first vector.
+/// * `vector_a` : The first vector in the linear combination.
+/// * `scalar_b` : The scalar coefficient for the second vector.
+/// * `vector_b` : The second vector in the linear combination.
+///
+/// Returns a new vector that is the linear combination `scalar_a * vector_a +
+/// scalar_b * vector_b`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let v1 = Vector::from_array([1, 2, 3])
+/// let v2 = Vector::from_array([4, 5, 6])
+/// let result = lin_comb(2, v1, 3, v2)
+/// inspect(result, content="|14, 19, 24|")
+/// ```
+///
+pub fn[T : Add + Mul] lin_comb(
+  scalar_a : T,
+  self : Vector[T],
+  scalar_b : T,
+  other : Vector[T],
+) -> Vector[T] {
+  self.left_scale(scalar_a) + other.left_scale(scalar_b)
 }

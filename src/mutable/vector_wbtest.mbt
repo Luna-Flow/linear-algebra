@@ -17,7 +17,9 @@ impl[T] @qc.Shrink for Vector[T] with shrink(_) -> Iter[Vector[T]] {
 /// ```moonbit
 /// // The property being tested:
 /// let v = Vector::from_array([1, 2, 3])
+///
 /// let sum = v + v
+///
 /// let scaled = v.left_scale(2)
 /// // sum should equal scaled: [2, 4, 6]
 /// ```
@@ -50,6 +52,7 @@ test "a + a = 2 * a" {
 /// ```moonbit
 /// // This property should hold for any two vectors of the same length
 /// let v1 = Vector::from_array([1, 2, 3])
+///
 /// let v2 = Vector::from_array([4, 5, 6])
 /// // v1 + v2 should equal v2 + v1: [5, 7, 9]
 /// ```
@@ -138,4 +141,11 @@ test "S_v * p = v * p" {
   }
 
   @qc.quick_check_fn(check)
+}
+
+///|
+test "iter" {
+  let v = Vector::from_array([1, 2, 3])
+  let arr = v.iter().to_array()
+  inspect(arr, content="[1, 2, 3]")
 }
