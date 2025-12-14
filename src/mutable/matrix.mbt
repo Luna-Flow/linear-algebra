@@ -221,29 +221,6 @@ pub fn[T, U] Matrix::mapi(
 ///
 /// ```moonbit
 /// let m = @mutable.Matrix::from_2d_array([[1, 2], [3, 4]])
-/// m.map_inplace(fn(x) { x * 2 })
-/// inspect(m, content="|2, 4|\n|6, 8|")
-/// ```
-///
-#deprecated("Use Matrix::map_in_place instead")
-pub fn[T] Matrix::map_inplace(self : Matrix[T], f : (T) -> T) -> Unit {
-  self.data.map_in_place(f)
-}
-
-///|
-/// Applies a transformation function to all elements in the matrix in-place,
-/// modifying the original matrix.
-///
-/// Parameters:
-///
-/// * `self` : The matrix whose elements will be transformed.
-/// * `f` : The transformation function to apply to each element, taking a value
-///   of type `T` and returning a transformed value of the same type.
-///
-/// Example:
-///
-/// ```moonbit
-/// let m = @mutable.Matrix::from_2d_array([[1, 2], [3, 4]])
 /// m.map_in_place(fn(x) { x * 2 })
 /// inspect(m, content="|2, 4|\n|6, 8|")
 /// ```
@@ -290,35 +267,6 @@ pub fn[T] Matrix::to_transpose(self : Matrix[T]) -> Transpose[T] {
 ///
 /// ```moonbit
 /// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// m.map_row_inplace(0, fn(x) { x * 2 })
-/// // The first row becomes [2, 4, 6], second row remains [4, 5, 6]
-/// ```
-///
-#deprecated("Use Matrix::map_row_in_place instead")
-pub fn[T] Matrix::map_row_inplace(
-  self : Matrix[T],
-  row : Int,
-  f : (T) -> T,
-) -> Unit {
-  for i in 0..<self.col {
-    self.data[row * self.col + i] = f(self.data[row * self.col + i])
-  }
-}
-
-///|
-/// Applies a transformation function to all elements in a specific row of the
-/// matrix in-place.
-///
-/// Parameters:
-///
-/// * `self` : The matrix to modify.
-/// * `row` : The zero-based index of the row to transform.
-/// * `f` : The transformation function to apply to each element in the row.
-///
-/// Example:
-///
-/// ```moonbit
-/// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// m.map_row_in_place(0, fn(x) { x * 2 })
 /// // The first row becomes [2, 4, 6], second row remains [4, 5, 6]
 /// ```
@@ -347,36 +295,7 @@ pub fn[T] Matrix::map_row_in_place(
 ///
 /// ```moonbit
 /// let matrix = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// matrix.map_col_inplace(1, fn(x) { x * 2 })
-/// // matrix is now [[1, 4, 3], [4, 10, 6]]
-/// ```
-///
-#deprecated("Use Matrix::map_col_in_place instead")
-pub fn[T] Matrix::map_col_inplace(
-  self : Matrix[T],
-  col : Int,
-  f : (T) -> T,
-) -> Unit {
-  for i in 0..<self.row {
-    self.data[i * self.col + col] = f(self.data[i * self.col + col])
-  }
-}
-
-///|
-/// Applies a transformation function to all elements in a specific column of
-/// the matrix in-place.
-///
-/// Parameters:
-///
-/// * `self` : The matrix to modify.
-/// * `col` : The index of the column to transform (0-based).
-/// * `f` : The transformation function to apply to each element in the column.
-///
-/// Example:
-///
-/// ```moonbit
-/// let matrix = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// matrix.map_col_inplace(1, fn(x) { x * 2 })
+/// matrix.map_col_in_place(1, fn(x) { x * 2 })
 /// // matrix is now [[1, 4, 3], [4, 10, 6]]
 /// ```
 ///
