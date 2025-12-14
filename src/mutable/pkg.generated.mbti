@@ -37,13 +37,16 @@ pub fn[T] Matrix::eachi_col(Self[T], Int, (Int, T) -> Unit) -> Unit
 pub fn[T] Matrix::eachi_row(Self[T], Int, (Int, T) -> Unit) -> Unit
 pub fn[T : Compare + Add + Mul + Sub + Neg + @luna-generic.Num + Div + Sqrt + Tolerance] Matrix::eigen(Self[T]) -> (Vector[T], Self[T])
 pub fn[T : Compare + Add + Mul + Sub + @luna-generic.Num + Div + Sqrt + SMul] Matrix::eigen_2x2(Self[T]) -> Vector[T]
+pub fn[T : Add + Mul + Sqrt + @luna-generic.Zero] Matrix::frobenius_norm(Self[T]) -> T
 pub fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
 pub fn[T] Matrix::from_array(Int, Int, Array[T]) -> Self[T]
 pub fn[T : @internal.HomomorphismNat] Matrix::from_nat_matrix(Self[Int]) -> Self[T]
 pub fn[T] Matrix::horizontal_combine(Self[T], Self[T]) -> Self[T]
 pub fn[T : Compare + @luna-generic.Num + Sub + @luna-generic.Inverse + @luna-generic.Zero + @luna-generic.One + Tolerance + Div] Matrix::inverse(Self[T]) -> Self[T]?
 pub fn[T : Compare + Sub + Mul + Div + @luna-generic.Zero + @luna-generic.One + @luna-generic.Num + Tolerance] Matrix::is_invertible(Self[T]) -> Bool
+pub fn[T : Compare + Add + Mul + Sub + Neg + @luna-generic.Num + Div + Sqrt + Tolerance + @luna-generic.Zero] Matrix::is_positive_definite(Self[T]) -> Bool
 pub fn[T] Matrix::is_square(Self[T]) -> Bool
+pub fn[T : Sub + @luna-generic.Num + Compare + Tolerance] Matrix::is_symmetric(Self[T]) -> Bool
 pub fn[T] Matrix::iter(Self[T]) -> Iter[T]
 pub fn[T] Matrix::iter_col(Self[T], Int) -> Iter[T]
 pub fn[T] Matrix::iter_row(Self[T], Int) -> Iter[T]
@@ -59,6 +62,10 @@ pub fn[T] Matrix::map_row_in_place(Self[T], Int, (T) -> T) -> Unit
 #deprecated
 pub fn[T] Matrix::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
 pub fn[T, U] Matrix::mapi(Self[T], (Int, Int, T) -> U) -> Self[U]
+pub fn[T : @luna-generic.Semiring] Matrix::matrix_power(Self[T], Int) -> Self[T]
+pub fn[T : Compare] Matrix::max_element(Self[T]) -> T
+pub fn[T : Add + Div + @internal.HomomorphismNat] Matrix::mean(Self[T]) -> T
+pub fn[T : Compare] Matrix::min_element(Self[T]) -> T
 pub fn[T] Matrix::new(Int, Int, T) -> Self[T]
 pub fn[T : Compare + @luna-generic.Zero] Matrix::null(Self[T]) -> Bool
 pub fn[T] Matrix::op_get(Self[T], Int) -> Lens[T]
@@ -70,6 +77,7 @@ pub fn[T] Matrix::row(Self[T]) -> Int
 pub fn[T] Matrix::row_to_array(Self[T], Int) -> Array[T]
 pub fn[T] Matrix::row_to_vector(Self[T], Int) -> Vector[T]
 pub fn[T : Mul] Matrix::scale(Self[T], T) -> Self[T]
+pub fn[T : Add + Sub + Mul + Div + Sqrt + @internal.HomomorphismNat] Matrix::std_dev(Self[T]) -> T
 pub fn[T] Matrix::swap_cols(Self[T], Int, Int) -> Unit
 pub fn[T] Matrix::swap_rows(Self[T], Int, Int) -> Unit
 pub fn[T] Matrix::to_2d_array(Self[T]) -> Array[Array[T]]
@@ -78,6 +86,7 @@ pub fn[T] Matrix::to_transpose(Self[T]) -> Transpose[T]
 pub fn[T] Matrix::to_vector(Self[T]) -> Vector[T]
 pub fn[T : Add + @luna-generic.Zero] Matrix::trace(Self[T]) -> T
 pub fn[T] Matrix::transpose(Self[T]) -> Self[T]
+pub fn[T : Add + Sub + Mul + Div + @internal.HomomorphismNat] Matrix::variance(Self[T]) -> T
 pub fn[T] Matrix::vertical_combine(Self[T], Self[T]) -> Self[T]
 pub impl[T : Add] Add for Matrix[T]
 pub impl[T : Eq] Eq for Matrix[T]
