@@ -178,6 +178,36 @@ pub fn[T, U] Matrix::map(self : Matrix[T], f : (T) -> U) -> Matrix[U] {
 }
 
 ///|
+/// Applies a function to every element of the matrix with its index, creating a
+/// new matrix with the transformed elements.
+///
+/// Parameters:
+///
+/// * `self` : The input matrix to transform.
+/// * `f` : The function to apply to each element, taking the row index, column
+///   index, and value of type `T`, and returning a value of type `U`.
+///
+/// Returns a new matrix with the same dimensions as the input matrix.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m = @mutable.Matrix::from_2d_array([[1, 2], [3, 4]])
+/// let m2 = m.mapi(fn(i, j, x) { x + i + j })
+/// inspect(m2, content="|1, 3|\n|4, 6|")
+/// ```
+///
+pub fn[T, U] Matrix::mapi(
+  self : Matrix[T],
+  f : (Int, Int, T) -> U,
+) -> Matrix[U] {
+  let row = self.row
+  let col = self.col
+  let data = Array::makei(row * col, fn(i) { f(i / col, i % col, self.data[i]) })
+  { row, col, data }
+}
+
+///|
 /// Applies a transformation function to all elements in the matrix in-place,
 /// modifying the original matrix.
 ///
@@ -191,12 +221,12 @@ pub fn[T, U] Matrix::map(self : Matrix[T], f : (T) -> U) -> Matrix[U] {
 ///
 /// ```moonbit
 /// let m = @mutable.Matrix::from_2d_array([[1, 2], [3, 4]])
-/// m.map_inplace(fn(x) { x * 2 })
+/// m.map_in_place(fn(x) { x * 2 })
 /// inspect(m, content="|2, 4|\n|6, 8|")
 /// ```
 ///
-pub fn[T] Matrix::map_inplace(self : Matrix[T], f : (T) -> T) -> Unit {
-  self.data.map_inplace(f)
+pub fn[T] Matrix::map_in_place(self : Matrix[T], f : (T) -> T) -> Unit {
+  self.data.map_in_place(f)
 }
 
 ///|
@@ -237,11 +267,11 @@ pub fn[T] Matrix::to_transpose(self : Matrix[T]) -> Transpose[T] {
 ///
 /// ```moonbit
 /// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// m.map_row_inplace(0, fn(x) { x * 2 })
+/// m.map_row_in_place(0, fn(x) { x * 2 })
 /// // The first row becomes [2, 4, 6], second row remains [4, 5, 6]
 /// ```
 ///
-pub fn[T] Matrix::map_row_inplace(
+pub fn[T] Matrix::map_row_in_place(
   self : Matrix[T],
   row : Int,
   f : (T) -> T,
@@ -265,11 +295,11 @@ pub fn[T] Matrix::map_row_inplace(
 ///
 /// ```moonbit
 /// let matrix = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// matrix.map_col_inplace(1, fn(x) { x * 2 })
+/// matrix.map_col_in_place(1, fn(x) { x * 2 })
 /// // matrix is now [[1, 4, 3], [4, 10, 6]]
 /// ```
 ///
-pub fn[T] Matrix::map_col_inplace(
+pub fn[T] Matrix::map_col_in_place(
   self : Matrix[T],
   col : Int,
   f : (T) -> T,
@@ -1042,7 +1072,7 @@ pub fn[T : Compare + Num + Sub + Inverse] Matrix::reduce_row_elimination(
       continue
     }
     let val = self[i][col]
-    ignore(self.map_row_inplace(i, fn(x) { x * val.inv() }))
+    ignore(self.map_row_in_place(i, fn(x) { x * val.inv() }))
     for j in 0..<r {
       if j == i {
         continue
@@ -1725,7 +1755,7 @@ pub impl SMul for Double with scalar(self, rhs : Double) -> Double {
 
 ///|
 pub impl SMul for Float with scalar(self, rhs : Double) -> Float {
-  self * rhs.to_float()
+  self * Float::from_double(rhs)
 }
 
 ///|
@@ -1908,4 +1938,257 @@ pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] Matrix::is_
   }
   let det = self.determinant()
   return det.abs() > T::tolerance()
+}
+
+///|
+/// Calculates the mean (average) of all elements in the matrix.
+///
+/// Parameters:
+///
+/// * `self` : The matrix to calculate the mean of.
+///
+/// Returns the mean value.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m = @mutable.Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
+/// inspect(m.mean(), content="2.5")
+/// ```
+///
+pub fn[T : Add + Div + @internal.HomomorphismNat] Matrix::mean(
+  self : Matrix[T],
+) -> T {
+  let sum = self.data.iter().fold(init=T::from_nat(0), fn(acc, x) { acc + x })
+  let count = self.row * self.col
+  sum / T::from_nat(count)
+}
+
+///|
+/// Calculates the variance of the elements in the matrix.
+///
+/// Parameters:
+///
+/// * `self` : The matrix to calculate the variance of.
+///
+/// Returns the variance.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m = @mutable.Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
+/// inspect(m.variance(), content="1.25")
+/// ```
+///
+pub fn[T : Add + Sub + Mul + Div + @internal.HomomorphismNat] Matrix::variance(
+  self : Matrix[T],
+) -> T {
+  let m = self.mean()
+  let sum_sq_diff = self.data
+    .iter()
+    .fold(init=T::from_nat(0), fn(acc, x) {
+      let diff = x - m
+      acc + diff * diff
+    })
+  let count = self.row * self.col
+  sum_sq_diff / T::from_nat(count)
+}
+
+///|
+/// Calculates the standard deviation of the elements in the matrix.
+///
+/// Parameters:
+///
+/// * `self` : The matrix to calculate the standard deviation of.
+///
+/// Returns the standard deviation.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m = @mutable.Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
+/// // sqrt(1.25) ≈ 1.118
+///
+/// let std = m.std_dev()
+/// ```
+///
+pub fn[T : Add + Sub + Mul + Div + Sqrt + @internal.HomomorphismNat] Matrix::std_dev(
+  self : Matrix[T],
+) -> T {
+  self.variance().sqrt()
+}
+
+///|
+/// Checks if the matrix is symmetric (A^T = A).
+///
+/// Parameters:
+///
+/// * `self` : The matrix to check.
+///
+/// Returns `true` if symmetric, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m = @mutable.Matrix::from_2d_array([[1.0, 2.0], [2.0, 1.0]])
+/// inspect(m.is_symmetric(), content="true")
+/// ```
+///
+pub fn[T : Sub + Num + Compare + Tolerance] Matrix::is_symmetric(
+  self : Matrix[T],
+) -> Bool {
+  if self.row != self.col {
+    return false
+  }
+  for i = 0; i < self.row; i = i + 1 {
+    for j = i + 1; j < self.col; j = j + 1 {
+      if (self[i][j] - self[j][i]).abs() > T::tolerance() {
+        return false
+      }
+    }
+  }
+  true
+}
+
+///|
+/// Checks if the matrix is positive definite.
+///
+/// A matrix is positive definite if it is symmetric and all its eigenvalues are positive.
+///
+/// Parameters:
+///
+/// * `self` : The matrix to check.
+///
+/// Returns `true` if positive definite, `false` otherwise.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m = @mutable.Matrix::from_2d_array([[2.0, 0.0], [0.0, 2.0]])
+/// inspect(m.is_positive_definite(), content="true")
+/// ```
+///
+pub fn[
+  T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance + Zero,
+] Matrix::is_positive_definite(
+  self : Matrix[T],
+) -> Bool {
+  if not(self.is_symmetric()) {
+    return false
+  }
+  let (eigenvals, _) = self.eigen()
+  for val in eigenvals {
+    if val <= T::zero() {
+      return false
+    }
+  }
+  true
+}
+
+///|
+/// Calculates the n-th power of the matrix.
+///
+/// Parameters:
+///
+/// * `self` : The matrix to raise to the power.
+/// * `n` : The exponent.
+///
+/// Returns the matrix raised to the power `n`.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m = @mutable.Matrix::from_2d_array([[1, 1], [1, 0]])
+/// let m2 = m.matrix_power(2)
+/// inspect(m2, content="|2, 1|\n|1, 1|")
+/// ```
+///
+pub fn[T : Semiring] Matrix::matrix_power(
+  self : Matrix[T],
+  n : Int,
+) -> Matrix[T] {
+  self.pow(n)
+}
+
+///|
+/// Calculates the Frobenius norm of the matrix.
+///
+/// Parameters:
+///
+/// * `self` : The matrix to calculate the norm of.
+///
+/// Returns the Frobenius norm.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m = @mutable.Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
+/// // sqrt(1^2 + 2^2 + 3^2 + 4^2) = sqrt(30) ≈ 5.477
+///
+/// let norm = m.frobenius_norm()
+/// ```
+///
+pub fn[T : Add + Mul + Sqrt + Zero] Matrix::frobenius_norm(
+  self : Matrix[T],
+) -> T {
+  let sum_sq = self.data.iter().fold(init=T::zero(), fn(acc, x) { acc + x * x })
+  sum_sq.sqrt()
+}
+
+///|
+/// Finds the maximum element in the matrix.
+///
+/// Parameters:
+///
+/// * `self` : The matrix to search.
+///
+/// Returns the maximum element.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m = @mutable.Matrix::from_2d_array([[1, 5, 3], [2, 8, 1]])
+/// inspect(m.max_element(), content="8")
+/// ```
+///
+pub fn[T : Compare] Matrix::max_element(self : Matrix[T]) -> T {
+  if self.data.length() == 0 {
+    abort("Empty matrix")
+  }
+  let mut max_val = self.data[0]
+  for i = 1; i < self.data.length(); i = i + 1 {
+    if self.data[i] > max_val {
+      max_val = self.data[i]
+    }
+  }
+  max_val
+}
+
+///|
+/// Finds the minimum element in the matrix.
+///
+/// Parameters:
+///
+/// * `self` : The matrix to search.
+///
+/// Returns the minimum element.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m = @mutable.Matrix::from_2d_array([[5, 2, 8], [1, 9, 3]])
+/// inspect(m.min_element(), content="1")
+/// ```
+///
+pub fn[T : Compare] Matrix::min_element(self : Matrix[T]) -> T {
+  if self.data.length() == 0 {
+    abort("Empty matrix")
+  }
+  let mut min_val = self.data[0]
+  for i = 1; i < self.data.length(); i = i + 1 {
+    if self.data[i] < min_val {
+      min_val = self.data[i]
+    }
+  }
+  min_val
 }

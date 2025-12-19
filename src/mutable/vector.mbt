@@ -16,7 +16,7 @@
 /// // Vector operations
 /// let sum = v2 + v3
 /// let scaled = v2.left_scale(2.0)
-/// 
+///
 /// inspect(sum.to_string(), content="|1, 3, 5|")
 /// inspect(scaled.to_string(), content="|0, 2, 4|")
 /// ```
@@ -397,12 +397,12 @@ pub fn[A, B] Vector::map(self : Vector[A], f : (A) -> B) -> Vector[B] {
 ///
 /// ```moonbit
 /// let v = @mutable.Vector::from_array([1, 2, 3, 4])
-/// v.map_inplace(fn(x) { x * 2 })
+/// v.map_in_place(fn(x) { x * 2 })
 /// inspect(v, content="|2, 4, 6, 8|")
 /// ```
 ///
-pub fn[A] Vector::map_inplace(self : Vector[A], f : (A) -> A) -> Unit {
-  self.0.map_inplace(f)
+pub fn[A] Vector::map_in_place(self : Vector[A], f : (A) -> A) -> Unit {
+  self.0.map_in_place(f)
 }
 
 ///|
@@ -465,15 +465,15 @@ pub fn[A : Mul] Vector::right_scale(scalar : A, self : Vector[A]) -> Vector[A] {
 ///
 /// ```moonbit
 /// let v = @mutable.Vector::from_array([1, 2, 3])
-/// v.left_scale_inplace(2)
+/// v.left_scale_in_place(2)
 /// inspect(v, content="|2, 4, 6|")
 /// ```
 ///
-pub fn[A : Mul] Vector::left_scale_inplace(
+pub fn[A : Mul] Vector::left_scale_in_place(
   self : Vector[A],
   scalar : A,
 ) -> Unit {
-  self.map_inplace(x => x * scalar)
+  self.map_in_place(x => x * scalar)
 }
 
 ///|
@@ -489,15 +489,15 @@ pub fn[A : Mul] Vector::left_scale_inplace(
 ///
 /// ```moonbit
 /// let v = @mutable.Vector::from_array([1, 2, 3])
-/// @mutable.Vector::right_scale_inplace(2, v)
+/// @mutable.Vector::right_scale_in_place(2, v)
 /// // v is now [2, 4, 6]
 /// ```
 ///
-pub fn[A : Mul] Vector::right_scale_inplace(
+pub fn[A : Mul] Vector::right_scale_in_place(
   scalar : A,
   self : Vector[A],
 ) -> Unit {
-  self.map_inplace(x => scalar * x)
+  self.map_in_place(x => scalar * x)
 }
 
 ///|
@@ -519,6 +519,18 @@ pub fn[A : Mul] Vector::right_scale_inplace(
 ///
 pub fn[T] Vector::from_array(a : Array[T]) -> Vector[T] {
   a
+}
+
+///|
+/// Returns an iterator over the elements of the vector.
+///
+/// Parameters:
+///
+/// * `self` : The vector to iterate over.
+///
+/// Returns an `Iter[T]` that yields each element of the vector in order.
+pub fn[T] Vector::iter(self : Vector[T]) -> Iter[T] {
+  self.0.iter()
 }
 
 ///|

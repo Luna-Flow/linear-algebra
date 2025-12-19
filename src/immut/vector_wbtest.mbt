@@ -25,8 +25,10 @@ impl[T] @qc.Shrink for Vector[T] with shrink(_) -> Iter[Vector[T]] {
 ///
 /// ```moonbit
 /// let v = Vector::from_array([1, 2, 3])
-/// let col = v.to_col_matrix()  // 3×1 matrix: [[1], [2], [3]]
-/// let row = v.to_row_matrix()  // 1×3 matrix: [[1, 2, 3]]
+///
+/// let col = v.to_col_matrix() // 3×1 matrix: [[1], [2], [3]]
+///
+/// let row = v.to_row_matrix() // 1×3 matrix: [[1, 2, 3]]
 /// ```
 ///
 test "to matrix" {
@@ -88,8 +90,10 @@ test "from . to = identity" {
 /// ```moonbit
 /// // This property should hold for any vector
 /// let v = Vector::from_array([1, 2, 3])
-/// let sum = v + v           // |2, 4, 6|
-/// let scaled = v.left_scale(2)  // |2, 4, 6|
+///
+/// let sum = v + v // |2, 4, 6|
+///
+/// let scaled = v.left_scale(2) // |2, 4, 6|
 /// // sum == scaled should be true
 /// ```
 ///
@@ -119,6 +123,7 @@ test "a + a = 2 * a" {
 /// ```moonbit
 /// // The property being tested:
 /// let v1 = Vector::from_array([1, 2, 3])
+///
 /// let v2 = Vector::from_array([4, 5, 6])
 /// // v1 + v2 should equal v2 + v1
 /// // |5, 7, 9| == |5, 7, 9| ✓
@@ -251,4 +256,30 @@ test {
     ),
   )
   inspect(v2.set(1, 10), content="|4, 10, 6|")
+}
+
+///|
+test "make" {
+  let v = Vector::make(3, 42)
+  inspect(v, content="|42, 42, 42|")
+}
+
+///|
+test "neg" {
+  let v = Vector::from_array([1, 2, -3])
+  inspect(-v, content="|-1, -2, 3|")
+}
+
+///|
+test "add_constant" {
+  let v = Vector::from_array([1, 2, 3])
+  inspect(v.add_constant(5), content="|6, 7, 8|")
+}
+
+///|
+test "lin_comb" {
+  let v1 = Vector::from_array([1, 2, 3])
+  let v2 = Vector::from_array([4, 5, 6])
+  let result = lin_comb(2, v1, 3, v2)
+  inspect(result, content="|14, 19, 24|")
 }

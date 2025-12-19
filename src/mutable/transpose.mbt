@@ -252,7 +252,7 @@ pub fn[T] Transpose::each(self : Transpose[T], f : (T) -> Unit) -> Unit {
 ///   linear index is calculated in row-major order of the transpose (which
 ///   corresponds to column-major order of the underlying matrix).
 pub fn[T] Transpose::eachi(self : Transpose[T], f : (Int, T) -> Unit) -> Unit {
-  self.0.each_row_col((i, j, v) => f(j * self.col + i, v))
+  self.0.each_row_col((i, j, v) => f(j * self.0.row + i, v))
 }
 
 ///|
@@ -472,8 +472,24 @@ pub fn[T] Transpose::map(self : Transpose[T], f : (T) -> T) -> Transpose[T] {
 /// * `f` : The function to apply to each element, which takes an element and
 ///   returns a new element of the same type.
 ///
-pub fn[T] Transpose::map_inplace(self : Transpose[T], f : (T) -> T) -> Unit {
-  self.0.map_inplace(f)
+/// Example:
+/// ```moonbit
+/// let matrix = @mutable.Matrix::make(2, 3, fn(i, j) { i + j })
+/// inspect(matrix, content=>
+///   #||0, 1, 2|
+///   #||1, 2, 3|
+/// )
+/// let transpose = matrix.to_transpose()
+/// transpose.map_in_place(fn(x) { x + 1 })
+/// inspect(transpose, content=>
+///   #||1, 2|
+///   #||2, 3|
+///   #||3, 4|
+/// )
+/// ```
+/// 
+pub fn[T] Transpose::map_in_place(self : Transpose[T], f : (T) -> T) -> Unit {
+  self.0.map_in_place(f)
 }
 
 ///|
@@ -495,15 +511,15 @@ pub fn[T] Transpose::map_inplace(self : Transpose[T], f : (T) -> T) -> Unit {
 /// let matrix = @mutable.Matrix::make(2, 3, fn(i, j) { i + j })
 /// let transpose = matrix.to_transpose()
 /// // Double all elements in column 1
-/// transpose.map_col_inplace(1, fn(x) { x * 2 })
+/// transpose.map_col_in_place(1, fn(x) { x * 2 })
 /// ```
 ///
-pub fn[T] Transpose::map_col_inplace(
+pub fn[T] Transpose::map_col_in_place(
   self : Transpose[T],
   col : Int,
   f : (T) -> T,
 ) -> Unit {
-  self.0.map_row_inplace(col, f)
+  self.0.map_row_in_place(col, f)
 }
 
 ///|
@@ -525,15 +541,15 @@ pub fn[T] Transpose::map_col_inplace(
 /// let matrix = @mutable.Matrix::make(3, 2, (i, j) => i + j)
 /// let transposed = matrix.to_transpose()
 /// // Double all elements in row 1
-/// transposed.map_row_inplace(1, (x) => x * 2)
+/// transposed.map_row_in_place(1, (x) => x * 2)
 /// ```
 ///
-pub fn[T] Transpose::map_row_inplace(
+pub fn[T] Transpose::map_row_in_place(
   self : Transpose[T],
   row : Int,
   f : (T) -> T,
 ) -> Unit {
-  self.0.map_col_inplace(row, f)
+  self.0.map_col_in_place(row, f)
 }
 
 ///|

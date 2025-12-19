@@ -177,6 +177,34 @@ pub fn[T, U] Matrix::map(self : Matrix[T], f : (T) -> U) -> Matrix[U] {
 }
 
 ///|
+/// Apply `mapi` method to the `Matrix` type.
+/// 
+/// Parameters
+/// - `self`: The matrix to apply the map method.
+/// - `f`: The function to apply to each element of the matrix. The function takes the row index, column index and the element.
+/// 
+/// Example
+/// ```moonbit
+/// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+/// let m2 = m.mapi(fn(i, j, x) { x + i + j })
+/// inspect(m2, content=
+///   #||1, 3|
+///   #||4, 6|
+/// )
+/// ```
+pub fn[T, U] Matrix::mapi(
+  self : Matrix[T],
+  f : (Int, Int, T) -> U,
+) -> Matrix[U] {
+  let row = self.row
+  let col = self.col
+  let data = @immut/array.makei(row * col, fn(i) {
+    f(i / col, i % col, self.data[i])
+  })
+  { row, col, data }
+}
+
+///|
 /// Create a new `Matrix` type.
 /// 
 /// Parameters
@@ -570,6 +598,187 @@ pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
 }
 
 ///|
+/// Computes the trace of a matrix (the sum of the diagonal elements).
+/// 
+/// Parameters
+/// - `self`: The matrix to compute the trace of.
+/// 
+/// Example
+/// ```moonbit
+/// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+/// inspect(m.trace(), content="5")
+/// ```
+pub fn[T : Add + Zero] Matrix::trace(self : Matrix[T]) -> T {
+  let n = if self.row < self.col { self.row } else { self.col }
+  let mut sum = T::zero()
+  for i in 0..<n {
+    sum = sum + self[i][i]
+  }
+  sum
+}
+
+///|
+/// Checks if the matrix is square (i.e., has the same number of rows and columns).
+/// 
+/// Parameters:
+/// * `self` : The matrix to check for squareness.
+/// 
+/// Returns `true` if the matrix is square, `false` otherwise.
+/// 
+/// Example:
+/// ```moonbit
+/// let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
+/// let m2 = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+/// inspect(m1.is_square(), content="true")  // 2x2 matrix is
+/// inspect(m2.is_square(), content="false") // 2x3 matrix is not square
+/// ```
+pub fn[T] Matrix::is_square(self : Matrix[T]) -> Bool {
+  self.row == self.col
+}
+
+///|
+/// Make a iterator over the matrix elements.
+/// 
+/// Parameters:
+/// * `self` : The matrix to iterate over.
+/// 
+/// Returns an iterator that yields each element of the matrix in row-major
+/// 
+/// Example:
+/// ```moonbit
+/// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+/// let iter = m.iter()
+/// inspect(iter.collect(), content="[1, 2, 3, 4]") // Collects all elements in row-major order
+/// ```
+pub fn[T] Matrix::iter(self : Matrix[T]) -> Iter[T] {
+  self.data.iter()
+}
+
+///|
+/// Creates an iterator over the elements of a specific row in the matrix.
+/// 
+/// Parameters:
+/// * `self` : The matrix to iterate over.
+/// * `row` : The zero-based index of the row to iterate.
+/// 
+/// Returns an iterator that yields each element in the specified row from left to right.
+/// 
+/// Panics if `row` is negative or greater than or equal to the number of rows.
+/// 
+/// Example:
+/// ```moonbit
+/// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+/// let row_iter = m.iter_row(1)
+/// for elem in row_iter {
+///   println(elem) // prints: 4, 5, 6
+/// }
+/// ```
+pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
+  guard row >= 0 && row < self.row else { abort("Row index out of bounds") }
+  let start = row * self.col
+  let end = start + self.col
+  Iter::new(fn(yield_) {
+    for i in start..<end {
+      if yield_(self.data[i]) == IterEnd {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  })
+}
+
+///|
+/// Creates an iterator over the elements of a specific column in the matrix.
+/// 
+/// Parameters:
+/// * `self` : The matrix to iterate over.
+/// * `col` : The zero-based index of the column to iterate.
+/// 
+/// Returns an iterator that yields each element in the specified column from top to bottom.
+/// 
+/// Panics if `col` is negative or greater than or equal to the number of columns.
+/// 
+/// Example:
+/// ```moonbit
+/// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+/// let col_iter = m.iter_col(1)
+/// for elem in col_iter {
+///   println(elem) // prints: 2, 5
+/// }
+/// ```
+pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
+  guard col >= 0 && col < self.col else { abort("Column index out of bounds") }
+  Iter::new(fn(yield_) {
+    for i in 0..<self.row {
+      if yield_(self.data[i * self.col + col]) == IterEnd {
+        break IterEnd
+      }
+    } else {
+      IterContinue
+    }
+  })
+}
+
+///|
+/// Creates a copy of the matrix's underlying data as a new array.
+///
+/// Parameters:
+///
+/// * `self` : The matrix whose data will be copied.
+///
+/// Returns a new array containing all elements of the matrix in row-major
+/// order.
+///
+/// Example:
+///
+/// ```moonbit
+/// let matrix = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+/// let array = matrix.to_array()
+/// inspect(array, content="[1, 2, 3, 4, 5, 6]")
+/// ```
+///
+pub fn[T] Matrix::to_array(self : Matrix[T]) -> Array[T] {
+  // IArray to Array conversion
+  let arr = []
+  self.data.each(fn(x) { arr.push(x) })
+  arr
+}
+
+///|
+/// Converts a matrix to a 2D array representation where each sub-array
+/// represents a row of the matrix.
+///
+/// Parameters:
+///
+/// * `self` : The matrix to convert to a 2D array.
+///
+/// Returns a 2D array where each element is an array representing a row from
+/// the original matrix, preserving the order of rows and elements within each
+/// row.
+///
+/// Example:
+///
+/// ```moonbit
+/// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+/// let array_2d = m.to_2d_array()
+/// inspect(array_2d, content="[[1, 2, 3], [4, 5, 6]]")
+/// ```
+///
+pub fn[T] Matrix::to_2d_array(self : Matrix[T]) -> Array[Array[T]] {
+  let row = self.row
+  let arr_2d = []
+  for i in 0..<row {
+    let row_arr = []
+    for j in 0..<self.col {
+      row_arr.push(self.data[i * self.col + j])
+    }
+    arr_2d.push(row_arr)
+  }
+  arr_2d
+}
+
+///|
 /// Compute the determinant of a matrix.
 /// 
 /// Parameters
@@ -751,5 +960,17 @@ pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
 /// )
 /// ```
 pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Matrix[T] {
-  self.transpose().swap_rows(c1, c2).transpose()
+  guard c1 < self.col && c2 < self.col
+  guard c1 >= 0 && c2 >= 0
+  guard c1 != c2
+  let new_matrix = Matrix::make(self.row, self.col, fn(i, j) {
+    if j == c1 {
+      self[i][c2]
+    } else if j == c2 {
+      self[i][c1]
+    } else {
+      self[i][j]
+    }
+  })
+  new_matrix
 }

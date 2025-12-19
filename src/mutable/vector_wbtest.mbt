@@ -17,7 +17,9 @@ impl[T] @qc.Shrink for Vector[T] with shrink(_) -> Iter[Vector[T]] {
 /// ```moonbit
 /// // The property being tested:
 /// let v = Vector::from_array([1, 2, 3])
+///
 /// let sum = v + v
+///
 /// let scaled = v.left_scale(2)
 /// // sum should equal scaled: [2, 4, 6]
 /// ```
@@ -50,6 +52,7 @@ test "a + a = 2 * a" {
 /// ```moonbit
 /// // This property should hold for any two vectors of the same length
 /// let v1 = Vector::from_array([1, 2, 3])
+///
 /// let v2 = Vector::from_array([4, 5, 6])
 /// // v1 + v2 should equal v2 + v1: [5, 7, 9]
 /// ```
@@ -138,4 +141,107 @@ test "S_v * p = v * p" {
   }
 
   @qc.quick_check_fn(check)
+}
+
+///|
+test "iter" {
+  let v = Vector::from_array([1, 2, 3])
+  let arr = v.iter().to_array()
+  inspect(arr, content="[1, 2, 3]")
+}
+
+///|
+test "vector_creation_and_access" {
+  let v1 = Vector::make(3, 10)
+  inspect(v1.length(), content="3")
+  inspect(v1[0], content="10")
+  inspect(v1[2], content="10")
+  let v2 = Vector::makei(3, fn(i) { i * 2 })
+  inspect(v2[0], content="0")
+  inspect(v2[1], content="2")
+  inspect(v2[2], content="4")
+  v2[1] = 99
+  inspect(v2[1], content="99")
+  let v3 = v2.copy()
+  v3[0] = 100
+  inspect(v2[0], content="0") // Original unchanged
+  inspect(v3[0], content="100") // Copy changed
+}
+
+///|
+test "vector_formatting" {
+  let v = Vector::from_array([1, 2, 3])
+  inspect(v.to_string(), content="|1, 2, 3|")
+}
+
+///|
+test "vector_mapping" {
+  let v = Vector::from_array([1, 2, 3])
+  let v2 = v.map(fn(x) { x * 2 })
+  inspect(v2, content="|2, 4, 6|")
+  let v3 = Vector::from_array([1, 2, 3])
+  v3.map_in_place(fn(x) { x + 1 })
+  inspect(v3, content="|2, 3, 4|")
+}
+
+///|
+test "vector_scaling" {
+  let v = Vector::from_array([1, 2, 3])
+  inspect(v.left_scale(2), content="|2, 4, 6|")
+  inspect(Vector::right_scale(2, v), content="|2, 4, 6|")
+  let v2 = Vector::from_array([1, 2, 3])
+  v2.left_scale_in_place(2)
+  inspect(v2, content="|2, 4, 6|")
+  let v3 = Vector::from_array([1, 2, 3])
+  Vector::right_scale_in_place(2, v3)
+  inspect(v3, content="|2, 4, 6|")
+}
+
+///|
+test "vector_matrix_conversion" {
+  let v = Vector::from_array([1, 2, 3])
+  let row_m = v.to_row_matrix()
+  inspect(row_m.row(), content="1")
+  inspect(row_m.col(), content="3")
+  inspect(row_m[0][0], content="1")
+  let col_m = v.to_col_matrix()
+  inspect(col_m.row(), content="3")
+  inspect(col_m.col(), content="1")
+  inspect(col_m[0][0], content="1")
+}
+
+///|
+test "vector_advanced_math" {
+  // lerp
+  let v1 = Vector::from_array([0.0, 0.0])
+  let v2 = Vector::from_array([10.0, 20.0])
+  inspect(v1.lerp(v2, 0.5), content="|5, 10|")
+
+  // tensor_product
+  let t1 = Vector::from_array([1, 2])
+  let t2 = Vector::from_array([3, 4, 5])
+  let tp = t1.tensor_product(t2)
+  inspect(
+    tp,
+    content=(
+      #||3, 4, 5|
+      #||6, 8, 10|
+    ),
+  )
+
+  // add_constant
+  let ac = Vector::from_array([1, 2, 3])
+  inspect(ac.add_constant(10), content="|11, 12, 13|")
+
+  // lin_comb
+  let lc1 = Vector::from_array([1, 2])
+  let lc2 = Vector::from_array([3, 4])
+  // 2 * [1, 2] + 3 * [3, 4] = [2, 4] + [9, 12] = [11, 16]
+  inspect(lin_comb(2, lc1, 3, lc2), content="|11, 16|")
+}
+
+///|
+test "vector_negation" {
+  let v = Vector::from_array([1, -2, 3])
+  inspect(-v, content="|-1, 2, -3|")
 }
