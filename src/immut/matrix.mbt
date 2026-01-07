@@ -2,7 +2,7 @@
 /// Create a new type called IArray, which is an alias for 
 /// the immutable array type.
 /// 
-using @immut/array {type T as IArray}
+type IArray[T] = @immut/array.T[T]
 
 ///|
 /// Define a new type called Matrix, which is a 2D array of 
@@ -677,15 +677,14 @@ pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
   guard row >= 0 && row < self.row else { abort("Row index out of bounds") }
   let start = row * self.col
   let end = start + self.col
-  Iter::new(fn(yield_) {
-    for i in start..<end {
-      if yield_(self.data[i]) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
-    }
-  })
+  let mut i = start
+  Iterator::new(() => if i < end {
+    let value = self.data[i]
+    i = i + 1
+    Some(value)
+  } else {
+    None
+  }).iter()
 }
 
 ///|
@@ -709,15 +708,14 @@ pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
 /// ```
 pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
   guard col >= 0 && col < self.col else { abort("Column index out of bounds") }
-  Iter::new(fn(yield_) {
-    for i in 0..<self.row {
-      if yield_(self.data[i * self.col + col]) == IterEnd {
-        break IterEnd
-      }
-    } else {
-      IterContinue
-    }
-  })
+  let mut i = 0
+  Iterator::new(() => if i < self.row {
+    let value = self.data[i * self.col + col]
+    i = i + 1
+    Some(value)
+  } else {
+    None
+  }).iter()
 }
 
 ///|
