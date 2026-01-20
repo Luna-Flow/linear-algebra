@@ -678,7 +678,7 @@ pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
   let start = row * self.col
   let end = start + self.col
   let mut i = start
-  Iterator::new(() => if i < end {
+  Iter::new(() => if i < end {
     let value = self.data[i]
     i = i + 1
     Some(value)
@@ -709,7 +709,7 @@ pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
 pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
   guard col >= 0 && col < self.col else { abort("Column index out of bounds") }
   let mut i = 0
-  Iterator::new(() => if i < self.row {
+  Iter::new(() => if i < self.row {
     let value = self.data[i * self.col + col]
     i = i + 1
     Some(value)
