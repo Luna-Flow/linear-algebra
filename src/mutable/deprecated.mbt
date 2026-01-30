@@ -66,14 +66,14 @@ pub fn[A : Mul] Vector::left_scale_inplace(
   self : Vector[A],
   scalar : A,
 ) -> Unit {
-  self.map_in_place(x => x * scalar)
+  self.left_scale_in_place(scalar)
 }
 
 ///|
 #deprecated("Use Vector::right_scale_in_place instead")
 pub fn[A : Mul] Vector::right_scale_inplace(
-  scalar : A,
   self : Vector[A],
+  scalar : A,
 ) -> Unit {
-  self.map_in_place(x => scalar * x)
+  self.right_scale_in_place(scalar)
 }

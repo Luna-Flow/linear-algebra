@@ -286,3 +286,19 @@ test "lin_comb" {
   let result = lin_comb(2, v1, 3, v2)
   inspect(result, content="|14, 19, 24|")
 }
+
+///|
+test "vector_empty_edge_cases" {
+  let v = Vector::make(0, 0.0)
+  inspect(v.length(), content="0")
+  inspect(v.to_string(), content="||")
+  inspect(v.map(fn(x) { x + 1.0 }).length(), content="0")
+}
+
+///|
+test "vector_single_element" {
+  let v = Vector::from_array([34.0])
+  inspect(v.length(), content="1")
+  inspect(v[0], content="34")
+  inspect(v.left_scale(2.0)[0], content="68")
+}

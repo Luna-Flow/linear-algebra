@@ -1,4 +1,19 @@
 ///|
+pub fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T] {
+  guard row >= 0 && row < self.row()
+  {
+    get: fn(col) {
+      guard col >= 0 && col < self.col()
+      self.0[col][row]
+    },
+    set: fn(col, val) {
+      guard col >= 0 && col < self.col()
+      self.0[col][row] = val
+    },
+  }
+}
+
+///|
 /// Matrix transpose view providing transposed access to an underlying matrix
 /// without copying data.
 ///
@@ -69,7 +84,7 @@ pub impl[T : Show] Show for Transpose[T] with to_string(s) {
     res.write_char('|')
     s.eachi_row(i, (c, x) => {
       res.write_string(x.to_string())
-      if c < s.row - 1 {
+      if c < s.col() - 1 {
         res.write_string(", ")
       }
     })
@@ -122,7 +137,7 @@ pub impl[T : Show] Show for Transpose[T] with output(s, l) {
 /// ```
 ///
 pub impl[T : Add + Mul] Mul for Transpose[T] with mul(a, b) {
-  b.0 * a.0
+  Transpose(b.0 * a.0)
 }
 
 ///|
@@ -145,7 +160,7 @@ pub impl[T : Add + Mul] Mul for Transpose[T] with mul(a, b) {
 /// ```
 ///
 pub impl[T : Neg] Neg for Transpose[T] with neg(a) {
-  -a.0
+  Transpose(-a.0)
 }
 
 ///|
@@ -159,7 +174,7 @@ pub impl[T : Neg] Neg for Transpose[T] with neg(a) {
 /// Returns a new transpose matrix that is the result of the subtraction.
 ///
 pub impl[T : Add + Neg] Sub for Transpose[T] with sub(a, b) {
-  a.0 - b.0
+  Transpose(a.0 - b.0)
 }
 
 ///|
@@ -375,7 +390,7 @@ pub fn[T] Transpose::each_row_col(
 /// ```
 ///
 pub fn[T] Transpose::copy(self : Transpose[T]) -> Transpose[T] {
-  self.0.copy()
+  Transpose(self.0.copy())
 }
 
 ///|
@@ -404,7 +419,7 @@ pub fn[T] Transpose::horizontal_combine(
   self : Transpose[T],
   other : Transpose[T],
 ) -> Transpose[T] {
-  self.0.vertical_combine(other.0)
+  Transpose(self.0.vertical_combine(other.0))
 }
 
 ///|
@@ -434,7 +449,7 @@ pub fn[T] Transpose::vertical_combine(
   self : Transpose[T],
   other : Transpose[T],
 ) -> Transpose[T] {
-  self.0.horizontal_combine(other.0)
+  Transpose(self.0.horizontal_combine(other.0))
 }
 
 ///|
@@ -459,7 +474,7 @@ pub fn[T] Transpose::vertical_combine(
 /// ```
 ///
 pub fn[T] Transpose::map(self : Transpose[T], f : (T) -> T) -> Transpose[T] {
-  self.0.map(f)
+  Transpose(self.0.map(f))
 }
 
 ///|
@@ -674,7 +689,7 @@ pub fn[T : Add] Transpose::add_constant(
   self : Transpose[T],
   cst : T,
 ) -> Transpose[T] {
-  self.0.map(v => v + cst)
+  Transpose(self.0.add_constant(cst))
 }
 
 ///|
@@ -712,7 +727,7 @@ pub fn[T : Add] Transpose::add_constant(
 /// ```
 ///
 pub fn[T : Mul] Transpose::scale(self : Transpose[T], cst : T) -> Transpose[T] {
-  self.0.map(v => v * cst)
+  Transpose(self.0.scale(cst))
 }
 
 ///|
