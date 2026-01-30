@@ -111,6 +111,11 @@ struct Matrix[T] {
     - **Returns**
       `Lens[T]` - Accessor object for that row
 
+    - **Performance Note**
+      Calling `m[row]` allocates a new `Lens` object and two closures. For performance-critical bulk operations, it is highly recommended to:
+      1. **Cache the lens**: Store the result of `m[row]` in a variable before the loop.
+      2. **Use built-in tools**: For common operations, use `each_row`, `map_row_inplace`, etc., which avoid Lens overhead entirely.
+
   ---
 
   - **`fn[T, U] Matrix::map(self, f) -> Matrix[U]`**
@@ -1287,3 +1292,9 @@ pub struct Transpose[T](Matrix[T])
 
 - **`impl[T : Show] Show for Transpose[T] with to_string`**
   - **Description**: String representation of transposed matrix.
+  - **`fn[T] Transpose::op_get(self, row) -> Lens[T]`**
+    - **Description**
+        Gets an accessor for the specified row of the transpose view.
+
+    - **Performance Note**
+        Calling `t[row]` involves allocation overhead. When processing row data in a loop, it is recommended to cache the result using `let row = t[i]`.

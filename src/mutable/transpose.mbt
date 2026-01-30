@@ -1,14 +1,35 @@
 ///|
+/// Returns a lens that provides indexed access to a specific row of the 
+/// transposed matrix.
+///
+/// **Performance Note**: Calling `t[row]` allocates a new `Lens` object and several closures.
+/// Since this is a transposed view, every access `t[row][col]` maps back to 
+/// the underlying matrix. For performance-critical bulk operations, it is 
+/// highly recommended to:
+/// 1. **Cache the lens**: Store the result of `t[row]` in a variable before the loop.
+/// 2. **Use built-in tools**: For common operations, use `eachi_row`, `map_row_in_place`, 
+///    or `iter_row` which avoid Lens overhead entirely.
+///
+/// Parameters:
+///
+/// * `self` : The transposed matrix to access.
+/// * `row` : The zero-based index of the row to access.
+///
+/// Returns a `Lens[T]` object for accessing elements in the specified row by 
+/// column index.
 pub fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T] {
   guard row >= 0 && row < self.row()
   {
     get: fn(col) {
       guard col >= 0 && col < self.col()
-      self.0[col][row]
+      // Index mapping for Transpose view:
+      // Transpose[i][j] maps to UnderlyingMatrix[j][i]
+      self.0.data[col * self.0.col + row]
     },
     set: fn(col, val) {
       guard col >= 0 && col < self.col()
-      self.0[col][row] = val
+      // Mapping: Transpose[i][j] = val -> UnderlyingMatrix[j][i] = val
+      self.0.data[col * self.0.col + row] = val
     },
   }
 }
@@ -136,7 +157,11 @@ pub impl[T : Show] Show for Transpose[T] with output(s, l) {
 /// )
 /// ```
 ///
-pub impl[T : Add + Mul] Mul for Transpose[T] with mul(a, b) {
+pub impl[T : AddMonoid + Mul] Mul for Transpose[T] with mul(a, b) {
+  // Leverage the matrix identity: A^T * B^T = (B * A)^T
+  // This allows us to reuse the heavily optimized Matrix multiplication logic
+  // by just swapping the operand order, effectively performing the multiplication 
+  // on the transposed views without any data movement or manual loop management.
   Transpose(b.0 * a.0)
 }
 
@@ -812,5 +837,22 @@ pub fn[T] Transpose::transpose(self : Transpose[T]) -> Matrix[T] {
 /// )
 /// ```
 pub fn[T] Transpose::materialize(self : Transpose[T]) -> Matrix[T] {
-  Matrix::make(self.row(), self.col(), (i, j) => self.0[j][i])
+  let r = self.row()
+  let c = self.col()
+  if r == 0 || c == 0 {
+    return Matrix::from_array(r, c, [])
+  }
+  // Materialize the transposed view into a new physical Matrix.
+  // Using direct nested loops to avoid the overhead of Lens abstractions and
+  // division/modulo operations that would occur in a generic Matrix::make call.
+  let m = self.0
+  let data = Array::make(r * c, m.data[0])
+  for i = 0; i < r; i = i + 1 {
+    let row_offset = i * c // result[i][...]
+    for j = 0; j < c; j = j + 1 {
+      // Equivalent to result[i][j] = underlying[j][i]
+      data[row_offset + j] = m.data[j * m.col + i]
+    }
+  }
+  Matrix::from_array(r, c, data)
 }

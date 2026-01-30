@@ -4,7 +4,10 @@ using @lg {
   trait Zero,
   trait Conjugate,
   trait Inverse,
+  trait AddMonoid,
+  trait MulMonoid,
   trait Semiring,
+  trait Field,
   trait Num,
 }
 

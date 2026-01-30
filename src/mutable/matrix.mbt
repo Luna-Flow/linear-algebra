@@ -45,6 +45,22 @@ struct Matrix[T] {
 /// and users cannot directly access its fields. The struct can only be used
 /// through its associated methods.
 ///
+/// ### Performance Best Practices:
+///
+/// 1. **Avoid Repeated Lens Allocation**: Accessing `m[i][j]` in a loop creates a `Lens` object 
+///    on every call to `m[i]`. For bulk operations on a row, it is much faster to cache the 
+///    row lens:
+///    ```moonbit
+///    let row = m[i] // Allocate once
+///    for j in 0..<m.col {
+///      row[j] = ... // Reuse cached lens
+///    }
+///    ```
+/// 2. **Prefer Built-in Row/Col Tools**: Methods like `map_row_in_place`, `each_row`, `eachi_row`,
+///    and `iter_row` are highly optimized and bypass the `Lens` abstraction entirely.
+/// 3. **Manual Index Tracking**: For custom low-level loops, manually incrementing a 1D offset 
+///    is more efficient than calculating `row * col + j` in every iteration.
+///
 /// Example:
 ///
 /// ```moonbit
@@ -203,7 +219,19 @@ pub fn[T, U] Matrix::mapi(
 ) -> Matrix[U] {
   let row = self.row
   let col = self.col
-  let data = Array::makei(row * col, fn(i) { f(i / col, i % col, self.data[i]) })
+  if row == 0 || col == 0 {
+    return { row, col, data: [] }
+  }
+  // Avoid division and modulo in the loop by using nested loops.
+  // This is significantly faster for large matrices.
+  let data = Array::make(row * col, f(0, 0, self.data[0]))
+  for i in 0..<row {
+    let offset = i * col
+    for j in 0..<col {
+      let idx = offset + j
+      data[idx] = f(i, j, self.data[idx])
+    }
+  }
   { row, col, data }
 }
 
@@ -278,8 +306,11 @@ pub fn[T] Matrix::map_row_in_place(
   row : Int,
   f : (T) -> T,
 ) -> Unit {
+  let offset = row * self.col
+  let data = self.data
   for i in 0..<self.col {
-    self.data[row * self.col + i] = f(self.data[row * self.col + i])
+    let idx = offset + i
+    data[idx] = f(data[idx])
   }
 }
 
@@ -307,8 +338,12 @@ pub fn[T] Matrix::map_col_in_place(
   col : Int,
   f : (T) -> T,
 ) -> Unit {
-  for i in 0..<self.row {
-    self.data[i * self.col + col] = f(self.data[i * self.col + col])
+  let rows = self.row
+  let cols = self.col
+  let data = self.data
+  for i in 0..<rows {
+    let idx = i * cols + col
+    data[idx] = f(data[idx])
   }
 }
 
@@ -351,7 +386,15 @@ pub fn[T] Matrix::each_row_col(
   self : Matrix[T],
   f : (Int, Int, T) -> Unit,
 ) -> Unit {
-  self.data.eachi((index, data) => f(index / self.col, index % self.col, data))
+  let rows = self.row
+  let cols = self.col
+  let data = self.data
+  for i in 0..<rows {
+    let offset = i * cols
+    for j in 0..<cols {
+      f(i, j, data[offset + j])
+    }
+  }
 }
 
 ///|
@@ -367,8 +410,10 @@ pub fn[T] Matrix::each_row(
   row : Int,
   f : (T) -> Unit,
 ) -> Unit {
+  let offset = row * self.col
+  let data = self.data
   for i in 0..<self.col {
-    f(self.data[row * self.col + i])
+    f(data[offset + i])
   }
 }
 
@@ -402,8 +447,10 @@ pub fn[T] Matrix::eachi_row(
   row : Int,
   f : (Int, T) -> Unit,
 ) -> Unit {
+  let offset = row * self.col
+  let data = self.data
   for i in 0..<self.col {
-    f(i, self.data[row * self.col + i])
+    f(i, data[offset + i])
   }
 }
 
@@ -421,8 +468,11 @@ pub fn[T] Matrix::each_col(
   col : Int,
   f : (T) -> Unit,
 ) -> Unit {
-  for i in 0..<self.row {
-    f(self.data[i * self.col + col])
+  let rows = self.row
+  let cols = self.col
+  let data = self.data
+  for i in 0..<rows {
+    f(data[i * cols + col])
   }
 }
 
@@ -556,7 +606,23 @@ pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
 /// ```
 ///
 pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
-  Matrix::make(arr.length(), arr[0].length(), fn(i, j) { arr[i][j] })
+  let row = arr.length()
+  if row == 0 {
+    return { row: 0, col: 0, data: [] }
+  }
+  let col = arr[0].length()
+  if col == 0 {
+    return { row, col, data: [] }
+  }
+  let data = Array::make(row * col, arr[0][0])
+  for i in 0..<row {
+    let offset = i * col
+    let row_arr = arr[i]
+    for j in 0..<col {
+      data[offset + j] = row_arr[j]
+    }
+  }
+  { row, col, data }
 }
 
 ///|
@@ -593,6 +659,12 @@ pub fn[T] Matrix::from_array(
 ///|
 /// Returns a lens that provides indexed access to a specific row of the matrix.
 ///
+/// **Performance Note**: Calling `m[row]` allocates a new `Lens` object and two closures.
+/// For performance-critical bulk operations on a row, it is highly recommended to:
+/// 1. **Cache the lens**: Store the result of `m[row]` in a variable before the loop.
+/// 2. **Use built-in tools**: For common operations, use `each_row`, `map_row_in_place`, 
+///    or `iter_row` which avoid Lens overhead entirely.
+///
 /// Parameters:
 ///
 /// * `self` : The matrix to access.
@@ -605,7 +677,7 @@ pub fn[T] Matrix::from_array(
 ///
 /// ```moonbit
 /// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// let row_lens = m[1]  // Get lens for row 1
+/// let row_lens = m[1]  // Caching the lens for row 1
 /// inspect(row_lens[0], content="4")  // Access element at column 0
 /// row_lens[2] = 10  // Set element at column 2
 /// inspect(m[1][2], content="10")
@@ -613,6 +685,7 @@ pub fn[T] Matrix::from_array(
 ///
 pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Lens[T] {
   {
+    // Index mapping for flattened 1D array: index = row * total_cols + col
     set: (c, v) => self.data[c + self.col * row] = v,
     get: c => self.data[c + self.col * row],
   }
@@ -676,7 +749,7 @@ pub fn[T] Lens::op_set(self : Lens[T], col : Int, elem : T) -> Unit {
 /// inspect(result, content="|19, 22|\n|43, 50|")
 /// ```
 ///
-pub impl[T : Mul + Add] Mul for Matrix[T] with mul(
+pub impl[T : AddMonoid + Mul] Mul for Matrix[T] with mul(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
@@ -684,16 +757,40 @@ pub impl[T : Mul + Add] Mul for Matrix[T] with mul(
   let col = other.col
   let inner = self.col
   guard inner == other.row
-  let data = Array::makei(row * col, fn(i) {
-    let r = i / col
-    let c = i % col
-    let mut sum = self[r][0] * other[0][c]
-    for k in 1..<inner {
-      sum += self[r][k] * other[k][c]
+  // Hybrid Strategy for Performance:
+  // 1. Small Case (N <= 64): Use i-j-k (dot-product) order to maximize register accumulation.
+  //    Manual indexing hoisting is applied here to minimize instructions in the innermost loop.
+  // 2. Large Case (N > 64): Use i-k-j (scan line) order to maximize L1/L2 cache locality.
+  //    Natural indexing (i * n + j) is preferred to trigger compiler strength reduction and bounds check elimination.
+  if row <= 64 && col <= 64 && inner <= 64 {
+    let data = Array::make(row * col, T::zero())
+    for i = 0; i < row; i = i + 1 {
+      let row_offset = i * col // self[i][...]
+      let self_row_offset = i * inner // result[i][...]
+      for j = 0; j < col; j = j + 1 {
+        let mut sum = T::zero()
+        for k = 0; k < inner; k = k + 1 {
+          // Calculation equivalent to: result[i][j] += self[i][k] * other[k][j]
+          sum = sum + self.data[self_row_offset + k] * other.data[k * col + j]
+        }
+        data[row_offset + j] = sum
+      }
     }
-    sum
-  })
-  { row, col, data }
+    { row, col, data }
+  } else {
+    let data = Array::make(row * col, T::zero())
+    for i = 0; i < row; i = i + 1 {
+      for k = 0; k < inner; k = k + 1 {
+        let aik = self.data[i * inner + k] // self[i][k]
+        for j = 0; j < col; j = j + 1 {
+          let res_idx = i * col + j // result[i][j]
+          let other_idx = k * col + j // other[k][j]
+          data[res_idx] = data[res_idx] + aik * other.data[other_idx]
+        }
+      }
+    }
+    { row, col, data }
+  }
 }
 
 ///|
@@ -847,7 +944,7 @@ pub fn[T : Add] Matrix::add_constant(self : Matrix[T], cst : T) -> Matrix[T] {
 /// inspect(id, content="|1, 0, 0|\n|0, 1, 0|\n|0, 0, 1|")
 /// ```
 ///
-pub fn[T : One + Zero] identity(size : Int) -> Matrix[T] {
+pub fn[T : Zero + One] identity(size : Int) -> Matrix[T] {
   Matrix::make(size, size, fn(i, j) {
     guard i == j else { T::zero() }
     T::one()
@@ -911,7 +1008,10 @@ pub fn[T : Conjugate] Matrix::adjoint(self : Matrix[T]) -> Matrix[T] {
 /// ```
 ///
 pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
-  Matrix::make(self.col, self.row, fn(i, j) { self[j][i] })
+  Matrix::make(self.col, self.row, fn(i, j) {
+    // self[j][i]
+    self.data[j * self.col + i]
+  })
 }
 
 ///|
@@ -1053,7 +1153,7 @@ pub fn[T : Semiring] Matrix::pow(self : Matrix[T], power : Int) -> Matrix[T] {
 /// inspect(result, content="|1, 0, 0, 1|\n|0, 1, 0, -3|\n|0, 0, 1, 4|")
 /// ```
 ///
-pub fn[T : Compare + Num + Sub + Inverse] Matrix::reduce_row_elimination(
+pub fn[T : Compare + Num + Inverse] Matrix::reduce_row_elimination(
   self : Matrix[T],
 ) -> Matrix[T] {
   let r = self.row
@@ -1065,24 +1165,30 @@ pub fn[T : Compare + Num + Sub + Inverse] Matrix::reduce_row_elimination(
     }
     let mut max_row = i
     for j in (i + 1)..<r {
-      if self[j][col].abs() > self[max_row][col].abs() {
+      // self[j][col].abs() > self[max_row][col].abs()
+      if self.data[j * c + col].abs() > self.data[max_row * c + col].abs() {
         max_row = j
       }
     }
     ignore(self.swap_rows(i, max_row))
-    if self[i][col] == T::zero() {
+    // self[i][col]
+    if self.data[i * c + col] == T::zero() {
       col = col + 1
       continue
     }
-    let val = self[i][col]
+    // self[i][col]
+    let val = self.data[i * c + col]
     ignore(self.map_row_in_place(i, fn(x) { x * val.inv() }))
     for j in 0..<r {
       if j == i {
         continue
       }
-      let factor = self[j][col]
+      // self[j][col]
+      let factor = self.data[j * c + col]
       for k in 0..<c {
-        self[j][k] = self[j][k] - self[i][k] * factor
+        // self[j][k] = self[j][k] - self[i][k] * factor
+        self.data[j * c + k] = self.data[j * c + k] -
+          self.data[i * c + k] * factor
       }
     }
     col = col + 1
@@ -1119,9 +1225,11 @@ pub fn[T] Matrix::horizontal_combine(
   guard self.row == other.row
   Matrix::make(self.row, self.col + other.col, fn(i, j) {
     if j < self.col {
-      self[i][j]
+      // self[i][j]
+      self.data[i * self.col + j]
     } else {
-      other[i][j - self.col]
+      // other[i][j - self.col]
+      other.data[i * other.col + (j - self.col)]
     }
   })
 }
@@ -1213,11 +1321,17 @@ pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int) -> Array[T] {
 ///
 pub fn[T] Matrix::col_to_array(self : Matrix[T], col : Int) -> Array[T] {
   guard col >= 0 && col < self.col
-  let arr = []
-  for i in 0..<self.row {
-    arr.push(self.data[i * self.col + col])
+  let row_count = self.row
+  let col_count = self.col
+  if row_count == 0 {
+    return []
   }
-  arr
+  let data = self.data
+  let res = Array::make(row_count, data[col])
+  for i in 1..<row_count {
+    res[i] = data[i * col_count + col]
+  }
+  res
 }
 
 ///|
@@ -1362,13 +1476,14 @@ pub fn[T] Matrix::to_vector(self : Matrix[T]) -> Vector[T] {
 /// let rank = m.rank()
 /// inspect(rank, content="2")  // The rank of the matrix is 2
 /// ```
-pub fn[T : Compare + Num + Inverse + Sub] Matrix::rank(self : Matrix[T]) -> Int {
+pub fn[T : Compare + Num + Inverse] Matrix::rank(self : Matrix[T]) -> Int {
   let m = self.copy()
   let _ = m.reduce_row_elimination()
   let mut rank = 0
   for i in 0..<m.row {
     for j in 0..<m.col {
-      if m[i][j] != T::zero() {
+      // m[i][j]
+      if m.data[i * m.col + j] != T::zero() {
         rank += 1
         break
       }
@@ -1405,13 +1520,14 @@ pub fn[T : @internal.HomomorphismNat] Matrix::from_nat_matrix(
 /// let trace = m.trace()
 /// inspect(trace, content="15")  // 1 + 5 + 9 = 15
 /// ```
-pub fn[T : Add + Zero] Matrix::trace(self : Matrix[T]) -> T {
+pub fn[T : AddMonoid] Matrix::trace(self : Matrix[T]) -> T {
   guard self.is_square() else {
     abort("Matrix must be square to calculate trace")
   }
   let mut sum = T::zero()
   for i in 0..<self.row {
-    sum = sum + self[i][i]
+    // self[i][i]
+    sum = sum + self.data[i * self.col + i]
   }
   sum
 }
@@ -1536,7 +1652,7 @@ pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
 ///    (eigenvals[1] - 5.0).abs() < Tolerance::tolerance()
 ///  assert_true(v1_ok || v2_ok)
 /// ```
-pub fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] Matrix::eigen(
+pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::eigen(
   self : Matrix[T],
 ) -> (Vector[T], Matrix[T]) {
   guard self.is_square() else {
@@ -1550,7 +1666,7 @@ pub fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] Matri
 /// 
 /// This is the core algorithm that iteratively applies QR decomposition
 /// to converge to a matrix with eigenvalues on the diagonal.
-fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] qr_algorithm(
+fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
   matrix : Matrix[T],
 ) -> (Vector[T], Matrix[T]) {
   let n = matrix.row
@@ -1562,31 +1678,39 @@ fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] qr_algori
     let mut iter = 0
     while iter < max_iterations {
       // Check for convergence
-      if a[m - 1][m - 2].abs() <= T::tolerance() {
+      // a[m - 1][m - 2]
+      if a.data[(m - 1) * n + (m - 2)].abs() <= T::tolerance() {
         break
       }
 
       // Compute Wilkinson shift
       let two = T::one() + T::one()
-      let d = (a[m - 2][m - 2] - a[m - 1][m - 1]) / two
+      // (a[m - 2][m - 2] - a[m - 1][m - 1])
+      let d = (a.data[(m - 2) * n + (m - 2)] - a.data[(m - 1) * n + (m - 1)]) /
+        two
       let mut sgn = T::one()
       if d < T::zero() {
         sgn = -T::one()
       }
-      let num = sgn * a[m - 1][m - 2] * a[m - 1][m - 2]
-      let den = d.abs() + (d * d + a[m - 1][m - 2] * a[m - 1][m - 2]).sqrt()
-      let mu = a[m - 1][m - 1] - num / den
+      // a[m - 1][m - 2]
+      let a_m1_m2 = a.data[(m - 1) * n + (m - 2)]
+      let num = sgn * a_m1_m2 * a_m1_m2
+      let den = d.abs() + (d * d + a_m1_m2 * a_m1_m2).sqrt()
+      // a[m - 1][m - 1]
+      let mu = a.data[(m - 1) * n + (m - 1)] - num / den
 
       // Apply shift: A - mu * I
       for i in 0..<m {
-        a[i][i] -= mu
+        // a[i][i]
+        a.data[i * n + i] -= mu
       }
 
       // QR decomposition of the active submatrix
       let sub_a = Matrix::new(m, m, T::zero())
       for i in 0..<m {
         for j in 0..<m {
-          sub_a[i][j] = a[i][j]
+          // sub_a[i][j] = a[i][j]
+          sub_a.data[i * m + j] = a.data[i * n + j]
         }
       }
       let (sub_q, sub_r) = qr_decomposition(sub_a)
@@ -1595,9 +1719,11 @@ fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] qr_algori
       let new_sub_a = sub_r * sub_q
       for i in 0..<m {
         for j in 0..<m {
-          a[i][j] = new_sub_a[i][j]
+          // a[i][j] = new_sub_a[i][j]
+          a.data[i * n + j] = new_sub_a.data[i * m + j]
         }
-        a[i][i] += mu
+        // a[i][i]
+        a.data[i * n + i] += mu
       }
 
       // Update Q_total
@@ -1606,14 +1732,17 @@ fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] qr_algori
         for j in 0..<m {
           let mut sum = T::zero()
           for k in 0..<m {
-            sum += q_total[i][k] * sub_q[k][j]
+            // q_total[i][k] * sub_q[k][j]
+            sum += q_total.data[i * n + k] * sub_q.data[k * m + j]
           }
-          temp_cols[i][j] = sum
+          // temp_cols[i][j]
+          temp_cols.data[i * m + j] = sum
         }
       }
       for i in 0..<n {
         for j in 0..<m {
-          q_total[i][j] = temp_cols[i][j]
+          // q_total[i][j]
+          q_total.data[i * n + j] = temp_cols.data[i * m + j]
         }
       }
       iter += 1
@@ -1622,7 +1751,7 @@ fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] qr_algori
   }
 
   // Extract eigenvalues from diagonal
-  let eigenvalues = Vector::makei(n, i => a[i][i])
+  let eigenvalues = Vector::makei(n, i => a.data[i * n + i]) // a[i][i]
   (eigenvalues, q_total)
 }
 
@@ -1633,7 +1762,7 @@ fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] qr_algori
 /// * `matrix` : The matrix to decompose.
 /// 
 /// Returns a tuple (Q, R) where Q is orthogonal and R is upper triangular.
-fn[T : Compare + Add + Mul + Sub + Num + Div + Tolerance + Sqrt] qr_decomposition(
+fn[T : Compare + AddMonoid + Sub + Mul + Div + Tolerance + Sqrt] qr_decomposition(
   matrix : Matrix[T],
 ) -> (Matrix[T], Matrix[T]) {
   let m = matrix.row
@@ -1645,7 +1774,8 @@ fn[T : Compare + Add + Mul + Sub + Num + Div + Tolerance + Sqrt] qr_decompositio
   for j in 0..<n {
     // Copy column j from A to Q
     for i in 0..<m {
-      q[i][j] = matrix[i][j]
+      // q[i][j] = matrix[i][j]
+      q.data[i * n + j] = matrix.data[i * n + j]
     }
 
     // Orthogonalize against previous columns
@@ -1653,26 +1783,32 @@ fn[T : Compare + Add + Mul + Sub + Num + Div + Tolerance + Sqrt] qr_decompositio
       // Compute r[k][j] = q_k^T * q_j
       let mut dot_product = T::zero()
       for i in 0..<m {
-        dot_product += q[i][k] * q[i][j]
+        // dot_product += q[i][k] * q[i][j]
+        dot_product += q.data[i * n + k] * q.data[i * n + j]
       }
-      r[k][j] = dot_product
+      // r[k][j] = dot_product
+      r.data[k * n + j] = dot_product
 
       // q_j = q_j - r[k][j] * q_k
       for i in 0..<m {
-        q[i][j] -= r[k][j] * q[i][k]
+        // q[i][j] -= r[k][j] * q[i][k]
+        q.data[i * n + j] -= r.data[k * n + j] * q.data[i * n + k]
       }
     }
 
     // Normalize q_j
     let mut norm = T::zero()
     for i in 0..<m {
-      norm += q[i][j] * q[i][j]
+      // norm += q[i][j] * q[i][j]
+      norm += q.data[i * n + j] * q.data[i * n + j]
     }
     norm = norm.sqrt()
-    r[j][j] = norm
+    // r[j][j] = norm
+    r.data[j * n + j] = norm
     if norm > T::tolerance() {
       for i in 0..<m {
-        q[i][j] /= norm
+        // q[i][j] /= norm
+        q.data[i * n + j] /= norm
       }
     }
   }
@@ -1692,7 +1828,7 @@ fn[T : Compare + Add + Mul + Sub + Num + Div + Tolerance + Sqrt] qr_decompositio
 /// * The corresponding eigenvector as a normalized vector.
 /// 
 /// Panics if the matrix is not square.
-pub fn[T : Compare + Add + Mul + Sub + Div + Num + Tolerance] Matrix::power_method(
+pub fn[T : Compare + Num + Div + Tolerance] Matrix::power_method(
   self : Matrix[T],
   max_iterations : Int,
 ) -> (T, Vector[T]) {
@@ -1722,22 +1858,26 @@ pub fn[T : Compare + Add + Mul + Sub + Div + Num + Tolerance] Matrix::power_meth
 
 ///|
 /// Helper function to multiply a matrix by a vector.
-fn[T : Add + Mul + Zero] matrix_vector_multiply(
+fn[T : AddMonoid + Mul] matrix_vector_multiply(
   matrix : Matrix[T],
   vector : Vector[T],
 ) -> Vector[T] {
   let m = matrix.row
   let n = matrix.col
-  guard n == vector.length() else {
+  let v_data = vector.0
+  guard n == v_data.length() else {
     abort("Matrix and vector dimensions are not compatible for multiplication")
   }
-  Vector::makei(m, i => {
+  let res_data = Array::make(m, T::zero())
+  for i = 0; i < m; i = i + 1 {
     let mut sum = T::zero()
-    for j in 0..<n {
-      sum += matrix[i][j] * vector[j]
+    let row_offset = i * n
+    for j = 0; j < n; j = j + 1 {
+      sum = sum + matrix.data[row_offset + j] * v_data[j]
     }
-    sum
-  })
+    res_data[i] = sum
+  }
+  Vector(res_data)
 }
 
 ///|
@@ -1752,16 +1892,20 @@ fn[T : Add + Mul + Zero] matrix_vector_multiply(
 /// Returns a vector containing the two eigenvalues.
 /// 
 /// Panics if the matrix is not 2x2.
-pub fn[T : Compare + Add + Mul + Sub + Num + Div + Sqrt + SMul] Matrix::eigen_2x2(
+pub fn[T : Compare + Num + Div + Sqrt + SMul] Matrix::eigen_2x2(
   self : Matrix[T],
 ) -> Vector[T] {
   guard self.row == 2 && self.col == 2 else {
     abort("This function is only for 2x2 matrices")
   }
-  let a = self[0][0]
-  let b = self[0][1]
-  let c = self[1][0]
-  let d = self[1][1]
+  // self[0][0]
+  let a = self.data[0 * self.col + 0]
+  // self[0][1]
+  let b = self.data[0 * self.col + 1]
+  // self[1][0]
+  let c = self.data[1 * self.col + 0]
+  // self[1][1]
+  let d = self.data[1 * self.col + 1]
   let trace = a + d
   let det = a * d - b * c
   let discriminant = trace * trace - T::one().scalar(4.0) * det
@@ -1844,7 +1988,7 @@ pub impl Sqrt for Float with sqrt(a) -> Float {
 /// let m = @mutable.Matrix::from_2d_array([[4.0, 3.0], [6.0, 3.0]])
 /// inspect(m.determinant(), content="-6")
 /// ```
-pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] Matrix::determinant(
+pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
   self : Matrix[T],
 ) -> T {
   guard self.is_square() else {
@@ -1860,7 +2004,8 @@ pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] Matrix::det
     // Find pivot using partial pivoting for numerical stability.
     let mut max_row = j
     for i in (j + 1)..<n {
-      if m[i][j].abs() > m[max_row][j].abs() {
+      // m[i][j].abs() > m[max_row][j].abs()
+      if m.data[i * n + j].abs() > m.data[max_row * n + j].abs() {
         max_row = i
       }
     }
@@ -1868,7 +2013,8 @@ pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] Matrix::det
       m.swap_rows(j, max_row)
       det_sign = -det_sign
     }
-    let pivot = m[j][j]
+    let offset_j = j * n
+    let pivot = m.data[offset_j + j]
     if pivot.abs() < T::tolerance() {
       // If a pivot is zero (or very close to it), the matrix is singular.
       return T::zero()
@@ -1876,9 +2022,11 @@ pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] Matrix::det
 
     // Perform elimination for rows below the pivot.
     for i in (j + 1)..<n {
-      let factor = m[i][j] / pivot
+      let offset_i = i * n
+      let factor = m.data[offset_i + j] / pivot
       for k in (j + 1)..<n {
-        m[i][k] -= factor * m[j][k]
+        // m[i][k] -= factor * m[j][k]
+        m.data[offset_i + k] -= factor * m.data[offset_j + k]
       }
     }
   }
@@ -1887,7 +2035,8 @@ pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] Matrix::det
   // resulting upper triangular matrix, adjusted by the sign.
   let mut det = det_sign
   for i in 0..<n {
-    det *= m[i][i]
+    // det *= m[i][i]
+    det *= m.data[i * n + i]
   }
   det
 }
@@ -1911,7 +2060,7 @@ pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] Matrix::det
 /// Panics if the matrix is not square.
 /// 
 ///
-pub fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] Matrix::inverse(
+pub fn[T : Compare + Field + Num + Tolerance] Matrix::inverse(
   self : Matrix[T],
 ) -> Matrix[T]? {
   guard self.is_square() else {
@@ -1933,7 +2082,10 @@ pub fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] Matrix:
   let reduced = augmented.reduce_row_elimination()
 
   // Extract the inverse from the right half of the augmented matrix
-  let inverse_matrix = Matrix::make(n, n, fn(i, j) { reduced[i][j + n] })
+  let inverse_matrix = Matrix::make(n, n, fn(i, j) {
+    // reduced[i][j + n]
+    reduced.data[i * (2 * n) + (j + n)]
+  })
   return Some(inverse_matrix)
 }
 
@@ -1965,7 +2117,7 @@ pub fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] Matrix:
 /// inspect(m2.is_invertible(), content="false")
 /// ```
 ///
-pub fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] Matrix::is_invertible(
+pub fn[T : Compare + Num + Div + Tolerance] Matrix::is_invertible(
   self : Matrix[T],
 ) -> Bool {
   guard self.is_square() else {
@@ -2069,7 +2221,7 @@ pub fn[T : Add + Sub + Mul + Div + Sqrt + @internal.HomomorphismNat] Matrix::std
 /// inspect(m.is_symmetric(), content="true")
 /// ```
 ///
-pub fn[T : Sub + Num + Compare + Tolerance] Matrix::is_symmetric(
+pub fn[T : Compare + Num + Tolerance] Matrix::is_symmetric(
   self : Matrix[T],
 ) -> Bool {
   if self.row != self.col {
@@ -2077,7 +2229,9 @@ pub fn[T : Sub + Num + Compare + Tolerance] Matrix::is_symmetric(
   }
   for i = 0; i < self.row; i = i + 1 {
     for j = i + 1; j < self.col; j = j + 1 {
-      if (self[i][j] - self[j][i]).abs() > T::tolerance() {
+      // (self[i][j] - self[j][i])
+      if (self.data[i * self.col + j] - self.data[j * self.col + i]).abs() >
+        T::tolerance() {
         return false
       }
     }
@@ -2103,9 +2257,7 @@ pub fn[T : Sub + Num + Compare + Tolerance] Matrix::is_symmetric(
 /// inspect(m.is_positive_definite(), content="true")
 /// ```
 ///
-pub fn[
-  T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance + Zero,
-] Matrix::is_positive_definite(
+pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::is_positive_definite(
   self : Matrix[T],
 ) -> Bool {
   if not(self.is_symmetric()) {
@@ -2163,7 +2315,7 @@ pub fn[T : Semiring] Matrix::matrix_power(
 /// let norm = m.frobenius_norm()
 /// ```
 ///
-pub fn[T : Add + Mul + Sqrt + Zero] Matrix::frobenius_norm(
+pub fn[T : AddMonoid + Mul + Sqrt] Matrix::frobenius_norm(
   self : Matrix[T],
 ) -> T {
   let sum_sq = self.data.iter().fold(init=T::zero(), fn(acc, x) { acc + x * x })
