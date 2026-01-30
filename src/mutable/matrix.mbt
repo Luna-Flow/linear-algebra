@@ -107,7 +107,7 @@ pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
 ///
 /// Parameters:
 ///
-/// * `s` : The matrix to convert to a string.
+/// * `self` : The matrix to convert to a string.
 ///
 /// Returns a string representation of the matrix where each row is enclosed in
 /// vertical bars (`|`), elements are separated by commas and spaces, and rows
@@ -120,22 +120,10 @@ pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
 /// inspect(m.to_string(), content="|1, 2, 3|\n|4, 5, 6|")
 /// ```
 ///
-pub impl[T : Show] Show for Matrix[T] with to_string(s) {
-  let res = StringBuilder::new()
-  for i in 0..<s.row {
-    res.write_char('|')
-    s.eachi_row(i, (c, x) => {
-      res.write_string(x.to_string())
-      if c < s.col - 1 {
-        res.write_string(", ")
-      }
-    })
-    res.write_char('|')
-    if i < s.row - 1 {
-      res.write_string("\n")
-    }
-  }
-  res.to_string()
+pub impl[T : Show] Show for Matrix[T] with to_string(self) {
+  let logger = StringBuilder::new()
+  self.output(logger)
+  logger.to_string()
 }
 
 ///|
@@ -144,11 +132,23 @@ pub impl[T : Show] Show for Matrix[T] with to_string(s) {
 ///
 /// Parameters:
 ///
-/// * `s` : The matrix to be output.
-/// * `l` : The logger to write the matrix representation to.
+/// * `self` : The matrix to be output.
+/// * `logger` : The logger to write the matrix representation to.
 ///
-pub impl[T : Show] Show for Matrix[T] with output(s, l) {
-  l.write_string(s.to_string())
+pub impl[T : Show] Show for Matrix[T] with output(self, logger) {
+  for i in 0..<self.row {
+    logger.write_char('|')
+    self.eachi_row(i, (c, x) => {
+      logger.write_object(x)
+      if c < self.col - 1 {
+        logger.write_string(", ")
+      }
+    })
+    logger.write_char('|')
+    if i < self.row - 1 {
+      logger.write_char('\n')
+    }
+  }
 }
 
 ///|

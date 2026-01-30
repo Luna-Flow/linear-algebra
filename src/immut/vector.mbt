@@ -484,11 +484,9 @@ pub fn[T : One + Mul + Add + Neg] Vector::lerp(
 /// Returns a string representation of the vector with elements separated by
 /// commas and enclosed in pipe characters (e.g., "|1, 2, 3|").
 pub impl[T : Show] Show for Vector[T] with to_string(self) {
-  // Immutable array has no join method
-  // we need to convert to mutable array first
-  // wait for core to support immutable array join
-  let sep = ", "
-  "|\{self.data.to_array().map(T::to_string).join(sep)}|"
+  let logger = StringBuilder::new()
+  self.output(logger)
+  logger.to_string()
 }
 
 ///|
@@ -498,9 +496,9 @@ pub impl[T : Show] Show for Vector[T] with to_string(self) {
 /// Parameters:
 ///
 /// * `self` : The vector to be output.
-/// * `output` : The output stream to write the string representation to.
-pub impl[T : Show] Show for Vector[T] with output(s, l) {
-  l.write_string(s.to_string())
+/// * `logger` : The output stream to write the string representation to.
+pub impl[T : Show] Show for Vector[T] with output(self, logger) {
+  logger.write_iter(self.data.iter(), prefix="|", suffix="|", sep=", ")
 }
 
 ///|

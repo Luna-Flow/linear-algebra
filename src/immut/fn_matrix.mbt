@@ -170,26 +170,14 @@ pub fn[T, U] MatrixFn::map(self : MatrixFn[T], f : (T) -> U) -> MatrixFn[U] {
 ///
 /// Parameters:
 ///
-/// * `s` : The `MatrixFn[T]` instance to convert to a string.
+/// * `self` : The `MatrixFn[T]` instance to convert to a string.
 ///
 /// Returns a `String` representation of the matrix in the format `|element1,
 /// element2|` for each row, with rows separated by newlines.
-pub impl[T : Show] Show for MatrixFn[T] with to_string(s) {
-  let mut res = ""
-  for i in 0..<s.grid.0 {
-    res = res + "|"
-    for j in 0..<s.grid.1 {
-      res = res + (s.data)(i, j).to_string()
-      if j < s.grid.1 - 1 {
-        res = res + ", "
-      }
-    }
-    res = res + "|"
-    if i < s.grid.0 - 1 {
-      res = res + "\n"
-    }
-  }
-  res
+pub impl[T : Show] Show for MatrixFn[T] with to_string(self) {
+  let logger = StringBuilder::new()
+  self.output(logger)
+  logger.to_string()
 }
 
 ///|
@@ -197,11 +185,23 @@ pub impl[T : Show] Show for MatrixFn[T] with to_string(s) {
 ///
 /// Parameters:
 ///
-/// * `s` : The matrix to be output.
-/// * `l` : The logger to write the string representation to.
+/// * `self` : The matrix to be output.
+/// * `logger` : The logger to write the string representation to.
 ///
-pub impl[T : Show] Show for MatrixFn[T] with output(s, l) {
-  l.write_string(s.to_string())
+pub impl[T : Show] Show for MatrixFn[T] with output(self, logger) {
+  for i in 0..<self.grid.0 {
+    logger.write_char('|')
+    for j in 0..<self.grid.1 {
+      logger.write_object((self.data)(i, j))
+      if j < self.grid.1 - 1 {
+        logger.write_string(", ")
+      }
+    }
+    logger.write_char('|')
+    if i < self.grid.0 - 1 {
+      logger.write_char('\n')
+    }
+  }
 }
 
 ///|
