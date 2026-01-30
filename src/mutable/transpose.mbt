@@ -85,7 +85,7 @@ pub impl[T : Add] Add for Transpose[T] with add(a, b) {
 ///
 /// Parameters:
 ///
-/// * `s` : The transposed matrix to convert to a string.
+/// * `self` : The transposed matrix to convert to a string.
 ///
 /// Returns a string representation where each row is enclosed in pipe
 /// characters (`|`) and elements within each row are separated by commas and
@@ -99,22 +99,10 @@ pub impl[T : Add] Add for Transpose[T] with add(a, b) {
 /// inspect(t.to_string(), content="|0, 1|\n|1, 2|\n|2, 3|")
 /// ```
 ///
-pub impl[T : Show] Show for Transpose[T] with to_string(s) {
-  let res = StringBuilder::new()
-  for i in 0..<s.row() {
-    res.write_char('|')
-    s.eachi_row(i, (c, x) => {
-      res.write_string(x.to_string())
-      if c < s.col() - 1 {
-        res.write_string(", ")
-      }
-    })
-    res.write_char('|')
-    if i < s.row() - 1 {
-      res.write_string("\n")
-    }
-  }
-  res.to_string()
+pub impl[T : Show] Show for Transpose[T] with to_string(self) {
+  let logger = StringBuilder::new()
+  self.output(logger)
+  logger.to_string()
 }
 
 ///|
@@ -123,11 +111,23 @@ pub impl[T : Show] Show for Transpose[T] with to_string(s) {
 ///
 /// Parameters:
 ///
-/// * `s` : The transposed matrix to output.
-/// * `l` : The logger or output stream to write the formatted representation
+/// * `self` : The transposed matrix to output.
+/// * `logger` : The logger or output stream to write the formatted representation
 ///   to.
-pub impl[T : Show] Show for Transpose[T] with output(s, l) {
-  l.write_string(s.to_string())
+pub impl[T : Show] Show for Transpose[T] with output(self, logger) {
+  for i in 0..<self.row() {
+    logger.write_char('|')
+    self.eachi_row(i, (c, x) => {
+      logger.write_object(x)
+      if c < self.col() - 1 {
+        logger.write_string(", ")
+      }
+    })
+    logger.write_char('|')
+    if i < self.row() - 1 {
+      logger.write_char('\n')
+    }
+  }
 }
 
 ///|

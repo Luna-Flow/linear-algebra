@@ -93,7 +93,7 @@ pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
 ///
 /// Parameters:
 ///
-/// * `matrix` : The matrix to be converted to string. Elements in the matrix
+/// * `self` : The matrix to be converted to string. Elements in the matrix
 /// must implement the `Show` trait.
 ///
 /// Returns a string representation of the matrix.
@@ -110,22 +110,10 @@ pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
 ///     ,
 ///   )
 /// ```
-pub impl[T : Show] Show for Matrix[T] with to_string(s) {
-  let mut res = ""
-  for i in 0..<s.row {
-    res = res + "|"
-    for j in 0..<s.col {
-      res = res + s.data[i * s.col + j].to_string()
-      if j < s.col - 1 {
-        res = res + ", "
-      }
-    }
-    res = res + "|"
-    if i < s.row - 1 {
-      res = res + "\n"
-    }
-  }
-  res
+pub impl[T : Show] Show for Matrix[T] with to_string(self) {
+  let logger = StringBuilder::new()
+  self.output(logger)
+  logger.to_string()
 }
 
 ///|
@@ -133,9 +121,9 @@ pub impl[T : Show] Show for Matrix[T] with to_string(s) {
 ///
 /// Parameters:
 ///
-/// * `matrix` : The matrix to be written to the buffer. The elements in the
+/// * `self` : The matrix to be written to the buffer. The elements in the
 /// matrix must implement the `Show` trait.
-/// * `buffer` : A buffer to write the string representation to.
+/// * `logger` : A buffer to write the string representation to.
 ///
 /// Example:
 ///
@@ -151,8 +139,20 @@ pub impl[T : Show] Show for Matrix[T] with to_string(s) {
 ///     ,
 ///   )
 /// ```
-pub impl[T : Show] Show for Matrix[T] with output(s, l) {
-  l.write_string(s.to_string())
+pub impl[T : Show] Show for Matrix[T] with output(self, logger) {
+  for i in 0..<self.row {
+    logger.write_char('|')
+    for j in 0..<self.col {
+      logger.write_object(self.data[i * self.col + j])
+      if j < self.col - 1 {
+        logger.write_string(", ")
+      }
+    }
+    logger.write_char('|')
+    if i < self.row - 1 {
+      logger.write_char('\n')
+    }
+  }
 }
 
 ///|

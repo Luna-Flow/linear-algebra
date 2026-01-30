@@ -82,8 +82,9 @@ pub impl[T : Eq] Eq for Vector[T] with equal(self, other) {
 /// ```
 ///
 pub impl[T : Show] Show for Vector[T] with to_string(self) {
-  let sep = ", "
-  "|\{self.0.map(T::to_string).join(sep)}|"
+  let logger = StringBuilder::new()
+  self.output(logger)
+  logger.to_string()
 }
 
 ///|
@@ -101,8 +102,8 @@ pub impl[T : Show] Show for Vector[T] with to_string(self) {
 /// inspect(v, content="|1, 2, 3|")
 /// ```
 ///
-pub impl[T : Show] Show for Vector[T] with output(self, l) {
-  l.write_string(self.to_string())
+pub impl[T : Show] Show for Vector[T] with output(self, logger) {
+  logger.write_iter(self.0.iter(), prefix="|", suffix="|", sep=", ")
 }
 
 ///|
