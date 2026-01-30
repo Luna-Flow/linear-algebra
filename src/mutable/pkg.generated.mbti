@@ -1,12 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "Luna-Flow/linear-algebra/mutable"
 
-import(
-  "Luna-Flow/linear-algebra/internal"
-  "Luna-Flow/luna-generic"
-  "moonbitlang/core/quickcheck"
-  "moonbitlang/core/quickcheck/splitmix"
-)
+import {
+  "Luna-Flow/linear-algebra/internal",
+  "Luna-Flow/luna-generic",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/quickcheck/splitmix",
+}
 
 // Values
 pub fn[T : @luna-generic.One + @luna-generic.Zero] identity(Int) -> Matrix[T]

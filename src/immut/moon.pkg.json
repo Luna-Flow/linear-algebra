@@ -1,12 +1,22 @@
 {
   "import": [
+		{
+			"path": "Luna-Flow/luna-generic",
+			"alias": "lg"
+		},
+		{
+			"path": "moonbitlang/core/quickcheck",
+			"alias": "qc_core"
+		},
+		{
+			"path": "moonbitlang/core/immut/array",
+			"alias": "immut/array"
+		}
+	],
+  "wbtest-import" :[
     {
-      "path": "Luna-Flow/luna-generic",
-      "alias": "lg"
-    },
-    {
-      "path": "moonbitlang/quickcheck",
-      "alias": "qc"
-    }
+			"path": "moonbitlang/quickcheck",
+			"alias": "qc"
+		}
   ]
 }
