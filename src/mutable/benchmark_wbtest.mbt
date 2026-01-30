@@ -137,3 +137,48 @@ test "bench_transpose_mul" {
   bench.bench(fn() { ignore(t1 * t2) }, name="Library Transpose Mul (64x64)")
   println(bench.dump_summaries())
 }
+
+///|
+fn[T] naive_matrix_each_row_col(
+  m : Matrix[T],
+  f : (Int, Int, T) -> Unit,
+) -> Unit {
+  let col = m.col
+  m.data.eachi(fn(i, x) { f(i / col, i % col, x) })
+}
+
+///|
+test "bench_secondary_utilities" {
+  let n = 256
+  let rng = PRNG::new(42L)
+  let m = Matrix::make(n, n, fn(_i, _j) { rng.next() })
+  let bench = @bench.Bench::new()
+
+  // Test each_row_col (Iteration overhead)
+  let mut sum = 0.0
+  bench.bench(
+    fn() {
+      sum = 0.0
+      naive_matrix_each_row_col(m, fn(_i, _j, x) { sum = sum + x })
+    },
+    name="Naive each_row_col (256x256)",
+  )
+  bench.bench(
+    fn() {
+      sum = 0.0
+      m.each_row_col(fn(_i, _j, x) { sum = sum + x })
+    },
+    name="Optimized each_row_col (256x256)",
+  )
+
+  // Test mapi (Transformation overhead)
+  bench.bench(
+    fn() { ignore(Matrix::make(n, n, fn(i, j) { m.data[i * n + j] + 1.0 })) },
+    name="Naive make-based mapi (256x256)",
+  )
+  bench.bench(
+    fn() { ignore(m.mapi(fn(_i, _j, x) { x + 1.0 })) },
+    name="Optimized mapi (256x256)",
+  )
+  println(bench.dump_summaries())
+}

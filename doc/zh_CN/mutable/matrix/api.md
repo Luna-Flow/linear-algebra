@@ -111,6 +111,11 @@ struct Matrix[T] {
     - **返回值**
       `Lens[T]` - 该行的访问器对象
 
+    - **性能提示**
+      调用 `m[row]` 会分配一个新的 `Lens` 对象和两个闭包。对于性能敏感的批量操作，强烈建议：
+      1. **缓存访问器**：在循环前将 `m[row]` 的结果存储在变量中。
+      2. **使用内置工具**：使用 `each_row`、`map_row_inplace` 等直接绕过 Lens 抽象的方法。
+
   ---
 
   - **`fn[T, U] Matrix::map(self, f) -> Matrix[U]`**
@@ -1283,3 +1288,9 @@ pub struct Transpose[T](Matrix[T])
 
   - **`fn[T] map_in_place(self : Transpose[T], f : (T) -> T) -> Unit`**
     - **作用**：就地修改底层矩阵的数据。
+  - **`fn[T] Transpose::op_get(self, row) -> Lens[T]`**
+    - **描述**
+        获取转置矩阵指定行的访问器。
+
+    - **性能提示**
+        调用 `t[row]` 会产生分配开销。在循环中处理行数据时，建议先缓存 `let row = t[i]`。

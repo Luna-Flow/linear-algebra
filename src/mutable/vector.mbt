@@ -127,8 +127,15 @@ fn[A, B, C] array_zip_with(
 ) -> Array[C] {
   let n = a1.length()
   guard n == a2.length()
-  let result = Array::makei(n, i => f(a1[i], a2[i]))
-  result
+  if n == 0 {
+    return []
+  }
+  // Avoid makei to reduce closure overhead.
+  let res = Array::make(n, f(a1[0], a2[0]))
+  for i in 1..<n {
+    res[i] = f(a1[i], a2[i])
+  }
+  res
 }
 
 ///|

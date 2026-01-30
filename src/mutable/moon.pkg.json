@@ -13,10 +13,8 @@
 			"alias": "internal"
 		}
 	],
-  "test-import" :[
-	"moonbitlang/core/bench"
-  ],
   "wbtest-import" :[
+	"moonbitlang/core/bench",
     {
 			"path": "moonbitlang/quickcheck",
 			"alias": "qc"

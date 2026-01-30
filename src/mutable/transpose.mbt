@@ -1,4 +1,22 @@
 ///|
+/// Returns a lens that provides indexed access to a specific row of the 
+/// transposed matrix.
+///
+/// **Performance Note**: Calling `t[row]` allocates a new `Lens` object and several closures.
+/// Since this is a transposed view, every access `t[row][col]` maps back to 
+/// the underlying matrix. For performance-critical bulk operations, it is 
+/// highly recommended to:
+/// 1. **Cache the lens**: Store the result of `t[row]` in a variable before the loop.
+/// 2. **Use built-in tools**: For common operations, use `eachi_row`, `map_row_in_place`, 
+///    or `iter_row` which avoid Lens overhead entirely.
+///
+/// Parameters:
+///
+/// * `self` : The transposed matrix to access.
+/// * `row` : The zero-based index of the row to access.
+///
+/// Returns a `Lens[T]` object for accessing elements in the specified row by 
+/// column index.
 pub fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T] {
   guard row >= 0 && row < self.row()
   {

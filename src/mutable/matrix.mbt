@@ -45,6 +45,22 @@ struct Matrix[T] {
 /// and users cannot directly access its fields. The struct can only be used
 /// through its associated methods.
 ///
+/// ### Performance Best Practices:
+///
+/// 1. **Avoid Repeated Lens Allocation**: Accessing `m[i][j]` in a loop creates a `Lens` object 
+///    on every call to `m[i]`. For bulk operations on a row, it is much faster to cache the 
+///    row lens:
+///    ```moonbit
+///    let row = m[i] // Allocate once
+///    for j in 0..<m.col {
+///      row[j] = ... // Reuse cached lens
+///    }
+///    ```
+/// 2. **Prefer Built-in Row/Col Tools**: Methods like `map_row_in_place`, `each_row`, `eachi_row`,
+///    and `iter_row` are highly optimized and bypass the `Lens` abstraction entirely.
+/// 3. **Manual Index Tracking**: For custom low-level loops, manually incrementing a 1D offset 
+///    is more efficient than calculating `row * col + j` in every iteration.
+///
 /// Example:
 ///
 /// ```moonbit
@@ -203,7 +219,19 @@ pub fn[T, U] Matrix::mapi(
 ) -> Matrix[U] {
   let row = self.row
   let col = self.col
-  let data = Array::makei(row * col, fn(i) { f(i / col, i % col, self.data[i]) })
+  if row == 0 || col == 0 {
+    return { row, col, data: [] }
+  }
+  // Avoid division and modulo in the loop by using nested loops.
+  // This is significantly faster for large matrices.
+  let data = Array::make(row * col, f(0, 0, self.data[0]))
+  for i in 0..<row {
+    let offset = i * col
+    for j in 0..<col {
+      let idx = offset + j
+      data[idx] = f(i, j, self.data[idx])
+    }
+  }
   { row, col, data }
 }
 
@@ -278,8 +306,11 @@ pub fn[T] Matrix::map_row_in_place(
   row : Int,
   f : (T) -> T,
 ) -> Unit {
+  let offset = row * self.col
+  let data = self.data
   for i in 0..<self.col {
-    self.data[row * self.col + i] = f(self.data[row * self.col + i])
+    let idx = offset + i
+    data[idx] = f(data[idx])
   }
 }
 
@@ -307,8 +338,12 @@ pub fn[T] Matrix::map_col_in_place(
   col : Int,
   f : (T) -> T,
 ) -> Unit {
-  for i in 0..<self.row {
-    self.data[i * self.col + col] = f(self.data[i * self.col + col])
+  let rows = self.row
+  let cols = self.col
+  let data = self.data
+  for i in 0..<rows {
+    let idx = i * cols + col
+    data[idx] = f(data[idx])
   }
 }
 
@@ -351,7 +386,15 @@ pub fn[T] Matrix::each_row_col(
   self : Matrix[T],
   f : (Int, Int, T) -> Unit,
 ) -> Unit {
-  self.data.eachi((index, data) => f(index / self.col, index % self.col, data))
+  let rows = self.row
+  let cols = self.col
+  let data = self.data
+  for i in 0..<rows {
+    let offset = i * cols
+    for j in 0..<cols {
+      f(i, j, data[offset + j])
+    }
+  }
 }
 
 ///|
@@ -367,8 +410,10 @@ pub fn[T] Matrix::each_row(
   row : Int,
   f : (T) -> Unit,
 ) -> Unit {
+  let offset = row * self.col
+  let data = self.data
   for i in 0..<self.col {
-    f(self.data[row * self.col + i])
+    f(data[offset + i])
   }
 }
 
@@ -402,8 +447,10 @@ pub fn[T] Matrix::eachi_row(
   row : Int,
   f : (Int, T) -> Unit,
 ) -> Unit {
+  let offset = row * self.col
+  let data = self.data
   for i in 0..<self.col {
-    f(i, self.data[row * self.col + i])
+    f(i, data[offset + i])
   }
 }
 
@@ -421,8 +468,11 @@ pub fn[T] Matrix::each_col(
   col : Int,
   f : (T) -> Unit,
 ) -> Unit {
-  for i in 0..<self.row {
-    f(self.data[i * self.col + col])
+  let rows = self.row
+  let cols = self.col
+  let data = self.data
+  for i in 0..<rows {
+    f(data[i * cols + col])
   }
 }
 
@@ -556,7 +606,23 @@ pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
 /// ```
 ///
 pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
-  Matrix::make(arr.length(), arr[0].length(), fn(i, j) { arr[i][j] })
+  let row = arr.length()
+  if row == 0 {
+    return { row: 0, col: 0, data: [] }
+  }
+  let col = arr[0].length()
+  if col == 0 {
+    return { row, col, data: [] }
+  }
+  let data = Array::make(row * col, arr[0][0])
+  for i in 0..<row {
+    let offset = i * col
+    let row_arr = arr[i]
+    for j in 0..<col {
+      data[offset + j] = row_arr[j]
+    }
+  }
+  { row, col, data }
 }
 
 ///|
@@ -593,6 +659,12 @@ pub fn[T] Matrix::from_array(
 ///|
 /// Returns a lens that provides indexed access to a specific row of the matrix.
 ///
+/// **Performance Note**: Calling `m[row]` allocates a new `Lens` object and two closures.
+/// For performance-critical bulk operations on a row, it is highly recommended to:
+/// 1. **Cache the lens**: Store the result of `m[row]` in a variable before the loop.
+/// 2. **Use built-in tools**: For common operations, use `each_row`, `map_row_in_place`, 
+///    or `iter_row` which avoid Lens overhead entirely.
+///
 /// Parameters:
 ///
 /// * `self` : The matrix to access.
@@ -605,7 +677,7 @@ pub fn[T] Matrix::from_array(
 ///
 /// ```moonbit
 /// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// let row_lens = m[1]  // Get lens for row 1
+/// let row_lens = m[1]  // Caching the lens for row 1
 /// inspect(row_lens[0], content="4")  // Access element at column 0
 /// row_lens[2] = 10  // Set element at column 2
 /// inspect(m[1][2], content="10")
@@ -1249,11 +1321,17 @@ pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int) -> Array[T] {
 ///
 pub fn[T] Matrix::col_to_array(self : Matrix[T], col : Int) -> Array[T] {
   guard col >= 0 && col < self.col
-  let arr = []
-  for i in 0..<self.row {
-    arr.push(self.data[i * self.col + col])
+  let row_count = self.row
+  let col_count = self.col
+  if row_count == 0 {
+    return []
   }
-  arr
+  let data = self.data
+  let res = Array::make(row_count, data[col])
+  for i in 1..<row_count {
+    res[i] = data[i * col_count + col]
+  }
+  res
 }
 
 ///|
@@ -1935,8 +2013,8 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
       m.swap_rows(j, max_row)
       det_sign = -det_sign
     }
-    // m[j][j]
-    let pivot = m.data[j * n + j]
+    let offset_j = j * n
+    let pivot = m.data[offset_j + j]
     if pivot.abs() < T::tolerance() {
       // If a pivot is zero (or very close to it), the matrix is singular.
       return T::zero()
@@ -1944,11 +2022,11 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
 
     // Perform elimination for rows below the pivot.
     for i in (j + 1)..<n {
-      // m[i][j]
-      let factor = m.data[i * n + j] / pivot
+      let offset_i = i * n
+      let factor = m.data[offset_i + j] / pivot
       for k in (j + 1)..<n {
         // m[i][k] -= factor * m[j][k]
-        m.data[i * n + k] -= factor * m.data[j * n + k]
+        m.data[offset_i + k] -= factor * m.data[offset_j + k]
       }
     }
   }
