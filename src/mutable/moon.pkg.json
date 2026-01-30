@@ -13,6 +13,9 @@
 			"alias": "internal"
 		}
 	],
+  "test-import" :[
+	"moonbitlang/core/bench"
+  ],
   "wbtest-import" :[
     {
 			"path": "moonbitlang/quickcheck",

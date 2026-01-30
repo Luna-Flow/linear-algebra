@@ -193,7 +193,7 @@ pub fn[A, U, V] Vector::zip_with(
 /// ```
 ///
 pub fn[T] Vector::to_col_matrix(self : Vector[T]) -> Matrix[T] {
-  Matrix::make(self.length(), 1, fn(i, _) { self[i] })
+  Matrix::from_array(self.0.length(), 1, self.0.copy())
 }
 
 ///|
@@ -334,6 +334,7 @@ pub fn[A] Vector::copy(self : Vector[A]) -> Vector[A] {
 /// ```
 ///
 pub fn[A] Vector::op_get(self : Vector[A], index : Int) -> A {
+  // Direct indexed access to the underlying 1D array.
   self.0[index]
 }
 
@@ -358,6 +359,7 @@ pub fn[A] Vector::op_get(self : Vector[A], index : Int) -> A {
 /// ```
 ///
 pub fn[A] Vector::op_set(self : Vector[A], index : Int, value : A) -> Unit {
+  // Direct indexed update to the underlying 1D array.
   self.0[index] = value
 }
 
@@ -629,7 +631,7 @@ pub impl[T : Neg] Neg for Vector[T] with neg(self : Vector[T]) -> Vector[T] {
 /// inspect(result, content="|2.5, 3.5, 4.5|")
 /// ```
 ///
-pub fn[T : One + Mul + Add + Neg] Vector::lerp(
+pub fn[T : MulMonoid + Add + Neg] Vector::lerp(
   self : Vector[T],
   other : Vector[T],
   alpha : T,
@@ -649,16 +651,18 @@ pub fn[T : One + Mul + Add + Neg] Vector::lerp(
 /// 
 /// Panics:
 /// * If the two vectors have different lengths.
-pub fn[T : Add + Mul + Zero] Vector::dot(
+pub fn[T : AddMonoid + Mul] Vector::dot(
   self : Vector[T],
   other : Vector[T],
 ) -> T {
-  if self.length() != other.length() {
+  let len = self.0.length()
+  if len != other.0.length() {
     abort("Vector length mismatch for dot product")
   }
   let mut sum = T::zero()
-  for i = 0; i < self.length(); i = i + 1 {
-    sum = sum + self[i] * other[i]
+  for i = 0; i < len; i = i + 1 {
+    // Equivalent to sum += self[i] * other[i]
+    sum = sum + self.0[i] * other.0[i]
   }
   sum
 }
@@ -719,9 +723,43 @@ pub fn[T : Mul] Vector::tensor_product(
   self : Vector[T],
   other : Vector[T],
 ) -> Matrix[T] {
-  let n = self.length()
-  let m = other.length()
-  Matrix::make(n, m, fn(i, j) { self[i] * other[j] })
+  let n = self.0.length()
+  let m = other.0.length()
+  if n == 0 || m == 0 {
+    return Matrix::from_array(n, m, [])
+  }
+  // Optimize by avoiding division and modulo operations in the innermost loop.
+  // Uses manual offset tracking for contiguous memory access.
+  let data = Array::make(n * m, self.0[0] * other.0[0])
+  for i = 0; i < n; i = i + 1 {
+    let row_offset = i * m // result[i][...]
+    let val_i = self.0[i] // self[i]
+    for j = 0; j < m; j = j + 1 {
+      // Equivalent to result[i][j] = self[i] * other[j]
+      data[row_offset + j] = val_i * other.0[j]
+    }
+  }
+  Matrix::from_array(n, m, data)
+}
+
+///|
+pub fn[T : Mul + Add + Zero] Vector::lin_comb(
+  weights : Array[T],
+  vectors : Array[Vector[T]],
+) -> Vector[T] {
+  guard weights.length() > 0 else { abort("weights is empty") }
+  let len = vectors[0].0.length()
+  // Single-pass linear combination to avoid multiple intermediate vector allocations.
+  let res_data = Array::make(len, T::zero())
+  for i = 0; i < weights.length(); i = i + 1 {
+    let w = weights[i]
+    let v_data = vectors[i].0
+    for j = 0; j < len; j = j + 1 {
+      // res[j] += weights[i] * vectors[i][j]
+      res_data[j] = res_data[j] + w * v_data[j]
+    }
+  }
+  Vector(res_data)
 }
 
 ///|
