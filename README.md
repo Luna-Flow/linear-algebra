@@ -17,6 +17,11 @@ We have conducted a thorough audit of the codebase, ensuring high test coverage 
 ### Documentation
 Comprehensive API documentation is available and up-to-date with the latest implementation. You can access it at [mooncakes.io](https://mooncakes.io/docs/Luna-Flow/linear-algebra) or browse the `doc/` directory in this repository.
 
+We provide documentation in multiple languages to support our global community:
+- 🇺🇸 **English** (`doc/en_US`)
+- 🇨🇳 **简体中文** (`doc/zh_CN`)
+- 🇯🇵 **日本語** (`doc/ja_JP`)
+
 ## Recent Changes & Breaking Updates
 
 - **Renaming**: 
