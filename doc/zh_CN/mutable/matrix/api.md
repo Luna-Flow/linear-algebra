@@ -126,7 +126,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T] Matrix::map_inplace(self, f) -> Unit`**
+  - **`fn[T] Matrix::map_in_place(self, f) -> Unit`**
     - **描述**
         就地对矩阵的每个元素应用变换函数，修改原矩阵
 
@@ -1252,6 +1252,34 @@ struct Lens[T] {
     ```moonbit
     let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
     let row_lens = m[1]  // 获取第2行的访问器
-    let value = row_lens[0]  // 访问该行第1列的元素
-    row_lens[2] = 10  // 修改该行第3列的元素
+    let value = row_lens[0]  // 访问该行第1列 of the element
+    row_lens[2] = 10  // 修改该行第3列 of the element
     ```
+
+---
+
+## @mutable.Transpose[T]
+
+```moonbit
+pub struct Transpose[T](Matrix[T])
+```
+
+- **描述**
+  矩阵的转置视图，提供对底层矩阵的转置访问，而不拷贝数据。
+
+- **方法**
+
+  - **`fn[T] row(self : Transpose[T]) -> Int`**
+    - **返回**：行数（等于原矩阵的列数）。
+
+  - **`fn[T] col(self : Transpose[T]) -> Int`**
+    - **返回**：列数（等于原矩阵的行数）。
+
+  - **`fn[T] transpose(self : Transpose[T]) -> Matrix[T]`**
+    - **返回**：由于 Transpose 是 Matrix 的视图，再次调用 transpose 会返回原始的 `Matrix[T]`。
+
+  - **`fn[T] materialize(self : Transpose[T]) -> Matrix[T]`**
+    - **返回**：创建一个新的、物理上已转置布局的 `Matrix[T]`。
+
+  - **`fn[T] map_in_place(self : Transpose[T], f : (T) -> T) -> Unit`**
+    - **作用**：就地修改底层矩阵的数据。

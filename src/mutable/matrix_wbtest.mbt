@@ -683,3 +683,46 @@ test "min_max_element" {
   inspect(m2.max_element(), content="-1")
   inspect(m2.min_element(), content="-8")
 }
+
+///|
+test "matrix_empty_edge_cases" {
+  let m = Matrix::new(0, 0, 0.0)
+  inspect(m.row(), content="0")
+  inspect(m.col(), content="0")
+  inspect(m.to_string(), content="")
+  inspect(m.transpose().row(), content="0")
+  inspect(m.transpose().col(), content="0")
+  inspect(m.copy().row(), content="0")
+  inspect(m.determinant(), content="1")
+  inspect(m.inverse() is Some(_), content="true")
+}
+
+///|
+test "matrix_1x1_edge_cases" {
+  let m = Matrix::from_2d_array([[2.0]])
+  inspect(m.determinant(), content="2")
+  let inv = m.inverse().unwrap()
+  inspect(inv[0][0], content="0.5")
+  inspect(m.transpose()[0][0], content="2")
+}
+
+///|
+test "matrix_non_square_ops" {
+  let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  let t = m.transpose()
+  inspect(t.row(), content="3")
+  inspect(t.col(), content="2")
+  inspect(
+    t.to_string(),
+    content=(
+      #||1, 4|
+      #||2, 5|
+      #||3, 6|
+    ),
+  )
+  let m_wide = Matrix::new(2, 4, 1)
+  let m_tall = Matrix::new(4, 2, 1)
+  let prod = m_wide * m_tall
+  inspect(prod.row(), content="2")
+  inspect(prod.col(), content="2")
+}

@@ -236,3 +236,66 @@ test "transpose_conversion" {
     ),
   )
 }
+
+///|
+test "transpose_chainability" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let t = m.to_transpose()
+
+  // Chain multiple operations that return Transpose
+  let result = t.map(fn(x) { x + 1 }).scale(2).add_constant(5)
+
+  // t is:
+  // |1, 3|
+  // |2, 4|
+
+  // map(+1):
+  // |2, 4|
+  // |3, 5|
+
+  // scale(2):
+  // |4, 8|
+  // |6, 10|
+
+  // add_constant(5):
+  // |9, 13|
+  // |11, 15|
+
+  inspect(result, content="|9, 13|\n|11, 15|")
+}
+
+///|
+test "transpose_operators_return_type" {
+  let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let m2 = Matrix::from_2d_array([[5, 6], [7, 8]])
+  let t1 = m1.to_transpose()
+  let t2 = m2.to_transpose()
+  let sum = t1 + t2
+  let diff = t1 - t2
+  let neg = -t1
+  inspect(sum, content="|6, 10|\n|8, 12|")
+  inspect(diff, content="|-4, -4|\n|-4, -4|")
+  inspect(neg, content="|-1, -3|\n|-2, -4|")
+
+  // Ensure we can still call Transpose methods on them
+  inspect(sum.row(), content="2")
+  inspect(sum.col(), content="2")
+}
+
+///|
+test "transpose_empty_matrix" {
+  let m = Matrix::new(0, 0, 0)
+  let t = m.to_transpose()
+  inspect(t.row(), content="0")
+  inspect(t.col(), content="0")
+  inspect(t.to_string(), content="")
+}
+
+///|
+test "transpose_view_reactivity" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let t = m.to_transpose()
+  m[0][1] = 20
+  // t is transpose, so t[1][0] should be m[0][1]
+  inspect(t[1][0], content="20")
+}

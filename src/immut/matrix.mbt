@@ -792,6 +792,9 @@ pub fn[T : Mul + Add + One + Neg + Zero] Matrix::determinant(
 ) -> T {
   let n = self.row
   guard n == self.col
+  if n == 0 {
+    return T::one()
+  }
   letrec view = (f, j) => match j {
     1 => f(0, 0)
     n => {

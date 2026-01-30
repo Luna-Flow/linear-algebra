@@ -378,3 +378,44 @@ test "matrix_subtraction" {
   let m3 = m1 - m2
   inspect(m3, content="|4, 3|\n|2, 1|")
 }
+
+///|
+test "matrix_empty_edge_cases" {
+  let m = Matrix::new(0, 0, 0.0)
+  inspect(m.row(), content="0")
+  inspect(m.col(), content="0")
+  inspect(m.to_string(), content="")
+  inspect(m.transpose().row(), content="0")
+  inspect(m.transpose().col(), content="0")
+  inspect(m.to_array().length(), content="0")
+  inspect(m.determinant(), content="1")
+}
+
+///|
+test "matrix_1x1_edge_cases" {
+  let m = Matrix::from_2d_array([[2.0]])
+  inspect(m.determinant(), content="2")
+  inspect(m.transpose()[0][0], content="2")
+  inspect(m.is_square(), content="true")
+}
+
+///|
+test "matrix_non_square_ops" {
+  let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  let t = m.transpose()
+  inspect(t.row(), content="3")
+  inspect(t.col(), content="2")
+  inspect(
+    t.to_string(),
+    content=(
+      #||1, 4|
+      #||2, 5|
+      #||3, 6|
+    ),
+  )
+  let m_wide = Matrix::new(2, 4, 1)
+  let m_tall = Matrix::new(4, 2, 1)
+  let prod = m_wide * m_tall
+  inspect(prod.row(), content="2")
+  inspect(prod.col(), content="2")
+}

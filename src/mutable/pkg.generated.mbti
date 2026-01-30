@@ -140,7 +140,7 @@ pub impl[T : Add + Neg] Sub for Transpose[T]
 pub struct Vector[A](Array[A])
 pub fn[T : Add] Vector::add_constant(Self[T], T) -> Self[T]
 pub fn[A] Vector::copy(Self[A]) -> Self[A]
-pub fn[T] Vector::from_array(Array[T]) -> Self[T]
+pub fn[A] Vector::from_array(Array[A]) -> Self[A]
 #deprecated
 pub fn[A] Vector::inner(Self[A]) -> Array[A]
 pub fn[T] Vector::iter(Self[T]) -> Iter[T]
@@ -158,10 +158,10 @@ pub fn[A] Vector::map_in_place(Self[A], (A) -> A) -> Unit
 pub fn[A] Vector::map_inplace(Self[A], (A) -> A) -> Unit
 pub fn[A] Vector::op_get(Self[A], Int) -> A
 pub fn[A] Vector::op_set(Self[A], Int, A) -> Unit
-pub fn[A : Mul] Vector::right_scale(A, Self[A]) -> Self[A]
-pub fn[A : Mul] Vector::right_scale_in_place(A, Self[A]) -> Unit
+pub fn[A : Mul] Vector::right_scale(Self[A], A) -> Self[A]
+pub fn[A : Mul] Vector::right_scale_in_place(Self[A], A) -> Unit
 #deprecated
-pub fn[A : Mul] Vector::right_scale_inplace(A, Self[A]) -> Unit
+pub fn[A : Mul] Vector::right_scale_inplace(Self[A], A) -> Unit
 pub fn[T : @luna-generic.Zero] Vector::scaled_matrix(Self[T]) -> Matrix[T]
 pub fn[T : Mul] Vector::tensor_product(Self[T], Self[T]) -> Matrix[T]
 pub fn[T] Vector::to_col_matrix(Self[T]) -> Matrix[T]

@@ -126,7 +126,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T] Matrix::map_inplace(self, f) -> Unit`**
+  - **`fn[T] Matrix::map_in_place(self, f) -> Unit`**
     - **Description**
         Applies a transformation function to each element of the matrix in-place, modifying the original matrix
 
@@ -1236,3 +1236,54 @@ struct Lens[T] {
     let value = row_lens[0]  // Access element at column 1 of that row
     row_lens[2] = 10  // Modify element at column 3 of that row
     ```
+
+---
+
+## @mutable.Transpose[T]
+
+```moonbit
+pub struct Transpose[T](Matrix[T])
+```
+
+- **Description**
+  A transpose view of a matrix, providing transposed access to the underlying matrix without copying data.
+
+- **Methods**
+
+  - **`fn[T] row(self : Transpose[T]) -> Int`**
+    - **Returns**: Number of rows (equals number of columns in original matrix).
+
+  - **`fn[T] col(self : Transpose[T]) -> Int`**
+    - **Returns**: Number of columns (equals number of rows in original matrix).
+
+  - **`fn[T] transpose(self : Transpose[T]) -> Matrix[T]`**
+    - **Returns**: Since Transpose is a view of a Matrix, calling transpose again returns the original `Matrix[T]`.
+
+  - **`fn[T] materialize(self : Transpose[T]) -> Matrix[T]`**
+    - **Returns**: Creates a new `Matrix[T]` with a physically transposed data layout.
+
+  - **`fn[T] map_in_place(self : Transpose[T], f : (T) -> T) -> Unit`**
+    - **Action**: Modifies the underlying matrix data in-place.
+
+  - **`fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T]`**
+    - **Description**: Returns a row accessor for the specified row. Supports `t[row][col]` syntax.
+
+### Operator Overloading for Transpose
+
+- **`impl[T : Add + Mul] Mul for Transpose[T] with mul`**
+  - **Description**: Matrix multiplication for transposed matrices. Returns `Transpose[T]`.
+
+- **`impl[T : Add] Add for Transpose[T] with add`**
+  - **Description**: Matrix addition for transposed matrices. Returns `Transpose[T]`.
+
+- **`impl[T : Add + Neg] Sub for Transpose[T] with sub`**
+  - **Description**: Matrix subtraction for transposed matrices. Returns `Transpose[T]`.
+
+- **`impl[T : Neg] Neg for Transpose[T] with neg`**
+  - **Description**: Matrix negation for transposed matrices. Returns `Transpose[T]`.
+
+- **`impl[T : Eq] Eq for Transpose[T] with equal`**
+  - **Description**: Equality check for transposed matrices.
+
+- **`impl[T : Show] Show for Transpose[T] with to_string`**
+  - **Description**: String representation of transposed matrix.

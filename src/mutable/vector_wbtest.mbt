@@ -191,12 +191,12 @@ test "vector_mapping" {
 test "vector_scaling" {
   let v = Vector::from_array([1, 2, 3])
   inspect(v.left_scale(2), content="|2, 4, 6|")
-  inspect(Vector::right_scale(2, v), content="|2, 4, 6|")
+  inspect(v.right_scale(2), content="|2, 4, 6|")
   let v2 = Vector::from_array([1, 2, 3])
   v2.left_scale_in_place(2)
   inspect(v2, content="|2, 4, 6|")
   let v3 = Vector::from_array([1, 2, 3])
-  Vector::right_scale_in_place(2, v3)
+  v3.right_scale_in_place(2)
   inspect(v3, content="|2, 4, 6|")
 }
 
@@ -247,4 +247,54 @@ test "vector_advanced_math" {
 test "vector_negation" {
   let v = Vector::from_array([1, -2, 3])
   inspect(-v, content="|-1, 2, -3|")
+}
+
+///|
+test "vector_empty_edge_cases" {
+  let v = Vector::make(0, 0.0)
+  inspect(v.length(), content="0")
+  inspect(v.to_string(), content="||")
+  inspect(v.copy().length(), content="0")
+  inspect(v.map(fn(x) { x + 1.0 }).length(), content="0")
+}
+
+///|
+test "vector_single_element" {
+  let v = Vector::from_array([34.0])
+  inspect(v.length(), content="1")
+  inspect(v[0], content="34")
+  inspect(v.left_scale(2.0)[0], content="68")
+}
+
+///|
+test "vector_scaling_direction" {
+  // Use a string-like operation or just check math.
+  // Since Int/Double are commutative, we just check they work.
+  let v = Vector::from_array([1, 2, 3])
+  inspect(v.left_scale(10), content="|10, 20, 30|")
+  inspect(v.right_scale(10), content="|10, 20, 30|")
+  let v_inplace = Vector::from_array([1, 2, 3])
+  v_inplace.left_scale_in_place(10)
+  inspect(v_inplace, content="|10, 20, 30|")
+  v_inplace.right_scale_in_place(2)
+  inspect(v_inplace, content="|20, 40, 60|")
+}
+
+///|
+test "vector_zip_with_regression" {
+  let v1 = Vector::from_array([1, 2, 3])
+  let v2 = Vector::from_array([10, 20, 30])
+  let result = v1.zip_with(v2, fn(a, b) { a + b })
+  inspect(result, content="|11, 22, 33|")
+}
+
+///|
+test "vector_dot_product" {
+  let v1 = Vector::from_array([1, 2, 3])
+  let v2 = Vector::from_array([4, 5, 6])
+  // 1*4 + 2*5 + 3*6 = 4 + 10 + 18 = 32
+  inspect(v1.dot(v2), content="32")
+  
+  let v_zero_len : Vector[Int] = Vector::make(0, 0)
+  inspect(v_zero_len.dot(v_zero_len), content="0")
 }

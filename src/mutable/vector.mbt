@@ -266,7 +266,7 @@ pub fn[A] Vector::length(self : Vector[A]) -> Int {
 /// ```
 ///
 pub fn[A] Vector::makei(n : Int, f : (Int) -> A) -> Vector[A] {
-  Array::makei(n, f)
+  Vector(Array::makei(n, f))
 }
 
 ///|
@@ -288,7 +288,7 @@ pub fn[A] Vector::makei(n : Int, f : (Int) -> A) -> Vector[A] {
 /// ```
 ///
 pub fn[A] Vector::make(n : Int, elem : A) -> Vector[A] {
-  Array::make(n, elem)
+  Vector(Array::make(n, elem))
 }
 
 ///|
@@ -310,7 +310,7 @@ pub fn[A] Vector::make(n : Int, elem : A) -> Vector[A] {
 /// ```
 ///
 pub fn[A] Vector::copy(self : Vector[A]) -> Vector[A] {
-  self.0.copy()
+  Vector(self.0.copy())
 }
 
 ///|
@@ -407,7 +407,7 @@ pub fn[A] Vector::map_in_place(self : Vector[A], f : (A) -> A) -> Unit {
 
 ///|
 /// Scales the vector by multiplying each component by the given scalar from the
-/// right.
+/// left.
 ///
 /// Parameters:
 ///
@@ -426,16 +426,16 @@ pub fn[A] Vector::map_in_place(self : Vector[A], f : (A) -> A) -> Unit {
 /// ```
 ///
 pub fn[A : Mul] Vector::left_scale(self : Vector[A], scalar : A) -> Vector[A] {
-  self.map(x => x * scalar)
+  self.map(x => scalar * x)
 }
 
 ///|
-/// Multiplies each element of a vector by a scalar value.
+/// Multiplies each element of a vector by a scalar value from the right.
 ///
 /// Parameters:
 ///
-/// * `scalar` : The scalar value to multiply each vector element by.
 /// * `self` : The vector to be scaled.
+/// * `scalar` : The scalar value to multiply each vector element by.
 ///
 /// Returns a new vector where each element is the result of multiplying the
 /// corresponding element in the input vector by the scalar.
@@ -444,12 +444,12 @@ pub fn[A : Mul] Vector::left_scale(self : Vector[A], scalar : A) -> Vector[A] {
 ///
 /// ```moonbit
 /// let v = Vector::from_array([1, 2, 3])
-/// let scaled = Vector::right_scale(2, v)
+/// let scaled = v.right_scale(2)
 /// inspect(scaled, content="|2, 4, 6|")
 /// ```
 ///
-pub fn[A : Mul] Vector::right_scale(scalar : A, self : Vector[A]) -> Vector[A] {
-  self.map(x => scalar * x)
+pub fn[A : Mul] Vector::right_scale(self : Vector[A], scalar : A) -> Vector[A] {
+  self.map(x => x * scalar)
 }
 
 ///|
@@ -473,7 +473,7 @@ pub fn[A : Mul] Vector::left_scale_in_place(
   self : Vector[A],
   scalar : A,
 ) -> Unit {
-  self.map_in_place(x => x * scalar)
+  self.map_in_place(x => scalar * x)
 }
 
 ///|
@@ -482,22 +482,22 @@ pub fn[A : Mul] Vector::left_scale_in_place(
 ///
 /// Parameters:
 ///
-/// * `scalar` : The scalar value to multiply each vector element by.
 /// * `self` : The vector to be modified.
+/// * `scalar` : The scalar value to multiply each vector element by.
 ///
 /// Example:
 ///
 /// ```moonbit
 /// let v = @mutable.Vector::from_array([1, 2, 3])
-/// @mutable.Vector::right_scale_in_place(2, v)
+/// v.right_scale_in_place(2)
 /// // v is now [2, 4, 6]
 /// ```
 ///
 pub fn[A : Mul] Vector::right_scale_in_place(
-  scalar : A,
   self : Vector[A],
+  scalar : A,
 ) -> Unit {
-  self.map_in_place(x => scalar * x)
+  self.map_in_place(x => x * scalar)
 }
 
 ///|
@@ -517,8 +517,8 @@ pub fn[A : Mul] Vector::right_scale_in_place(
 /// inspect(vec.to_string(), content="|1, 2, 3, 4, 5|")
 /// ```
 ///
-pub fn[T] Vector::from_array(a : Array[T]) -> Vector[T] {
-  a
+pub fn[A] Vector::from_array(a : Array[A]) -> Vector[A] {
+  Vector(a)
 }
 
 ///|
@@ -635,6 +635,32 @@ pub fn[T : One + Mul + Add + Neg] Vector::lerp(
   alpha : T,
 ) -> Vector[T] {
   self.left_scale(T::one() + -alpha) + other.left_scale(alpha)
+}
+
+///|
+/// Computes the dot product of two vectors.
+///
+/// Parameters:
+///
+/// * `self` : The first vector.
+/// * `other` : The second vector.
+///
+/// Returns the dot product of the two vectors.
+/// 
+/// Panics:
+/// * If the two vectors have different lengths.
+pub fn[T : Add + Mul + Zero] Vector::dot(
+  self : Vector[T],
+  other : Vector[T],
+) -> T {
+  if self.length() != other.length() {
+    abort("Vector length mismatch for dot product")
+  }
+  let mut sum = T::zero()
+  for i = 0; i < self.length(); i = i + 1 {
+    sum = sum + self[i] * other[i]
+  }
+  sum
 }
 
 ///|
