@@ -9,4 +9,4 @@ using @lg {
 }
 
 ///|
-using @quickcheck {trait Arbitrary}
+using @qc_core {trait Arbitrary}

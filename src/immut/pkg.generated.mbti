@@ -1,12 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "Luna-Flow/linear-algebra/immut"
 
-import(
-  "Luna-Flow/luna-generic"
-  "moonbitlang/core/immut/array"
-  "moonbitlang/core/quickcheck"
-  "moonbitlang/core/quickcheck/splitmix"
-)
+import {
+  "Luna-Flow/luna-generic",
+  "moonbitlang/core/immut/array",
+  "moonbitlang/core/quickcheck",
+  "moonbitlang/core/quickcheck/splitmix",
+}
 
 // Values
 pub fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]

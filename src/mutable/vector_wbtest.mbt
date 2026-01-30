@@ -1,5 +1,8 @@
 ///|
-impl[T] @qc.Shrink for Vector[T] with shrink(_) -> Iter[Vector[T]] {
+using @qc {quick_check_fn, trait Shrink}
+
+///|
+impl[T] Shrink for Vector[T] with shrink(_) -> Iter[Vector[T]] {
   Iter::empty()
 }
 
@@ -29,7 +32,7 @@ test "a + a = 2 * a" {
     v + v == v.left_scale(2)
   }
 
-  @qc.quick_check_fn(prop)
+  quick_check_fn(prop)
 }
 
 ///|
@@ -68,7 +71,7 @@ test "a + b = b + a" {
     prop(a, b)
   }
 
-  @qc.quick_check_fn(check)
+  quick_check_fn(check)
 }
 
 ///|
@@ -103,7 +106,7 @@ test "a * b * c = a * (b * c)" {
     prop(a, b, c)
   }
 
-  @qc.quick_check_fn(check)
+  quick_check_fn(check)
 }
 
 ///|
@@ -140,7 +143,7 @@ test "S_v * p = v * p" {
     prop(v, p)
   }
 
-  @qc.quick_check_fn(check)
+  quick_check_fn(check)
 }
 
 ///|
