@@ -294,7 +294,6 @@ test "vector_dot_product" {
   let v2 = Vector::from_array([4, 5, 6])
   // 1*4 + 2*5 + 3*6 = 4 + 10 + 18 = 32
   inspect(v1.dot(v2), content="32")
-  
   let v_zero_len : Vector[Int] = Vector::make(0, 0)
   inspect(v_zero_len.dot(v_zero_len), content="0")
 }

@@ -2,18 +2,28 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## Important Info: Docs will be rewritten soon
+## Stable Beta Release
 
-Due to the aim to publish a stable beta version for industrial use, we decided to design a standardized, effective and easy-to-read doc standard. Existing docs are outdated. We will publish some breaking changes here temporarily. Docs in code is still correct, you can read it easier at [mooncakes.io](https://mooncakes.io/docs/Luna-Flow/linear-algebra)
+We are excited to announce that `linear-algebra` has reached a **Stable Beta** state. This version is designed for reliability and is suitable for industrial use and testing. 
 
-This repo has been published as a stable beta version now.
+We have conducted a thorough audit of the codebase, ensuring high test coverage (106 tests across both mutable and immutable modules) and correcting inconsistencies between documentation and implementation.
 
-Documentation will be completed soon.
+### Key Features
+- **Mutable & Immutable Support**: Full suites for both `Matrix` and `Vector` types.
+- **Advanced Operations**: Includes determinant, inverse, rank, eigenvalues (QR algorithm), and more.
+- **Zero-Cost Abstractions**: Efficient `Transpose` views that allow operations without deep copying.
+- **Correctness First**: Rigorous testing including edge cases (empty matrices, single-element vectors, etc.).
 
-## Breaking Changes
+### Documentation
+Comprehensive API documentation is available and up-to-date with the latest implementation. You can access it at [mooncakes.io](https://mooncakes.io/docs/Luna-Flow/linear-algebra) or browse the `doc/` directory in this repository.
 
-- `map_row()` and `map_col()` in `@mutable.Matrix` is renamed to `map_row_inplace()` and `map_col_inplace()`
+## Recent Changes & Breaking Updates
 
-- `eachij()` in `@mutable.Matrix` is renamed to `each_row_col()`
-
-- `@mutable.Transpose` has been rewritten (for better performance and standardized), operation is same as `@mutable.Matrix`. You can use `materialize()` to turn virtual transpose into a transposed `@mutable.Matrix`
+- **Renaming**: 
+  - `map_row()` / `map_col()` -> `map_row_inplace()` / `map_col_inplace()` for clarity.
+  - `eachij()` -> `each_row_col()`
+- **New Features**:
+  - `Vector::dot` added for dot product calculations.
+  - `Transpose` view now supports direct indexing (`t[row][col]`).
+- **Fixes**:
+  - Corrected edge case behavior for 0x0 matrices (determinant is now 1).
