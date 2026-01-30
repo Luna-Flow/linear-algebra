@@ -510,6 +510,7 @@ pub fn[T] Transpose::map(self : Transpose[T], f : (T) -> T) -> Transpose[T] {
 /// )
 /// ```
 /// 
+#alias(map_inplace, deprecated)
 pub fn[T] Transpose::map_in_place(self : Transpose[T], f : (T) -> T) -> Unit {
   self.0.map_in_place(f)
 }
@@ -536,6 +537,7 @@ pub fn[T] Transpose::map_in_place(self : Transpose[T], f : (T) -> T) -> Unit {
 /// transpose.map_col_in_place(1, fn(x) { x * 2 })
 /// ```
 ///
+#alias(map_col_inplace, deprecated)
 pub fn[T] Transpose::map_col_in_place(
   self : Transpose[T],
   col : Int,
@@ -566,6 +568,7 @@ pub fn[T] Transpose::map_col_in_place(
 /// transposed.map_row_in_place(1, (x) => x * 2)
 /// ```
 ///
+#alias(map_row_inplace, deprecated)
 pub fn[T] Transpose::map_row_in_place(
   self : Transpose[T],
   row : Int,

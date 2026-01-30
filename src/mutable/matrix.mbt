@@ -225,6 +225,7 @@ pub fn[T, U] Matrix::mapi(
 /// inspect(m, content="|2, 4|\n|6, 8|")
 /// ```
 ///
+#alias(map_inplace, deprecated)
 pub fn[T] Matrix::map_in_place(self : Matrix[T], f : (T) -> T) -> Unit {
   self.data.map_in_place(f)
 }
@@ -271,6 +272,7 @@ pub fn[T] Matrix::to_transpose(self : Matrix[T]) -> Transpose[T] {
 /// // The first row becomes [2, 4, 6], second row remains [4, 5, 6]
 /// ```
 ///
+#alias(map_row_inplace, deprecated)
 pub fn[T] Matrix::map_row_in_place(
   self : Matrix[T],
   row : Int,
@@ -299,6 +301,7 @@ pub fn[T] Matrix::map_row_in_place(
 /// // matrix is now [[1, 4, 3], [4, 10, 6]]
 /// ```
 ///
+#alias(map_col_inplace, deprecated)
 pub fn[T] Matrix::map_col_in_place(
   self : Matrix[T],
   col : Int,
