@@ -401,6 +401,7 @@ pub fn[A, B] Vector::map(self : Vector[A], f : (A) -> B) -> Vector[B] {
 /// inspect(v, content="|2, 4, 6, 8|")
 /// ```
 ///
+#alias(map_inplace, deprecated)
 pub fn[A] Vector::map_in_place(self : Vector[A], f : (A) -> A) -> Unit {
   self.0.map_in_place(f)
 }
@@ -469,6 +470,7 @@ pub fn[A : Mul] Vector::right_scale(self : Vector[A], scalar : A) -> Vector[A] {
 /// inspect(v, content="|2, 4, 6|")
 /// ```
 ///
+#alias(left_scale_inplace, deprecated)
 pub fn[A : Mul] Vector::left_scale_in_place(
   self : Vector[A],
   scalar : A,
@@ -493,6 +495,7 @@ pub fn[A : Mul] Vector::left_scale_in_place(
 /// // v is now [2, 4, 6]
 /// ```
 ///
+#alias(right_scale_inplace, deprecated)
 pub fn[A : Mul] Vector::right_scale_in_place(
   self : Vector[A],
   scalar : A,
