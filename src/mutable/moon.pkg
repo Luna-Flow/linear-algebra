@@ -12,11 +12,13 @@ import "wbtest" {
 
 options(
   targets: {
+    //"vector_js.mbt": [ "js" ],
+    "matrix.mbt": [ "wasm-gc" ],
     "matrix_js.mbt": [ "js" ],
     "matrix_wasm_gc.mbt": [ "wasm-gc" ],
+    "transpose.mbt": [ "wasm-gc" ],
     "transpose_js.mbt": [ "js" ],
     "transpose_wasm_gc.mbt": [ "wasm-gc" ],
-    "vector_js.mbt": [ "js" ],
     "vector_wasm_gc.mbt": [ "wasm-gc" ],
   },
 )
