@@ -131,7 +131,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T] Matrix::map_in_place(self, f) -> Unit`**
+  - **`fn[T] Matrix::map_inplace(self, f) -> Unit`**
     - **描述**
         就地对矩阵的每个元素应用变换函数，修改原矩阵
 
@@ -1286,7 +1286,7 @@ pub struct Transpose[T](Matrix[T])
   - **`fn[T] materialize(self : Transpose[T]) -> Matrix[T]`**
     - **返回**：创建一个新的、物理上已转置布局的 `Matrix[T]`。
 
-  - **`fn[T] map_in_place(self : Transpose[T], f : (T) -> T) -> Unit`**
+  - **`fn[T] map_inplace(self : Transpose[T], f : (T) -> T) -> Unit`**
     - **作用**：就地修改底层矩阵的数据。
   - **`fn[T] Transpose::op_get(self, row) -> Lens[T]`**
     - **描述**

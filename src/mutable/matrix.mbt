@@ -56,7 +56,7 @@ struct Matrix[T] {
 ///      row[j] = ... // Reuse cached lens
 ///    }
 ///    ```
-/// 2. **Prefer Built-in Row/Col Tools**: Methods like `map_row_in_place`, `each_row`, `eachi_row`,
+/// 2. **Prefer Built-in Row/Col Tools**: Methods like `map_row_inplace`, `each_row`, `eachi_row`,
 ///    and `iter_row` are highly optimized and bypass the `Lens` abstraction entirely.
 /// 3. **Manual Index Tracking**: For custom low-level loops, manually incrementing a 1D offset 
 ///    is more efficient than calculating `row * col + j` in every iteration.
@@ -249,12 +249,12 @@ pub fn[T, U] Matrix::mapi(
 ///
 /// ```moonbit
 /// let m = @mutable.Matrix::from_2d_array([[1, 2], [3, 4]])
-/// m.map_in_place(fn(x) { x * 2 })
+/// m.map_inplace(fn(x) { x * 2 })
 /// inspect(m, content="|2, 4|\n|6, 8|")
 /// ```
 ///
-#alias(map_inplace, deprecated)
-pub fn[T] Matrix::map_in_place(self : Matrix[T], f : (T) -> T) -> Unit {
+#alias(map_in_place, deprecated)
+pub fn[T] Matrix::map_inplace(self : Matrix[T], f : (T) -> T) -> Unit {
   self.data.map_in_place(f)
 }
 
@@ -296,12 +296,12 @@ pub fn[T] Matrix::to_transpose(self : Matrix[T]) -> Transpose[T] {
 ///
 /// ```moonbit
 /// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// m.map_row_in_place(0, fn(x) { x * 2 })
+/// m.map_row_inplace(0, fn(x) { x * 2 })
 /// // The first row becomes [2, 4, 6], second row remains [4, 5, 6]
 /// ```
 ///
-#alias(map_row_inplace, deprecated)
-pub fn[T] Matrix::map_row_in_place(
+#alias(map_row_in_place, deprecated)
+pub fn[T] Matrix::map_row_inplace(
   self : Matrix[T],
   row : Int,
   f : (T) -> T,
@@ -328,12 +328,12 @@ pub fn[T] Matrix::map_row_in_place(
 ///
 /// ```moonbit
 /// let matrix = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// matrix.map_col_in_place(1, fn(x) { x * 2 })
+/// matrix.map_col_inplace(1, fn(x) { x * 2 })
 /// // matrix is now [[1, 4, 3], [4, 10, 6]]
 /// ```
 ///
-#alias(map_col_inplace, deprecated)
-pub fn[T] Matrix::map_col_in_place(
+#alias(map_col_in_place, deprecated)
+pub fn[T] Matrix::map_col_inplace(
   self : Matrix[T],
   col : Int,
   f : (T) -> T,
@@ -662,7 +662,7 @@ pub fn[T] Matrix::from_array(
 /// **Performance Note**: Calling `m[row]` allocates a new `Lens` object and two closures.
 /// For performance-critical bulk operations on a row, it is highly recommended to:
 /// 1. **Cache the lens**: Store the result of `m[row]` in a variable before the loop.
-/// 2. **Use built-in tools**: For common operations, use `each_row`, `map_row_in_place`, 
+/// 2. **Use built-in tools**: For common operations, use `each_row`, `map_row_inplace`, 
 ///    or `iter_row` which avoid Lens overhead entirely.
 ///
 /// Parameters:
@@ -1178,7 +1178,7 @@ pub fn[T : Compare + Num + Inverse] Matrix::reduce_row_elimination(
     }
     // self[i][col]
     let val = self.data[i * c + col]
-    ignore(self.map_row_in_place(i, fn(x) { x * val.inv() }))
+    ignore(self.map_row_inplace(i, fn(x) { x * val.inv() }))
     for j in 0..<r {
       if j == i {
         continue

@@ -73,9 +73,9 @@ pub struct Vector[T](Array[T])
 
   ---
 
-  - **`fn[T] map_in_place(self : Vector[T], f : (T) -> T) -> Unit`**
+  - **`fn[T] map_inplace(self : Vector[T], f : (T) -> T) -> Unit`**
     - **Description**
-        Applies a transformation function in-place, modifying the original vector.
+        Applies a transformation function inplace, modifying the original vector.
 
   ---
 
@@ -91,15 +91,15 @@ pub struct Vector[T](Array[T])
 
   ---
 
-  - **`fn[T : Mul] left_scale_in_place(self : Vector[T], scalar : T) -> Unit`**
+  - **`fn[T : Mul] left_scale_inplace(self : Vector[T], scalar : T) -> Unit`**
     - **Description**
-        Scales the vector in-place by a scalar from the left.
+        Scales the vector inplace by a scalar from the left.
 
   ---
 
-  - **`fn[T : Mul] right_scale_in_place(self : Vector[T], scalar : T) -> Unit`**
+  - **`fn[T : Mul] right_scale_inplace(self : Vector[T], scalar : T) -> Unit`**
     - **Description**
-        Scales the vector in-place by a scalar from the right.
+        Scales the vector inplace by a scalar from the right.
 
   ---
 

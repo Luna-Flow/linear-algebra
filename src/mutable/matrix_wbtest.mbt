@@ -32,12 +32,12 @@ test "map_function" {
   let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
   let m1 = {
     let m_ = m.copy()
-    m_.map_row_in_place(0, fn(x) { x * 2 })
+    m_.map_row_inplace(0, fn(x) { x * 2 })
     m_
   }
   let m2 = {
     let m_ = m.copy()
-    m_.map_col_in_place(0, fn(x) { x * 2 })
+    m_.map_col_inplace(0, fn(x) { x * 2 })
     m_
   }
   inspect(m1.to_string(), content="|2, 4, 6|\n|4, 5, 6|")

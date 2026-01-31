@@ -183,7 +183,7 @@ test "vector_mapping" {
   let v2 = v.map(fn(x) { x * 2 })
   inspect(v2, content="|2, 4, 6|")
   let v3 = Vector::from_array([1, 2, 3])
-  v3.map_in_place(fn(x) { x + 1 })
+  v3.map_inplace(fn(x) { x + 1 })
   inspect(v3, content="|2, 3, 4|")
 }
 
@@ -193,10 +193,10 @@ test "vector_scaling" {
   inspect(v.left_scale(2), content="|2, 4, 6|")
   inspect(v.right_scale(2), content="|2, 4, 6|")
   let v2 = Vector::from_array([1, 2, 3])
-  v2.left_scale_in_place(2)
+  v2.left_scale_inplace(2)
   inspect(v2, content="|2, 4, 6|")
   let v3 = Vector::from_array([1, 2, 3])
-  v3.right_scale_in_place(2)
+  v3.right_scale_inplace(2)
   inspect(v3, content="|2, 4, 6|")
 }
 
@@ -274,9 +274,9 @@ test "vector_scaling_direction" {
   inspect(v.left_scale(10), content="|10, 20, 30|")
   inspect(v.right_scale(10), content="|10, 20, 30|")
   let v_inplace = Vector::from_array([1, 2, 3])
-  v_inplace.left_scale_in_place(10)
+  v_inplace.left_scale_inplace(10)
   inspect(v_inplace, content="|10, 20, 30|")
-  v_inplace.right_scale_in_place(2)
+  v_inplace.right_scale_inplace(2)
   inspect(v_inplace, content="|20, 40, 60|")
 }
 

@@ -86,7 +86,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T] Matrix::map_in_place(self, f) -> Unit`**
+  - **`fn[T] Matrix::map_inplace(self, f) -> Unit`**
     - **説明**
         各要素に変換関数をその場で適用し、元の行列を変更します。
 
@@ -193,7 +193,7 @@ pub struct Transpose[T](Matrix[T])
   - **`fn[T] materialize(self : Transpose[T]) -> Matrix[T]`**
     - **戻り値**: 物理的に転置されたレイアウトを持つ新しい `Matrix[T]` を作成します。
 
-  - **`fn[T] map_in_place(self : Transpose[T], f : (T) -> T) -> Unit`**
+  - **`fn[T] map_inplace(self : Transpose[T], f : (T) -> T) -> Unit`**
     - **動作**: 元の行列のデータをその場で変更します。
 
   - **`fn[T] Transpose::op_get(self, row) -> Lens[T]`**

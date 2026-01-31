@@ -7,7 +7,7 @@
 /// the underlying matrix. For performance-critical bulk operations, it is 
 /// highly recommended to:
 /// 1. **Cache the lens**: Store the result of `t[row]` in a variable before the loop.
-/// 2. **Use built-in tools**: For common operations, use `eachi_row`, `map_row_in_place`, 
+/// 2. **Use built-in tools**: For common operations, use `eachi_row`, `map_row_inplace`, 
 ///    or `iter_row` which avoid Lens overhead entirely.
 ///
 /// Parameters:
@@ -520,7 +520,7 @@ pub fn[T] Transpose::map(self : Transpose[T], f : (T) -> T) -> Transpose[T] {
 ///   #||1, 2, 3|
 /// )
 /// let transpose = matrix.to_transpose()
-/// transpose.map_in_place(fn(x) { x + 1 })
+/// transpose.map_inplace(fn(x) { x + 1 })
 /// inspect(transpose, content=>
 ///   #||1, 2|
 ///   #||2, 3|
@@ -528,9 +528,9 @@ pub fn[T] Transpose::map(self : Transpose[T], f : (T) -> T) -> Transpose[T] {
 /// )
 /// ```
 /// 
-#alias(map_inplace, deprecated)
-pub fn[T] Transpose::map_in_place(self : Transpose[T], f : (T) -> T) -> Unit {
-  self.0.map_in_place(f)
+#alias(map_in_place, deprecated)
+pub fn[T] Transpose::map_inplace(self : Transpose[T], f : (T) -> T) -> Unit {
+  self.0.map_inplace(f)
 }
 
 ///|
@@ -552,16 +552,16 @@ pub fn[T] Transpose::map_in_place(self : Transpose[T], f : (T) -> T) -> Unit {
 /// let matrix = @mutable.Matrix::make(2, 3, fn(i, j) { i + j })
 /// let transpose = matrix.to_transpose()
 /// // Double all elements in column 1
-/// transpose.map_col_in_place(1, fn(x) { x * 2 })
+/// transpose.map_col_inplace(1, fn(x) { x * 2 })
 /// ```
 ///
-#alias(map_col_inplace, deprecated)
-pub fn[T] Transpose::map_col_in_place(
+#alias(map_col_in_place, deprecated)
+pub fn[T] Transpose::map_col_inplace(
   self : Transpose[T],
   col : Int,
   f : (T) -> T,
 ) -> Unit {
-  self.0.map_row_in_place(col, f)
+  self.0.map_row_inplace(col, f)
 }
 
 ///|
@@ -583,16 +583,16 @@ pub fn[T] Transpose::map_col_in_place(
 /// let matrix = @mutable.Matrix::make(3, 2, (i, j) => i + j)
 /// let transposed = matrix.to_transpose()
 /// // Double all elements in row 1
-/// transposed.map_row_in_place(1, (x) => x * 2)
+/// transposed.map_row_inplace(1, (x) => x * 2)
 /// ```
 ///
-#alias(map_row_inplace, deprecated)
-pub fn[T] Transpose::map_row_in_place(
+#alias(map_row_in_place, deprecated)
+pub fn[T] Transpose::map_row_inplace(
   self : Transpose[T],
   row : Int,
   f : (T) -> T,
 ) -> Unit {
-  self.0.map_col_in_place(row, f)
+  self.0.map_col_inplace(row, f)
 }
 
 ///|

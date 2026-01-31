@@ -407,12 +407,12 @@ pub fn[A, B] Vector::map(self : Vector[A], f : (A) -> B) -> Vector[B] {
 ///
 /// ```moonbit
 /// let v = @mutable.Vector::from_array([1, 2, 3, 4])
-/// v.map_in_place(fn(x) { x * 2 })
+/// v.map_inplace(fn(x) { x * 2 })
 /// inspect(v, content="|2, 4, 6, 8|")
 /// ```
 ///
-#alias(map_inplace, deprecated)
-pub fn[A] Vector::map_in_place(self : Vector[A], f : (A) -> A) -> Unit {
+#alias(map_in_place, deprecated)
+pub fn[A] Vector::map_inplace(self : Vector[A], f : (A) -> A) -> Unit {
   self.0.map_in_place(f)
 }
 
@@ -476,16 +476,16 @@ pub fn[A : Mul] Vector::right_scale(self : Vector[A], scalar : A) -> Vector[A] {
 ///
 /// ```moonbit
 /// let v = @mutable.Vector::from_array([1, 2, 3])
-/// v.left_scale_in_place(2)
+/// v.left_scale_inplace(2)
 /// inspect(v, content="|2, 4, 6|")
 /// ```
 ///
-#alias(left_scale_inplace, deprecated)
-pub fn[A : Mul] Vector::left_scale_in_place(
+#alias(left_scale_in_place, deprecated)
+pub fn[A : Mul] Vector::left_scale_inplace(
   self : Vector[A],
   scalar : A,
 ) -> Unit {
-  self.map_in_place(x => scalar * x)
+  self.map_inplace(x => scalar * x)
 }
 
 ///|
@@ -501,16 +501,16 @@ pub fn[A : Mul] Vector::left_scale_in_place(
 ///
 /// ```moonbit
 /// let v = @mutable.Vector::from_array([1, 2, 3])
-/// v.right_scale_in_place(2)
+/// v.right_scale_inplace(2)
 /// // v is now [2, 4, 6]
 /// ```
 ///
-#alias(right_scale_inplace, deprecated)
-pub fn[A : Mul] Vector::right_scale_in_place(
+#alias(right_scale_in_place, deprecated)
+pub fn[A : Mul] Vector::right_scale_inplace(
   self : Vector[A],
   scalar : A,
 ) -> Unit {
-  self.map_in_place(x => x * scalar)
+  self.map_inplace(x => x * scalar)
 }
 
 ///|
