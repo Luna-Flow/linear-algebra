@@ -131,9 +131,9 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T] Matrix::map_in_place(self, f) -> Unit`**
+  - **`fn[T] Matrix::map_inplace(self, f) -> Unit`**
     - **Description**
-        Applies a transformation function to each element of the matrix in-place, modifying the original matrix
+        Applies a transformation function to each element of the matrix inplace, modifying the original matrix
 
     - **Parameters**
       - `self: Matrix[T]` - Matrix to modify
@@ -146,7 +146,7 @@ struct Matrix[T] {
 
   - **`fn[T] Matrix::map_row_inplace(self, row, f) -> Unit`**
     - **Description**
-        Applies a transformation function to all elements in the specified row in-place
+        Applies a transformation function to all elements in the specified row inplace
 
     - **Parameters**
       - `self: Matrix[T]` - Matrix to modify
@@ -160,7 +160,7 @@ struct Matrix[T] {
 
   - **`fn[T] Matrix::map_col_inplace(self, col, f) -> Unit`**
     - **Description**
-        Applies a transformation function to all elements in the specified column in-place
+        Applies a transformation function to all elements in the specified column inplace
 
     - **Parameters**
       - `self: Matrix[T]` - Matrix to modify
@@ -1267,8 +1267,8 @@ pub struct Transpose[T](Matrix[T])
   - **`fn[T] materialize(self : Transpose[T]) -> Matrix[T]`**
     - **Returns**: Creates a new `Matrix[T]` with a physically transposed data layout.
 
-  - **`fn[T] map_in_place(self : Transpose[T], f : (T) -> T) -> Unit`**
-    - **Action**: Modifies the underlying matrix data in-place.
+  - **`fn[T] map_inplace(self : Transpose[T], f : (T) -> T) -> Unit`**
+    - **Action**: Modifies the underlying matrix data inplace.
 
   - **`fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T]`**
     - **Description**: Returns a row accessor for the specified row. Supports `t[row][col]` syntax.

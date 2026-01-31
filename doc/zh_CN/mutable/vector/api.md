@@ -73,7 +73,7 @@ pub struct Vector[T](Array[T])
 
   ---
 
-  - **`fn[T] map_in_place(self : Vector[T], f : (T) -> T) -> Unit`**
+  - **`fn[T] map_inplace(self : Vector[T], f : (T) -> T) -> Unit`**
     - **描述**
         就地应用变换函数，修改原向量。
 
@@ -91,13 +91,13 @@ pub struct Vector[T](Array[T])
 
   ---
 
-  - **`fn[T : Mul] left_scale_in_place(self : Vector[T], scalar : T) -> Unit`**
+  - **`fn[T : Mul] left_scale_inplace(self : Vector[T], scalar : T) -> Unit`**
     - **描述**
         就地进行左乘标量缩放。
 
   ---
 
-  - **`fn[T : Mul] right_scale_in_place(self : Vector[T], scalar : T) -> Unit`**
+  - **`fn[T : Mul] right_scale_inplace(self : Vector[T], scalar : T) -> Unit`**
     - **描述**
         就地进行右乘标量缩放。
 

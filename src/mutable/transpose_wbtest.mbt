@@ -129,7 +129,7 @@ test "transpose_mapping_pure" {
 test "transpose_mapping_inplace" {
   let base = Matrix::from_2d_array([[0, 1, 2], [3, 4, 5]])
   let t_inplace = base.to_transpose()
-  t_inplace.map_in_place(fn(x) { x * 2 })
+  t_inplace.map_inplace(fn(x) { x * 2 })
   inspect(
     t_inplace,
     content=(
@@ -138,7 +138,7 @@ test "transpose_mapping_inplace" {
       #||4, 10|
     ),
   )
-  t_inplace.map_col_in_place(1, fn(x) { x + 1 })
+  t_inplace.map_col_inplace(1, fn(x) { x + 1 })
   inspect(
     t_inplace,
     content=(
@@ -147,7 +147,7 @@ test "transpose_mapping_inplace" {
       #||4, 11|
     ),
   )
-  t_inplace.map_row_in_place(0, fn(x) { x - 1 })
+  t_inplace.map_row_inplace(0, fn(x) { x - 1 })
   inspect(
     t_inplace,
     content=(
