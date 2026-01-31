@@ -5,3 +5,4 @@ _build
 .vscode/
 _coverage/
 coverage_summary.txt
+bench/

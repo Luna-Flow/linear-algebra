@@ -52,17 +52,18 @@ pub fn[T] Matrix::iter_col(Self[T], Int) -> Iter[T]
 pub fn[T] Matrix::iter_row(Self[T], Int) -> Iter[T]
 pub fn[A] Matrix::make(Int, Int, (Int, Int) -> A) -> Self[A]
 pub fn[T, U] Matrix::map(Self[T], (T) -> U) -> Self[U]
-#alias(map_col_inplace, deprecated)
-pub fn[T] Matrix::map_col_in_place(Self[T], Int, (T) -> T) -> Unit
-#alias(map_inplace, deprecated)
-pub fn[T] Matrix::map_in_place(Self[T], (T) -> T) -> Unit
-#alias(map_row_inplace, deprecated)
-pub fn[T] Matrix::map_row_in_place(Self[T], Int, (T) -> T) -> Unit
+#alias(map_col_in_place, deprecated)
+pub fn[T] Matrix::map_col_inplace(Self[T], Int, (T) -> T) -> Unit
+#alias(map_in_place, deprecated)
+pub fn[T] Matrix::map_inplace(Self[T], (T) -> T) -> Unit
+#alias(map_row_in_place, deprecated)
+pub fn[T] Matrix::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
 pub fn[T, U] Matrix::mapi(Self[T], (Int, Int, T) -> U) -> Self[U]
 pub fn[T : @luna-generic.Semiring] Matrix::matrix_power(Self[T], Int) -> Self[T]
 pub fn[T : Compare] Matrix::max_element(Self[T]) -> T
 pub fn[T : Add + Div + @internal.HomomorphismNat] Matrix::mean(Self[T]) -> T
 pub fn[T : Compare] Matrix::min_element(Self[T]) -> T
+pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::mul_vec(Self[T], Vector[T]) -> Vector[T]
 pub fn[T] Matrix::new(Int, Int, T) -> Self[T]
 pub fn[T : Compare + @luna-generic.Zero] Matrix::null(Self[T]) -> Bool
 pub fn[T] Matrix::op_get(Self[T], Int) -> Lens[T]
@@ -109,12 +110,12 @@ pub fn[T] Transpose::horizontal_combine(Self[T], Self[T]) -> Self[T]
 #deprecated
 pub fn[T] Transpose::inner(Self[T]) -> Matrix[T]
 pub fn[T] Transpose::map(Self[T], (T) -> T) -> Self[T]
-#alias(map_col_inplace, deprecated)
-pub fn[T] Transpose::map_col_in_place(Self[T], Int, (T) -> T) -> Unit
-#alias(map_inplace, deprecated)
-pub fn[T] Transpose::map_in_place(Self[T], (T) -> T) -> Unit
-#alias(map_row_inplace, deprecated)
-pub fn[T] Transpose::map_row_in_place(Self[T], Int, (T) -> T) -> Unit
+#alias(map_col_in_place, deprecated)
+pub fn[T] Transpose::map_col_inplace(Self[T], Int, (T) -> T) -> Unit
+#alias(map_in_place, deprecated)
+pub fn[T] Transpose::map_inplace(Self[T], (T) -> T) -> Unit
+#alias(map_row_in_place, deprecated)
+pub fn[T] Transpose::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
 pub fn[T] Transpose::materialize(Self[T]) -> Matrix[T]
 pub fn[T] Transpose::op_get(Self[T], Int) -> Lens[T]
 pub fn[T] Transpose::row(Self[T]) -> Int
@@ -141,21 +142,21 @@ pub fn[A] Vector::from_array(Array[A]) -> Self[A]
 pub fn[A] Vector::inner(Self[A]) -> Array[A]
 pub fn[T] Vector::iter(Self[T]) -> Iter[T]
 pub fn[A : Mul] Vector::left_scale(Self[A], A) -> Self[A]
-#alias(left_scale_inplace, deprecated)
-pub fn[A : Mul] Vector::left_scale_in_place(Self[A], A) -> Unit
+#alias(left_scale_in_place, deprecated)
+pub fn[A : Mul] Vector::left_scale_inplace(Self[A], A) -> Unit
 pub fn[A] Vector::length(Self[A]) -> Int
 pub fn[T : @luna-generic.MulMonoid + Add + Neg] Vector::lerp(Self[T], Self[T], T) -> Self[T]
 pub fn[T : Mul + Add + @luna-generic.Zero] Vector::lin_comb(Array[T], Array[Self[T]]) -> Self[T]
 pub fn[A] Vector::make(Int, A) -> Self[A]
 pub fn[A] Vector::makei(Int, (Int) -> A) -> Self[A]
 pub fn[A, B] Vector::map(Self[A], (A) -> B) -> Self[B]
-#alias(map_inplace, deprecated)
-pub fn[A] Vector::map_in_place(Self[A], (A) -> A) -> Unit
+#alias(map_in_place, deprecated)
+pub fn[A] Vector::map_inplace(Self[A], (A) -> A) -> Unit
 pub fn[A] Vector::op_get(Self[A], Int) -> A
 pub fn[A] Vector::op_set(Self[A], Int, A) -> Unit
 pub fn[A : Mul] Vector::right_scale(Self[A], A) -> Self[A]
-#alias(right_scale_inplace, deprecated)
-pub fn[A : Mul] Vector::right_scale_in_place(Self[A], A) -> Unit
+#alias(right_scale_in_place, deprecated)
+pub fn[A : Mul] Vector::right_scale_inplace(Self[A], A) -> Unit
 pub fn[T : @luna-generic.Zero] Vector::scaled_matrix(Self[T]) -> Matrix[T]
 pub fn[T : Mul] Vector::tensor_product(Self[T], Self[T]) -> Matrix[T]
 pub fn[T] Vector::to_col_matrix(Self[T]) -> Matrix[T]

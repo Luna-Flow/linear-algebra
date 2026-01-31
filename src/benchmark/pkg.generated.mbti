@@ -1,0 +1,61 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/linear-algebra/benchmark"
+
+import {
+  "Luna-Flow/linear-algebra/mutable",
+  "moonbitlang/core/bench",
+}
+
+// Values
+pub fn[T] lib_naive_matrix_each_row_col(@mutable.Matrix[T], (Int, Int, T) -> Unit) -> Unit
+
+pub fn[T] lib_naive_matrix_map_inplace(@mutable.Matrix[T], (T) -> T) -> Unit
+
+pub fn[T, U] lib_naive_matrix_mapi(@mutable.Matrix[T], (Int, Int, T) -> U) -> @mutable.Matrix[U]
+
+pub fn m2d_matrix_access(Int, Int, Array[Array[Double]]) -> Double
+
+pub fn m2d_matrix_each_row_col(Int, Int, Array[Array[Double]], (Int, Int, Double) -> Unit) -> Unit
+
+pub fn m2d_matrix_map_inplace(Int, Int, Array[Array[Double]], (Double) -> Double) -> Unit
+
+pub fn m2d_matrix_mapi(Int, Int, Array[Array[Double]], (Int, Int, Double) -> Double) -> Array[Array[Double]]
+
+pub fn m2d_matrix_mul(Int, Array[Array[Double]], Array[Array[Double]]) -> Array[Array[Double]]
+
+pub fn m2d_matrix_vector_mul(Int, Int, Array[Array[Double]], Array[Double]) -> Array[Double]
+
+pub fn native_matrix_access(Int, Int, Array[Double]) -> Double
+
+pub fn native_matrix_each_row_col(Int, Int, Array[Double], (Int, Int, Double) -> Unit) -> Unit
+
+pub fn native_matrix_map_inplace(Int, Int, Array[Double], (Double) -> Double) -> Unit
+
+pub fn native_matrix_mapi(Int, Int, Array[Double], (Int, Int, Double) -> Double) -> Array[Double]
+
+pub fn native_matrix_mul(Int, Array[Double], Array[Double]) -> Array[Double]
+
+pub fn native_matrix_vector_mul(Int, Int, Array[Double], Array[Double]) -> Array[Double]
+
+pub fn native_vector_dot(Array[Double], Array[Double]) -> Double
+
+// Errors
+
+// Types and methods
+pub struct PRNG {
+  mut seed : Int64
+}
+pub fn PRNG::new(Int64) -> Self
+pub fn PRNG::next(Self) -> Double
+
+// Type aliases
+pub using @bench {type Bench}
+
+pub using @mutable {type Matrix}
+
+pub using @mutable {type Transpose}
+
+pub using @mutable {type Vector}
+
+// Traits
+

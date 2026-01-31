@@ -405,7 +405,7 @@ test "eigenvector verification" {
   // Verify for the first eigenvector
   let v1 = eigenvecs.col_to_vector(0)
   let lambda1 = eigenvals[0]
-  let m_v1 = matrix_vector_multiply(m, v1)
+  let m_v1 = m.mul_vec(v1)
   let lambda1_v1 = v1.map(x => x * lambda1)
   inspect(
     vectors_are_close(m_v1, lambda1_v1, Tolerance::tolerance()),
@@ -416,7 +416,7 @@ test "eigenvector verification" {
   // Verify for the second eigenvector
   let v2 = eigenvecs.col_to_vector(1)
   let lambda2 = eigenvals[1]
-  let m_v2 = matrix_vector_multiply(m, v2)
+  let m_v2 = m.mul_vec(v2)
   let lambda2_v2 = v2.map(x => x * lambda2)
   inspect(
     vectors_are_close(m_v2, lambda2_v2, Tolerance::tolerance()),
