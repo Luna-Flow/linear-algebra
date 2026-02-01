@@ -2,7 +2,7 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.4 - High-Performance Update
+## v0.2.6 - High-Performance Update
 
 We are proud to announce the **v0.2.4** update, which focuses on extreme performance optimization. `linear-algebra` now competes with native array implementations in raw speed.
 
