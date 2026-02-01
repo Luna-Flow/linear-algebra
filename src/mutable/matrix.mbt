@@ -72,8 +72,9 @@ struct Matrix[T] {
 /// ```
 ///
 struct Lens[T] {
-  set : (Int, T) -> Unit
-  get : (Int) -> T
+  data : Matrix[T]
+  fst : Int
+  is_transpose : Bool
 }
 
 ///|
@@ -225,11 +226,11 @@ pub fn[T, U] Matrix::mapi(
   // Avoid division and modulo in the loop by using nested loops.
   // This is significantly faster for large matrices.
   let data = Array::make(row * col, f(0, 0, self.data[0]))
+  let mut idx = 0
   for i in 0..<row {
-    let offset = i * col
     for j in 0..<col {
-      let idx = offset + j
       data[idx] = f(i, j, self.data[idx])
+      idx += 1
     }
   }
   { row, col, data }
@@ -626,6 +627,16 @@ pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
 }
 
 ///|
+pub fn[T] Matrix::get(self : Matrix[T], row : Int, col : Int) -> T {
+  self.data[row * self.col + col]
+}
+
+///|
+pub fn[T] Matrix::set(self : Matrix[T], row : Int, col : Int, elem : T) -> Unit {
+  self.data[row * self.col + col] = elem
+}
+
+///|
 /// Creates a matrix from a flat array with specified dimensions.
 ///
 /// Parameters:
@@ -684,11 +695,7 @@ pub fn[T] Matrix::from_array(
 /// ```
 ///
 pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Lens[T] {
-  {
-    // Index mapping for flattened 1D array: index = row * total_cols + col
-    set: (c, v) => self.data[c + self.col * row] = v,
-    get: c => self.data[c + self.col * row],
-  }
+  { data: self, fst: row, is_transpose: false }
 }
 
 ///|
@@ -701,8 +708,12 @@ pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Lens[T] {
 ///
 /// Returns the value at the specified column index.
 ///
-pub fn[T] Lens::op_get(self : Lens[T], col : Int) -> T {
-  (self.get)(col)
+pub fn[T] Lens::op_get(self : Lens[T], snd : Int) -> T {
+  if self.is_transpose {
+    self.data.get(snd, self.fst)
+  } else {
+    self.data.get(self.fst, snd)
+  }
 }
 
 ///|
@@ -718,13 +729,13 @@ pub fn[T] Lens::op_get(self : Lens[T], col : Int) -> T {
 ///
 /// ```moonbit
 /// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// let lens = m[0]  // Get lens for first row
-/// lens[1] = 10     // Set column 1 to value 10
-/// inspect(m[0][1], content="10")
-/// ```
 ///
-pub fn[T] Lens::op_set(self : Lens[T], col : Int, elem : T) -> Unit {
-  (self.set)(col, elem)
+pub fn[T] Lens::op_set(self : Lens[T], snd : Int, elem : T) -> Unit {
+  if self.is_transpose {
+    self.data.set(snd, self.fst, elem)
+  } else {
+    self.data.set(self.fst, snd, elem)
+  }
 }
 
 ///|
@@ -779,15 +790,18 @@ pub impl[T : AddMonoid + Mul] Mul for Matrix[T] with mul(
     { row, col, data }
   } else {
     let data = Array::make(row * col, T::zero())
+    let mut res_idx = 0
     for i = 0; i < row; i = i + 1 {
+      let self_row_start = i * inner
       for k = 0; k < inner; k = k + 1 {
-        let aik = self.data[i * inner + k] // self[i][k]
+        let aik = self.data[self_row_start + k]
+        let other_row_start = k * col
         for j = 0; j < col; j = j + 1 {
-          let res_idx = i * col + j // result[i][j]
-          let other_idx = k * col + j // other[k][j]
-          data[res_idx] = data[res_idx] + aik * other.data[other_idx]
+          data[res_idx + j] = data[res_idx + j] +
+            aik * other.data[other_row_start + j]
         }
       }
+      res_idx += col
     }
     { row, col, data }
   }
@@ -1269,35 +1283,6 @@ pub fn[T] Matrix::vertical_combine(
 }
 
 ///|
-/// Extracts a specific row from the matrix and returns it as an array.
-///
-/// Parameters:
-///
-/// * `self` : The matrix from which to extract the row.
-/// * `row` : The zero-based index of the row to extract.
-///
-/// Returns an array containing all elements from the specified row in column
-/// order.
-///
-/// Panics if `row` is negative or greater than or equal to the number of rows
-/// in the matrix.
-///
-/// Example:
-///
-/// ```moonbit
-/// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// let row_array = m.row_to_array(1)
-/// inspect(row_array, content="[4, 5, 6]")
-/// ```
-///
-pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int) -> Array[T] {
-  guard row >= 0 && row < self.row
-  let start = row * self.col
-  let end = start + self.col
-  self.data[start:end].to_array()
-}
-
-///|
 /// Extracts a specific column from the matrix and returns it as an array.
 ///
 /// Parameters:
@@ -1354,6 +1339,21 @@ pub fn[T] Matrix::col_to_array(self : Matrix[T], col : Int) -> Array[T] {
 ///
 pub fn[T] Matrix::to_array(self : Matrix[T]) -> Array[T] {
   self.data.copy()
+}
+
+///|
+pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int) -> Array[T] {
+  guard row >= 0 && row < self.row
+  let col_count = self.col
+  if col_count == 0 {
+    return []
+  }
+  let data = self.data
+  let res = Array::make(col_count, data[row * col_count])
+  for i in 1..<col_count {
+    res[i] = data[row * col_count + i]
+  }
+  res
 }
 
 ///|
@@ -1839,7 +1839,7 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::power_method(
   let mut x = Vector::makei(n, _ => T::one())
   let mut lambda = T::zero()
   for _ in 0..<max_iterations {
-    let y = matrix_vector_multiply(self, x)
+    let y = self.mul_vec(x)
     let mut max_val = T::zero()
     for i in 0..<n {
       if y[i].abs() > max_val.abs() {
@@ -1857,23 +1857,34 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::power_method(
 }
 
 ///|
-/// Helper function to multiply a matrix by a vector.
-fn[T : AddMonoid + Mul] matrix_vector_multiply(
-  matrix : Matrix[T],
+/// Multiplies a matrix by a vector.
+///
+/// Parameters:
+///
+/// * `self` : The matrix to multiply.
+/// * `vector` : The vector to multiply.
+///
+/// Returns a new vector that is the product of the matrix and the vector.
+///
+/// Panics if the number of columns in the matrix does not equal the length of
+/// the vector.
+pub fn[T : AddMonoid + Mul] Matrix::mul_vec(
+  self : Matrix[T],
   vector : Vector[T],
 ) -> Vector[T] {
-  let m = matrix.row
-  let n = matrix.col
+  let m = self.row
+  let n = self.col
   let v_data = vector.0
   guard n == v_data.length() else {
     abort("Matrix and vector dimensions are not compatible for multiplication")
   }
   let res_data = Array::make(m, T::zero())
+  let mut idx = 0
   for i = 0; i < m; i = i + 1 {
     let mut sum = T::zero()
-    let row_offset = i * n
     for j = 0; j < n; j = j + 1 {
-      sum = sum + matrix.data[row_offset + j] * v_data[j]
+      sum = sum + self.data[idx] * v_data[j]
+      idx += 1
     }
     res_data[i] = sum
   }

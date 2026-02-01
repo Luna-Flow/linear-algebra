@@ -297,5 +297,5 @@ test "transpose_view_reactivity" {
   let t = m.to_transpose()
   m[0][1] = 20
   // t is transpose, so t[1][0] should be m[0][1]
-  inspect(t[1][0], content="20")
+  inspect(t.get(1, 0), content="20")
 }

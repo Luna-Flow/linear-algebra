@@ -1,0 +1,22 @@
+import {
+  "Luna-Flow/luna-generic" as @lg,
+  "moonbitlang/core/quickcheck" as @qc_core,
+  "Luna-Flow/linear-algebra/internal" as @internal,
+}
+
+import "wbtest" {
+  "moonbitlang/core/bench",
+  "Luna-Flow/luna-generic" as @lg,
+  "moonbitlang/quickcheck" as @qc,
+}
+
+options(
+  targets: {
+    "matrix.mbt": [ "not", "js", "wasm-gc" ],
+    "matrix_js.mbt": [ "js" ],
+    "matrix_wasm_gc.mbt": [ "wasm-gc" ],
+    "transpose.mbt": [ "not", "js", "wasm-gc" ],
+    "transpose_js.mbt": [ "js" ],
+    "transpose_wasm_gc.mbt": [ "wasm-gc" ],
+  },
+)

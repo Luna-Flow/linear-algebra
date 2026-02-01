@@ -9,8 +9,14 @@ We are proud to announce the **v0.2.4** update, which focuses on extreme perform
 ### High-Performance Design
 - **Hybrid Matrix Multiplication**: Automatically switches between `i-j-k` (register-optimized) and `i-k-j` (cache-friendly) strategies.
 - **Secondary Utility Acceleration**: Audited functions like `mapi` and `each_row_col` to eliminate division/modulo overhead (up to 60% faster).
+- **Backend-Specific Optimization**: Internal implementations are tailored for different targets (Wasm/JS vs. Native) to leverage specific engine strengths, while maintaining a **strictly identical public API**.
 - **Zero-Copy Transpose**: Optimized identity-based multiplication and materialization.
 - **BCE-Friendly Indexing**: Loops structured for optimal Bounds-Check Elimination.
+
+### API Guidance & Performance
+- **Consistent API**: No matter which backend you target, the high-level API remains the same.
+- **Random Access**: For high-performance scenarios requiring frequent random access, we strongly recommend using the `.get(i, j)` and `.set(i, j, val)` methods directly. These are designed to be the fastest path for individual element interaction.
+- **Bulk Operations**: Prefer built-in tools like `.each_row_col()` or `.map_inplace()` over manual loops with indexing for maximum optimization.
 
 ### Key Features
 - **Mutable & Immutable Support**: Full suites for both `Matrix` and `Vector` types.

@@ -19,19 +19,24 @@
 /// column index.
 pub fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T] {
   guard row >= 0 && row < self.row()
-  {
-    get: fn(col) {
-      guard col >= 0 && col < self.col()
-      // Index mapping for Transpose view:
-      // Transpose[i][j] maps to UnderlyingMatrix[j][i]
-      self.0.data[col * self.0.col + row]
-    },
-    set: fn(col, val) {
-      guard col >= 0 && col < self.col()
-      // Mapping: Transpose[i][j] = val -> UnderlyingMatrix[j][i] = val
-      self.0.data[col * self.0.col + row] = val
-    },
-  }
+  Lens::{ data: self.0, fst: row, is_transpose: true }
+}
+
+///|
+pub fn[T] Transpose::get(self : Transpose[T], row : Int, col : Int) -> T {
+  guard row >= 0 && row < self.row()
+  self.0.get(col, row)
+}
+
+///|
+pub fn[T] Transpose::set(
+  self : Transpose[T],
+  row : Int,
+  col : Int,
+  elem : T,
+) -> Unit {
+  guard row >= 0 && row < self.row()
+  self.0.set(col, row, elem)
 }
 
 ///|

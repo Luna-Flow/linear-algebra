@@ -227,7 +227,7 @@ pub fn[T] Vector::to_col_matrix(self : Vector[T]) -> Matrix[T] {
 /// ```
 ///
 pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
-  { data: self.0, row: 1, col: self.length() }
+  Matrix::from_array(1, self.length(), self.0)
 }
 
 ///|
