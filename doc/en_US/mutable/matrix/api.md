@@ -12,6 +12,11 @@ struct Matrix[T] {
 } derive(Eq)
 ```
 
+### Design & Performance Notes
+- **Backend-Specific Optimization**: Internal implementations are tailored for different targets (Wasm/JS vs. Native) to leverage specific engine strengths, while maintaining a **strictly identical public API**.
+- **Random Access**: For high-performance scenarios requiring frequent random access, we strongly recommend using the `.get(i, j)` and `.set(i, j, val)` methods directly. These are designed to be the fastest path for individual element interaction.
+- **Bulk Operations**: Prefer built-in tools like `.each_row_col()` or `.map_inplace()` over manual loops with indexing for maximum optimization.
+
 - **Description**
   This struct represents a mutable matrix with data stored in a one-dimensional array `data`
 

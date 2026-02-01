@@ -72,10 +72,9 @@ struct Matrix[T] {
 /// ```
 ///
 struct Lens[T] {
-  data : Array[T]
-  offset : Int
-  stride : Int
-  len : Int
+  data : Matrix[T]
+  fst : Int
+  is_transpose : Bool
 }
 
 ///|
@@ -628,6 +627,16 @@ pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
 }
 
 ///|
+pub fn[T] Matrix::get(self : Matrix[T], row : Int, col : Int) -> T {
+  self.data[row * self.col + col]
+}
+
+///|
+pub fn[T] Matrix::set(self : Matrix[T], row : Int, col : Int, elem : T) -> Unit {
+  self.data[row * self.col + col] = elem
+}
+
+///|
 /// Creates a matrix from a flat array with specified dimensions.
 ///
 /// Parameters:
@@ -686,7 +695,7 @@ pub fn[T] Matrix::from_array(
 /// ```
 ///
 pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Lens[T] {
-  { data: self.data, offset: row * self.col, stride: 1, len: self.col }
+  { data: self, fst: row, is_transpose: false }
 }
 
 ///|
@@ -699,9 +708,12 @@ pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Lens[T] {
 ///
 /// Returns the value at the specified column index.
 ///
-pub fn[T] Lens::op_get(self : Lens[T], col : Int) -> T {
-  guard col >= 0 && col < self.len
-  self.data[self.offset + col * self.stride]
+pub fn[T] Lens::op_get(self : Lens[T], snd : Int) -> T {
+  if self.is_transpose {
+    self.data.get(snd, self.fst)
+  } else {
+    self.data.get(self.fst, snd)
+  }
 }
 
 ///|
@@ -717,14 +729,13 @@ pub fn[T] Lens::op_get(self : Lens[T], col : Int) -> T {
 ///
 /// ```moonbit
 /// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// let lens = m[0]  // Get lens for first row
-/// lens[1] = 10     // Set column 1 to value 10
-/// inspect(m[0][1], content="10")
-/// ```
 ///
-pub fn[T] Lens::op_set(self : Lens[T], col : Int, elem : T) -> Unit {
-  guard col >= 0 && col < self.len
-  self.data[self.offset + col * self.stride] = elem
+pub fn[T] Lens::op_set(self : Lens[T], snd : Int, elem : T) -> Unit {
+  if self.is_transpose {
+    self.data.set(snd, self.fst, elem)
+  } else {
+    self.data.set(self.fst, snd, elem)
+  }
 }
 
 ///|
@@ -1272,35 +1283,6 @@ pub fn[T] Matrix::vertical_combine(
 }
 
 ///|
-/// Extracts a specific row from the matrix and returns it as an array.
-///
-/// Parameters:
-///
-/// * `self` : The matrix from which to extract the row.
-/// * `row` : The zero-based index of the row to extract.
-///
-/// Returns an array containing all elements from the specified row in column
-/// order.
-///
-/// Panics if `row` is negative or greater than or equal to the number of rows
-/// in the matrix.
-///
-/// Example:
-///
-/// ```moonbit
-/// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// let row_array = m.row_to_array(1)
-/// inspect(row_array, content="[4, 5, 6]")
-/// ```
-///
-pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int) -> Array[T] {
-  guard row >= 0 && row < self.row
-  let start = row * self.col
-  let end = start + self.col
-  self.data[start:end].to_array()
-}
-
-///|
 /// Extracts a specific column from the matrix and returns it as an array.
 ///
 /// Parameters:
@@ -1357,6 +1339,21 @@ pub fn[T] Matrix::col_to_array(self : Matrix[T], col : Int) -> Array[T] {
 ///
 pub fn[T] Matrix::to_array(self : Matrix[T]) -> Array[T] {
   self.data.copy()
+}
+
+///|
+pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int) -> Array[T] {
+  guard row >= 0 && row < self.row
+  let col_count = self.col
+  if col_count == 0 {
+    return []
+  }
+  let data = self.data
+  let res = Array::make(col_count, data[row * col_count])
+  for i in 1..<col_count {
+    res[i] = data[row * col_count + i]
+  }
+  res
 }
 
 ///|

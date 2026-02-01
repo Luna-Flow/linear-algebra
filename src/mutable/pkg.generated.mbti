@@ -13,6 +13,10 @@ pub fn[T : @luna-generic.Zero + @luna-generic.One] identity(Int) -> Matrix[T]
 
 pub fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]
 
+pub fn[T : Compare + @luna-generic.Num + Div + Sqrt + Tolerance] qr_algorithm(Matrix[T]) -> (Vector[T], Matrix[T])
+
+pub fn[T : Compare + @luna-generic.AddMonoid + Sub + Mul + Div + Tolerance + Sqrt] qr_decomposition(Matrix[T]) -> (Matrix[T], Matrix[T])
+
 // Errors
 
 // Types and methods
@@ -20,7 +24,11 @@ type Lens[T]
 pub fn[T] Lens::op_get(Self[T], Int) -> T
 pub fn[T] Lens::op_set(Self[T], Int, T) -> Unit
 
-type Matrix[T]
+pub struct Matrix[T] {
+  row : Int
+  col : Int
+  data : Array[Array[T]]
+}
 pub fn[T : Add] Matrix::add_constant(Self[T], T) -> Self[T]
 pub fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]
 pub fn[T] Matrix::col(Self[T]) -> Int
@@ -41,6 +49,7 @@ pub fn[T : @luna-generic.AddMonoid + Mul + Sqrt] Matrix::frobenius_norm(Self[T])
 pub fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
 pub fn[T] Matrix::from_array(Int, Int, Array[T]) -> Self[T]
 pub fn[T : @internal.HomomorphismNat] Matrix::from_nat_matrix(Self[Int]) -> Self[T]
+pub fn[T] Matrix::get(Self[T], Int, Int) -> T
 pub fn[T] Matrix::horizontal_combine(Self[T], Self[T]) -> Self[T]
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::inverse(Self[T]) -> Self[T]?
 pub fn[T : Compare + @luna-generic.Num + Div + Tolerance] Matrix::is_invertible(Self[T]) -> Bool
@@ -50,7 +59,7 @@ pub fn[T : Compare + @luna-generic.Num + Tolerance] Matrix::is_symmetric(Self[T]
 pub fn[T] Matrix::iter(Self[T]) -> Iter[T]
 pub fn[T] Matrix::iter_col(Self[T], Int) -> Iter[T]
 pub fn[T] Matrix::iter_row(Self[T], Int) -> Iter[T]
-pub fn[A] Matrix::make(Int, Int, (Int, Int) -> A) -> Self[A]
+pub fn[T] Matrix::make(Int, Int, (Int, Int) -> T) -> Self[T]
 pub fn[T, U] Matrix::map(Self[T], (T) -> U) -> Self[U]
 #alias(map_col_in_place, deprecated)
 pub fn[T] Matrix::map_col_inplace(Self[T], Int, (T) -> T) -> Unit
@@ -66,7 +75,7 @@ pub fn[T : Compare] Matrix::min_element(Self[T]) -> T
 pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::mul_vec(Self[T], Vector[T]) -> Vector[T]
 pub fn[T] Matrix::new(Int, Int, T) -> Self[T]
 pub fn[T : Compare + @luna-generic.Zero] Matrix::null(Self[T]) -> Bool
-pub fn[T] Matrix::op_get(Self[T], Int) -> Lens[T]
+pub fn[T] Matrix::op_get(Self[T], Int) -> Array[T]
 pub fn[T : @luna-generic.Semiring] Matrix::pow(Self[T], Int) -> Self[T]
 pub fn[T : Compare + @luna-generic.Num + Div + Tolerance] Matrix::power_method(Self[T], Int) -> (T, Vector[T])
 pub fn[T : Compare + @luna-generic.Num + @luna-generic.Inverse] Matrix::rank(Self[T]) -> Int
@@ -75,6 +84,7 @@ pub fn[T] Matrix::row(Self[T]) -> Int
 pub fn[T] Matrix::row_to_array(Self[T], Int) -> Array[T]
 pub fn[T] Matrix::row_to_vector(Self[T], Int) -> Vector[T]
 pub fn[T : Mul] Matrix::scale(Self[T], T) -> Self[T]
+pub fn[T] Matrix::set(Self[T], Int, Int, T) -> Unit
 pub fn[T : Add + Sub + Mul + Div + Sqrt + @internal.HomomorphismNat] Matrix::std_dev(Self[T]) -> T
 pub fn[T] Matrix::swap_cols(Self[T], Int, Int) -> Unit
 pub fn[T] Matrix::swap_rows(Self[T], Int, Int) -> Unit
@@ -106,6 +116,7 @@ pub fn[T] Transpose::each_row_col(Self[T], (Int, Int, T) -> Unit) -> Unit
 pub fn[T] Transpose::eachi(Self[T], (Int, T) -> Unit) -> Unit
 pub fn[T] Transpose::eachi_col(Self[T], Int, (Int, T) -> Unit) -> Unit
 pub fn[T] Transpose::eachi_row(Self[T], Int, (Int, T) -> Unit) -> Unit
+pub fn[T] Transpose::get(Self[T], Int, Int) -> T
 pub fn[T] Transpose::horizontal_combine(Self[T], Self[T]) -> Self[T]
 #deprecated
 pub fn[T] Transpose::inner(Self[T]) -> Matrix[T]
@@ -122,6 +133,7 @@ pub fn[T] Transpose::row(Self[T]) -> Int
 pub fn[T] Transpose::row_to_array(Self[T], Int) -> Array[T]
 pub fn[T] Transpose::row_to_vector(Self[T], Int) -> Vector[T]
 pub fn[T : Mul] Transpose::scale(Self[T], T) -> Self[T]
+pub fn[T] Transpose::set(Self[T], Int, Int, T) -> Unit
 pub fn[T] Transpose::swap_cols(Self[T], Int, Int) -> Unit
 pub fn[T] Transpose::swap_rows(Self[T], Int, Int) -> Unit
 pub fn[T] Transpose::transpose(Self[T]) -> Matrix[T]

@@ -19,7 +19,24 @@
 /// column index.
 pub fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T] {
   guard row >= 0 && row < self.row()
-  { data: self.0.data, offset: row, stride: self.0.col, len: self.col() }
+  Lens::{ data: self.0, fst: row, is_transpose: true }
+}
+
+///|
+pub fn[T] Transpose::get(self : Transpose[T], row : Int, col : Int) -> T {
+  guard row >= 0 && row < self.row()
+  self.0.get(col, row)
+}
+
+///|
+pub fn[T] Transpose::set(
+  self : Transpose[T],
+  row : Int,
+  col : Int,
+  elem : T,
+) -> Unit {
+  guard row >= 0 && row < self.row()
+  self.0.set(col, row, elem)
 }
 
 ///|

@@ -61,33 +61,21 @@ pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
 }
 
 ///|
-pub struct Lens[T] {
-  data : Array[Array[T]]
-  index : Int
-  is_row : Bool
+pub fn[T] Matrix::get(self : Matrix[T], row : Int, col : Int) -> T {
+  guard row >= 0 && row < self.row && col >= 0 && col < self.col
+  self.data[row][col]
 }
 
 ///|
-pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Lens[T] {
-  Lens::{ data: self.data, index: row, is_row: true }
+pub fn[T] Matrix::set(self : Matrix[T], row : Int, col : Int, val : T) -> Unit {
+  guard row >= 0 && row < self.row && col >= 0 && col < self.col
+  self.data[row][col] = val
 }
 
 ///|
-pub fn[T] Lens::op_get(self : Lens[T], idx : Int) -> T {
-  if self.is_row {
-    self.data[self.index][idx]
-  } else {
-    self.data[idx][self.index]
-  }
-}
-
-///|
-pub fn[T] Lens::op_set(self : Lens[T], idx : Int, elem : T) -> Unit {
-  if self.is_row {
-    self.data[self.index][idx] = elem
-  } else {
-    self.data[idx][self.index] = elem
-  }
+pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Array[T] {
+  guard row >= 0 && row < self.row
+  self.data[row]
 }
 
 ///|

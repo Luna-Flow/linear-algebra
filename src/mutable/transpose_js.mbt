@@ -12,9 +12,42 @@ pub fn[T] Transpose::col(self : Transpose[T]) -> Int {
 }
 
 ///|
+pub fn[T] Transpose::get(self : Transpose[T], row : Int, col : Int) -> T {
+  guard row >= 0 && row < self.row() && col >= 0 && col < self.col()
+  self.0.data[col][row]
+}
+
+///|
+pub fn[T] Transpose::set(
+  self : Transpose[T],
+  row : Int,
+  col : Int,
+  val : T,
+) -> Unit {
+  guard row >= 0 && row < self.row() && col >= 0 && col < self.col()
+  self.0.data[col][row] = val
+}
+
+///|
+struct Lens[T] {
+  data : Matrix[T]
+  col : Int
+}
+
+///|
+pub fn[T] Lens::op_get(self : Lens[T], row : Int) -> T {
+  self.data.get(row, self.col)
+}
+
+///|
+pub fn[T] Lens::op_set(self : Lens[T], row : Int, val : T) -> Unit {
+  self.data.set(row, self.col, val)
+}
+
+///|
 pub fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T] {
-  guard row >= 0 && row < self.0.col
-  Lens::{ data: self.0.data, index: row, is_row: false }
+  guard row >= 0 && row < self.row()
+  { data: self.0, col: row }
 }
 
 ///|

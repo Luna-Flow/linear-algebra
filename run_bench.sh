@@ -1,12 +1,22 @@
 #!/bin/bash
 
 # Get the target backend from argument
+# Get the target backend from argument
 TARGET=$1
 
 if [ -z "$TARGET" ]; then
     echo "Usage: $0 <backend_name>"
-    echo "Available backends: wasm, js, native, llvm"
+    echo "Available backends: wasm, js, native, wasm-gc (or 'all' to run everything)"
     exit 1
+fi
+
+if [ "$TARGET" == "all" ]; then
+    echo "🌟 Running benchmarks for ALL backends..."
+    for t in wasm wasm-gc js native; do
+        $0 $t
+    done
+    echo "🎉 All benchmarks completed."
+    exit 0
 fi
 
 # Determine if we should use --release (recommended for benchmarks)

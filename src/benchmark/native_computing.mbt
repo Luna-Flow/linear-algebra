@@ -62,3 +62,47 @@ pub fn native_matrix_vector_mul(
   }
   res
 }
+
+///|
+pub fn native_matrix_access(
+  rows : Int,
+  cols : Int,
+  data : Array[Double],
+) -> Double {
+  let mut sum = 0.0
+  let len = rows * cols
+  for i = 0; i < len; i = i + 1 {
+    sum = sum + data[i]
+  }
+  sum
+}
+
+///|
+pub fn native_matrix_mapi(
+  rows : Int,
+  cols : Int,
+  data : Array[Double],
+  f : (Int, Int, Double) -> Double,
+) -> Array[Double] {
+  let res = Array::make(rows * cols, 0.0)
+  for i = 0; i < rows; i = i + 1 {
+    let offset = i * cols
+    for j = 0; j < cols; j = j + 1 {
+      res[offset + j] = f(i, j, data[offset + j])
+    }
+  }
+  res
+}
+
+///|
+pub fn native_matrix_map_inplace(
+  _rows : Int,
+  _cols : Int,
+  data : Array[Double],
+  f : (Double) -> Double,
+) -> Unit {
+  let len = data.length()
+  for i = 0; i < len; i = i + 1 {
+    data[i] = f(data[i])
+  }
+}
