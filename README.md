@@ -4,7 +4,7 @@
 
 ## v0.2.6 - High-Performance Update
 
-We are proud to announce the **v0.2.4** update, which focuses on extreme performance optimization. `linear-algebra` now competes with native array implementations in raw speed.
+We are proud to announce the **v0.2.6** update, which focuses on extreme performance optimization. `linear-algebra` now competes with native array implementations in raw speed.
 
 ### High-Performance Design
 - **Hybrid Matrix Multiplication**: Automatically switches between `i-j-k` (register-optimized) and `i-k-j` (cache-friendly) strategies.
