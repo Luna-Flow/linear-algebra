@@ -120,6 +120,7 @@ struct Matrix[T] {
       调用 `m[row]` 会分配一个新的 `Lens` 对象和两个闭包。对于性能敏感的批量操作，强烈建议：
       1. **缓存访问器**：在循环前将 `m[row]` 的结果存储在变量中。
       2. **使用内置工具**：使用 `each_row`、`map_row_inplace` 等直接绕过 Lens 抽象的方法。
+      3. **直接访问（推荐）**：对于单个元素的读写，请直接使用 `Matrix::get(row, col)` 和 `Matrix::set(row, col, value)`。这能完全避免 `Lens` 和闭包的开销，是性能最好的方式。
 
   ---
 

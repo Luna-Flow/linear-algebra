@@ -120,6 +120,7 @@ struct Matrix[T] {
       Calling `m[row]` allocates a new `Lens` object and two closures. For performance-critical bulk operations, it is highly recommended to:
       1. **Cache the lens**: Store the result of `m[row]` in a variable before the loop.
       2. **Use built-in tools**: For common operations, use `each_row`, `map_row_inplace`, etc., which avoid Lens overhead entirely.
+      3. **Direct Access (Recommended)**: For single element read/write, use `Matrix::get(row, col)` and `Matrix::set(row, col, value)`. This avoids all Lens and closure overhead and is the most performant method.
 
   ---
 

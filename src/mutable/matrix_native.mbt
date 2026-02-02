@@ -47,18 +47,20 @@ struct Matrix[T] {
 ///
 /// ### Performance Best Practices:
 ///
-/// 1. **Avoid Repeated Lens Allocation**: Accessing `m[i][j]` in a loop creates a `Lens` object 
-///    on every call to `m[i]`. For bulk operations on a row, it is much faster to cache the 
-///    row lens:
+/// 1. **Use Direct Access (Recommended)**: While `m[i][j]` is convenient, `Matrix::get(row, col)` 
+///    and `Matrix::set(row, col, value)` are significantly faster as they avoid creating temporary 
+///    Lens objects and closures. Prefer these for performance-critical code.
+/// 2. **Avoid Repeated Lens Allocation**: If you must use `Lens`, accessing `m[i][j]` in a loop 
+///    creates a `Lens` object on every call to `m[i]`. Cache the row lens:
 ///    ```moonbit
 ///    let row = m[i] // Allocate once
 ///    for j in 0..<m.col {
 ///      row[j] = ... // Reuse cached lens
 ///    }
 ///    ```
-/// 2. **Prefer Built-in Row/Col Tools**: Methods like `map_row_inplace`, `each_row`, `eachi_row`,
+/// 3. **Prefer Built-in Row/Col Tools**: Methods like `map_row_inplace`, `each_row`, `eachi_row`,
 ///    and `iter_row` are highly optimized and bypass the `Lens` abstraction entirely.
-/// 3. **Manual Index Tracking**: For custom low-level loops, manually incrementing a 1D offset 
+/// 4. **Manual Index Tracking**: For custom low-level loops, manually incrementing a 1D offset 
 ///    is more efficient than calculating `row * col + j` in every iteration.
 ///
 /// Example:
