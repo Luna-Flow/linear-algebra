@@ -13,7 +13,6 @@ pub fn[T] Transpose::col(self : Transpose[T]) -> Int {
 
 ///|
 pub fn[T] Transpose::get(self : Transpose[T], row : Int, col : Int) -> T {
-  guard row >= 0 && row < self.row() && col >= 0 && col < self.col()
   self.0.data[col][row]
 }
 
@@ -24,7 +23,6 @@ pub fn[T] Transpose::set(
   col : Int,
   val : T,
 ) -> Unit {
-  guard row >= 0 && row < self.row() && col >= 0 && col < self.col()
   self.0.data[col][row] = val
 }
 
@@ -46,7 +44,6 @@ pub fn[T] Lens::op_set(self : Lens[T], row : Int, val : T) -> Unit {
 
 ///|
 pub fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T] {
-  guard row >= 0 && row < self.row()
   { data: self.0, col: row }
 }
 

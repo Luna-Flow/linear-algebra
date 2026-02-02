@@ -1,0 +1,51 @@
+{
+    "mat_mul": [
+        "array2d_mat_mul_test.mbt",
+        "array1d_mat_mul_test.mbt",
+        "naive_mat_mul_test.mbt",
+        "lib_mat_mul_test.mbt"
+    ],
+    "vec_ops": [
+        "array1d_vec_dot_test.mbt",
+        "naive_vec_dot_test.mbt",
+        "lib_vec_dot_test.mbt"
+    ],
+    "mat_vec_mul": [
+        "array2d_mat_vec_mul_test.mbt",
+        "array1d_mat_vec_mul_test.mbt",
+        "naive_mat_vec_mul_test.mbt",
+        "lib_mat_vec_mul_test.mbt"
+    ],
+    "adv": [
+        "array2d_mat_det_test.mbt",
+        "array1d_mat_det_test.mbt",
+        "naive_mat_det_test.mbt",
+        "lib_mat_det_test.mbt",
+        "array2d_mat_inv_test.mbt",
+        "array1d_mat_inv_test.mbt",
+        "naive_mat_inv_test.mbt",
+        "lib_mat_inv_test.mbt",
+        "array2d_mat_rank_test.mbt",
+        "array1d_mat_rank_test.mbt",
+        "naive_mat_rank_test.mbt",
+        "lib_mat_rank_test.mbt"
+    ],
+    "mapi": [
+        "array2d_mat_mapi_test.mbt",
+        "array1d_mat_mapi_test.mbt",
+        "naive_mat_mapi_test.mbt",
+        "lib_mat_mapi_test.mbt"
+    ],
+    "get": [
+        "array2d_mat_acc_test.mbt",
+        "array1d_mat_acc_test.mbt",
+        "naive_mat_acc_test.mbt",
+        "lib_mat_acc_test.mbt"
+    ],
+    "set": [
+        "array2d_mat_set_acc_test.mbt",
+        "array1d_mat_set_acc_test.mbt",
+        "naive_mat_set_acc_test.mbt",
+        "lib_mat_set_acc_test.mbt"
+    ]
+}

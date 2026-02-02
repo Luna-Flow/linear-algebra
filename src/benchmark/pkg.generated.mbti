@@ -6,49 +6,91 @@ import {
 }
 
 // Values
-pub fn[T] lib_matrix_each_row_col(@mutable.Matrix[T], (Int, Int, T) -> Unit) -> Unit
+pub fn array1d_det(Int, Array[Double]) -> Double
 
-pub fn[T] lib_matrix_map_inplace(@mutable.Matrix[T], (T) -> T) -> Unit
+pub fn array1d_inv(Int, Array[Double]) -> Array[Double]?
 
-pub fn[T, U] lib_matrix_mapi(@mutable.Matrix[T], (Int, Int, T) -> U) -> @mutable.Matrix[U]
+pub fn array1d_mat_acc(Int, Int, Array[Double]) -> Double
 
-pub fn m2d_matrix_access(Int, Int, Array[Array[Double]]) -> Double
+pub fn array1d_mat_each(Array[Double], (Double) -> Unit) -> Unit
 
-pub fn m2d_matrix_each_row_col(Int, Int, Array[Array[Double]], (Int, Int, Double) -> Unit) -> Unit
+pub fn array1d_mat_each_row_col(Int, Int, Array[Double], (Int, Int, Double) -> Unit) -> Unit
 
-pub fn m2d_matrix_map_inplace(Int, Int, Array[Array[Double]], (Double) -> Double) -> Unit
+pub fn array1d_mat_map_inplace(Int, Int, Array[Double], (Double) -> Double) -> Unit
 
-pub fn m2d_matrix_mapi(Int, Int, Array[Array[Double]], (Int, Int, Double) -> Double) -> Array[Array[Double]]
+pub fn array1d_mat_mapi(Int, Int, Array[Double], (Int, Int, Double) -> Double) -> Array[Double]
 
-pub fn m2d_matrix_mul(Int, Array[Array[Double]], Array[Array[Double]]) -> Array[Array[Double]]
+pub fn array1d_mat_mul(Int, Array[Double], Array[Double]) -> Array[Double]
 
-pub fn m2d_matrix_vector_mul(Int, Int, Array[Array[Double]], Array[Double]) -> Array[Double]
+pub fn array1d_mat_set_acc(Int, Int, Array[Double], Double) -> Unit
 
-pub fn naive_matrix_access(Int, Int, Array[Array[Double]]) -> Double
+pub fn array1d_mat_vec_mul(Int, Int, Array[Double], Array[Double]) -> Array[Double]
 
-pub fn naive_matrix_map_inplace(Int, Int, Array[Array[Double]], (Double) -> Double) -> Unit
+pub fn array1d_rank(Int, Int, Array[Double]) -> Int
 
-pub fn naive_matrix_mapi(Int, Int, Array[Array[Double]], (Int, Int, Double) -> Double) -> Array[Array[Double]]
+pub fn array1d_reduce_row_elimination(Int, Int, Array[Double]) -> Array[Double]
 
-pub fn naive_matrix_mul(Int, Array[Array[Double]], Array[Array[Double]]) -> Array[Array[Double]]
+pub fn array1d_vec_acc(Array[Double]) -> Double
 
-pub fn naive_matrix_vector_mul(Int, Int, Array[Array[Double]], Array[Double]) -> Array[Double]
+pub fn array1d_vec_dot(Array[Double], Array[Double]) -> Double
 
-pub fn naive_vector_access(Array[Double]) -> Double
+pub fn array2d_det(Int, Array[Array[Double]]) -> Double
 
-pub fn naive_vector_dot(Array[Double], Array[Double]) -> Double
+pub fn array2d_inv(Int, Array[Array[Double]]) -> Array[Array[Double]]?
 
-pub fn native_matrix_access(Int, Int, Array[Double]) -> Double
+pub fn array2d_mat_acc(Int, Int, Array[Array[Double]]) -> Double
 
-pub fn native_matrix_map_inplace(Int, Int, Array[Double], (Double) -> Double) -> Unit
+pub fn array2d_mat_each(Array[Array[Double]], (Double) -> Unit) -> Unit
 
-pub fn native_matrix_mapi(Int, Int, Array[Double], (Int, Int, Double) -> Double) -> Array[Double]
+pub fn array2d_mat_each_row_col(Int, Int, Array[Array[Double]], (Int, Int, Double) -> Unit) -> Unit
 
-pub fn native_matrix_mul(Int, Array[Double], Array[Double]) -> Array[Double]
+pub fn array2d_mat_map_inplace(Int, Int, Array[Array[Double]], (Double) -> Double) -> Unit
 
-pub fn native_matrix_vector_mul(Int, Int, Array[Double], Array[Double]) -> Array[Double]
+pub fn array2d_mat_mapi(Int, Int, Array[Array[Double]], (Int, Int, Double) -> Double) -> Array[Array[Double]]
 
-pub fn native_vector_dot(Array[Double], Array[Double]) -> Double
+pub fn array2d_mat_mul(Int, Array[Array[Double]], Array[Array[Double]]) -> Array[Array[Double]]
+
+pub fn array2d_mat_set_acc(Int, Int, Array[Array[Double]], Double) -> Unit
+
+pub fn array2d_mat_vec_mul(Int, Int, Array[Array[Double]], Array[Double]) -> Array[Double]
+
+pub fn array2d_rank(Int, Int, Array[Array[Double]]) -> Int
+
+pub fn array2d_reduce_row_elimination(Int, Int, Array[Array[Double]]) -> Array[Array[Double]]
+
+pub fn[T] lib_mat_each_row_col(@mutable.Matrix[T], (Int, Int, T) -> Unit) -> Unit
+
+pub fn[T] lib_mat_map_inplace(@mutable.Matrix[T], (T) -> T) -> Unit
+
+pub fn[T, U] lib_mat_mapi(@mutable.Matrix[T], (Int, Int, T) -> U) -> @mutable.Matrix[U]
+
+pub fn naive_det(Int, Array[Array[Double]]) -> Double
+
+pub fn naive_inv(Int, Array[Array[Double]]) -> Array[Array[Double]]?
+
+pub fn naive_mat_acc(Int, Int, Array[Array[Double]]) -> Double
+
+pub fn naive_mat_each(Array[Array[Double]], (Double) -> Unit) -> Unit
+
+pub fn naive_mat_each_row_col(Array[Array[Double]], (Int, Int, Double) -> Unit) -> Unit
+
+pub fn naive_mat_map_inplace(Int, Int, Array[Array[Double]], (Double) -> Double) -> Unit
+
+pub fn naive_mat_mapi(Int, Int, Array[Array[Double]], (Int, Int, Double) -> Double) -> Array[Array[Double]]
+
+pub fn naive_mat_mul(Int, Array[Array[Double]], Array[Array[Double]]) -> Array[Array[Double]]
+
+pub fn naive_mat_set_acc(Int, Int, Array[Array[Double]], Double) -> Unit
+
+pub fn naive_mat_vec_mul(Int, Int, Array[Array[Double]], Array[Double]) -> Array[Double]
+
+pub fn naive_rank(Int, Int, Array[Array[Double]]) -> Int
+
+pub fn naive_reduce_row_elimination(Int, Int, Array[Array[Double]]) -> Array[Array[Double]]
+
+pub fn naive_vec_acc(Array[Double]) -> Double
+
+pub fn naive_vec_dot(Array[Double], Array[Double]) -> Double
 
 // Errors
 

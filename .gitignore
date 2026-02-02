@@ -3,6 +3,10 @@ _build
 .mooncakes/
 .DS_Store
 .vscode/
+.venv/
 _coverage/
 coverage_summary.txt
-bench/
+bench/*.txt
+bench/*.png
+bench/*.json
+!bench/bench_groups.json

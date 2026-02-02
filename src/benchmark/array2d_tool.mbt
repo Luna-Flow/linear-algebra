@@ -1,5 +1,5 @@
 ///|
-pub fn m2d_matrix_access(
+pub fn array2d_mat_acc(
   rows : Int,
   cols : Int,
   data : Array[Array[Double]],
@@ -15,7 +15,20 @@ pub fn m2d_matrix_access(
 }
 
 ///|
-pub fn m2d_matrix_each_row_col(
+pub fn array2d_mat_each(
+  data : Array[Array[Double]],
+  f : (Double) -> Unit,
+) -> Unit {
+  for i = 0; i < data.length(); i = i + 1 {
+    let row = data[i]
+    for j = 0; j < row.length(); j = j + 1 {
+      f(row[j])
+    }
+  }
+}
+
+///|
+pub fn array2d_mat_each_row_col(
   rows : Int,
   cols : Int,
   data : Array[Array[Double]],
@@ -30,7 +43,7 @@ pub fn m2d_matrix_each_row_col(
 }
 
 ///|
-pub fn m2d_matrix_mapi(
+pub fn array2d_mat_mapi(
   rows : Int,
   cols : Int,
   data : Array[Array[Double]],
@@ -44,7 +57,7 @@ pub fn m2d_matrix_mapi(
 }
 
 ///|
-pub fn m2d_matrix_map_inplace(
+pub fn array2d_mat_map_inplace(
   rows : Int,
   cols : Int,
   data : Array[Array[Double]],
@@ -54,6 +67,21 @@ pub fn m2d_matrix_map_inplace(
     let row = data[i]
     for j = 0; j < cols; j = j + 1 {
       row[j] = f(row[j])
+    }
+  }
+}
+
+///|
+pub fn array2d_mat_set_acc(
+  rows : Int,
+  cols : Int,
+  data : Array[Array[Double]],
+  val : Double,
+) -> Unit {
+  for i = 0; i < rows; i = i + 1 {
+    let row = data[i]
+    for j = 0; j < cols; j = j + 1 {
+      row[j] = val
     }
   }
 }

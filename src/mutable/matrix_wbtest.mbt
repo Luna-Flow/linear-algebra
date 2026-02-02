@@ -368,7 +368,7 @@ test "eigenvalue computation" {
   inspect((dom_val - 10.0).abs() < Tolerance::tolerance(), content="true")
 
   // Test 2x2 analytical solution
-  let vals_2x2 = m1.eigen_2x2()
+  let (vals_2x2, _) = m1.eigen_2x2()
   let v3_ok = (vals_2x2[0] - 5.0).abs() < Tolerance::tolerance() &&
     (vals_2x2[1] - 10.0).abs() < Tolerance::tolerance()
   let v4_ok = (vals_2x2[0] - 10.0).abs() < Tolerance::tolerance() &&
