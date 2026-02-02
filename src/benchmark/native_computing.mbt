@@ -37,7 +37,8 @@ pub fn native_matrix_mul(
 ///|
 pub fn native_vector_dot(a : Array[Double], b : Array[Double]) -> Double {
   let mut sum = 0.0
-  for i in 0..<a.length() {
+  let len = a.length()
+  for i = 0; i < len; i = i + 1 {
     sum = sum + a[i] * b[i]
   }
   sum
@@ -104,5 +105,190 @@ pub fn native_matrix_map_inplace(
   let len = data.length()
   for i = 0; i < len; i = i + 1 {
     data[i] = f(data[i])
+  }
+}
+
+///|
+pub fn native_matrix_set_access(
+  _rows : Int,
+  _cols : Int,
+  data : Array[Double],
+  val : Double,
+) -> Unit {
+  let len = data.length()
+  for i = 0; i < len; i = i + 1 {
+    data[i] = val
+  }
+}
+
+///|
+pub fn native_vector_access(data : Array[Double]) -> Double {
+  let mut sum = 0.0
+  let len = data.length()
+  for i = 0; i < len; i = i + 1 {
+    sum = sum + data[i]
+  }
+  sum
+}
+
+// --- Advanced Computing ---
+
+///|
+pub fn native_reduce_row_elimination(
+  rows : Int,
+  cols : Int,
+  data : Array[Double],
+) -> Array[Double] {
+  let m = data.copy()
+  let mut col = 0
+  for i = 0; i < rows; i = i + 1 {
+    if col >= cols {
+      break
+    }
+    let mut max_row = i
+    for j = i + 1; j < rows; j = j + 1 {
+      if m[j * cols + col].abs() > m[max_row * cols + col].abs() {
+        max_row = j
+      }
+    }
+    // Swap rows
+    if max_row != i {
+      for k = 0; k < cols; k = k + 1 {
+        let tmp = m[i * cols + k]
+        m[i * cols + k] = m[max_row * cols + k]
+        m[max_row * cols + k] = tmp
+      }
+    }
+    if m[i * cols + col].abs() < 1.0e-15 {
+      col = col + 1
+      continue
+    }
+    let val = m[i * cols + col]
+    for k = 0; k < cols; k = k + 1 {
+      m[i * cols + k] = m[i * cols + k] / val
+    }
+    for j = 0; j < rows; j = j + 1 {
+      if j == i {
+        continue
+      }
+      let factor = m[j * cols + col]
+      for k = 0; k < cols; k = k + 1 {
+        m[j * cols + k] = m[j * cols + k] - m[i * cols + k] * factor
+      }
+    }
+    col = col + 1
+  }
+  m
+}
+
+///|
+pub fn native_determinant(n : Int, data : Array[Double]) -> Double {
+  let m = data.copy()
+  if n == 0 {
+    return 1.0
+  }
+  let mut det_sign = 1.0
+  for j = 0; j < n; j = j + 1 {
+    let mut max_row = j
+    for i = j + 1; i < n; i = i + 1 {
+      if m[i * n + j].abs() > m[max_row * n + j].abs() {
+        max_row = i
+      }
+    }
+    if max_row != j {
+      // Swap rows
+      for k = 0; k < n; k = k + 1 {
+        let tmp = m[j * n + k]
+        m[j * n + k] = m[max_row * n + k]
+        m[max_row * n + k] = tmp
+      }
+      det_sign = -det_sign
+    }
+    let pivot = m[j * n + j]
+    if pivot.abs() < 1.0e-15 {
+      return 0.0
+    }
+    for i = j + 1; i < n; i = i + 1 {
+      let factor = m[i * n + j] / pivot
+      for k = j + 1; k < n; k = k + 1 {
+        m[i * n + k] = m[i * n + k] - factor * m[j * n + k]
+      }
+    }
+  }
+  let mut det = det_sign
+  for i = 0; i < n; i = i + 1 {
+    det = det * m[i * n + i]
+  }
+  det
+}
+
+///|
+pub fn native_rank(rows : Int, cols : Int, data : Array[Double]) -> Int {
+  let m = native_reduce_row_elimination(rows, cols, data)
+  let mut rank = 0
+  for i = 0; i < rows; i = i + 1 {
+    let mut has_nonzero = false
+    for j = 0; j < cols; j = j + 1 {
+      if m[i * cols + j].abs() > 1.0e-15 {
+        has_nonzero = true
+        break
+      }
+    }
+    if has_nonzero {
+      rank += 1
+    }
+  }
+  rank
+}
+
+///|
+pub fn native_inverse(n : Int, data : Array[Double]) -> Array[Double]? {
+  let rows = n
+  let cols = 2 * n
+  let augmented = Array::make(rows * cols, 0.0)
+  for i = 0; i < n; i = i + 1 {
+    for j = 0; j < n; j = j + 1 {
+      augmented[i * cols + j] = data[i * n + j]
+    }
+    augmented[i * cols + n + i] = 1.0
+  }
+  let res = native_reduce_row_elimination(rows, cols, augmented)
+  for i = 0; i < n; i = i + 1 {
+    if res[i * cols + i].abs() < 1.0e-15 {
+      return None
+    }
+  }
+  let inv = Array::make(n * n, 0.0)
+  for i = 0; i < n; i = i + 1 {
+    for j = 0; j < n; j = j + 1 {
+      inv[i * n + j] = res[i * cols + n + j]
+    }
+  }
+  Some(inv)
+}
+
+// --- Utility Functions ---
+
+///|
+pub fn native_matrix_each(data : Array[Double], f : (Double) -> Unit) -> Unit {
+  let len = data.length()
+  for i = 0; i < len; i = i + 1 {
+    f(data[i])
+  }
+}
+
+///|
+pub fn native_matrix_each_row_col(
+  rows : Int,
+  cols : Int,
+  data : Array[Double],
+  f : (Int, Int, Double) -> Unit,
+) -> Unit {
+  let mut idx = 0
+  for i = 0; i < rows; i = i + 1 {
+    for j = 0; j < cols; j = j + 1 {
+      f(i, j, data[idx])
+      idx += 1
+    }
   }
 }

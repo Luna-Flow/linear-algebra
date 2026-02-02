@@ -67,13 +67,11 @@ pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
 
 ///|
 pub fn[T] Matrix::get(self : Matrix[T], row : Int, col : Int) -> T {
-  guard row >= 0 && row < self.row && col >= 0 && col < self.col
   self.data[row][col]
 }
 
 ///|
 pub fn[T] Matrix::set(self : Matrix[T], row : Int, col : Int, val : T) -> Unit {
-  guard row >= 0 && row < self.row && col >= 0 && col < self.col
   self.data[row][col] = val
 }
 
@@ -118,7 +116,6 @@ pub fn[T, U] Matrix::mapi(
 }
 
 ///|
-#alias(map_in_place, deprecated)
 pub fn[T] Matrix::map_inplace(self : Matrix[T], f : (T) -> T) -> Unit {
   self.data.each(fn(row) { row.map_in_place(f) })
 }
@@ -129,24 +126,20 @@ pub fn[T] Matrix::to_transpose(self : Matrix[T]) -> Transpose[T] {
 }
 
 ///|
-#alias(map_row_in_place, deprecated)
 pub fn[T] Matrix::map_row_inplace(
   self : Matrix[T],
   row : Int,
   f : (T) -> T,
 ) -> Unit {
-  guard row >= 0 && row < self.row
   self.data[row].map_in_place(f)
 }
 
 ///|
-#alias(map_col_in_place, deprecated)
 pub fn[T] Matrix::map_col_inplace(
   self : Matrix[T],
   col : Int,
   f : (T) -> T,
 ) -> Unit {
-  guard col >= 0 && col < self.col
   for i in 0..<self.row {
     self.data[i][col] = f(self.data[i][col])
   }
@@ -186,7 +179,6 @@ pub fn[T] Matrix::each_row(
   row : Int,
   f : (T) -> Unit,
 ) -> Unit {
-  guard row >= 0 && row < self.row
   self.data[row].each(f)
 }
 
@@ -196,7 +188,6 @@ pub fn[T] Matrix::eachi_row(
   row : Int,
   f : (Int, T) -> Unit,
 ) -> Unit {
-  guard row >= 0 && row < self.row
   self.data[row].eachi(f)
 }
 
@@ -206,7 +197,6 @@ pub fn[T] Matrix::each_col(
   col : Int,
   f : (T) -> Unit,
 ) -> Unit {
-  guard col >= 0 && col < self.col
   for i in 0..<self.row {
     f(self.data[i][col])
   }
@@ -218,7 +208,6 @@ pub fn[T] Matrix::eachi_col(
   col : Int,
   f : (Int, T) -> Unit,
 ) -> Unit {
-  guard col >= 0 && col < self.col
   for i in 0..<self.row {
     f(i, self.data[i][col])
   }
@@ -329,7 +318,6 @@ pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
 
 ///|
 pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Unit {
-  guard r1 >= 0 && r1 < self.row && r2 >= 0 && r2 < self.row
   if r1 == r2 {
     return
   }
@@ -340,7 +328,6 @@ pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Unit {
 
 ///|
 pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Unit {
-  guard c1 >= 0 && c1 < self.col && c2 >= 0 && c2 < self.col
   if c1 == c2 {
     return
   }
@@ -353,13 +340,11 @@ pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Unit {
 
 ///|
 pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int) -> Array[T] {
-  guard row >= 0 && row < self.row
   self.data[row].copy()
 }
 
 ///|
 pub fn[T] Matrix::col_to_array(self : Matrix[T], col : Int) -> Array[T] {
-  guard col >= 0 && col < self.col
   let res = Array::makei(self.row, fn(i) { self.data[i][col] })
   res
 }
@@ -385,14 +370,11 @@ pub fn[T] Matrix::iter(self : Matrix[T]) -> Iter[T] {
 
 ///|
 pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
-  guard row >= 0 && row < self.row else { abort("Row index out of bounds") }
   self.data[row].iter()
 }
 
 ///|
 pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
-  guard col >= 0 && col < self.col else { abort("Column index out of bounds") }
-  // Use array collection fallback to avoid Iter::new issues
   let arr = []
   for i in 0..<self.row {
     arr.push(self.data[i][col])
@@ -523,7 +505,6 @@ pub fn[T] Matrix::vertical_combine(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
-  guard self.col == other.col
   let data = []
   for i in 0..<self.row {
     data.push(self.data[i].copy())
@@ -623,13 +604,13 @@ pub fn[T : Compare + Num + Inverse] Matrix::reduce_row_elimination(
         max_row = j
       }
     }
-    ignore(self.swap_rows(i, max_row))
+    self.swap_rows(i, max_row)
     if self.data[i][col] == T::zero() {
       col = col + 1
       continue
     }
     let val = self.data[i][col]
-    ignore(self.map_row_inplace(i, fn(x) { x * val.inv() }))
+    self.map_row_inplace(i, fn(x) { x * val.inv() })
     for j in 0..<r {
       if j == i {
         continue
@@ -768,28 +749,48 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::is_positive_definite(
 }
 
 ///|
-pub fn[T : Compare + Num + Div + Sqrt + SMul] Matrix::eigen_2x2(
+fn[T : Compare + Num + Div + Sqrt] Matrix::eigen_2x2(
   self : Matrix[T],
-) -> Vector[T] {
-  guard self.row == 2 && self.col == 2 else {
-    abort("This function is only for 2x2 matrices")
-  }
+) -> (Vector[T], Matrix[T]) {
   let a = self.data[0][0]
   let b = self.data[0][1]
   let c = self.data[1][0]
   let d = self.data[1][1]
-  let trace = a + d
+  let half = T::one() / (T::one() + T::one())
+  let mid = (a + d) * half
   let det = a * d - b * c
-  let discriminant = trace * trace - T::one().scalar(4.0) * det
-  if discriminant >= T::zero() {
-    let sqrt_disc = discriminant.sqrt()
-    let lambda1 = (trace + sqrt_disc) / T::one().scalar(2.0)
-    let lambda2 = (trace - sqrt_disc) / T::one().scalar(2.0)
-    Vector::from_array([lambda1, lambda2])
+  let disc_prime = mid * mid - det
+  let (l1, l2) = if disc_prime >= T::zero() {
+    let s = disc_prime.sqrt()
+    (mid + s, mid - s)
   } else {
-    let real_part = trace / T::one().scalar(2.0)
-    Vector::from_array([real_part, real_part])
+    (mid, mid)
   }
+  let mut v11 = T::one()
+  let mut v21 = T::zero()
+  let mut v12 = T::zero()
+  let mut v22 = T::one()
+  if b != T::zero() {
+    v11 = b
+    v21 = l1 - a
+  } else if c != T::zero() {
+    v11 = l1 - d
+    v21 = c
+  } else {
+    v11 = T::one()
+    v21 = T::zero()
+  }
+  if b != T::zero() {
+    v12 = b
+    v22 = l2 - a
+  } else if c != T::zero() {
+    v12 = l2 - d
+    v22 = c
+  } else {
+    v12 = T::zero()
+    v22 = T::one()
+  }
+  (Vector::from_array([l1, l2]), Matrix::from_array(2, 2, [v11, v12, v21, v22]))
 }
 
 ///|
@@ -797,7 +798,10 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::eigen(
   self : Matrix[T],
 ) -> (Vector[T], Matrix[T]) {
   guard self.is_square() else {
-    abort("Matrix must be square for eigenvalue computation")
+    abort("Matrix must be square to compute eigenvalues")
+  }
+  if self.row == 2 && self.col == 2 {
+    return self.eigen_2x2()
   }
   qr_algorithm(self)
 }
@@ -902,21 +906,6 @@ pub fn[T : Compare + AddMonoid + Sub + Mul + Div + Tolerance + Sqrt] qr_decompos
     }
   }
   (q, r)
-}
-
-///|
-pub trait SMul {
-  scalar(Self, Double) -> Self
-}
-
-///|
-pub impl SMul for Double with scalar(self, rhs : Double) -> Double {
-  self * rhs
-}
-
-///|
-pub impl SMul for Float with scalar(self, rhs : Double) -> Float {
-  self * Float::from_double(rhs)
 }
 
 ///|

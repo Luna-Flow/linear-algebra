@@ -18,13 +18,11 @@
 /// Returns a `Lens[T]` object for accessing elements in the specified row by 
 /// column index.
 pub fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T] {
-  guard row >= 0 && row < self.row()
   Lens::{ data: self.0, fst: row, is_transpose: true }
 }
 
 ///|
 pub fn[T] Transpose::get(self : Transpose[T], row : Int, col : Int) -> T {
-  guard row >= 0 && row < self.row()
   self.0.get(col, row)
 }
 
@@ -35,7 +33,6 @@ pub fn[T] Transpose::set(
   col : Int,
   elem : T,
 ) -> Unit {
-  guard row >= 0 && row < self.row()
   self.0.set(col, row, elem)
 }
 

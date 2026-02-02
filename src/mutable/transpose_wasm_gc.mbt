@@ -80,7 +80,6 @@ pub fn[T] Lens::op_set(self : Lens[T], row : Int, val : T) -> Unit {
 
 ///|
 pub fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T] {
-  guard row >= 0 && row < self.row()
   { data: self.0, col: row }
 }
 

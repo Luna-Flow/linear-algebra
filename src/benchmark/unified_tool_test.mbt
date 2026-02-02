@@ -1,5 +1,8 @@
 ///|
 test "unified_bench_tool" {
+  let mut sink_double : Double = 0.0
+  let mut sink_array_double : Array[Double] = []
+  let mut sink_array_array_double : Array[Array[Double]] = []
   let results = Json::object({})
   let steps = [64, 128, 256, 512]
   for n in steps {
@@ -19,9 +22,9 @@ test "unified_bench_tool" {
     let mat = Matrix::from_array(n, n, arr_1d.copy())
     let mut sum = 0.0
 
-    // --- 1. Matrix Access ---
+    // --- 1. Matrix Access & Set ---
     let summary1 = single_bench(
-      fn() { sum = m2d_matrix_access(n, n, data_2d) },
+      fn() { sum = _2d_matrix_access(n, n, data_2d) },
       name="2d_matrix_access scale(\{n})",
     )
     pack(results, "2d_matrix_access scale(\{n})", ToJson::to_json(summary1))
@@ -41,18 +44,48 @@ test "unified_bench_tool" {
     )
     let summary3 = single_bench(
       fn() {
-        sum = 0.0
+        let mut inner_sum = 0.0
         let rows = mat.row()
         let cols = mat.col()
         for i = 0; i < rows; i = i + 1 {
           for j = 0; j < cols; j = j + 1 {
-            sum = sum + mat.get(i, j)
+            inner_sum = inner_sum + mat.get(i, j)
           }
         }
+        sum = inner_sum
       },
       name="lib_matrix_access scale(\{n})",
     )
     pack(results, "lib_matrix_access scale(\{n})", ToJson::to_json(summary3))
+
+    // -- Set Access --
+    let summary_set_2d = single_bench(
+      fn() { _2d_matrix_set_access(n, n, data_2d, 1.0) },
+      name="2d_matrix_set_access scale(\{n})",
+    )
+    pack(
+      results,
+      "2d_matrix_set_access scale(\{n})",
+      ToJson::to_json(summary_set_2d),
+    )
+    let summary_set_naive = single_bench(
+      fn() { naive_matrix_set_access(n, n, data_2d, 1.0) },
+      name="naive_matrix_set_access scale(\{n})",
+    )
+    pack(
+      results,
+      "naive_matrix_set_access scale(\{n})",
+      ToJson::to_json(summary_set_naive),
+    )
+    let summary_set_native = single_bench(
+      fn() { native_matrix_set_access(n, n, arr_1d, 1.0) },
+      name="native_matrix_set_access scale(\{n})",
+    )
+    pack(
+      results,
+      "native_matrix_set_access scale(\{n})",
+      ToJson::to_json(summary_set_native),
+    )
     let summary4 = single_bench(
       fn() {
         let rows = mat.row()
@@ -74,21 +107,31 @@ test "unified_bench_tool" {
     // --- 2. Map (Copy) ---
     let summary5 = single_bench(
       fn() {
-        m2d_matrix_mapi(n, n, data_2d, fn(_i, _j, x) { x + 1.0 }) |> ignore
+        sink_array_array_double = _2d_matrix_mapi(n, n, data_2d, fn(_i, _j, x) {
+          x + 1.0
+        })
       },
       name="2d_matrix_mapi scale(\{n})",
     )
     pack(results, "2d_matrix_mapi scale(\{n})", ToJson::to_json(summary5))
     let summary6 = single_bench(
       fn() {
-        naive_matrix_mapi(n, n, data_2d, fn(_i, _j, x) { x + 1.0 }) |> ignore
+        sink_array_array_double = naive_matrix_mapi(n, n, data_2d, fn(
+          _i,
+          _j,
+          x,
+        ) {
+          x + 1.0
+        })
       },
       name="naive_matrix_mapi scale(\{n})",
     )
     pack(results, "naive_matrix_mapi scale(\{n})", ToJson::to_json(summary6))
     let summary6_native = single_bench(
       fn() {
-        native_matrix_mapi(n, n, arr_1d, fn(_i, _j, x) { x + 1.0 }) |> ignore
+        sink_array_double = native_matrix_mapi(n, n, arr_1d, fn(_i, _j, x) {
+          x + 1.0
+        })
       },
       name="native_matrix_mapi scale(\{n})",
     )
@@ -103,80 +146,163 @@ test "unified_bench_tool" {
     )
     pack(results, "lib_matrix_mapi scale(\{n})", ToJson::to_json(summary7))
 
-    // --- 3. Map (In-place) ---
-    let summary8 = single_bench(
-      fn() { m2d_matrix_map_inplace(n, n, data_2d, fn(x) { x + 1.0 }) },
-      name="2d_matrix_map_inplace scale(\{n})",
-    )
-    pack(
-      results,
-      "2d_matrix_map_inplace scale(\{n})",
-      ToJson::to_json(summary8),
-    )
-    let summary9 = single_bench(
-      fn() { naive_matrix_map_inplace(n, n, data_2d, fn(x) { x + 1.0 }) },
-      name="naive_matrix_map_inplace scale(\{n})",
-    )
-    pack(
-      results,
-      "naive_matrix_map_inplace scale(\{n})",
-      ToJson::to_json(summary9),
-    )
-    let summary9_native = single_bench(
-      fn() { native_matrix_map_inplace(n, n, arr_1d, fn(x) { x + 1.0 }) },
-      name="native_matrix_map_inplace scale(\{n})",
-    )
-    pack(
-      results,
-      "native_matrix_map_inplace scale(\{n})",
-      ToJson::to_json(summary9_native),
-    )
-    let summary10 = single_bench(
-      fn() { mat.map_inplace(fn(x) { x + 1.0 }) },
-      name="lib_matrix_map_inplace scale(\{n})",
-    )
-    pack(
-      results,
-      "lib_matrix_map_inplace scale(\{n})",
-      ToJson::to_json(summary10),
-    )
-
-    // --- 4. Vector Access (1D) ---
-    let vec_1d = arr_1d.copy()
-    let vec_lib = Vector::from_array(arr_1d.copy())
-    let summary11 = single_bench(
+    // --- 3. Vector Access ---
+    let (vec_lib, vec_arr) = {
+      let arr = Array::makei(n, fn(_i) { rng.next() })
+      (Vector::from_array(arr.copy()), arr)
+    }
+    let summary_va_lib = single_bench(
       fn() {
-        sum = 0.0
-        for i = 0; i < size; i = i + 1 {
-          sum = sum + vec_1d[i]
+        let mut inner_sum = 0.0
+        let len = vec_lib.length()
+        for i = 0; i < len; i = i + 1 {
+          inner_sum = inner_sum + vec_lib[i]
         }
+        sum = inner_sum
       },
+      name="lib_vector_access scale(\{n})",
+    )
+    pack(
+      results,
+      "lib_vector_access scale(\{n})",
+      ToJson::to_json(summary_va_lib),
+    )
+    let summary_va_native = single_bench(
+      fn() { sum = native_vector_access(vec_arr) },
       name="native_vector_access scale(\{n})",
     )
     pack(
       results,
       "native_vector_access scale(\{n})",
-      ToJson::to_json(summary11),
+      ToJson::to_json(summary_va_native),
     )
-    let summary11_naive = single_bench(
-      fn() { sum = naive_vector_access(vec_1d) },
+    let summary_va_naive = single_bench(
+      fn() { sum = naive_vector_access(vec_arr) },
       name="naive_vector_access scale(\{n})",
     )
     pack(
       results,
       "naive_vector_access scale(\{n})",
-      ToJson::to_json(summary11_naive),
+      ToJson::to_json(summary_va_naive),
     )
-    let summary12 = single_bench(
+
+    // --- 4. Each / RowCol ---
+    let summary_each_lib = single_bench(
       fn() {
-        sum = 0.0
-        for i = 0; i < size; i = i + 1 {
-          sum = sum + vec_lib[i]
-        }
+        let mut inner_sum = 0.0
+        mat.each(fn(x) { inner_sum = inner_sum + x })
+        sum = inner_sum
       },
-      name="lib_vector_access scale(\{n})",
+      name="lib_matrix_each scale(\{n})",
     )
-    pack(results, "lib_vector_access scale(\{n})", ToJson::to_json(summary12))
+    pack(
+      results,
+      "lib_matrix_each scale(\{n})",
+      ToJson::to_json(summary_each_lib),
+    )
+    let summary_each_native = single_bench(
+      fn() {
+        let mut inner_sum = 0.0
+        native_matrix_each(arr_1d, fn(x) { inner_sum = inner_sum + x })
+        sum = inner_sum
+      },
+      name="native_matrix_each scale(\{n})",
+    )
+    pack(
+      results,
+      "native_matrix_each scale(\{n})",
+      ToJson::to_json(summary_each_native),
+    )
+    let summary_each_naive = single_bench(
+      fn() {
+        let mut inner_sum = 0.0
+        naive_matrix_each(data_2d, fn(x) { inner_sum = inner_sum + x })
+        sum = inner_sum
+      },
+      name="naive_matrix_each scale(\{n})",
+    )
+    pack(
+      results,
+      "naive_matrix_each scale(\{n})",
+      ToJson::to_json(summary_each_naive),
+    )
+    let summary_each_2d = single_bench(
+      fn() {
+        let mut inner_sum = 0.0
+        _2d_matrix_each(data_2d, fn(x) { inner_sum = inner_sum + x })
+        sum = inner_sum
+      },
+      name="2d_matrix_each scale(\{n})",
+    )
+    pack(
+      results,
+      "2d_matrix_each scale(\{n})",
+      ToJson::to_json(summary_each_2d),
+    )
+
+    // -- Each Row Col --
+    let summary_erc_lib = single_bench(
+      fn() {
+        let mut inner_sum = 0.0
+        mat.each_row_col(fn(_i, _j, x) { inner_sum = inner_sum + x })
+        sum = inner_sum
+      },
+      name="lib_matrix_each_row_col scale(\{n})",
+    )
+    pack(
+      results,
+      "lib_matrix_each_row_col scale(\{n})",
+      ToJson::to_json(summary_erc_lib),
+    )
+    let summary_erc_native = single_bench(
+      fn() {
+        let mut inner_sum = 0.0
+        native_matrix_each_row_col(n, n, arr_1d, fn(_i, _j, x) {
+          inner_sum = inner_sum + x
+        })
+        sum = inner_sum
+      },
+      name="native_matrix_each_row_col scale(\{n})",
+    )
+    pack(
+      results,
+      "native_matrix_each_row_col scale(\{n})",
+      ToJson::to_json(summary_erc_native),
+    )
+    let summary_erc_2d = single_bench(
+      fn() {
+        let mut inner_sum = 0.0
+        _2d_matrix_each_row_col(n, n, data_2d, fn(_i, _j, x) {
+          inner_sum = inner_sum + x
+        })
+        sum = inner_sum
+      },
+      name="2d_matrix_each_row_col scale(\{n})",
+    )
+    pack(
+      results,
+      "2d_matrix_each_row_col scale(\{n})",
+      ToJson::to_json(summary_erc_2d),
+    )
+    let summary_erc_naive = single_bench(
+      fn() {
+        let mut inner_sum = 0.0
+        naive_matrix_each_row_col(data_2d, fn(_i, _j, x) {
+          inner_sum = inner_sum + x
+        })
+        sum = inner_sum
+      },
+      name="naive_matrix_each_row_col scale(\{n})",
+    )
+    pack(
+      results,
+      "naive_matrix_each_row_col scale(\{n})",
+      ToJson::to_json(summary_erc_naive),
+    )
+    sink_double = sum
   }
   println(results.stringify())
+  ignore(sink_double)
+  ignore(sink_array_double)
+  ignore(sink_array_array_double)
 }

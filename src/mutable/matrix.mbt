@@ -1051,7 +1051,6 @@ pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
 pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Unit {
   let r = self.row
   let c = self.col
-  guard r1 < r && r2 < r && r1 >= 0 && r2 >= 0
   if r1 == r2 {
     return
   }
@@ -1087,7 +1086,6 @@ pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Unit {
 pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Unit {
   let r = self.row
   let c = self.col
-  guard c1 < c && c2 < c && c1 >= 0 && c2 >= 0
   if c1 == c2 {
     return
   }
@@ -1305,7 +1303,6 @@ pub fn[T] Matrix::vertical_combine(
 /// ```
 ///
 pub fn[T] Matrix::col_to_array(self : Matrix[T], col : Int) -> Array[T] {
-  guard col >= 0 && col < self.col
   let row_count = self.row
   let col_count = self.col
   if row_count == 0 {
@@ -1343,7 +1340,6 @@ pub fn[T] Matrix::to_array(self : Matrix[T]) -> Array[T] {
 
 ///|
 pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int) -> Array[T] {
-  guard row >= 0 && row < self.row
   let col_count = self.col
   if col_count == 0 {
     return []
@@ -1589,7 +1585,6 @@ pub fn[T] Matrix::iter(self : Matrix[T]) -> Iter[T] {
 /// }
 /// ```
 pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
-  guard row >= 0 && row < self.row else { abort("Row index out of bounds") }
   let start = row * self.col
   let end = start + self.col
   self.data[start:end].iter()
@@ -1615,7 +1610,6 @@ pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
 /// }
 /// ```
 pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
-  guard col >= 0 && col < self.col else { abort("Column index out of bounds") }
   self.transpose().iter_row(col)
 }
 
@@ -1657,6 +1651,9 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::eigen(
 ) -> (Vector[T], Matrix[T]) {
   guard self.is_square() else {
     abort("Matrix must be square for eigenvalue computation")
+  }
+  if self.row == 2 && self.col == 2 {
+    return self.eigen_2x2()
   }
   qr_algorithm(self)
 }
@@ -1903,49 +1900,49 @@ pub fn[T : AddMonoid + Mul] Matrix::mul_vec(
 /// Returns a vector containing the two eigenvalues.
 /// 
 /// Panics if the matrix is not 2x2.
-pub fn[T : Compare + Num + Div + Sqrt + SMul] Matrix::eigen_2x2(
+fn[T : Compare + Num + Div + Sqrt] Matrix::eigen_2x2(
   self : Matrix[T],
-) -> Vector[T] {
-  guard self.row == 2 && self.col == 2 else {
-    abort("This function is only for 2x2 matrices")
-  }
-  // self[0][0]
-  let a = self.data[0 * self.col + 0]
-  // self[0][1]
-  let b = self.data[0 * self.col + 1]
-  // self[1][0]
-  let c = self.data[1 * self.col + 0]
-  // self[1][1]
-  let d = self.data[1 * self.col + 1]
-  let trace = a + d
+) -> (Vector[T], Matrix[T]) {
+  let n = self.col
+  let a = self.data[0 * n + 0]
+  let b = self.data[0 * n + 1]
+  let c = self.data[1 * n + 0]
+  let d = self.data[1 * n + 1]
+  let half = T::one() / (T::one() + T::one())
+  let mid = (a + d) * half
   let det = a * d - b * c
-  let discriminant = trace * trace - T::one().scalar(4.0) * det
-  if discriminant >= T::zero() {
-    let sqrt_disc = discriminant.sqrt()
-    let lambda1 = (trace + sqrt_disc) / T::one().scalar(2.0)
-    let lambda2 = (trace - sqrt_disc) / T::one().scalar(2.0)
-    Vector::from_array([lambda1, lambda2])
+  let disc_prime = mid * mid - det
+  let (l1, l2) = if disc_prime >= T::zero() {
+    let s = disc_prime.sqrt()
+    (mid + s, mid - s)
   } else {
-    // This case results in complex eigenvalues.
-    // This implementation returns only the real part.
-    let real_part = trace / T::one().scalar(2.0)
-    Vector::from_array([real_part, real_part])
+    (mid, mid)
   }
-}
-
-///|
-pub trait SMul {
-  scalar(Self, Double) -> Self
-}
-
-///|
-pub impl SMul for Double with scalar(self, rhs : Double) -> Double {
-  self * rhs
-}
-
-///|
-pub impl SMul for Float with scalar(self, rhs : Double) -> Float {
-  self * Float::from_double(rhs)
+  let mut v11 = T::one()
+  let mut v21 = T::zero()
+  let mut v12 = T::zero()
+  let mut v22 = T::one()
+  if b != T::zero() {
+    v11 = b
+    v21 = l1 - a
+  } else if c != T::zero() {
+    v11 = l1 - d
+    v21 = c
+  } else {
+    v11 = T::one()
+    v21 = T::zero()
+  }
+  if b != T::zero() {
+    v12 = b
+    v22 = l2 - a
+  } else if c != T::zero() {
+    v12 = l2 - d
+    v22 = c
+  } else {
+    v12 = T::zero()
+    v22 = T::one()
+  }
+  (Vector::from_array([l1, l2]), Matrix::from_array(2, 2, [v11, v12, v21, v22]))
 }
 
 ///|
