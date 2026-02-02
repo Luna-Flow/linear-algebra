@@ -15,6 +15,10 @@ if [ "$TARGET" == "all" ]; then
     for t in wasm wasm-gc js native; do
         $0 $t
     done
+    echo "🧹 Cleaning up and processing results..."
+    cd bench
+    python clean_up.py && python proc.py
+    cd ..
     echo "🎉 All benchmarks completed."
     exit 0
 fi

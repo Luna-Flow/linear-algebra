@@ -666,39 +666,74 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
   guard self.is_square() else {
     abort("Matrix must be square to calculate determinant")
   }
-  let m = self.copy()
-  let n = m.row
-  if n == 0 {
-    return T::one()
-  }
-  let mut det_sign = T::one()
-  for j in 0..<n {
-    let mut max_row = j
-    for i in (j + 1)..<n {
-      if m.data[i][j].abs() > m.data[max_row][j].abs() {
-        max_row = i
+  let n = self.row
+  match n {
+    0 => T::one()
+    1 => self.data[0][0]
+    2 => {
+      let r0 = self.data[0]
+      let r1 = self.data[1]
+      r0[0] * r1[1] - r0[1] * r1[0]
+    }
+    3 => {
+      let r0 = self.data[0]
+      let r1 = self.data[1]
+      let r2 = self.data[2]
+      r0[0] * (r1[1] * r2[2] - r1[2] * r2[1]) -
+      r0[1] * (r1[0] * r2[2] - r1[2] * r2[0]) +
+      r0[2] * (r1[0] * r2[1] - r1[1] * r2[0])
+    }
+    4 => {
+      let r0 = self.data[0]
+      let r1 = self.data[1]
+      let r2 = self.data[2]
+      let r3 = self.data[3]
+      let s01 = r0[0] * r1[1] - r0[1] * r1[0]
+      let s02 = r0[0] * r1[2] - r0[2] * r1[0]
+      let s03 = r0[0] * r1[3] - r0[3] * r1[0]
+      let s12 = r0[1] * r1[2] - r0[2] * r1[1]
+      let s13 = r0[1] * r1[3] - r0[3] * r1[1]
+      let s23 = r0[2] * r1[3] - r0[3] * r1[2]
+      let c01 = r2[0] * r3[1] - r2[1] * r3[0]
+      let c02 = r2[0] * r3[2] - r2[2] * r3[0]
+      let c03 = r2[0] * r3[3] - r2[3] * r3[0]
+      let c12 = r2[1] * r3[2] - r2[2] * r3[1]
+      let c13 = r2[1] * r3[3] - r2[3] * r3[1]
+      let c23 = r2[2] * r3[3] - r2[3] * r3[2]
+      s01 * c23 - s02 * c13 + s03 * c12 + s12 * c03 - s13 * c02 + s23 * c01
+    }
+    _ => {
+      let m = self.copy()
+      let mut det_sign = T::one()
+      for j in 0..<n {
+        let mut max_row = j
+        for i in (j + 1)..<n {
+          if m.data[i][j].abs() > m.data[max_row][j].abs() {
+            max_row = i
+          }
+        }
+        if max_row != j {
+          m.swap_rows(j, max_row)
+          det_sign = -det_sign
+        }
+        let pivot = m.data[j][j]
+        if pivot.abs() < T::tolerance() {
+          return T::zero()
+        }
+        for i in (j + 1)..<n {
+          let factor = m.data[i][j] / pivot
+          for k in (j + 1)..<n {
+            m.data[i][k] -= factor * m.data[j][k]
+          }
+        }
       }
-    }
-    if max_row != j {
-      m.swap_rows(j, max_row)
-      det_sign = -det_sign
-    }
-    let pivot = m.data[j][j]
-    if pivot.abs() < T::tolerance() {
-      return T::zero()
-    }
-    for i in (j + 1)..<n {
-      let factor = m.data[i][j] / pivot
-      for k in (j + 1)..<n {
-        m.data[i][k] -= factor * m.data[j][k]
+      let mut det = det_sign
+      for i in 0..<n {
+        det *= m.data[i][i]
       }
+      det
     }
   }
-  let mut det = det_sign
-  for i in 0..<n {
-    det *= m.data[i][i]
-  }
-  det
 }
 
 ///|
