@@ -1,5 +1,5 @@
 ///|
-pub fn _2d_matrix_access(
+pub fn array2d_mat_acc(
   rows : Int,
   cols : Int,
   data : Array[Array[Double]],
@@ -15,7 +15,7 @@ pub fn _2d_matrix_access(
 }
 
 ///|
-pub fn _2d_matrix_each(
+pub fn array2d_mat_each(
   data : Array[Array[Double]],
   f : (Double) -> Unit,
 ) -> Unit {
@@ -28,7 +28,7 @@ pub fn _2d_matrix_each(
 }
 
 ///|
-pub fn _2d_matrix_each_row_col(
+pub fn array2d_mat_each_row_col(
   rows : Int,
   cols : Int,
   data : Array[Array[Double]],
@@ -43,7 +43,7 @@ pub fn _2d_matrix_each_row_col(
 }
 
 ///|
-pub fn _2d_matrix_mapi(
+pub fn array2d_mat_mapi(
   rows : Int,
   cols : Int,
   data : Array[Array[Double]],
@@ -57,7 +57,7 @@ pub fn _2d_matrix_mapi(
 }
 
 ///|
-pub fn _2d_matrix_map_inplace(
+pub fn array2d_mat_map_inplace(
   rows : Int,
   cols : Int,
   data : Array[Array[Double]],
@@ -72,7 +72,7 @@ pub fn _2d_matrix_map_inplace(
 }
 
 ///|
-pub fn _2d_matrix_set_access(
+pub fn array2d_mat_set_acc(
   rows : Int,
   cols : Int,
   data : Array[Array[Double]],

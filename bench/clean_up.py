@@ -13,22 +13,22 @@ def get_info(full_name):
     # 提取头部名称
     op_part = full_name.split(' ')[0]
     
-    # 1. 识别实现类型 (Implementation Type) - 基于初次识别
+    # 1. 识别实现类型 (Implementation Type)
     if op_part.startswith('naive_'):
         impl = 'naive'
-    elif op_part.startswith('native_'):
-        impl = 'native'
-    elif op_part.startswith('2d_') or op_part.startswith('m2d_') or op_part.startswith('_2d_'):
-        impl = '2d'
+    elif op_part.startswith('array1d_') or op_part.startswith('native_'):
+        impl = 'array1d'
+    elif op_part.startswith('array2d_') or op_part.startswith('2d_') or op_part.startswith('_2d_'):
+        impl = 'array2d'
     elif op_part.startswith('lib_'):
         impl = 'lib'
     else:
         impl = 'other'
         
     # 2. 剥离所有前缀以提取核心项目名 (Test Item)
-    # 采用递归剥离，处理如 naive_m2d_ 这样的复合前缀
     op = op_part
-    prefixes = ['naive_', 'native_', '2d_', 'lib_', 'm2d_', '_2d_', 'matrix_']
+    # 只剥离实现相关的前缀，保留操作相关的前缀 (如 mat_, vec_)
+    prefixes = ['naive_', 'array1d_', 'array2d_', 'lib_', 'native_', 'array_1d_', 'array_2d_', '2d_', '_2d_']
     prefixes.sort(key=len, reverse=True)
     
     changed = True
@@ -40,23 +40,46 @@ def get_info(full_name):
                 changed = True
                 break
     
-    # 统一重命名一些常见的项目名，确保对齐
+    # 统一重命名项目名，确保对齐
     mapping = {
-        "mul": "matrix_mul",
-        "vector_mul": "matrix_vector_mul",
-        "dot": "vector_dot",
-        "access": "matrix_access",
-        "set_access": "matrix_set_access",
-        "mapi": "matrix_mapi",
-        "map_inplace": "matrix_map_inplace"
+        # 常见操作缩写化
+        "matrix_mul": "mat_mul",
+        "matrix_vector_mul": "mat_vec_mul",
+        "vector_dot": "vec_dot",
+        "matrix_acc": "mat_acc",
+        "matrix_access": "mat_acc",
+        "matrix_set_acc": "mat_set_acc",
+        "matrix_det": "mat_det",
+        "matrix_determinant": "mat_det",
+        "matrix_inv": "mat_inv",
+        "matrix_inverse": "mat_inv",
+        "matrix_rank": "mat_rank",
+        "matrix_mapi": "mat_mapi",
+        "matrix_map_inplace": "mat_map_inplace",
+        
+        # 裸名补全
+        "mul": "mat_mul",
+        "vec_mul": "mat_vec_mul",
+        "dot": "vec_dot",
+        "acc": "mat_acc",
+        "access": "mat_acc",
+        "set_acc": "mat_set_acc",
+        "mapi": "mat_mapi",
+        "map_inplace": "mat_map_inplace",
+        "det": "mat_det",
+        "determinant": "mat_det",
+        "rank": "mat_rank",
+        "inv": "mat_inv",
+        "inverse": "mat_inv"
     }
     if op in mapping:
         op = mapping[op]
-    else:
-        # For things like 'determinant', 'rank', 'inverse'
-        # ensure they have 'matrix_' prefix for consistency if it's a matrix op
-        if op in ["determinant", "rank", "inverse", "each", "each_row_col", "power"]:
-            op = f"matrix_{op}"
+    elif op in ["each", "each_row_col", "power"]:
+        op = f"mat_{op}"
+    elif op.startswith("matrix_"):
+        op = op.replace("matrix_", "mat_")
+    elif op.startswith("vector_"):
+        op = op.replace("vector_", "vec_")
             
     return op, scale, impl
 

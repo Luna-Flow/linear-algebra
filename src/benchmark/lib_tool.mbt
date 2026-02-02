@@ -1,5 +1,5 @@
 ///|
-pub fn[T] lib_matrix_each_row_col(
+pub fn[T] lib_mat_each_row_col(
   m : Matrix[T],
   f : (Int, Int, T) -> Unit,
 ) -> Unit {
@@ -14,15 +14,12 @@ pub fn[T] lib_matrix_each_row_col(
 }
 
 ///|
-pub fn[T, U] lib_matrix_mapi(
-  m : Matrix[T],
-  f : (Int, Int, T) -> U,
-) -> Matrix[U] {
+pub fn[T, U] lib_mat_mapi(m : Matrix[T], f : (Int, Int, T) -> U) -> Matrix[U] {
   Matrix::make(m.row(), m.col(), fn(i, j) { f(i, j, m[i][j]) })
 }
 
 ///|
-pub fn[T] lib_matrix_map_inplace(m : Matrix[T], f : (T) -> T) -> Unit {
+pub fn[T] lib_mat_map_inplace(m : Matrix[T], f : (T) -> T) -> Unit {
   let row = m.row()
   let col = m.col()
   for i = 0; i < row; i = i + 1 {

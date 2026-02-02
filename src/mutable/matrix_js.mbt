@@ -84,17 +84,20 @@ pub impl[T : Show] Show for Matrix[T] with to_string(self) {
 
 ///|
 pub impl[T : Show] Show for Matrix[T] with output(self, logger) {
-  for i in 0..<self.row {
+  let self_data = self.data
+  let row = self.row
+  let col = self.col
+  for i in 0..<row {
     logger.write_char('|')
-    let row = self.data[i]
-    for j in 0..<self.col {
-      logger.write_object(row[j])
-      if j < self.col - 1 {
+    let row_data = self_data[i]
+    for j in 0..<col {
+      logger.write_object(row_data[j])
+      if j < col - 1 {
         logger.write_string(", ")
       }
     }
     logger.write_char('|')
-    if i < self.row - 1 {
+    if i < row - 1 {
       logger.write_char('\n')
     }
   }
@@ -116,7 +119,6 @@ pub fn[T, U] Matrix::mapi(
 }
 
 ///|
-#alias(map_in_place, deprecated)
 pub fn[T] Matrix::map_inplace(self : Matrix[T], f : (T) -> T) -> Unit {
   self.data.each(fn(row) { row.map_in_place(f) })
 }
@@ -127,7 +129,6 @@ pub fn[T] Matrix::to_transpose(self : Matrix[T]) -> Transpose[T] {
 }
 
 ///|
-#alias(map_row_in_place, deprecated)
 pub fn[T] Matrix::map_row_inplace(
   self : Matrix[T],
   row : Int,
@@ -137,14 +138,14 @@ pub fn[T] Matrix::map_row_inplace(
 }
 
 ///|
-#alias(map_col_in_place, deprecated)
 pub fn[T] Matrix::map_col_inplace(
   self : Matrix[T],
   col : Int,
   f : (T) -> T,
 ) -> Unit {
+  let self_data = self.data
   for i in 0..<self.row {
-    self.data[i][col] = f(self.data[i][col])
+    self_data[i][col] = f(self_data[i][col])
   }
 }
 
@@ -156,9 +157,13 @@ pub fn[T] Matrix::each(self : Matrix[T], f : (T) -> Unit) -> Unit {
 ///|
 pub fn[T] Matrix::eachi(self : Matrix[T], f : (Int, T) -> Unit) -> Unit {
   let mut idx = 0
-  for i in 0..<self.row {
-    for j in 0..<self.col {
-      f(idx, self.data[i][j])
+  let self_data = self.data
+  let row = self.row
+  let col = self.col
+  for i in 0..<row {
+    let row_data = self_data[i]
+    for j in 0..<col {
+      f(idx, row_data[j])
       idx += 1
     }
   }
@@ -196,8 +201,9 @@ pub fn[T] Matrix::each_col(
   col : Int,
   f : (T) -> Unit,
 ) -> Unit {
+  let self_data = self.data
   for i in 0..<self.row {
-    f(self.data[i][col])
+    f(self_data[i][col])
   }
 }
 
@@ -207,8 +213,9 @@ pub fn[T] Matrix::eachi_col(
   col : Int,
   f : (Int, T) -> Unit,
 ) -> Unit {
+  let self_data = self.data
   for i in 0..<self.row {
-    f(i, self.data[i][col])
+    f(i, self_data[i][col])
   }
 }
 
@@ -230,13 +237,15 @@ pub impl[T : AddMonoid + Mul] Mul for Matrix[T] with mul(
   // Optimized for JS Array[Array] access
   // We use i-k-j loop order.
   let data = Array::makei(row, fn(_) { Array::make(col, T::zero()) })
+  let self_data = self.data
+  let other_data = other.data
   for i in 0..<row {
-    let row_a = self.data[i]
+    let row_a = self_data[i]
     let row_c = data[i]
     for k in 0..<inner {
       let val_a = row_a[k]
       // Inner loop over J
-      let row_b = other.data[k]
+      let row_b = other_data[k]
       for j in 0..<col {
         row_c[j] = row_c[j] + val_a * row_b[j]
       }
@@ -295,9 +304,13 @@ pub fn[T : Zero + One] identity(size : Int) -> Matrix[T] {
 
 ///|
 pub fn[T : Compare + Zero] Matrix::null(self : Matrix[T]) -> Bool {
-  for i in 0..<self.row {
-    for j in 0..<self.col {
-      if self.data[i][j] != T::zero() {
+  let self_data = self.data
+  let row = self.row
+  let col = self.col
+  for i in 0..<row {
+    let row_data = self_data[i]
+    for j in 0..<col {
+      if row_data[j] != T::zero() {
         return false
       }
     }
@@ -312,7 +325,8 @@ pub fn[T : Conjugate] Matrix::adjoint(self : Matrix[T]) -> Matrix[T] {
 
 ///|
 pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
-  Matrix::make(self.col, self.row, fn(i, j) { self.data[j][i] })
+  let self_data = self.data
+  Matrix::make(self.col, self.row, fn(i, j) { self_data[j][i] })
 }
 
 ///|
@@ -330,10 +344,13 @@ pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Unit {
   if c1 == c2 {
     return
   }
-  for i in 0..<self.row {
-    let temp = self.data[i][c1]
-    self.data[i][c1] = self.data[i][c2]
-    self.data[i][c2] = temp
+  let self_data = self.data
+  let row = self.row
+  for i in 0..<row {
+    let row_data = self_data[i]
+    let temp = row_data[c1]
+    row_data[c1] = row_data[c2]
+    row_data[c2] = temp
   }
 }
 
@@ -344,15 +361,18 @@ pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int) -> Array[T] {
 
 ///|
 pub fn[T] Matrix::col_to_array(self : Matrix[T], col : Int) -> Array[T] {
-  let res = Array::makei(self.row, fn(i) { self.data[i][col] })
+  let self_data = self.data
+  let res = Array::makei(self.row, fn(i) { self_data[i][col] })
   res
 }
 
 ///|
 pub fn[T] Matrix::to_array(self : Matrix[T]) -> Array[T] {
   let res = []
-  for i in 0..<self.row {
-    res.push_iter(self.data[i].iter())
+  let self_data = self.data
+  let row = self.row
+  for i in 0..<row {
+    res.push_iter(self_data[i].iter())
   }
   res
 }
@@ -376,8 +396,10 @@ pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
 pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
   // Use array collection fallback to avoid Iter::new issues
   let arr = []
-  for i in 0..<self.row {
-    arr.push(self.data[i][col])
+  let self_data = self.data
+  let row = self.row
+  for i in 0..<row {
+    arr.push(self_data[i][col])
   }
   arr.iter()
 }
@@ -427,12 +449,16 @@ pub fn[T] Matrix::is_square(self : Matrix[T]) -> Bool {
 pub fn[T : Compare + Num + Tolerance] Matrix::is_symmetric(
   self : Matrix[T],
 ) -> Bool {
-  if self.row != self.col {
+  let row = self.row
+  let col = self.col
+  if row != col {
     return false
   }
-  for i = 0; i < self.row; i = i + 1 {
-    for j = i + 1; j < self.col; j = j + 1 {
-      if (self.data[i][j] - self.data[j][i]).abs() > T::tolerance() {
+  let self_data = self.data
+  for i = 0; i < row; i = i + 1 {
+    let row_i = self_data[i]
+    for j = i + 1; j < col; j = j + 1 {
+      if (row_i[j] - self_data[j][i]).abs() > T::tolerance() {
         return false
       }
     }
@@ -462,6 +488,7 @@ pub fn[T : AddMonoid + Mul] Matrix::mul_vec(
 ) -> Vector[T] {
   let m = self.row
   let n = self.col
+  let self_data = self.data
   let v_data = vector.0
   guard n == v_data.length() else {
     abort("Matrix and vector dimensions are not compatible for multiplication")
@@ -469,7 +496,7 @@ pub fn[T : AddMonoid + Mul] Matrix::mul_vec(
   let res_data = Array::make(m, T::zero())
   for i = 0; i < m; i = i + 1 {
     let mut sum = T::zero()
-    let row_data = self.data[i]
+    let row_data = self_data[i]
     for j = 0; j < n; j = j + 1 {
       sum = sum + row_data[j] * v_data[j]
     }
@@ -484,20 +511,25 @@ pub fn[T] Matrix::horizontal_combine(
   other : Matrix[T],
 ) -> Matrix[T] {
   guard self.row == other.row
-  let new_col = self.col + other.col
-  let data = Array::makei(self.row, fn(i) {
-    let new_row = Array::make(new_col, self.data[0][0])
-    let row_self = self.data[i]
-    for j in 0..<self.col {
+  let row = self.row
+  let self_col = self.col
+  let other_col = other.col
+  let self_data = self.data
+  let other_data = other.data
+  let new_col = self_col + other_col
+  let data = Array::makei(row, fn(i) {
+    let new_row = Array::make(new_col, self_data[0][0])
+    let row_self = self_data[i]
+    for j in 0..<self_col {
       new_row[j] = row_self[j]
     }
-    let row_other = other.data[i]
-    for j in 0..<other.col {
-      new_row[self.col + j] = row_other[j]
+    let row_other = other_data[i]
+    for j in 0..<other_col {
+      new_row[self_col + j] = row_other[j]
     }
     new_row
   })
-  { row: self.row, col: new_col, data }
+  { row, col: new_col, data }
 }
 
 ///|
@@ -506,14 +538,18 @@ pub fn[T] Matrix::vertical_combine(
   other : Matrix[T],
 ) -> Matrix[T] {
   guard self.col == other.col
+  let self_data = self.data
+  let other_data = other.data
+  let row_self = self.row
+  let row_other = other.row
   let data = []
-  for i in 0..<self.row {
-    data.push(self.data[i].copy())
+  for i in 0..<row_self {
+    data.push(self_data[i].copy())
   }
-  for i in 0..<other.row {
-    data.push(other.data[i].copy())
+  for i in 0..<row_other {
+    data.push(other_data[i].copy())
   }
-  { row: self.row + other.row, col: self.col, data }
+  { row: row_self + row_other, col: self.col, data }
 }
 
 ///|
@@ -582,8 +618,9 @@ pub fn[T : AddMonoid] Matrix::trace(self : Matrix[T]) -> T {
     abort("Matrix must be square to calculate trace")
   }
   let mut sum = T::zero()
+  let self_data = self.data
   for i in 0..<self.row {
-    sum = sum + self.data[i][i]
+    sum = sum + self_data[i][i]
   }
   sum
 }
@@ -594,6 +631,7 @@ pub fn[T : Compare + Num + Inverse] Matrix::reduce_row_elimination(
 ) -> Matrix[T] {
   let r = self.row
   let c = self.col
+  let self_data = self.data
   let mut col = 0
   for i in 0..<r {
     if col >= c {
@@ -601,24 +639,26 @@ pub fn[T : Compare + Num + Inverse] Matrix::reduce_row_elimination(
     }
     let mut max_row = i
     for j in (i + 1)..<r {
-      if self.data[j][col].abs() > self.data[max_row][col].abs() {
+      if self_data[j][col].abs() > self_data[max_row][col].abs() {
         max_row = j
       }
     }
     ignore(self.swap_rows(i, max_row))
-    if self.data[i][col] == T::zero() {
+    let row_i = self_data[i]
+    if row_i[col] == T::zero() {
       col = col + 1
       continue
     }
-    let val = self.data[i][col]
+    let val = row_i[col]
     ignore(self.map_row_inplace(i, fn(x) { x * val.inv() }))
     for j in 0..<r {
       if j == i {
         continue
       }
-      let factor = self.data[j][col]
+      let row_j = self_data[j]
+      let factor = row_j[col]
       for k in 0..<c {
-        self.data[j][k] = self.data[j][k] - self.data[i][k] * factor
+        row_j[k] = row_j[k] - row_i[k] * factor
       }
     }
     col = col + 1
@@ -629,11 +669,13 @@ pub fn[T : Compare + Num + Inverse] Matrix::reduce_row_elimination(
 ///|
 pub fn[T : Compare + Num + Inverse] Matrix::rank(self : Matrix[T]) -> Int {
   let m = self.copy()
+  let m_data = m.data
   let _ = m.reduce_row_elimination()
   let mut rank = 0
   for i in 0..<m.row {
+    let row_i = m_data[i]
     for j in 0..<m.col {
-      if m.data[i][j] != T::zero() {
+      if row_i[j] != T::zero() {
         rank += 1
         break
       }
@@ -667,27 +709,28 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
     abort("Matrix must be square to calculate determinant")
   }
   let n = self.row
+  let self_data = self.data
   match n {
     0 => T::one()
-    1 => self.data[0][0]
+    1 => self_data[0][0]
     2 => {
-      let r0 = self.data[0]
-      let r1 = self.data[1]
+      let r0 = self_data[0]
+      let r1 = self_data[1]
       r0[0] * r1[1] - r0[1] * r1[0]
     }
     3 => {
-      let r0 = self.data[0]
-      let r1 = self.data[1]
-      let r2 = self.data[2]
+      let r0 = self_data[0]
+      let r1 = self_data[1]
+      let r2 = self_data[2]
       r0[0] * (r1[1] * r2[2] - r1[2] * r2[1]) -
       r0[1] * (r1[0] * r2[2] - r1[2] * r2[0]) +
       r0[2] * (r1[0] * r2[1] - r1[1] * r2[0])
     }
     4 => {
-      let r0 = self.data[0]
-      let r1 = self.data[1]
-      let r2 = self.data[2]
-      let r3 = self.data[3]
+      let r0 = self_data[0]
+      let r1 = self_data[1]
+      let r2 = self_data[2]
+      let r3 = self_data[3]
       let s01 = r0[0] * r1[1] - r0[1] * r1[0]
       let s02 = r0[0] * r1[2] - r0[2] * r1[0]
       let s03 = r0[0] * r1[3] - r0[3] * r1[0]
@@ -704,11 +747,12 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
     }
     _ => {
       let m = self.copy()
+      let m_data = m.data
       let mut det_sign = T::one()
       for j in 0..<n {
         let mut max_row = j
         for i in (j + 1)..<n {
-          if m.data[i][j].abs() > m.data[max_row][j].abs() {
+          if m_data[i][j].abs() > m_data[max_row][j].abs() {
             max_row = i
           }
         }
@@ -716,20 +760,22 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
           m.swap_rows(j, max_row)
           det_sign = -det_sign
         }
-        let pivot = m.data[j][j]
+        let pivot = m_data[j][j]
         if pivot.abs() < T::tolerance() {
           return T::zero()
         }
         for i in (j + 1)..<n {
-          let factor = m.data[i][j] / pivot
+          let row_i = m_data[i]
+          let row_j = m_data[j]
+          let factor = row_i[j] / pivot
           for k in (j + 1)..<n {
-            m.data[i][k] -= factor * m.data[j][k]
+            row_i[k] -= factor * row_j[k]
           }
         }
       }
       let mut det = det_sign
       for i in 0..<n {
-        det *= m.data[i][i]
+        det *= m_data[i][i]
       }
       det
     }
@@ -753,7 +799,8 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::inverse(
   let identity_matrix = identity(n)
   let augmented = self.horizontal_combine(identity_matrix)
   let reduced = augmented.reduce_row_elimination()
-  let inverse_matrix = Matrix::make(n, n, fn(i, j) { reduced.data[i][j + n] })
+  let reduced_data = reduced.data
+  let inverse_matrix = Matrix::make(n, n, fn(i, j) { reduced_data[i][j + n] })
   return Some(inverse_matrix)
 }
 
@@ -788,10 +835,13 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::is_positive_definite(
 fn[T : Compare + Num + Div + Sqrt] Matrix::eigen_2x2(
   self : Matrix[T],
 ) -> (Vector[T], Matrix[T]) {
-  let a = self.data[0][0]
-  let b = self.data[0][1]
-  let c = self.data[1][0]
-  let d = self.data[1][1]
+  let self_data = self.data
+  let row0 = self_data[0]
+  let row1 = self_data[1]
+  let a = row0[0]
+  let b = row0[1]
+  let c = row1[0]
+  let d = row1[1]
   let half = T::one() / (T::one() + T::one())
   let mid = (a + d) * half
   let det = a * d - b * c
@@ -848,62 +898,78 @@ fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
 ) -> (Vector[T], Matrix[T]) {
   let n = matrix.row
   let a = matrix.copy()
+  let a_data = a.data
   let q_total = identity(n)
+  let q_total_data = q_total.data
   let mut m = n
   let max_iterations = 1000
   while m > 1 {
     let mut iter = 0
     while iter < max_iterations {
-      if a.data[m - 1][m - 2].abs() <= T::tolerance() {
+      if a_data[m - 1][m - 2].abs() <= T::tolerance() {
         break
       }
       let two = T::one() + T::one()
-      let d = (a.data[m - 2][m - 2] - a.data[m - 1][m - 1]) / two
+      let a_m2_m2 = a_data[m - 2][m - 2]
+      let a_m1_m1 = a_data[m - 1][m - 1]
+      let d = (a_m2_m2 - a_m1_m1) / two
       let mut sgn = T::one()
       if d < T::zero() {
         sgn = -T::one()
       }
-      let a_m1_m2 = a.data[m - 1][m - 2]
+      let a_m1_m2 = a_data[m - 1][m - 2]
       let num = sgn * a_m1_m2 * a_m1_m2
       let den = d.abs() + (d * d + a_m1_m2 * a_m1_m2).sqrt()
-      let mu = a.data[m - 1][m - 1] - num / den
+      let mu = a_m1_m1 - num / den
       for i in 0..<m {
-        a.data[i][i] -= mu
+        a_data[i][i] -= mu
       }
       let sub_a = Matrix::new(m, m, T::zero())
+      let sub_a_data = sub_a.data
       for i in 0..<m {
+        let row_i = a_data[i]
+        let sub_row_i = sub_a_data[i]
         for j in 0..<m {
-          sub_a.data[i][j] = a.data[i][j]
+          sub_row_i[j] = row_i[j]
         }
       }
       let (sub_q, sub_r) = qr_decomposition(sub_a)
+      let sub_q_data = sub_q.data
       let new_sub_a = sub_r * sub_q
+      let new_sub_a_data = new_sub_a.data
       for i in 0..<m {
+        let row_i = a_data[i]
+        let new_sub_row_i = new_sub_a_data[i]
         for j in 0..<m {
-          a.data[i][j] = new_sub_a.data[i][j]
+          row_i[j] = new_sub_row_i[j]
         }
-        a.data[i][i] += mu
+        row_i[i] += mu
       }
       let temp_cols = Matrix::new(n, m, T::zero())
+      let temp_cols_data = temp_cols.data
       for i in 0..<n {
+        let row_q_total = q_total_data[i]
+        let row_temp_cols = temp_cols_data[i]
         for j in 0..<m {
           let mut sum = T::zero()
           for k in 0..<m {
-            sum += q_total.data[i][k] * sub_q.data[k][j]
+            sum += row_q_total[k] * sub_q_data[k][j]
           }
-          temp_cols.data[i][j] = sum
+          row_temp_cols[j] = sum
         }
       }
       for i in 0..<n {
+        let row_q_total = q_total_data[i]
+        let row_temp_cols = temp_cols_data[i]
         for j in 0..<m {
-          q_total.data[i][j] = temp_cols.data[i][j]
+          row_q_total[j] = row_temp_cols[j]
         }
       }
       iter += 1
     }
     m -= 1
   }
-  let eigenvalues = Vector::makei(n, i => a.data[i][i])
+  let eigenvalues = Vector::makei(n, i => a_data[i][i])
   (eigenvalues, q_total)
 }
 
@@ -915,29 +981,34 @@ fn[T : Compare + AddMonoid + Sub + Mul + Div + Tolerance + Sqrt] qr_decompositio
   let n = matrix.col
   let q = Matrix::new(m, n, T::zero())
   let r = Matrix::new(n, n, T::zero())
+  let q_data = q.data
+  let r_data = r.data
+  let matrix_data = matrix.data
   for j in 0..<n {
     for i in 0..<m {
-      q.data[i][j] = matrix.data[i][j]
+      q_data[i][j] = matrix_data[i][j]
     }
     for k in 0..<j {
       let mut dot_product = T::zero()
       for i in 0..<m {
-        dot_product += q.data[i][k] * q.data[i][j]
+        dot_product += q_data[i][k] * q_data[i][j]
       }
-      r.data[k][j] = dot_product
+      r_data[k][j] = dot_product
+      let r_val = r_data[k][j]
       for i in 0..<m {
-        q.data[i][j] -= r.data[k][j] * q.data[i][k]
+        q_data[i][j] -= r_val * q_data[i][k]
       }
     }
     let mut norm = T::zero()
     for i in 0..<m {
-      norm += q.data[i][j] * q.data[i][j]
+      let val = q_data[i][j]
+      norm += val * val
     }
     norm = norm.sqrt()
-    r.data[j][j] = norm
+    r_data[j][j] = norm
     if norm > T::tolerance() {
       for i in 0..<m {
-        q.data[i][j] /= norm
+        q_data[i][j] /= norm
       }
     }
   }

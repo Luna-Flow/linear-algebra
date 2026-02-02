@@ -166,11 +166,7 @@ pub fn[T] Matrix::each_row_col(
   self : Matrix[T],
   f : (Int, Int, T) -> Unit,
 ) -> Unit {
-  for i in 0..<self.row {
-    for j in 0..<self.col {
-      f(i, j, self.data[i][j])
-    }
-  }
+  self.data.eachi(fn(i, row) { row.eachi(fn(j, x) { f(i, j, x) }) })
 }
 
 ///|

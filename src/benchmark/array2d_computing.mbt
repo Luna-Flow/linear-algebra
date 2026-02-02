@@ -1,5 +1,5 @@
 ///|
-pub fn _2d_matrix_mul(
+pub fn array2d_mat_mul(
   n : Int,
   a : Array[Array[Double]],
   b : Array[Array[Double]],
@@ -30,7 +30,7 @@ pub fn _2d_matrix_mul(
 }
 
 ///|
-pub fn _2d_matrix_vector_mul(
+pub fn array2d_mat_vec_mul(
   rows : Int,
   cols : Int,
   mat : Array[Array[Double]],
@@ -61,7 +61,7 @@ pub fn _2d_matrix_vector_mul(
 // --- Advanced Computing ---
 
 ///|
-pub fn _2d_reduce_row_elimination(
+pub fn array2d_reduce_row_elimination(
   rows : Int,
   cols : Int,
   data : Array[Array[Double]],
@@ -109,8 +109,8 @@ pub fn _2d_reduce_row_elimination(
 }
 
 ///|
-pub fn _2d_rank(rows : Int, cols : Int, data : Array[Array[Double]]) -> Int {
-  let m = _2d_reduce_row_elimination(rows, cols, data)
+pub fn array2d_rank(rows : Int, cols : Int, data : Array[Array[Double]]) -> Int {
+  let m = array2d_reduce_row_elimination(rows, cols, data)
   let mut rank = 0
   for i = 0; i < rows; i = i + 1 {
     let mut has_nonzero = false
@@ -129,7 +129,7 @@ pub fn _2d_rank(rows : Int, cols : Int, data : Array[Array[Double]]) -> Int {
 }
 
 ///|
-pub fn _2d_inverse(
+pub fn array2d_inv(
   n : Int,
   data : Array[Array[Double]],
 ) -> Array[Array[Double]]? {
@@ -143,7 +143,7 @@ pub fn _2d_inverse(
     row[n + i] = 1.0
     row
   })
-  let res = _2d_reduce_row_elimination(rows, cols, augmented)
+  let res = array2d_reduce_row_elimination(rows, cols, augmented)
   for i = 0; i < n; i = i + 1 {
     if res[i][i].abs() < 1.0e-15 {
       return None
@@ -160,7 +160,7 @@ pub fn _2d_inverse(
 }
 
 ///|
-pub fn _2d_determinant(n : Int, data : Array[Array[Double]]) -> Double {
+pub fn array2d_det(n : Int, data : Array[Array[Double]]) -> Double {
   let m = Array::makei(n, fn(i) { data[i].copy() })
   if n == 0 {
     return 1.0

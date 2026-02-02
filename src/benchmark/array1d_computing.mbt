@@ -1,5 +1,5 @@
 ///|
-pub fn native_matrix_mul(
+pub fn array1d_mat_mul(
   n : Int,
   a : Array[Double],
   b : Array[Double],
@@ -35,7 +35,7 @@ pub fn native_matrix_mul(
 }
 
 ///|
-pub fn native_vector_dot(a : Array[Double], b : Array[Double]) -> Double {
+pub fn array1d_vec_dot(a : Array[Double], b : Array[Double]) -> Double {
   let mut sum = 0.0
   let len = a.length()
   for i = 0; i < len; i = i + 1 {
@@ -45,7 +45,7 @@ pub fn native_vector_dot(a : Array[Double], b : Array[Double]) -> Double {
 }
 
 ///|
-pub fn native_matrix_vector_mul(
+pub fn array1d_mat_vec_mul(
   row : Int,
   col : Int,
   mat : Array[Double],
@@ -65,11 +65,7 @@ pub fn native_matrix_vector_mul(
 }
 
 ///|
-pub fn native_matrix_access(
-  rows : Int,
-  cols : Int,
-  data : Array[Double],
-) -> Double {
+pub fn array1d_mat_acc(rows : Int, cols : Int, data : Array[Double]) -> Double {
   let mut sum = 0.0
   let len = rows * cols
   for i = 0; i < len; i = i + 1 {
@@ -79,7 +75,7 @@ pub fn native_matrix_access(
 }
 
 ///|
-pub fn native_matrix_mapi(
+pub fn array1d_mat_mapi(
   rows : Int,
   cols : Int,
   data : Array[Double],
@@ -96,7 +92,7 @@ pub fn native_matrix_mapi(
 }
 
 ///|
-pub fn native_matrix_map_inplace(
+pub fn array1d_mat_map_inplace(
   _rows : Int,
   _cols : Int,
   data : Array[Double],
@@ -109,7 +105,7 @@ pub fn native_matrix_map_inplace(
 }
 
 ///|
-pub fn native_matrix_set_access(
+pub fn array1d_mat_set_acc(
   _rows : Int,
   _cols : Int,
   data : Array[Double],
@@ -122,7 +118,7 @@ pub fn native_matrix_set_access(
 }
 
 ///|
-pub fn native_vector_access(data : Array[Double]) -> Double {
+pub fn array1d_vec_acc(data : Array[Double]) -> Double {
   let mut sum = 0.0
   let len = data.length()
   for i = 0; i < len; i = i + 1 {
@@ -134,7 +130,7 @@ pub fn native_vector_access(data : Array[Double]) -> Double {
 // --- Advanced Computing ---
 
 ///|
-pub fn native_reduce_row_elimination(
+pub fn array1d_reduce_row_elimination(
   rows : Int,
   cols : Int,
   data : Array[Double],
@@ -182,7 +178,7 @@ pub fn native_reduce_row_elimination(
 }
 
 ///|
-pub fn native_determinant(n : Int, data : Array[Double]) -> Double {
+pub fn array1d_det(n : Int, data : Array[Double]) -> Double {
   let m = data.copy()
   if n == 0 {
     return 1.0
@@ -223,8 +219,8 @@ pub fn native_determinant(n : Int, data : Array[Double]) -> Double {
 }
 
 ///|
-pub fn native_rank(rows : Int, cols : Int, data : Array[Double]) -> Int {
-  let m = native_reduce_row_elimination(rows, cols, data)
+pub fn array1d_rank(rows : Int, cols : Int, data : Array[Double]) -> Int {
+  let m = array1d_reduce_row_elimination(rows, cols, data)
   let mut rank = 0
   for i = 0; i < rows; i = i + 1 {
     let mut has_nonzero = false
@@ -242,7 +238,7 @@ pub fn native_rank(rows : Int, cols : Int, data : Array[Double]) -> Int {
 }
 
 ///|
-pub fn native_inverse(n : Int, data : Array[Double]) -> Array[Double]? {
+pub fn array1d_inv(n : Int, data : Array[Double]) -> Array[Double]? {
   let rows = n
   let cols = 2 * n
   let augmented = Array::make(rows * cols, 0.0)
@@ -252,7 +248,7 @@ pub fn native_inverse(n : Int, data : Array[Double]) -> Array[Double]? {
     }
     augmented[i * cols + n + i] = 1.0
   }
-  let res = native_reduce_row_elimination(rows, cols, augmented)
+  let res = array1d_reduce_row_elimination(rows, cols, augmented)
   for i = 0; i < n; i = i + 1 {
     if res[i * cols + i].abs() < 1.0e-15 {
       return None
@@ -270,7 +266,7 @@ pub fn native_inverse(n : Int, data : Array[Double]) -> Array[Double]? {
 // --- Utility Functions ---
 
 ///|
-pub fn native_matrix_each(data : Array[Double], f : (Double) -> Unit) -> Unit {
+pub fn array1d_mat_each(data : Array[Double], f : (Double) -> Unit) -> Unit {
   let len = data.length()
   for i = 0; i < len; i = i + 1 {
     f(data[i])
@@ -278,7 +274,7 @@ pub fn native_matrix_each(data : Array[Double], f : (Double) -> Unit) -> Unit {
 }
 
 ///|
-pub fn native_matrix_each_row_col(
+pub fn array1d_mat_each_row_col(
   rows : Int,
   cols : Int,
   data : Array[Double],

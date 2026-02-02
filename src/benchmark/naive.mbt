@@ -1,5 +1,5 @@
 ///|
-pub fn naive_matrix_access(
+pub fn naive_mat_acc(
   _rows : Int,
   _cols : Int,
   data : Array[Array[Double]],
@@ -11,7 +11,7 @@ pub fn naive_matrix_access(
 }
 
 ///|
-pub fn naive_matrix_mapi(
+pub fn naive_mat_mapi(
   _rows : Int,
   _cols : Int,
   data : Array[Array[Double]],
@@ -21,7 +21,7 @@ pub fn naive_matrix_mapi(
 }
 
 ///|
-pub fn naive_matrix_map_inplace(
+pub fn naive_mat_map_inplace(
   _rows : Int,
   _cols : Int,
   data : Array[Array[Double]],
@@ -32,12 +32,12 @@ pub fn naive_matrix_map_inplace(
 }
 
 ///|
-pub fn naive_vector_dot(a : Array[Double], b : Array[Double]) -> Double {
+pub fn naive_vec_dot(a : Array[Double], b : Array[Double]) -> Double {
   a.iter().mapi(fn(i, x) { x * b[i] }).fold(fn(acc, x) { acc + x }, init=0.0)
 }
 
 ///|
-pub fn naive_matrix_vector_mul(
+pub fn naive_mat_vec_mul(
   _rows : Int,
   _cols : Int,
   mat : Array[Array[Double]],
@@ -52,7 +52,7 @@ pub fn naive_matrix_vector_mul(
 }
 
 ///|
-pub fn naive_matrix_mul(
+pub fn naive_mat_mul(
   n : Int,
   a : Array[Array[Double]],
   b : Array[Array[Double]],
@@ -70,12 +70,12 @@ pub fn naive_matrix_mul(
 }
 
 ///|
-pub fn naive_vector_access(data : Array[Double]) -> Double {
+pub fn naive_vec_acc(data : Array[Double]) -> Double {
   data.iter().fold(fn(acc, x) { acc + x }, init=0.0)
 }
 
 ///|
-pub fn naive_matrix_set_access(
+pub fn naive_mat_set_acc(
   _rows : Int,
   _cols : Int,
   data : Array[Array[Double]],
@@ -89,7 +89,7 @@ pub fn naive_matrix_set_access(
 }
 
 ///|
-pub fn naive_matrix_each(
+pub fn naive_mat_each(
   data : Array[Array[Double]],
   f : (Double) -> Unit,
 ) -> Unit {
@@ -97,7 +97,7 @@ pub fn naive_matrix_each(
 }
 
 ///|
-pub fn naive_matrix_each_row_col(
+pub fn naive_mat_each_row_col(
   data : Array[Array[Double]],
   f : (Int, Int, Double) -> Unit,
 ) -> Unit {
@@ -169,10 +169,7 @@ pub fn naive_rank(rows : Int, cols : Int, data : Array[Array[Double]]) -> Int {
 }
 
 ///|
-pub fn naive_inverse(
-  n : Int,
-  data : Array[Array[Double]],
-) -> Array[Array[Double]]? {
+pub fn naive_inv(n : Int, data : Array[Array[Double]]) -> Array[Array[Double]]? {
   let rows = n
   let cols = 2 * n
   let augmented = Array::makei(rows, fn(i) {
@@ -196,7 +193,7 @@ pub fn naive_inverse(
 }
 
 ///|
-pub fn naive_determinant(n : Int, data : Array[Array[Double]]) -> Double {
+pub fn naive_det(n : Int, data : Array[Array[Double]]) -> Double {
   let m = Array::makei(n, fn(i) { data[i].copy() })
   if n == 0 {
     return 1.0

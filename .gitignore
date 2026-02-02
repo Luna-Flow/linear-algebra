@@ -9,3 +9,4 @@ coverage_summary.txt
 bench/*.txt
 bench/*.png
 bench/*.json
+!bench/bench_groups.json
