@@ -343,9 +343,10 @@ pub fn[T] Matrix::map_col_inplace(
   let rows = self.row
   let cols = self.col
   let data = self.data
+  let mut idx = col
   for i in 0..<rows {
-    let idx = i * cols + col
     data[idx] = f(data[idx])
+    idx += cols
   }
 }
 
@@ -507,8 +508,11 @@ pub fn[T] Matrix::eachi_col(
   col : Int,
   f : (Int, T) -> Unit,
 ) -> Unit {
-  for i in 0..<self.row {
-    f(i, self.data[i * self.col + col])
+  let mut idx = col
+  let cols = self.col
+  for i = 0; i < self.row; i = i + 1 {
+    f(i, self.data[idx])
+    idx += cols
   }
 }
 
@@ -561,7 +565,18 @@ pub fn[T] Matrix::copy(self : Matrix[T]) -> Matrix[T] {
 /// ```
 ///
 pub fn[A] Matrix::make(row : Int, col : Int, f : (Int, Int) -> A) -> Matrix[A] {
-  { row, col, data: Array::makei(row * col, fn(i) { f(i / col, i % col) }) }
+  if row <= 0 || col <= 0 {
+    return { row: 0, col: 0, data: [] }
+  }
+  let init = f(0, 0)
+  let data = Array::make(row * col, init)
+  for i = 0; i < row; i = i + 1 {
+    let r_off = i * col
+    for j = 0; j < col; j = j + 1 {
+      data[r_off + j] = f(i, j)
+    }
+  }
+  { row, col, data }
 }
 
 ///|
@@ -584,7 +599,10 @@ pub fn[A] Matrix::make(row : Int, col : Int, f : (Int, Int) -> A) -> Matrix[A] {
 /// ```
 ///
 pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
-  Matrix::make(row, col, (_, _) => elem)
+  if row <= 0 || col <= 0 {
+    return { row: 0, col: 0, data: [] }
+  }
+  { row, col, data: Array::make(row * col, elem) }
 }
 
 ///|
@@ -774,35 +792,46 @@ pub impl[T : AddMonoid + Mul] Mul for Matrix[T] with mul(
   //    Manual indexing hoisting is applied here to minimize instructions in the innermost loop.
   // 2. Large Case (N > 64): Use i-k-j (scan line) order to maximize L1/L2 cache locality.
   //    Natural indexing (i * n + j) is preferred to trigger compiler strength reduction and bounds check elimination.
-  if row <= 64 && col <= 64 && inner <= 64 {
+  // Optimization: Transpose 'other' (B) to 'b_t' so that we can access columns of B continuously.
+  // This changes the access pattern from random (strided) to sequential, which is much faster.
+  // Threshold selected to balance the cost of transposition vs cache misses.
+  if col >= 16 && inner >= 16 {
+    let b_t = Array::make(col * inner, T::zero())
+    for r = 0; r < inner; r = r + 1 {
+      let r_off = r * col
+      for c = 0; c < col; c = c + 1 {
+        b_t[c * inner + r] = other.data[r_off + c]
+      }
+    }
     let data = Array::make(row * col, T::zero())
+    let mut data_idx = 0
     for i = 0; i < row; i = i + 1 {
-      let row_offset = i * col // self[i][...]
-      let self_row_offset = i * inner // result[i][...]
+      let a_row_off = i * inner
       for j = 0; j < col; j = j + 1 {
+        let b_row_off = j * inner
         let mut sum = T::zero()
         for k = 0; k < inner; k = k + 1 {
-          // Calculation equivalent to: result[i][j] += self[i][k] * other[k][j]
-          sum = sum + self.data[self_row_offset + k] * other.data[k * col + j]
+          sum = sum + self.data[a_row_off + k] * b_t[b_row_off + k]
         }
-        data[row_offset + j] = sum
+        data[data_idx] = sum
+        data_idx = data_idx + 1
       }
     }
     { row, col, data }
   } else {
+    // Fallback for smaller matrices: standard i-j-k loop
+    // This avoids the allocation overhead of transposition for small N.
     let data = Array::make(row * col, T::zero())
-    let mut res_idx = 0
     for i = 0; i < row; i = i + 1 {
-      let self_row_start = i * inner
-      for k = 0; k < inner; k = k + 1 {
-        let aik = self.data[self_row_start + k]
-        let other_row_start = k * col
-        for j = 0; j < col; j = j + 1 {
-          data[res_idx + j] = data[res_idx + j] +
-            aik * other.data[other_row_start + j]
+      let row_offset = i * col
+      let self_row_offset = i * inner
+      for j = 0; j < col; j = j + 1 {
+        let mut sum = T::zero()
+        for k = 0; k < inner; k = k + 1 {
+          sum = sum + self.data[self_row_offset + k] * other.data[k * col + j]
         }
+        data[row_offset + j] = sum
       }
-      res_idx += col
     }
     { row, col, data }
   }
@@ -1023,10 +1052,20 @@ pub fn[T : Conjugate] Matrix::adjoint(self : Matrix[T]) -> Matrix[T] {
 /// ```
 ///
 pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
-  Matrix::make(self.col, self.row, fn(i, j) {
-    // self[j][i]
-    self.data[j * self.col + i]
-  })
+  let row = self.row
+  let col = self.col
+  if row == 0 || col == 0 {
+    return { row: col, col: row, data: [] }
+  }
+  let init = self.data[0]
+  let res_data = Array::make(col * row, init)
+  for i = 0; i < col; i = i + 1 {
+    let res_row_off = i * row
+    for j = 0; j < row; j = j + 1 {
+      res_data[res_row_off + j] = self.data[j * col + i]
+    }
+  }
+  { row: col, col: row, data: res_data }
 }
 
 ///|
