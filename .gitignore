@@ -10,3 +10,4 @@ bench/*.txt
 bench/*.png
 bench/*.json
 !bench/bench_groups.json
+NOTE.md

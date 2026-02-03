@@ -1054,12 +1054,12 @@ pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Unit {
   if r1 == r2 {
     return
   }
-  let temp = Array::makei(c, fn(i) { self.data[r1 * self.col + i] })
+  let r1_off = r1 * self.col
+  let r2_off = r2 * self.col
   for i in 0..<c {
-    self.data[r1 * self.col + i] = self.data[r2 * self.col + i]
-  }
-  for i in 0..<c {
-    self.data[r2 * self.col + i] = temp[i]
+    let tmp = self.data[r1_off + i]
+    self.data[r1_off + i] = self.data[r2_off + i]
+    self.data[r2_off + i] = tmp
   }
 }
 
@@ -1088,12 +1088,14 @@ pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Unit {
   if c1 == c2 {
     return
   }
-  let temp = Array::makei(r, fn(i) { self.data[i * self.col + c1] })
+  let col = self.col
   for i in 0..<r {
-    self.data[i * self.col + c1] = self.data[i * self.col + c2]
-  }
-  for i in 0..<r {
-    self.data[i * self.col + c2] = temp[i]
+    let row_off = i * col
+    let idx1 = row_off + c1
+    let idx2 = row_off + c2
+    let tmp = self.data[idx1]
+    self.data[idx1] = self.data[idx2]
+    self.data[idx2] = tmp
   }
 }
 
@@ -1471,20 +1473,10 @@ pub fn[T] Matrix::to_vector(self : Matrix[T]) -> Vector[T] {
 /// let rank = m.rank()
 /// inspect(rank, content="2")  // The rank of the matrix is 2
 /// ```
-pub fn[T : Compare + Num + Inverse] Matrix::rank(self : Matrix[T]) -> Int {
-  let m = self.copy()
-  let _ = m.reduce_row_elimination()
-  let mut rank = 0
-  for i in 0..<m.row {
-    for j in 0..<m.col {
-      // m[i][j]
-      if m.data[i * m.col + j] != T::zero() {
-        rank += 1
-        break
-      }
-    }
-  }
-  rank
+pub fn[T : Compare + Num + Div + Tolerance] Matrix::rank(
+  self : Matrix[T],
+) -> Int {
+  self.copy().lu_generic_inplace()
 }
 
 ///|
@@ -1975,6 +1967,76 @@ pub impl Sqrt for Float with sqrt(a) -> Float {
 }
 
 ///|
+fn[T : Compare + Num + Div + Tolerance] Matrix::lu_det_inplace(
+  self : Matrix[T],
+) -> T {
+  let n = self.row
+  let mut det_sign = T::one()
+  for j in 0..<n {
+    let mut max_row = j
+    for i in (j + 1)..<n {
+      if self.data[i * n + j].abs() > self.data[max_row * n + j].abs() {
+        max_row = i
+      }
+    }
+    if max_row != j {
+      self.swap_rows(j, max_row)
+      det_sign = -det_sign
+    }
+    let offset_j = j * n
+    let pivot = self.data[offset_j + j]
+    if pivot.abs() < T::tolerance() {
+      return T::zero()
+    }
+    for i in (j + 1)..<n {
+      let offset_i = i * n
+      let factor = self.data[offset_i + j] / pivot
+      self.data[offset_i + j] = factor
+      for k in (j + 1)..<n {
+        self.data[offset_i + k] = self.data[offset_i + k] -
+          factor * self.data[offset_j + k]
+      }
+    }
+  }
+  det_sign
+}
+
+///|
+fn[T : Compare + Num + Div + Tolerance] Matrix::lu_generic_inplace(
+  self : Matrix[T],
+) -> Int {
+  let n = self.row
+  let mut rank = n
+  for j in 0..<n {
+    let mut max_row = j
+    for i in (j + 1)..<n {
+      if self.data[i * n + j].abs() > self.data[max_row * n + j].abs() {
+        max_row = i
+      }
+    }
+    if max_row != j {
+      self.swap_rows(j, max_row)
+    }
+    let offset_j = j * n
+    let pivot = self.data[offset_j + j]
+    if pivot.abs() < T::tolerance() {
+      rank -= 1
+      continue
+    }
+    for i in (j + 1)..<n {
+      let offset_i = i * n
+      let factor = self.data[offset_i + j] / pivot
+      self.data[offset_i + j] = factor
+      for k in (j + 1)..<n {
+        self.data[offset_i + k] = self.data[offset_i + k] -
+          factor * self.data[offset_j + k]
+      }
+    }
+  }
+  rank
+}
+
+///|
 /// Calculates the determinant of a square matrix.
 ///
 /// This method uses an efficient algorithm based on self decomposition with partial
@@ -1988,8 +2050,8 @@ pub impl Sqrt for Float with sqrt(a) -> Float {
 ///
 /// Returns the determinant of the matrix.
 ///
-/// Panics if the matrix is not square.
-///
+
+///|
 /// Example:
 /// ```moonbit
 /// let m = @mutable.Matrix::from_2d_array([[4.0, 3.0], [6.0, 3.0]])
@@ -2030,30 +2092,9 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
     }
     _ => {
       let m = self.copy()
-      let mut det_sign = T::one()
-      for j in 0..<n {
-        let mut max_row = j
-        for i in (j + 1)..<n {
-          if m.data[i * n + j].abs() > m.data[max_row * n + j].abs() {
-            max_row = i
-          }
-        }
-        if max_row != j {
-          m.swap_rows(j, max_row)
-          det_sign = -det_sign
-        }
-        let offset_j = j * n
-        let pivot = m.data[offset_j + j]
-        if pivot.abs() < T::tolerance() {
-          return T::zero()
-        }
-        for i in (j + 1)..<n {
-          let offset_i = i * n
-          let factor = m.data[offset_i + j] / pivot
-          for k in (j + 1)..<n {
-            m.data[offset_i + k] -= factor * m.data[offset_j + k]
-          }
-        }
+      let det_sign = m.lu_det_inplace()
+      if det_sign == T::zero() {
+        return T::zero()
       }
       let mut det = det_sign
       for i in 0..<n {
