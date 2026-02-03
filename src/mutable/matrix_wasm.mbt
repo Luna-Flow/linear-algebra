@@ -561,7 +561,18 @@ pub fn[T] Matrix::copy(self : Matrix[T]) -> Matrix[T] {
 /// ```
 ///
 pub fn[A] Matrix::make(row : Int, col : Int, f : (Int, Int) -> A) -> Matrix[A] {
-  { row, col, data: Array::makei(row * col, fn(i) { f(i / col, i % col) }) }
+  if row <= 0 || col <= 0 {
+    return { row: 0, col: 0, data: [] }
+  }
+  let init = f(0, 0)
+  let data = Array::make(row * col, init)
+  for i = 0; i < row; i = i + 1 {
+    let r_off = i * col
+    for j = 0; j < col; j = j + 1 {
+      data[r_off + j] = f(i, j)
+    }
+  }
+  { row, col, data }
 }
 
 ///|
@@ -584,7 +595,10 @@ pub fn[A] Matrix::make(row : Int, col : Int, f : (Int, Int) -> A) -> Matrix[A] {
 /// ```
 ///
 pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
-  Matrix::make(row, col, (_, _) => elem)
+  if row <= 0 || col <= 0 {
+    return { row: 0, col: 0, data: [] }
+  }
+  { row, col, data: Array::make(row * col, elem) }
 }
 
 ///|
