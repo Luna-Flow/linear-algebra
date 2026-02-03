@@ -2,9 +2,15 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.7 - Native Performance Breakthrough
+## v0.2.8 - Algorithms & Stability
 
-With **v0.2.7**, we have pushed the limits of the Native backend performance.
+With **v0.2.8**, we have introduced robust numerical methods including LU and QR decompositions, Eigenvalue computations, and improved error handling for linear algebra operations.
+
+### New Algorithms
+- **LU Decomposition**: Implemented Gaussian elimination with partial pivoting for numerically stable `determinant`, `inverse`, and `rank` calculations.
+- **QR Decomposition**: Added `qr_decomposition` for QR decomposition.
+- **Eigenvalues**: Implemented `eigen` (power iteration) and `power_method` for eigenvalue and eigenvector computation.
+- **Row Operations**: Added `reduce_row_elimination` for Gaussian elimination.
 
 ### High-Performance Design
 - **Native Transpose Optimization**: Matrix multiplication on Native backend now utilizes a transposition-based strategy, achieving **>200% speedup** for large matrices compared to naive methods.
@@ -21,7 +27,7 @@ With **v0.2.7**, we have pushed the limits of the Native backend performance.
 
 ### Key Features
 - **Mutable & Immutable Support**: Full suites for both `Matrix` and `Vector` types.
-- **Advanced Operations**: Includes determinant, inverse, rank, eigenvalues, and more.
+- **Advanced Operations**: Includes LU/QR decomposition, determinant, inverse, rank, eigenvalues, and more.
 - **Zero-Cost Abstractions**: Efficient `Transpose` views and `Lens`-based row access.
 - **Correctness First**: Rigorous testing including edge cases (empty matrices, etc.).
 
@@ -35,6 +41,9 @@ We provide documentation in multiple languages:
 
 ## Recent Changes
 
+- **Algorithms (0.2.8)**:
+  - ✨ **Decompositions**: Added LU (internal for Det/Rank), QR, and Eigenvalue decompositions.
+  - ✨ **Stability**: Shifted `determinant` and `rank` to use partial pivoting LU for better numerical stability.
 - **Native Optimization (0.2.7)**:
   - 🚀 **Matrix Multiplication**: Implemented transposition + dot-product strategy for Native, outperforming naive implementations by >2x.
   - 🚀 **Matrix Construction**: Optimized `make`, `new`, `transpose` to use direct loop unrolling and Array ops, removing expensive integer division.
