@@ -667,21 +667,10 @@ pub fn[T : Compare + Num + Inverse] Matrix::reduce_row_elimination(
 }
 
 ///|
-pub fn[T : Compare + Num + Inverse] Matrix::rank(self : Matrix[T]) -> Int {
-  let m = self.copy()
-  let m_data = m.data
-  let _ = m.reduce_row_elimination()
-  let mut rank = 0
-  for i in 0..<m.row {
-    let row_i = m_data[i]
-    for j in 0..<m.col {
-      if row_i[j] != T::zero() {
-        rank += 1
-        break
-      }
-    }
-  }
-  rank
+pub fn[T : Compare + Num + Div + Tolerance] Matrix::rank(
+  self : Matrix[T],
+) -> Int {
+  self.copy().lu_generic_inplace()
 }
 
 ///|
@@ -699,6 +688,72 @@ pub fn[T : Semiring] Matrix::matrix_power(
   n : Int,
 ) -> Matrix[T] {
   self.pow(n)
+}
+
+///|
+fn[T : Compare + Num + Div + Tolerance] Matrix::lu_det_inplace(
+  self : Matrix[T],
+) -> T {
+  let n = self.row
+  let mut det_sign = T::one()
+  let data = self.data
+  for j in 0..<n {
+    let mut max_row = j
+    for i in (j + 1)..<n {
+      if data[i][j].abs() > data[max_row][j].abs() {
+        max_row = i
+      }
+    }
+    if max_row != j {
+      self.swap_rows(j, max_row)
+      det_sign = -det_sign
+    }
+    let pivot = data[j][j]
+    if pivot.abs() < T::tolerance() {
+      return T::zero()
+    }
+    for i in (j + 1)..<n {
+      let factor = data[i][j] / pivot
+      data[i][j] = factor
+      for k in (j + 1)..<n {
+        data[i][k] = data[i][k] - factor * data[j][k]
+      }
+    }
+  }
+  det_sign
+}
+
+///|
+fn[T : Compare + Num + Div + Tolerance] Matrix::lu_generic_inplace(
+  self : Matrix[T],
+) -> Int {
+  let n = self.row
+  let mut rank = n
+  let data = self.data
+  for j in 0..<n {
+    let mut max_row = j
+    for i in (j + 1)..<n {
+      if data[i][j].abs() > data[max_row][j].abs() {
+        max_row = i
+      }
+    }
+    if max_row != j {
+      self.swap_rows(j, max_row)
+    }
+    let pivot = data[j][j]
+    if pivot.abs() < T::tolerance() {
+      rank -= 1
+      continue
+    }
+    for i in (j + 1)..<n {
+      let factor = data[i][j] / pivot
+      data[i][j] = factor
+      for k in (j + 1)..<n {
+        data[i][k] = data[i][k] - factor * data[j][k]
+      }
+    }
+  }
+  rank
 }
 
 ///|
