@@ -1,6 +1,6 @@
 {
   "name": "Luna-Flow/linear-algebra",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "deps": {
     "Luna-Flow/luna-generic": "0.2.2",
     "moonbitlang/quickcheck": "0.9.10"
