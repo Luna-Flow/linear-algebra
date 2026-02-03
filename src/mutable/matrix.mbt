@@ -808,19 +808,49 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::is_invertible(
 }
 
 ///|
+/// Computes the Cholesky decomposition of a symmetric positive definite matrix.
+///
+/// Returns `Some(L)` where `L` is a lower triangular matrix such that `self = L * L.transpose()`.
+/// Returns `None` if the matrix is not positive definite.
+///
+/// The algorithms is based on the Cholesky-Banachiewicz algorithm.
+/// Time Complexity: O(n^3/3)
+pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::cholesky_decomposition(
+  self : Matrix[T],
+) -> Matrix[T]? {
+  if not(self.is_symmetric()) {
+    return None
+  }
+  let n = self.row
+  let l = Matrix::new(n, n, T::zero())
+  for i in 0..<n {
+    for j in 0..<=i {
+      let mut sum = T::zero()
+      for k in 0..<j {
+        sum = sum + l.data[i][k] * l.data[j][k]
+      }
+      if i == j {
+        let val = self.data[i][i] - sum
+        if val <= T::tolerance() {
+          return None
+        }
+        l.data[i][i] = val.sqrt()
+      } else {
+        l.data[i][j] = T::one() / l.data[j][j] * (self.data[i][j] - sum)
+      }
+    }
+  }
+  Some(l)
+}
+
+///|
 pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::is_positive_definite(
   self : Matrix[T],
 ) -> Bool {
-  if not(self.is_symmetric()) {
-    return false
+  match self.cholesky_decomposition() {
+    Some(_) => true
+    None => false
   }
-  let (eigenvals, _) = self.eigen()
-  for val in eigenvals {
-    if val <= T::zero() {
-      return false
-    }
-  }
-  true
 }
 
 ///|
@@ -882,20 +912,108 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::eigen(
 }
 
 ///|
+/// Reduces the matrix to Upper Hessenberg form using Householder similarity transformations.
+/// Returns (H, Q) where H is the Hessenberg matrix and Q is the unitary matrix such that A = Q * H * Q^T.
+pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::hessenberg_reduction(
+  self : Matrix[T],
+) -> (Matrix[T], Matrix[T]) {
+  let n = self.row
+  let h = self.copy()
+  let q = identity(n)
+  for k in 0..<(n - 2) {
+    // Compute Householder vector for column k below diagonal
+    let mut norm_sq = T::zero()
+    for i in (k + 1)..<n {
+      norm_sq = norm_sq + h.data[i][k] * h.data[i][k]
+    }
+    let norm = norm_sq.sqrt()
+    // Skip if already zero
+    if norm < T::tolerance() {
+      continue
+    }
+    let alpha = if h.data[k + 1][k] > T::zero() { -norm } else { norm }
+    let two = T::one() + T::one()
+    let r = (T::one() / two * (alpha * alpha - h.data[k + 1][k] * alpha)).sqrt()
+    let v = Array::make(n, T::zero())
+    v[k + 1] = (h.data[k + 1][k] - alpha) / (two * r)
+    for i in (k + 2)..<n {
+      v[i] = h.data[i][k] / (two * r)
+    }
+
+    // Apply Householder transformation to H from left: P * H
+    // H = H - 2 v v^T H
+    // Let w = v^T H, then H = H - 2 v w
+    let w = Array::make(n, T::zero())
+    for j in k..<n {
+      let mut sum = T::zero()
+      for i in (k + 1)..<n {
+        sum = sum + v[i] * h.data[i][j]
+      }
+      w[j] = sum
+    }
+    for i in (k + 1)..<n {
+      for j in k..<n {
+        h.data[i][j] = h.data[i][j] - two * v[i] * w[j]
+      }
+    }
+
+    // Apply Householder transformation to H from right: H * P
+    // H = H - 2 H v v^T
+    // Let q_vec = H v, then H = H - 2 q_vec v^T
+    let q_vec = Array::make(n, T::zero())
+    for i in 0..<n {
+      let mut sum = T::zero()
+      for j in (k + 1)..<n {
+        sum = sum + h.data[i][j] * v[j]
+      }
+      q_vec[i] = sum
+    }
+    for i in 0..<n {
+      for j in (k + 1)..<n {
+        h.data[i][j] = h.data[i][j] - two * q_vec[i] * v[j]
+      }
+    }
+
+    // Accumulate Q: Q = Q * P
+    // Q = Q - 2 Q v v^T
+    // Let z = Q v, then Q = Q - 2 z v^T
+    let z = Array::make(n, T::zero())
+    for i in 0..<n {
+      let mut sum = T::zero()
+      for j in (k + 1)..<n {
+        sum = sum + q.data[i][j] * v[j]
+      }
+      z[i] = sum
+    }
+    for i in 0..<n {
+      for j in (k + 1)..<n {
+        q.data[i][j] = q.data[i][j] - two * z[i] * v[j]
+      }
+    }
+  }
+  (h, q)
+}
+
+///|
 pub fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
   matrix : Matrix[T],
 ) -> (Vector[T], Matrix[T]) {
   let n = matrix.row
-  let a = matrix.copy()
-  let q_total = identity(n)
+  // First reduce to Hessenberg form
+  let (h, q_total) = matrix.hessenberg_reduction()
+  let a = h // works on Hessenberg matrix 'a'
   let mut m = n
   let max_iterations = 1000
+  let tol = T::tolerance()
   while m > 1 {
     let mut iter = 0
     while iter < max_iterations {
-      if a.data[m - 1][m - 2].abs() <= T::tolerance() {
+      // Check for convergence
+      if a.data[m - 1][m - 2].abs() <= tol {
         break
       }
+
+      // Calculate Wilkinson shift
       let two = T::one() + T::one()
       let d = (a.data[m - 2][m - 2] - a.data[m - 1][m - 1]) / two
       let mut sgn = T::one()
@@ -904,31 +1022,59 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
       }
       let a_m1_m2 = a.data[m - 1][m - 2]
       let num = sgn * a_m1_m2 * a_m1_m2
-      let den = d.abs() + (d * d + a_m1_m2 * a_m1_m2).sqrt()
+      let den = d.abs() + (d * d + num.abs()).sqrt() // num is a^2, always positive in term, but careful
       let mu = a.data[m - 1][m - 1] - num / den
+
+      // Implicit Q Theorem / Francis Step would be better here for Hessenberg
+      // But for now we stick to explicit QR on shifted matrix, 
+      // but optimized to not re-allocate everything.
+
+      // A_new = R * Q + mu * I = Q^T * (A - mu*I) * Q + mu*I = Q^T * A * Q
+
+      // 1. Shift diagonal
       for i in 0..<m {
-        a.data[i][i] -= mu
+        a.data[i][i] = a.data[i][i] - mu
       }
+
+      // 2. QR decomposition of the shifted block
+      // Ideally we should use Givens rotations for Hessenberg QR to stay O(n^2)
+      // Falling back to standard QR on the block for now, but strictly on the submatrix
+      // We need to implement a 'submatrix QR' to be efficient. 
+      // For now, we manually extract/embed to avoid full Matrix::new where possible, 
+      // but 'qr_decomposition' currently allocates. 
+      // TODO: Implement Givens rotation based QR step for Hessenberg matrices.
+
+      // Extract submatrix [0..m][0..m]
       let sub_a = Matrix::new(m, m, T::zero())
       for i in 0..<m {
-        for j in 0..<m {
+        // Optimization: Hessenberg matrix only has non-zeros in upper triangular + 1 subdiagonal
+        let start_col = if i > 0 { i - 1 } else { 0 }
+        for j in start_col..<m {
           sub_a.data[i][j] = a.data[i][j]
         }
       }
       let (sub_q, sub_r) = qr_decomposition(sub_a)
+
+      // Update A = R * Q + mu * I
+      // This A is the new block.
       let new_sub_a = sub_r * sub_q
+
+      // Copy back and add shift
       for i in 0..<m {
         for j in 0..<m {
           a.data[i][j] = new_sub_a.data[i][j]
         }
-        a.data[i][i] += mu
+        a.data[i][i] = a.data[i][i] + mu
       }
+
+      // Update global Q
+      // Q_total = Q_total * [Q_sub, 0; 0, I]
       let temp_cols = Matrix::new(n, m, T::zero())
       for i in 0..<n {
         for j in 0..<m {
           let mut sum = T::zero()
           for k in 0..<m {
-            sum += q_total.data[i][k] * sub_q.data[k][j]
+            sum = sum + q_total.data[i][k] * sub_q.data[k][j]
           }
           temp_cols.data[i][j] = sum
         }

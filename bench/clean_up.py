@@ -84,7 +84,18 @@ def get_info(full_name):
     return op, scale, impl
 
 def main():
+    output_file = 'cleaned_benchmarks.json'
     result_tree = {}
+
+    # 尝试加载现有数据
+    if os.path.exists(output_file):
+        try:
+            with open(output_file, 'r', encoding='utf-8') as f:
+                result_tree = json.load(f)
+            print(f"已加载现有数据: {output_file}")
+        except Exception as e:
+            print(f"无法读取现有数据 (将创建新文件): {e}")
+            result_tree = {}
 
     for filename in FILES:
         if not os.path.exists(filename):
@@ -94,6 +105,10 @@ def main():
         # 根据文件名识别后端
         backend_id = filename.replace('bench_', '').replace('.txt', '')
         
+        # 先读取并验证文件内容
+        new_entries_found = False
+        temp_updates = [] # 暂存更新操作 (op, scale, impl, stats)
+
         with open(filename, 'r') as f:
             for line in f:
                 line = line.strip()
@@ -103,22 +118,30 @@ def main():
                     # 原始文件格式为 {"backend_name": [...]}
                     data_key = list(content.keys())[0]
                     entries = content[data_key]
-                    for entry in entries:
-                        for full_name, stats in entry.items():
-                            op, scale, impl = get_info(full_name)
-                            
-                            # 构建嵌套结构: 项目 -> 规模 -> 后端 -> 实现 -> 结果
-                            if op not in result_tree: result_tree[op] = {}
-                            if scale not in result_tree[op]: result_tree[op][scale] = {}
-                            if backend_id not in result_tree[op][scale]: result_tree[op][scale][backend_id] = {}
-                            
-                            # 保存完整的统计结果
-                            result_tree[op][scale][backend_id][impl] = stats
+                    if entries:
+                        new_entries_found = True
+                        for entry in entries:
+                            for full_name, stats in entry.items():
+                                op, scale, impl = get_info(full_name)
+                                temp_updates.append((op, scale, backend_id, impl, stats))
                 except Exception:
                     continue
+        
+        # 只有当文件中包含有效的新数据时，才更新主数据树
+        if new_entries_found:
+            print(f"Updating data form {filename}...")
+            for op, scale, backend, impl, stats in temp_updates:
+                # 构建嵌套结构: 项目 -> 规模 -> 后端 -> 实现 -> 结果
+                if op not in result_tree: result_tree[op] = {}
+                if scale not in result_tree[op]: result_tree[op][scale] = {}
+                if backend not in result_tree[op][scale]: result_tree[op][scale][backend] = {}
+                
+                # 保存完整的统计结果
+                result_tree[op][scale][backend][impl] = stats
+        else:
+             print(f"Skipping {filename}: No valid data found (preserving existing data for {backend_id})")
 
     # 保存为最终的 JSON 文件
-    output_file = 'cleaned_benchmarks.json'
     with open(output_file, 'w', encoding='utf-8') as out:
         json.dump(result_tree, out, indent=2, ensure_ascii=False)
     
