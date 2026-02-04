@@ -7,10 +7,17 @@ test "array1d_mat_mul" {
     let size = n * n
     let a = Array::makei(size, fn(_idx) { rng.next() })
     let b = Array::makei(size, fn(_idx) { rng.next() })
+    let mut acc = 0.0
     let summary = single_bench(
-      fn() { array1d_mat_mul(n, a, b) |> ignore },
+      fn() {
+        let res = array1d_mat_mul(n, a, b)
+        if res.length() > 0 {
+          acc = acc + res[0]
+        }
+      },
       name="array1d_mat_mul scale(\{n})",
     )
+    ignore(acc)
     pack(results, "array1d_mat_mul scale(\{n})", ToJson::to_json(summary))
   }
   println(results.stringify())

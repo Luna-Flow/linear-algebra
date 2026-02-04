@@ -6,10 +6,17 @@ test "lib_mat_mul" {
     let rng = PRNG::new(42L)
     let a = Matrix::make(n, n, fn(_i, _j) { rng.next() })
     let b = Matrix::make(n, n, fn(_i, _j) { rng.next() })
+    let mut acc = 0.0
     let summary = single_bench(
-      fn() { (a * b) |> ignore },
+      fn() {
+        let c = a * b
+        if c.row() > 0 && c.col() > 0 {
+          acc = acc + c.get(0, 0)
+        }
+      },
       name="lib_mat_mul scale(\{n})",
     )
+    ignore(acc)
     pack(results, "lib_mat_mul scale(\{n})", ToJson::to_json(summary))
   }
   println(results.stringify())

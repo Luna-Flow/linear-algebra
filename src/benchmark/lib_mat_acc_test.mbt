@@ -5,6 +5,7 @@ test "lib_mat_acc" {
   for n in steps {
     let rng = PRNG::new(42L)
     let mat = Matrix::make(n, n, fn(_i, _j) { rng.next() })
+    let mut grand_sum = 0.0
     let summary = single_bench(
       fn() {
         let mut inner_sum = 0.0
@@ -15,10 +16,11 @@ test "lib_mat_acc" {
             inner_sum = inner_sum + mat.get(i, j)
           }
         }
-        inner_sum |> ignore
+        grand_sum = grand_sum + inner_sum
       },
       name="lib_mat_acc scale(\{n})",
     )
+    ignore(grand_sum)
     pack(results, "lib_mat_acc scale(\{n})", ToJson::to_json(summary))
   }
   println(results.stringify())

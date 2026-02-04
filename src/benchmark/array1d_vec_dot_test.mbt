@@ -6,10 +6,12 @@ test "array1d_vec_dot" {
     let rng = PRNG::new(42L)
     let a = Array::makei(n, fn(_i) { rng.next() })
     let b = Array::makei(n, fn(_i) { rng.next() })
+    let mut acc = 0.0
     let summary = single_bench(
-      fn() { array1d_vec_dot(a, b) |> ignore },
+      fn() { acc = acc + array1d_vec_dot(a, b) },
       name="array1d_vec_dot scale(\{n})",
     )
+    ignore(acc)
     pack(results, "array1d_vec_dot scale(\{n})", ToJson::to_json(summary))
   }
   println(results.stringify())
