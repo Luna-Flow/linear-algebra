@@ -8,7 +8,7 @@
 struct Matrix[T] {
   row : Int
   col : Int
-  data : Array[T]
+  data : Array[Array[T]]
 } derive(Eq)
 ```
 
@@ -20,12 +20,18 @@ struct Matrix[T] {
 - **Secondary Utility Acceleration**: Functions like `mapi` and `each_row_col` have been optimized to remove division/modulo overhead, resulting in up to 60% faster execution.
 - **Zero-Copy Transpose**: Optimized identity-based multiplication and materialization logic.
 
-- **Backend-Specific Optimization**: Internal implementations are tailored for different targets (Wasm/JS vs. Native) to leverage specific engine strengths, while maintaining a **strictly identical public API**.
+- **Backend-Specific Optimization**: Internal implementations are tailored for different targets (Wasm/JS vs. Native) to leverage specific engine strengths.
 - **Random Access**: For high-performance scenarios requiring frequent random access, we strongly recommend using the `.get(i, j)` and `.set(i, j, val)` methods directly. These are designed to be the fastest path for individual element interaction.
 - **Bulk Operations**: Prefer built-in tools like `.each_row_col()` or `.map_inplace()` over manual loops with indexing for maximum optimization.
 
 - **Description**
-  This struct represents a mutable matrix with data stored in a one-dimensional array `data`
+  This struct represents a mutable matrix for execution-oriented workloads. The default implementation stores rows in nested arrays, and target-specific backends may use different internal layouts while preserving the documented core algebraic behavior.
+
+### Semantic Notes
+
+- `@mutable.Matrix` is intentionally mutation-oriented. Operations such as `set`, `swap_rows`, `swap_cols`, and `map_inplace` modify the matrix in place.
+- The package exposes extra execution APIs such as `RowView`, `ColView`, `Transpose`, in-place row/column transforms, and decomposition-oriented helpers. These are not expected to match `immut` one-for-one.
+- For code shared across the two packages, rely on the common algebraic surface (`make`, `map`, `transpose`, `+`, `-`, `*`, `trace`, conversions) rather than assuming identical accessor or mutation semantics.
 
 - **Fields**
   - `row` - Number of rows in the matrix
@@ -124,10 +130,22 @@ struct Matrix[T] {
       `Lens[T]` - Accessor object for that row
 
     - **Performance Note**
-      Calling `m[row]` allocates a new `Lens` object and two closures. For performance-critical bulk operations, it is highly recommended to:
-      1. **Cache the lens**: Store the result of `m[row]` in a variable before the loop.
-      2. **Use built-in tools**: For common operations, use `each_row`, `map_row_inplace`, etc., which avoid Lens overhead entirely.
-      3. **Direct Access (Recommended)**: For single element read/write, use `Matrix::get(row, col)` and `Matrix::set(row, col, value)`. This avoids all Lens and closure overhead and is the most performant method.
+      Calling `m[row]` allocates a new `Lens` object and two closures. For performance-critical bulk operations, prefer:
+      1. **`row_view(row)`**: Use `Matrix::row_view(row)` for repeated row work with explicit view semantics.
+      2. **Built-in row/col tools**: Use `each_row`, `map_row_inplace`, etc., which avoid `Lens` overhead entirely.
+      3. **Direct Access (Recommended)**: For single element read/write, use `Matrix::get(row, col)` and `Matrix::set(row, col, value)`.
+
+  ---
+
+  - **`fn[T] Matrix::row_view(self, row) -> RowView[T]`**
+    - **Description**
+        Creates a mutable structured view over a matrix row.
+
+  ---
+
+  - **`fn[T] Matrix::col_view(self, col) -> ColView[T]`**
+    - **Description**
+        Creates a mutable structured view over a matrix column.
 
   ---
 

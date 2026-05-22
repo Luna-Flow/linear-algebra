@@ -15,6 +15,12 @@ struct Matrix[T] {
 - **Description**
   Represents an immutable matrix, with data stored in row-major order in an immutable array `IArray[T]`.
 
+### Semantic Notes
+
+- `@immut.Matrix` uses value semantics. Operations such as `set`, `swap_rows`, and `swap_cols` return a new matrix instead of mutating the original value.
+- The `m[row][col]` syntax is a read-only convenience accessor built on `Indexed[T]`.
+- This package is the baseline for shared algebraic behavior. It intentionally does not provide `inplace` update APIs or transpose-view mutation facilities.
+
 - **Fields**
   - `row` - The number of rows.
   - `col` - The number of columns.

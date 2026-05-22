@@ -20,16 +20,23 @@ With **v0.2.8**, we have introduced robust numerical methods including LU and QR
 - **Backend-Specific Optimization**: Internal implementations are tailored for different targets (Wasm/JS vs. Native) to leverage specific engine strengths.
 - **Zero-Copy Transpose**: Optimized identity-based multiplication and materialization.
 
+### Package Positioning
+- **`immut`**: Value semantics, immutable updates, and predictable materialized results. This package is the baseline for shared algebraic behavior.
+- **`mutable`**: Execution-oriented matrices with in-place operations, transpose views, and backend-specific optimization paths. This package is intended for performance-sensitive workloads.
+- **Shared Core, Different Execution Model**: The two packages aim to keep core algebraic operations aligned, but they do not expose identical mutation or access semantics.
+
 ### API Guidance & Performance
-- **Consistent API**: No matter which backend you target, the high-level API remains the same.
-- **Random Access**: For high-performance scenarios requiring frequent random access, we **strongly recommend** using the `.get(i, j)` and `.set(i, j, val)` methods directly. These avoid the overhead of `Lens` allocation and are the fastest way to interact with elements.
-- **Bulk Operations**: Prefer built-in tools like `.each_row_col()` or `.map_inplace()` over manual loops with indexing for maximum optimization.
+- **Core Algebraic API**: Constructors and core operations such as `make`, `map`, `transpose`, `+`, `-`, `*`, `trace`, and matrix/vector conversions are intended to behave consistently across the two packages.
+- **Random Access**: In `mutable`, for high-performance scenarios requiring frequent random access, we **strongly recommend** using `.get(i, j)` and `.set(i, j, val)` directly. These avoid row-accessor overhead and are the fastest way to interact with elements.
+- **Bulk Operations**: In `mutable`, prefer built-in tools like `.each_row_col()` or `.map_inplace()` over manual loops with indexing for maximum optimization.
+- **Structured Views**: In `mutable`, prefer `row_view()` / `col_view()` when you need repeated row or column work with explicit semantics. Treat `m[row]` / `Lens` as convenience syntax rather than the primary performance API.
+- **Accessor Semantics**: `immut` uses read-only row accessors, while `mutable` exposes backend-specific row access paths, structured row/column views, and transpose views. Performance-sensitive code should rely on the documented package-specific access APIs instead of assuming identical indexing internals.
 
 ### Key Features
-- **Mutable & Immutable Support**: Full suites for both `Matrix` and `Vector` types.
+- **Mutable & Immutable Support**: Full suites for both `Matrix` and `Vector` types with distinct semantics.
 - **Advanced Operations**: Includes LU/QR decomposition, determinant, inverse, rank, eigenvalues, and more.
-- **Zero-Cost Abstractions**: Efficient `Transpose` views and `Lens`-based row access.
-- **Correctness First**: Rigorous testing including edge cases (empty matrices, etc.).
+- **Execution Specialization**: `mutable` provides efficient `Transpose` views and in-place update APIs for performance-oriented code.
+- **Correctness First**: Rigorous testing including edge cases and cross-package consistency checks for shared operations.
 
 ### Documentation
 Comprehensive API documentation is available at [mooncakes.io](https://mooncakes.io/docs/Luna-Flow/linear-algebra).
