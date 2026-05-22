@@ -1,8 +1,0 @@
-import {
-  "Luna-Flow/linear-algebra/mutable" as @la/mut,
-}
-
-import "test" {
-  "Luna-Flow/luna-generic",
-  "moonbitlang/core/bench" as @bench,
-}
