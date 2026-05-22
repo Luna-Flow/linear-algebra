@@ -670,7 +670,7 @@ pub fn[T : Compare + Num + Inverse] Matrix::reduce_row_elimination(
 pub fn[T : Compare + Num + Div + Tolerance] Matrix::rank(
   self : Matrix[T],
 ) -> Int {
-  self.copy().lu_generic_inplace()
+  self.lu_decompose_internal().rank
 }
 
 ///|
@@ -688,72 +688,6 @@ pub fn[T : Semiring] Matrix::matrix_power(
   n : Int,
 ) -> Matrix[T] {
   self.pow(n)
-}
-
-///|
-fn[T : Compare + Num + Div + Tolerance] Matrix::lu_det_inplace(
-  self : Matrix[T],
-) -> T {
-  let n = self.row
-  let mut det_sign = T::one()
-  let data = self.data
-  for j in 0..<n {
-    let mut max_row = j
-    for i in (j + 1)..<n {
-      if data[i][j].abs() > data[max_row][j].abs() {
-        max_row = i
-      }
-    }
-    if max_row != j {
-      self.swap_rows(j, max_row)
-      det_sign = -det_sign
-    }
-    let pivot = data[j][j]
-    if pivot.abs() < T::tolerance() {
-      return T::zero()
-    }
-    for i in (j + 1)..<n {
-      let factor = data[i][j] / pivot
-      data[i][j] = factor
-      for k in (j + 1)..<n {
-        data[i][k] = data[i][k] - factor * data[j][k]
-      }
-    }
-  }
-  det_sign
-}
-
-///|
-fn[T : Compare + Num + Div + Tolerance] Matrix::lu_generic_inplace(
-  self : Matrix[T],
-) -> Int {
-  let n = self.row
-  let mut rank = n
-  let data = self.data
-  for j in 0..<n {
-    let mut max_row = j
-    for i in (j + 1)..<n {
-      if data[i][j].abs() > data[max_row][j].abs() {
-        max_row = i
-      }
-    }
-    if max_row != j {
-      self.swap_rows(j, max_row)
-    }
-    let pivot = data[j][j]
-    if pivot.abs() < T::tolerance() {
-      rank -= 1
-      continue
-    }
-    for i in (j + 1)..<n {
-      let factor = data[i][j] / pivot
-      data[i][j] = factor
-      for k in (j + 1)..<n {
-        data[i][k] = data[i][k] - factor * data[j][k]
-      }
-    }
-  }
-  rank
 }
 
 ///|
@@ -801,38 +735,7 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
       s01 * c23 - s02 * c13 + s03 * c12 + s12 * c03 - s13 * c02 + s23 * c01
     }
     _ => {
-      let m = self.copy()
-      let m_data = m.data
-      let mut det_sign = T::one()
-      for j in 0..<n {
-        let mut max_row = j
-        for i in (j + 1)..<n {
-          if m_data[i][j].abs() > m_data[max_row][j].abs() {
-            max_row = i
-          }
-        }
-        if max_row != j {
-          m.swap_rows(j, max_row)
-          det_sign = -det_sign
-        }
-        let pivot = m_data[j][j]
-        if pivot.abs() < T::tolerance() {
-          return T::zero()
-        }
-        for i in (j + 1)..<n {
-          let row_i = m_data[i]
-          let row_j = m_data[j]
-          let factor = row_i[j] / pivot
-          for k in (j + 1)..<n {
-            row_i[k] -= factor * row_j[k]
-          }
-        }
-      }
-      let mut det = det_sign
-      for i in 0..<n {
-        det *= m_data[i][i]
-      }
-      det
+      self.lu_decompose_internal().determinant_internal()
     }
   }
 }
@@ -848,15 +751,11 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::inverse(
   if n == 0 {
     return Some(Matrix::new(0, 0, T::zero()))
   }
-  if not(self.is_invertible()) {
+  let lu = self.lu_decompose_internal()
+  if lu.singular {
     return None
   }
-  let identity_matrix = identity(n)
-  let augmented = self.horizontal_combine(identity_matrix)
-  let reduced = augmented.reduce_row_elimination()
-  let reduced_data = reduced.data
-  let inverse_matrix = Matrix::make(n, n, fn(i, j) { reduced_data[i][j + n] })
-  return Some(inverse_matrix)
+  lu.solve_internal(identity(n))
 }
 
 ///|
@@ -866,8 +765,7 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::is_invertible(
   guard self.is_square() else {
     abort("Matrix must be square to check invertibility")
   }
-  let det = self.determinant()
-  return det.abs() > T::tolerance()
+  !self.lu_decompose_internal().singular
 }
 
 ///|

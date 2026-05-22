@@ -852,7 +852,7 @@ pub impl[T : Add] Add for Matrix[T] with add(
   guard self.col == other.col
   guard self.row == other.row
   {
-    data: array_zip_with(self.data, other.data, T::op_add),
+    data: array_zip_with(self.data, other.data, T::add),
     row: self.row,
     col: self.col,
   }
@@ -1490,7 +1490,7 @@ pub fn[T] Matrix::to_vector(self : Matrix[T]) -> Vector[T] {
 pub fn[T : Compare + Num + Div + Tolerance] Matrix::rank(
   self : Matrix[T],
 ) -> Int {
-  self.copy().lu_generic_inplace()
+  self.lu_decompose_internal().rank
 }
 
 ///|
@@ -1981,76 +1981,6 @@ pub impl Sqrt for Float with sqrt(a) -> Float {
 }
 
 ///|
-fn[T : Compare + Num + Div + Tolerance] Matrix::lu_det_inplace(
-  self : Matrix[T],
-) -> T {
-  let n = self.row
-  let mut det_sign = T::one()
-  for j in 0..<n {
-    let mut max_row = j
-    for i in (j + 1)..<n {
-      if self.data[i * n + j].abs() > self.data[max_row * n + j].abs() {
-        max_row = i
-      }
-    }
-    if max_row != j {
-      self.swap_rows(j, max_row)
-      det_sign = -det_sign
-    }
-    let offset_j = j * n
-    let pivot = self.data[offset_j + j]
-    if pivot.abs() < T::tolerance() {
-      return T::zero()
-    }
-    for i in (j + 1)..<n {
-      let offset_i = i * n
-      let factor = self.data[offset_i + j] / pivot
-      self.data[offset_i + j] = factor
-      for k in (j + 1)..<n {
-        self.data[offset_i + k] = self.data[offset_i + k] -
-          factor * self.data[offset_j + k]
-      }
-    }
-  }
-  det_sign
-}
-
-///|
-fn[T : Compare + Num + Div + Tolerance] Matrix::lu_generic_inplace(
-  self : Matrix[T],
-) -> Int {
-  let n = self.row
-  let mut rank = n
-  for j in 0..<n {
-    let mut max_row = j
-    for i in (j + 1)..<n {
-      if self.data[i * n + j].abs() > self.data[max_row * n + j].abs() {
-        max_row = i
-      }
-    }
-    if max_row != j {
-      self.swap_rows(j, max_row)
-    }
-    let offset_j = j * n
-    let pivot = self.data[offset_j + j]
-    if pivot.abs() < T::tolerance() {
-      rank -= 1
-      continue
-    }
-    for i in (j + 1)..<n {
-      let offset_i = i * n
-      let factor = self.data[offset_i + j] / pivot
-      self.data[offset_i + j] = factor
-      for k in (j + 1)..<n {
-        self.data[offset_i + k] = self.data[offset_i + k] -
-          factor * self.data[offset_j + k]
-      }
-    }
-  }
-  rank
-}
-
-///|
 /// Calculates the determinant of a square matrix.
 ///
 /// This method uses an efficient algorithm based on self decomposition with partial
@@ -2105,16 +2035,7 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
       s01 * c23 - s02 * c13 + s03 * c12 + s12 * c03 - s13 * c02 + s23 * c01
     }
     _ => {
-      let m = self.copy()
-      let det_sign = m.lu_det_inplace()
-      if det_sign == T::zero() {
-        return T::zero()
-      }
-      let mut det = det_sign
-      for i in 0..<n {
-        det *= m.data[i * n + i]
-      }
-      det
+      self.lu_decompose_internal().determinant_internal()
     }
   }
 }
@@ -2148,23 +2069,11 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::inverse(
   if n == 0 {
     return Some(Matrix::new(0, 0, T::zero()))
   }
-  if not(self.is_invertible()) {
+  let lu = self.lu_decompose_internal()
+  if lu.singular {
     return None
   }
-
-  // Create augmented matrix [A | I]
-  let identity_matrix = identity(n)
-  let augmented = self.horizontal_combine(identity_matrix)
-
-  // Apply Gauss-Jordan elimination
-  let reduced = augmented.reduce_row_elimination()
-
-  // Extract the inverse from the right half of the augmented matrix
-  let inverse_matrix = Matrix::make(n, n, fn(i, j) {
-    // reduced[i][j + n]
-    reduced.data[i * (2 * n) + (j + n)]
-  })
-  return Some(inverse_matrix)
+  lu.solve_internal(identity(n))
 }
 
 ///|
@@ -2201,8 +2110,7 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::is_invertible(
   guard self.is_square() else {
     abort("Matrix must be square to check invertibility")
   }
-  let det = self.determinant()
-  return det.abs() > T::tolerance()
+  !self.lu_decompose_internal().singular
 }
 
 ///|

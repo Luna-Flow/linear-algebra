@@ -12,6 +12,9 @@ import "wbtest" {
 
 options(
   targets: {
+    "lu_internal.mbt": [ "not", "js", "wasm", "native" ],
+    "lu_internal_native.mbt": [ "native" ],
+    "lu_internal_wasm.mbt": [ "wasm" ],
     "matrix_view.mbt": [ "not", "js", "wasm", "native" ],
     "matrix_view_js.mbt": [ "js" ],
     "matrix_view_native.mbt": [ "native" ],
