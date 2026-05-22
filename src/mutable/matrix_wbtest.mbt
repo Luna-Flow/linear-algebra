@@ -591,6 +591,78 @@ test "iter_col" {
 }
 
 ///|
+test "row_view_and_col_view" {
+  let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  let row = m.row_view(1)
+  let col = m.col_view(2)
+
+  inspect(row.length(), content="3")
+  inspect(col.length(), content="2")
+  inspect(row[0], content="4")
+  inspect(row[2], content="6")
+  inspect(col[0], content="3")
+  inspect(col[1], content="6")
+  inspect(row.to_array(), content="[4, 5, 6]")
+  inspect(col.to_array(), content="[3, 6]")
+  inspect(row.to_vector(), content="|4, 5, 6|")
+  inspect(col.to_vector(), content="|3, 6|")
+}
+
+///|
+test "row_view_and_col_view_inplace" {
+  let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  let row = m.row_view(0)
+  let col = m.col_view(1)
+
+  row[2] = 30
+  col[1] = 50
+  inspect(m.to_string(), content="|1, 2, 30|\n|4, 50, 6|")
+
+  row.map_inplace(fn(x) { x + 1 })
+  col.map_inplace(fn(x) { x * 2 })
+  inspect(m.to_string(), content="|2, 6, 31|\n|4, 100, 6|")
+}
+
+///|
+test "row_view_and_col_view_iteration" {
+  let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  let row = m.row_view(0)
+  let col = m.col_view(1)
+  let mut row_sum = 0
+  let mut col_sum = 0
+  let indexed = []
+
+  row.each(fn(x) { row_sum = row_sum + x })
+  col.each(fn(x) { col_sum = col_sum + x })
+  row.eachi(fn(i, x) { indexed.push(i + x) })
+
+  inspect(row.iter().to_array(), content="[1, 2, 3]")
+  inspect(col.iter().to_array(), content="[2, 5]")
+  inspect(row_sum, content="6")
+  inspect(col_sum, content="7")
+  inspect(indexed, content="[1, 3, 5]")
+}
+
+///|
+test "row_view_and_col_view_reactivity" {
+  let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  let row = m.row_view(1)
+  let col = m.col_view(0)
+
+  m.set(1, 1, 50)
+  inspect(row[1], content="50")
+
+  m.set(0, 0, 10)
+  inspect(col[0], content="10")
+
+  row[2] = 99
+  inspect(m[1][2], content="99")
+
+  col[1] = 77
+  inspect(m[1][0], content="77")
+}
+
+///|
 test "to_array" {
   let m = Matrix::from_2d_array([[1, 2], [3, 4]])
   inspect(m.to_array(), content="[1, 2, 3, 4]")

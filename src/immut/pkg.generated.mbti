@@ -17,7 +17,7 @@ pub fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]
 type Indexed[T]
 pub fn[T] Indexed::op_get(Self[T], Int) -> T
 
-type Matrix[T]
+type Matrix[T] derive(Eq)
 pub fn[T : Add] Matrix::add_constant(Self[T], T) -> Self[T]
 pub fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]
 pub fn[T] Matrix::col(Self[T]) -> Int
@@ -48,7 +48,6 @@ pub fn[T : Add + @luna-generic.Zero] Matrix::trace(Self[T]) -> T
 pub fn[T] Matrix::transpose(Self[T]) -> Self[T]
 pub fn[T] Matrix::vertical_combine(Self[T], Self[T]) -> Self[T]
 pub impl[T : Add] Add for Matrix[T]
-pub impl[T : Eq] Eq for Matrix[T]
 pub impl[T : Mul + Add] Mul for Matrix[T]
 pub impl[T : Neg] Neg for Matrix[T]
 pub impl[T : Show] Show for Matrix[T]
@@ -80,7 +79,7 @@ pub impl[T : Neg] Neg for MatrixFn[T]
 pub impl[T : Show] Show for MatrixFn[T]
 pub impl[T : Add + Neg] Sub for MatrixFn[T]
 
-type Vector[T]
+type Vector[T] derive(Eq)
 pub fn[T : Add] Vector::add_constant(Self[T], T) -> Self[T]
 pub fn[T] Vector::from_array(Array[T]) -> Self[T]
 pub fn[T] Vector::iter(Self[T]) -> Iter[T]
@@ -99,7 +98,6 @@ pub fn[T] Vector::to_col_matrix(Self[T]) -> Matrix[T]
 pub fn[T] Vector::to_row_matrix(Self[T]) -> Matrix[T]
 pub fn[T, U, V] Vector::zip_with(Self[T], Self[U], (T, U) -> V) -> Self[V]
 pub impl[T : Add] Add for Vector[T]
-pub impl[T : Eq] Eq for Vector[T]
 pub impl[T : Mul] Mul for Vector[T]
 pub impl[T : Neg] Neg for Vector[T]
 pub impl[T : Show] Show for Vector[T]

@@ -13,3 +13,6 @@ using @lg {
 
 ///|
 using @qc_core {trait Arbitrary}
+
+///|
+using @debug {trait Debug, type Repr}

@@ -65,7 +65,7 @@ test "transpose_iteration" {
   inspect(sum, content="15")
   let idx_hits = Array::make(6, 0)
   t.eachi(fn(idx, v) { idx_hits[idx] = v })
-  inspect(idx_hits, content="[0, 3, 1, 4, 2, 5]")
+  inspect(idx_hits.to_string(), content="[0, 3, 1, 4, 2, 5]")
   let row0 = Array::make(2, 0)
   let mut ri = 0
   t.each_row(0, fn(x) {
@@ -85,10 +85,10 @@ test "transpose_iteration" {
   inspect(col1, content="[3, 4, 5]")
   let col0 = Array::make(3, 0)
   t.eachi_col(0, fn(r, x) { col0[r] = x })
-  inspect(col0, content="[0, 1, 2]")
+  inspect(col0.to_string(), content="[0, 1, 2]")
   let pairs = Array::make(6, 0)
   t.each_row_col(fn(r, c, v) { pairs[r * 2 + c] = v })
-  inspect(pairs, content="[0, 3, 1, 4, 2, 5]")
+  inspect(pairs.to_string(), content="[0, 3, 1, 4, 2, 5]")
 }
 
 ///|
@@ -165,7 +165,7 @@ test "transpose_extraction" {
 
   // row/col extraction
   inspect(t.row_to_array(2), content="[2, 5]")
-  inspect(t.col_to_array(0), content="[0, 1, 2]")
+  inspect(t.col_to_array(0).to_string(), content="[0, 1, 2]")
   inspect(t.row_to_vector(1), content="|1, 4|")
   inspect(t.col_to_vector(1), content="|3, 4, 5|")
 }

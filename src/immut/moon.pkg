@@ -1,9 +1,10 @@
 import {
-  "Luna-Flow/luna-generic" as @lg,
-  "moonbitlang/core/quickcheck" as @qc_core,
-  "moonbitlang/core/immut/array" as @immut/array,
+  "moonbitlang/core/debug" @debug,
+  "Luna-Flow/luna-generic" @lg,
+  "moonbitlang/core/quickcheck" @qc_core,
+  "moonbitlang/core/immut/array" @immut/array,
 }
 
 import "wbtest" {
-  "moonbitlang/quickcheck" as @qc,
+  "moonbitlang/quickcheck" @qc,
 }

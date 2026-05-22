@@ -107,6 +107,15 @@ pub impl[T : Show] Show for Vector[T] with output(self, logger) {
 }
 
 ///|
+///|
+pub impl[T : Debug] Debug for Vector[T] with to_repr(self) {
+  Repr::opaque_(
+    "Vector",
+    Repr::array(self.iter().to_array().map(x => to_repr(x))),
+  )
+}
+
+///|
 /// Combines corresponding elements of two arrays using a specified function to
 /// produce a new array.
 ///

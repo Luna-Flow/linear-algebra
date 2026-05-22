@@ -1,17 +1,21 @@
 import {
-  "Luna-Flow/luna-generic" as @lg,
-  "moonbitlang/core/quickcheck" as @qc_core,
-  "Luna-Flow/linear-algebra/internal" as @internal,
+  "moonbitlang/core/debug" @debug,
+  "Luna-Flow/luna-generic" @lg,
+  "moonbitlang/core/quickcheck" @qc_core,
+  "Luna-Flow/linear-algebra/internal" @internal,
 }
 
 import "wbtest" {
-  "moonbitlang/core/bench",
-  "Luna-Flow/luna-generic" as @lg,
-  "moonbitlang/quickcheck" as @qc,
+  "Luna-Flow/luna-generic" @lg,
+  "moonbitlang/quickcheck" @qc,
 }
 
 options(
   targets: {
+    "matrix_view.mbt": [ "not", "js", "wasm", "native" ],
+    "matrix_view_js.mbt": [ "js" ],
+    "matrix_view_native.mbt": [ "native" ],
+    "matrix_view_wasm.mbt": [ "wasm" ],
     "matrix.mbt": [ "not", "js", "wasm", "native" ],
     "matrix_js.mbt": [ "js" ],
     "matrix_native.mbt": [ "native" ],

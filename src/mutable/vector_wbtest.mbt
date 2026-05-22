@@ -150,7 +150,7 @@ test "S_v * p = v * p" {
 test "iter" {
   let v = Vector::from_array([1, 2, 3])
   let arr = v.iter().to_array()
-  inspect(arr, content="[1, 2, 3]")
+  inspect(arr.to_string(), content="[1, 2, 3]")
 }
 
 ///|

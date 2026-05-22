@@ -397,7 +397,7 @@ pub impl[T : Add] Add for MatrixFn[T] with add(self, other) {
 /// Returns a new MatrixFn where each element is the negation of the
 /// corresponding element in the input matrix.
 pub impl[T : Neg] Neg for MatrixFn[T] with neg(self) {
-  self.map(T::op_neg)
+  self.map(T::neg)
 }
 
 ///|

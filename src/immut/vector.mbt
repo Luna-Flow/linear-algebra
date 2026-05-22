@@ -502,6 +502,15 @@ pub impl[T : Show] Show for Vector[T] with output(self, logger) {
 }
 
 ///|
+///|
+pub impl[T : Debug] Debug for Vector[T] with to_repr(self) {
+  Repr::opaque_(
+    "Vector",
+    Repr::array(self.iter().to_array().map(x => to_repr(x))),
+  )
+}
+
+///|
 /// Creates a diagonal matrix where the diagonal elements are the vector
 /// elements and all other elements are zero.
 ///
