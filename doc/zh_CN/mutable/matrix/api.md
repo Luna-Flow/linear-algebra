@@ -426,7 +426,7 @@ struct Matrix[T] {
 
   - **`fn[T : Semiring] pow(self, power) -> Matrix[T]`**
     - **描述**
-        计算方阵的幂
+        计算方阵的幂。对于非方阵或负指数会直接终止程序。
 
     - **参数**
       - `self: Matrix[T]` - 要计算幂的方阵
@@ -584,7 +584,7 @@ struct Matrix[T] {
 
   - **`fn[T : Add + Default] trace(self) -> T`**
     - **描述**
-        计算方阵的迹（主对角线元素之和）
+        计算方阵的迹（主对角线元素之和）。对于非方阵会直接终止程序。
 
     - **参数**
       - `self: Matrix[T]` - 要计算迹的方阵
@@ -620,9 +620,9 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] power_method(self, ~max_iterations : Int = 1000, ~tolerance_val : T? = None) -> (T, Vector[T])`**
+  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] power_method(self, ~max_iterations : Int = 1000, ~tolerance_val : T? = None) -> (T, Vector[T])?`**
     - **描述**
-        使用幂法计算矩阵的主特征值和特征向量
+        使用幂法近似计算矩阵的主导实特征对（best-effort）
 
     - **参数**
       - `self: Matrix[T]` - 要计算的方阵
@@ -630,13 +630,16 @@ struct Matrix[T] {
       - `tolerance_val: T?` - 收敛容忍度（可选）
 
     - **返回值**
-      `(T, Vector[T])` - 主特征值和对应的特征向量
+      `(T, Vector[T])?` - 收敛时返回 `Some((lambda, v))`，若迭代退化或在上限内未收敛则返回 `None`
 
     - **示例**
 
       ```moonbit
       let m = Matrix::from_2d_array([[4.0, 2.0], [1.0, 3.0]])
-      let (eigenvalue, eigenvector) = m.power_method()
+      match m.power_method() {
+        Some((eigenvalue, eigenvector)) => ignore((eigenvalue, eigenvector))
+        None => println("幂法未收敛")
+      }
       ```
 
   ---
@@ -970,48 +973,50 @@ struct Matrix[T] {
 
   - **`fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] eigen(self) -> (Vector[T], Matrix[T])`**
     - **描述**
-        使用QR算法计算方阵的特征值和特征向量
+        使用 QR 算法计算实对称方阵的特征值和特征向量
 
     - **参数**
-      - `self: Matrix[T]` - 要计算特征值和特征向量的方阵
+      - `self: Matrix[T]` - 要计算谱分解的实对称方阵
 
     - **返回值**
-      `(Vector[T], Matrix[T])` - 包含特征值的向量和特征向量矩阵
+      `(Vector[T], Matrix[T])` - 对当前支持的实对称输入，返回特征值向量和按列存放特征向量的矩阵
 
     - **异常**
-      如果矩阵不是方阵则会终止程序
+      如果矩阵不是方阵、不是对称矩阵，或需要复特征值，则会终止程序
 
     - **示例**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[4.0, -2.0], [1.0, 1.0]])
+      let m = Matrix::from_2d_array([[6.0, -2.0], [-2.0, 9.0]])
       let (eigenvals, eigenvecs) = m.eigen()
-      // eigenvals 应该接近 [3.0, 2.0]
-      // eigenvecs 包含对应的特征向量作为列
+      // eigenvals 应该接近 [5.0, 10.0]
+      // eigenvecs 按列包含对应的特征向量
       ```
 
   ---
 
-  - **`fn[T : Compare + Add + Mul + Sub + Div + Num + Tolerance] power_method(self, max_iterations) -> (T, Vector[T])`**
+  - **`fn[T : Compare + Add + Mul + Sub + Div + Num + Tolerance] power_method(self, max_iterations) -> (T, Vector[T])?`**
     - **描述**
-        使用幂法计算矩阵的主导特征值和对应的特征向量
+        使用幂法近似计算主导实特征对（best-effort）
 
     - **参数**
       - `self: Matrix[T]` - 要计算的方阵
       - `max_iterations: Int` - 要执行的最大迭代次数
 
     - **返回值**
-      `(T, Vector[T])` - 包含主导特征值和对应特征向量的元组
+      `(T, Vector[T])?` - 收敛时返回 `Some((lambda, v))`，若迭代退化或在上限内未收敛则返回 `None`
 
     - **异常**
-      如果矩阵不是方阵则会终止程序
+      如果矩阵不是方阵，则会终止程序
 
     - **示例**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[4.0, -2.0], [1.0, 1.0]])
-      let (lambda, v) = m.power_method(100)
-      // lambda 是主导特征值，v 是对应的特征向量
+      let m = Matrix::from_2d_array([[6.0, -2.0], [-2.0, 9.0]])
+      match m.power_method(100) {
+        Some((lambda, v)) => ignore((lambda, v))
+        None => println("幂法未收敛")
+      }
       ```
 
   ---

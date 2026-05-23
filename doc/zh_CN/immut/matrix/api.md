@@ -144,7 +144,7 @@ struct Matrix[T] {
 
   - **`fn[T : Add + Zero] trace(self : Matrix[T]) -> T`**
     - **描述**
-        计算方阵的迹。
+        计算方阵的迹。对于非方阵会直接终止程序。
 
   ---
 
@@ -156,7 +156,7 @@ struct Matrix[T] {
 
   - **`fn[T : Semiring] pow(self : Matrix[T], power : Int) -> Matrix[T]`**
     - **描述**
-        计算矩阵的整数次幂。
+        计算方阵的非负整数次幂。对于非方阵或负指数会直接终止程序。
 
   ---
 

@@ -144,7 +144,7 @@ struct Matrix[T] {
 
   - **`fn[T : Add + Zero] trace(self : Matrix[T]) -> T`**
     - **説明**
-        正方行列のトレースを計算します。
+        正方行列のトレースを計算します。非正方行列では実行を中断します。
 
   ---
 
@@ -156,7 +156,7 @@ struct Matrix[T] {
 
   - **`fn[T : Semiring] pow(self : Matrix[T], power : Int) -> Matrix[T]`**
     - **説明**
-        行列の整数乗を計算します。
+        正方行列の非負整数乗を計算します。非正方行列または負の指数では実行を中断します。
 
   ---
 

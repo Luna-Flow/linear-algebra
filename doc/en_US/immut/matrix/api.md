@@ -122,7 +122,7 @@ struct Matrix[T] {
 
   - **`fn[T : Add + Zero] trace(self : Matrix[T]) -> T`**
     - **Description**
-        Computes the trace (sum of diagonal elements) of a square matrix.
+        Computes the trace (sum of diagonal elements) of a square matrix. Panics for non-square matrices.
 
   ---
 
@@ -134,7 +134,7 @@ struct Matrix[T] {
 
   - **`fn[T : Semiring] pow(self : Matrix[T], power : Int) -> Matrix[T]`**
     - **Description**
-        Raises the matrix to an integer power.
+        Raises a square matrix to a non-negative integer power. Panics for non-square matrices or negative exponents.
 
   ---
 

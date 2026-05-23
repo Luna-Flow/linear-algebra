@@ -426,7 +426,7 @@ struct Matrix[T] {
 
   - **`fn[T : Semiring] pow(self, power) -> Matrix[T]`**
     - **Description**
-        Computes the power of a square matrix
+        Computes the power of a square matrix. Panics for non-square matrices or negative exponents.
 
     - **Parameters**
       - `self: Matrix[T]` - Square matrix to compute power for
@@ -584,7 +584,7 @@ struct Matrix[T] {
 
   - **`fn[T : Add + Default] trace(self) -> T`**
     - **Description**
-        Computes the trace of a square matrix (sum of main diagonal elements)
+        Computes the trace of a square matrix (sum of main diagonal elements). Panics for non-square matrices.
 
     - **Parameters**
       - `self: Matrix[T]` - Square matrix to compute trace for
@@ -620,9 +620,9 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] power_method(self, ~max_iterations : Int = 1000, ~tolerance_val : T? = None) -> (T, Vector[T])`**
+  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] power_method(self, ~max_iterations : Int = 1000, ~tolerance_val : T? = None) -> (T, Vector[T])?`**
     - **Description**
-        Computes the dominant eigenvalue and eigenvector using the power method
+        Computes a best-effort dominant real eigenpair approximation using the power method
 
     - **Parameters**
       - `self: Matrix[T]` - Square matrix to compute for
@@ -630,13 +630,16 @@ struct Matrix[T] {
       - `tolerance_val: T?` - Convergence tolerance (optional)
 
     - **Returns**
-      `(T, Vector[T])` - Dominant eigenvalue and corresponding eigenvector
+      `(T, Vector[T])?` - `Some((lambda, v))` on convergence, or `None` if the iteration degenerates or does not converge within the limit
 
     - **Example**
 
       ```moonbit
       let m = Matrix::from_2d_array([[4.0, 2.0], [1.0, 3.0]])
-      let (eigenvalue, eigenvector) = m.power_method()
+      match m.power_method() {
+        Some((eigenvalue, eigenvector)) => ignore((eigenvalue, eigenvector))
+        None => println("power method did not converge")
+      }
       ```
 
   ---
@@ -951,38 +954,38 @@ struct Matrix[T] {
 
   - **`fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] eigen(self) -> (Vector[T], Matrix[T])`**
     - **Description**
-        Computes the eigenvalues and eigenvectors of a square matrix using the QR algorithm
+        Computes eigenpairs for symmetric real matrices using the QR algorithm
 
     - **Parameters**
-      - `self: Matrix[T]` - The square matrix to compute eigenvalues and eigenvectors for
+      - `self: Matrix[T]` - The symmetric square matrix to compute eigenpairs for
 
     - **Returns**
-      `(Vector[T], Matrix[T])` - A tuple containing a vector of eigenvalues and a matrix where each column is an eigenvector
+      `(Vector[T], Matrix[T])` - A tuple containing eigenvalues and an eigenvector matrix for supported symmetric inputs
 
     - **Panics**
-      If the matrix is not square
+      If the matrix is not square, not symmetric, or requires complex eigenvalues
 
     - **Example**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[4.0, -2.0], [1.0, 1.0]])
+      let m = Matrix::from_2d_array([[6.0, -2.0], [-2.0, 9.0]])
       let (eigenvals, eigenvecs) = m.eigen()
-      // eigenvals should be close to [3.0, 2.0]
+      // eigenvals should be close to [5.0, 10.0]
       // eigenvecs contains the corresponding eigenvectors as columns
       ```
 
   ---
 
-  - **`fn[T : Compare + Add + Mul + Sub + Div + Num + Tolerance] power_method(self, max_iterations) -> (T, Vector[T])`**
+  - **`fn[T : Compare + Add + Mul + Sub + Div + Num + Tolerance] power_method(self, max_iterations) -> (T, Vector[T])?`**
     - **Description**
-        Computes the dominant eigenvalue and eigenvector using the power method
+        Computes a best-effort dominant real eigenpair approximation using the power method
 
     - **Parameters**
       - `self: Matrix[T]` - The square matrix to compute for
       - `max_iterations: Int` - The maximum number of iterations to perform
 
     - **Returns**
-      `(T, Vector[T])` - A tuple containing the dominant eigenvalue and corresponding eigenvector
+      `(T, Vector[T])?` - `Some((lambda, v))` on convergence, or `None` if the iteration degenerates or does not converge within the limit
 
     - **Panics**
       If the matrix is not square
@@ -990,9 +993,11 @@ struct Matrix[T] {
     - **Example**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[4.0, -2.0], [1.0, 1.0]])
-      let (lambda, v) = m.power_method(100)
-      // lambda is the dominant eigenvalue, v is the corresponding eigenvector
+      let m = Matrix::from_2d_array([[6.0, -2.0], [-2.0, 9.0]])
+      match m.power_method(100) {
+        Some((lambda, v)) => ignore((lambda, v))
+        None => println("power method did not converge")
+      }
       ```
 
   ---

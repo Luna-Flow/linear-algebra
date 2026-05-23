@@ -9,7 +9,7 @@ With **v0.2.8**, we have introduced robust numerical methods including LU and QR
 ### New Algorithms
 - **LU Decomposition**: Implemented Gaussian elimination with partial pivoting for numerically stable `determinant`, `inverse`, and `rank` calculations.
 - **QR Decomposition**: Added `qr_decomposition` for QR decomposition.
-- **Eigenvalues**: Implemented `eigen` (power iteration) and `power_method` for eigenvalue and eigenvector computation.
+- **Eigenvalues**: Implemented `eigen` for symmetric real matrices and `power_method` for best-effort dominant real eigenpair approximation on general square matrices.
 - **Row Operations**: Added `reduce_row_elimination` for Gaussian elimination.
 
 ### High-Performance Design
