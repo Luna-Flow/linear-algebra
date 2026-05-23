@@ -212,6 +212,15 @@ test "matrix_transpose_adjoint" {
 }
 
 ///|
+test "matrix_adjoint_matches_transpose_for_real_matrices" {
+  let m = MatrixFn::from_2d_array([
+    [AdjointReal(1), AdjointReal(2), AdjointReal(3)],
+    [AdjointReal(4), AdjointReal(5), AdjointReal(6)],
+  ])
+  inspect(m.adjoint(), content="|1, 4|\n|2, 5|\n|3, 6|")
+}
+
+///|
 test "matrix_subtraction" {
   let m1 = MatrixFn::from_2d_array([[5, 6], [7, 8]])
   let m2 = MatrixFn::from_2d_array([[1, 2], [3, 4]])

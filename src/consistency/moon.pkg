@@ -1,10 +1,11 @@
 import {
-  "Luna-Flow/linear-algebra/immut" @immut,
-  "Luna-Flow/linear-algebra/mutable" @mutable,
-  "Luna-Flow/luna-generic",
-  "moonbitlang/core/immut/array" @immut/array,
 }
 
 import "wbtest" {
+  "Luna-Flow/linear-algebra/immut" @immut,
+  "Luna-Flow/linear-algebra/mutable" @mutable,
+  "Luna-Flow/luna-generic",
+  "moonbitlang/core/debug" @debug,
   "moonbitlang/quickcheck" @qc,
+  "moonbitlang/core/immut/array" @immut/array,
 }

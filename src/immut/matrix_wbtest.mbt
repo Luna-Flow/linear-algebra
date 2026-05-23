@@ -1,3 +1,11 @@
+struct AdjointReal(Int)
+
+impl Conjugate for AdjointReal with conjugate(self) { self }
+
+impl Show for AdjointReal with to_string(self) { self.0.to_string() }
+
+impl Show for AdjointReal with output(self, logger) { logger.write_object(self.0) }
+
 ///|
 /// Tests the basic functionality of matrix creation, display, and element
 /// access.
@@ -40,6 +48,33 @@ test {
     ),
   )
   inspect(m[0][1], content="3")
+}
+
+///|
+test "from_2d_array/empty" {
+  let m : Matrix[Int] = Matrix::from_2d_array([])
+  inspect(m.row(), content="0")
+  inspect(m.col(), content="0")
+  debug_inspect(m.to_array(), content="[]")
+}
+
+test "from_2d_array/zero_col" {
+  let m : Matrix[Int] = Matrix::from_2d_array([[], []])
+  inspect(m.row(), content="2")
+  inspect(m.col(), content="0")
+  debug_inspect(m.to_array(), content="[]")
+  debug_inspect(m.to_2d_array(), content="[[], []]")
+  inspect(m.transpose().row(), content="0")
+  inspect(m.transpose().col(), content="2")
+  debug_inspect(m.transpose().to_2d_array(), content="[]")
+}
+
+test "panic from_2d_array/ragged_rows" {
+  ignore(Matrix::from_2d_array([[1, 2], [3]]))
+}
+
+test "panic from_2d_array/ragged_zero_col" {
+  ignore(Matrix::from_2d_array([[], [1]]))
 }
 
 ///|
@@ -253,7 +288,7 @@ test {
 test "matrix_trace" {
   let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
   inspect(m.trace(), content="15")
-  let m2 = Matrix::from_2d_array([[1, 2], [3, 4], [5, 6]])
+  let m2 = Matrix::from_2d_array([[1, 2], [3, 4]])
   inspect(m2.trace(), content="5")
 }
 
@@ -305,11 +340,11 @@ test "matrix_conversion" {
 
   // Test to_array
   let arr = m.to_array()
-  inspect(arr, content="[1, 2, 3, 4]")
+  debug_inspect(arr, content="[1, 2, 3, 4]")
 
   // Test to_2d_array
   let arr_2d = m.to_2d_array()
-  inspect(arr_2d, content="[[1, 2], [3, 4]]")
+  debug_inspect(arr_2d, content="[[1, 2], [3, 4]]")
 }
 
 ///|
@@ -320,6 +355,31 @@ test "matrix_transpose" {
 
   // Transpose of transpose is original
   inspect(t.transpose() == m, content="true")
+}
+
+test "matrix_zero_inner_dimension_multiplication" {
+  let left : Matrix[Int] = Matrix::from_2d_array([[], []])
+  let right : Matrix[Int] = Matrix::from_2d_array([])
+  let product = left * right
+  inspect(product.row(), content="2")
+  inspect(product.col(), content="0")
+  debug_inspect(product.to_array(), content="[]")
+  debug_inspect(product.to_2d_array(), content="[[], []]")
+}
+
+test "panic matrix_from_array/invalid_length" {
+  let arr = @immut/array.from_array([1, 2, 3])
+  ignore(Matrix::from_array(2, 2, arr))
+}
+
+test "panic matrix_iter_row/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  ignore(m.iter_row(2))
+}
+
+test "panic matrix_iter_col/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  ignore(m.iter_col(2))
 }
 
 ///|
@@ -343,15 +403,15 @@ test "matrix_iteration" {
 
   // Test iter
   let all_elems = m.iter().collect()
-  inspect(all_elems, content="[1, 2, 3, 4]")
+  debug_inspect(all_elems, content="[1, 2, 3, 4]")
 
   // Test iter_row
   let row1 = m.iter_row(1).collect()
-  inspect(row1, content="[3, 4]")
+  debug_inspect(row1, content="[3, 4]")
 
   // Test iter_col
   let col1 = m.iter_col(1).collect()
-  inspect(col1, content="[2, 4]")
+  debug_inspect(col1, content="[2, 4]")
 }
 
 ///|
@@ -418,4 +478,115 @@ test "matrix_non_square_ops" {
   let prod = m_wide * m_tall
   inspect(prod.row(), content="2")
   inspect(prod.col(), content="2")
+}
+
+fn small_square_matrix(
+  a00 : Int,
+  a01 : Int,
+  a10 : Int,
+  a11 : Int,
+) -> Matrix[Int] {
+  Matrix::from_2d_array([[a00, a01], [a10, a11]])
+}
+
+test "matrix_addition_associativity/property" {
+  fn prop(input : ((Int, Int, Int, Int), (Int, Int, Int, Int), (Int, Int, Int, Int))) {
+    let ((a00, a01, a10, a11), (b00, b01, b10, b11), (c00, c01, c10, c11)) = input
+    let a = small_square_matrix(a00, a01, a10, a11)
+    let b = small_square_matrix(b00, b01, b10, b11)
+    let c = small_square_matrix(c00, c01, c10, c11)
+    (a + b) + c == a + (b + c)
+  }
+
+  @qc.quick_check_fn(prop)
+}
+
+test "matrix_multiplication_associativity/property" {
+  fn prop(input : ((Int, Int, Int, Int), (Int, Int, Int, Int), (Int, Int, Int, Int))) {
+    let ((a00, a01, a10, a11), (b00, b01, b10, b11), (c00, c01, c10, c11)) = input
+    let a = small_square_matrix(a00, a01, a10, a11)
+    let b = small_square_matrix(b00, b01, b10, b11)
+    let c = small_square_matrix(c00, c01, c10, c11)
+    (a * b) * c == a * (b * c)
+  }
+
+  @qc.quick_check_fn(prop)
+}
+
+test "matrix_distributivity/property" {
+  fn prop(input : ((Int, Int, Int, Int), (Int, Int, Int, Int), (Int, Int, Int, Int))) {
+    let ((a00, a01, a10, a11), (b00, b01, b10, b11), (c00, c01, c10, c11)) = input
+    let a = small_square_matrix(a00, a01, a10, a11)
+    let b = small_square_matrix(b00, b01, b10, b11)
+    let c = small_square_matrix(c00, c01, c10, c11)
+    a * (b + c) == (a * b) + (a * c) &&
+    (a + b) * c == (a * c) + (b * c)
+  }
+
+  @qc.quick_check_fn(prop)
+}
+
+test "transpose_and_trace_laws/property" {
+  fn prop(input : ((Int, Int, Int, Int), (Int, Int, Int, Int))) {
+    let ((a00, a01, a10, a11), (b00, b01, b10, b11)) = input
+    let a = small_square_matrix(a00, a01, a10, a11)
+    let b = small_square_matrix(b00, b01, b10, b11)
+    (a + b).transpose() == a.transpose() + b.transpose() &&
+    (a * b).transpose() == b.transpose() * a.transpose() &&
+    a.transpose().trace() == a.trace()
+  }
+
+  @qc.quick_check_fn(prop)
+}
+
+test "adjoint matches transpose for real matrices" {
+  let m = Matrix::from_2d_array([
+    [AdjointReal(1), AdjointReal(2), AdjointReal(3)],
+    [AdjointReal(4), AdjointReal(5), AdjointReal(6)],
+  ])
+  inspect(m.adjoint(), content="|1, 4|\n|2, 5|\n|3, 6|")
+}
+
+test "determinant_and_pow_laws" {
+  let upper = Matrix::from_2d_array([[2, 3, 5], [0, -7, 11], [0, 0, 13]])
+  inspect(upper.determinant(), content="-182")
+
+  let base = Matrix::from_2d_array([[2, 1], [1, 1]])
+  inspect(base.pow(0), content="|1, 0|\n|0, 1|")
+  inspect(base.pow(1), content="|2, 1|\n|1, 1|")
+}
+
+test "panic trace/non_square" {
+  let non_square = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  ignore(non_square.trace())
+}
+
+test "panic pow/non_square" {
+  let non_square = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  ignore(non_square.pow(2))
+}
+
+test "panic pow/negative_exponent" {
+  let square = Matrix::from_2d_array([[1, 2], [3, 4]])
+  ignore(square.pow(-1))
+}
+
+test "determinant_row_swap_sign_change" {
+  let base = Matrix::from_2d_array([[1, 2, 3], [0, 4, 5], [1, 0, 6]])
+  let swapped = base.swap_rows(0, 1)
+  inspect(swapped.determinant(), content="-22")
+  inspect(base.determinant(), content="22")
+}
+
+test "combine_shape_laws" {
+  let left = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let right = Matrix::from_2d_array([[5], [6]])
+  let horizontal = left.horizontal_combine(right)
+  inspect(horizontal.row(), content="2")
+  inspect(horizontal.col(), content="3")
+
+  let bottom = Matrix::from_2d_array([[7, 8]])
+  let vertical = left.vertical_combine(bottom)
+  inspect(vertical.row(), content="3")
+  inspect(vertical.col(), content="2")
 }
