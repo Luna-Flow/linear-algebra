@@ -1,7 +1,7 @@
 ///|
-/// Create a new type called IArray, which is an alias for 
+/// Create a new type called IArray, which is an alias for
 /// the immutable array type.
-/// 
+///
 type IArray[T] = @immut/array.T[T]
 
 ///|
@@ -222,6 +222,9 @@ pub fn[T, U] Matrix::mapi(
 /// ```
 /// 
 pub fn[T] Matrix::make(row : Int, col : Int, f : (Int, Int) -> T) -> Matrix[T] {
+  if row == 0 || col == 0 {
+    return { row, col, data: @immut/array.from_array([]) }
+  }
   {
     row,
     col,
@@ -266,7 +269,16 @@ pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
 /// )
 /// ```
 pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
-  Matrix::make(arr.length(), arr[0].length(), fn(i, j) { arr[i][j] })
+  if arr.is_empty() {
+    return { row: 0, col: 0, data: @immut/array.from_array([]) }
+  }
+  let col = arr[0].length()
+  for row in arr {
+    guard row.length() == col else {
+      abort("Matrix rows must all have the same length")
+    }
+  }
+  Matrix::make(arr.length(), col, fn(i, j) { arr[i][j] })
 }
 
 ///|
@@ -389,7 +401,7 @@ pub fn[T] Matrix::set(
 ///   #||3, 7|
 /// )
 /// ```
-pub impl[T : Mul + Add] Mul for Matrix[T] with mul(
+pub impl[T : Mul + Add + Zero] Mul for Matrix[T] with mul(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
@@ -397,6 +409,12 @@ pub impl[T : Mul + Add] Mul for Matrix[T] with mul(
   let col = other.col
   let inner = self.col
   guard inner == other.row
+  if row == 0 || col == 0 {
+    return Matrix::make(row, col, fn(_, _) { abort("unreachable") })
+  }
+  if inner == 0 {
+    return Matrix::new(row, col, T::zero())
+  }
   let data = @immut/array.makei(row * col, fn(i) {
     let r = i / col
     let c = i % col
@@ -556,7 +574,7 @@ pub fn[T : One + Zero] Matrix::identity(size : Int) -> Matrix[T] {
 /// inspect(m.null(), content="true")
 /// ```
 pub fn[T : Compare + Zero] Matrix::null(self : Matrix[T]) -> Bool {
-  not(self.data.iter().any(fn(x) { x != T::zero() }))
+  !self.data.iter().any(fn(x) { x != T::zero() })
 }
 
 ///|
@@ -565,7 +583,7 @@ pub fn[T : Compare + Zero] Matrix::null(self : Matrix[T]) -> Bool {
 /// Parameters
 /// - `self`: The matrix to compute the adjoint of.
 pub fn[T : Conjugate] Matrix::adjoint(self : Matrix[T]) -> Matrix[T] {
-  self.map(T::conjugate)
+  self.transpose().map(T::conjugate)
 }
 
 ///|
@@ -609,7 +627,8 @@ pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
 /// inspect(m.trace(), content="5")
 /// ```
 pub fn[T : Add + Zero] Matrix::trace(self : Matrix[T]) -> T {
-  let n = if self.row < self.col { self.row } else { self.col }
+  guard self.is_square() else { abort("Matrix must be square to calculate trace") }
+  let n = self.row
   let mut sum = T::zero()
   for i in 0..<n {
     sum = sum + self[i][i]
@@ -828,10 +847,21 @@ pub fn[T : Mul + Add + One + Neg + Zero] Matrix::determinant(
 /// )
 /// ```
 pub fn[T : Semiring] Matrix::pow(self : Matrix[T], power : Int) -> Matrix[T] {
-  loop (Matrix::identity(self.col), power, self) {
-    (s, 0, _) => s
-    (s, 1, m) => s * m
-    (s, p, m) => continue (if (p & 1) == 1 { s * m } else { s }, p >> 1, m * m)
+  guard self.is_square() else {
+    abort("Matrix must be square to calculate powers")
+  }
+  guard power >= 0 else {
+    abort("Matrix::pow requires a non-negative exponent")
+  }
+  for state = Matrix::identity(self.col), exp = power, base = self {
+    if exp == 0 {
+      break state
+    }
+    if exp == 1 {
+      break state * base
+    }
+    let next_state = if (exp & 1) == 1 { state * base } else { state }
+    continue next_state, exp >> 1, base * base
   }
 }
 

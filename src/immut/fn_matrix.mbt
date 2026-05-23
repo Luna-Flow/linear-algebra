@@ -490,26 +490,35 @@ pub fn[T : Semiring] MatrixFn::pow(
   self : MatrixFn[T],
   power : Int,
 ) -> MatrixFn[T] {
-  loop (MatrixFn::identity(self.grid.1), power, self) {
-    (s, 0, _) => s
-    (s, 1, m) => s * m
-    (s, p, m) => continue (if (p & 1) == 1 { s * m } else { s }, p >> 1, m * m)
+  guard self.grid.0 == self.grid.1 else {
+    abort("Matrix must be square to calculate powers")
+  }
+  guard power >= 0 else {
+    abort("MatrixFn::pow requires a non-negative exponent")
+  }
+  for state = MatrixFn::identity(self.grid.1), exp = power, base = self {
+    if exp == 0 {
+      break state
+    }
+    if exp == 1 {
+      break state * base
+    }
+    let next_state = if (exp & 1) == 1 { state * base } else { state }
+    continue next_state, exp >> 1, base * base
   }
 }
 
 ///|
-/// Computes the adjoint (conjugate transpose) of a matrix by applying the
-/// conjugate operation to each element.
+/// Computes the adjoint (conjugate transpose) of a matrix.
 ///
 /// Parameters:
 ///
 /// * `self` : The matrix to compute the adjoint of.
 ///
-/// Returns a new matrix where each element is the conjugate of the
-/// corresponding element in the input matrix.
+/// Returns the conjugate transpose of the input matrix.
 ///
 pub fn[T : Conjugate] MatrixFn::adjoint(self : MatrixFn[T]) -> MatrixFn[T] {
-  self.map(T::conjugate)
+  self.transpose().map(T::conjugate)
 }
 
 ///|
