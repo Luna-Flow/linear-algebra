@@ -28,6 +28,9 @@ pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
     return { row: 0, col: 0, data: [] }
   }
   let col = arr[0].length()
+  for row_data in arr {
+    guard row_data.length() == col
+  }
   let data = arr.map(fn(row) { row.copy() })
   { row, col, data }
 }
@@ -224,6 +227,113 @@ pub fn[T] Matrix::copy(self : Matrix[T]) -> Matrix[T] {
   { row: self.row, col: self.col, data: self.data.map(fn(row) { row.copy() }) }
 }
 
+priv struct LuDecomposition[T] {
+  lu : Matrix[T]
+  permutation : Array[Int]
+  swap_count : Int
+  singular : Bool
+}
+
+fn[T : Compare + Num + Div + Tolerance] Matrix::lu_decompose_internal(
+  self : Matrix[T],
+) -> LuDecomposition[T] {
+  let lu = self.copy()
+  let n = lu.row
+  let data = lu.data
+  let permutation = Array::makei(n, fn(i) { i })
+  let mut swap_count = 0
+  let mut singular = false
+  for j in 0..<n {
+    let mut max_row = j
+    for i in (j + 1)..<n {
+      if data[i][j].abs() > data[max_row][j].abs() {
+        max_row = i
+      }
+    }
+    if max_row != j {
+      lu.swap_rows(j, max_row)
+      let temp = permutation[j]
+      permutation[j] = permutation[max_row]
+      permutation[max_row] = temp
+      swap_count += 1
+    }
+    let pivot = data[j][j]
+    if pivot.abs() < T::tolerance() {
+      singular = true
+      continue
+    }
+    for i in (j + 1)..<n {
+      let factor = data[i][j] / pivot
+      data[i][j] = factor
+      for k in (j + 1)..<n {
+        data[i][k] = data[i][k] - factor * data[j][k]
+      }
+    }
+  }
+  { lu, permutation, swap_count, singular }
+}
+
+fn[T : Num] LuDecomposition::determinant_internal(
+  self : LuDecomposition[T],
+) -> T {
+  if self.singular {
+    return T::zero()
+  }
+  let n = self.lu.row
+  let lu_data = self.lu.data
+  let mut det = if (self.swap_count & 1) == 0 {
+    T::one()
+  } else {
+    -T::one()
+  }
+  for i in 0..<n {
+    det *= lu_data[i][i]
+  }
+  det
+}
+
+fn[T : Compare + Field + Num + Tolerance] LuDecomposition::solve_internal(
+  self : LuDecomposition[T],
+  rhs : Matrix[T],
+) -> Matrix[T]? {
+  if self.singular {
+    return None
+  }
+  let n = self.lu.row
+  let cols = rhs.col
+  let lu_data = self.lu.data
+  let rhs_data = rhs.data
+  let permutation = self.permutation
+  let y = Matrix::new(n, cols, T::zero())
+  let y_data = y.data
+  for i in 0..<n {
+    for j in 0..<cols {
+      let mut acc = rhs_data[permutation[i]][j]
+      for k in 0..<i {
+        acc = acc - lu_data[i][k] * y_data[k][j]
+      }
+      y_data[i][j] = acc
+    }
+  }
+  let x = Matrix::new(n, cols, T::zero())
+  let x_data = x.data
+  for step in 0..<n {
+    let i = n - 1 - step
+    let pivot = lu_data[i][i]
+    if pivot.abs() < T::tolerance() {
+      return None
+    }
+    for j in 0..<cols {
+      let mut acc = y_data[i][j]
+      for k in (i + 1)..<n {
+        acc = acc - lu_data[i][k] * x_data[k][j]
+      }
+      x_data[i][j] = acc / pivot
+    }
+  }
+  Some(x)
+}
+
 ///|
 pub impl[T : AddMonoid + Mul] Mul for Matrix[T] with mul(
   self : Matrix[T],
@@ -320,7 +430,7 @@ pub fn[T : Compare + Zero] Matrix::null(self : Matrix[T]) -> Bool {
 
 ///|
 pub fn[T : Conjugate] Matrix::adjoint(self : Matrix[T]) -> Matrix[T] {
-  self.map(T::conjugate)
+  self.transpose().map(T::conjugate)
 }
 
 ///|
@@ -405,39 +515,62 @@ pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
 }
 
 ///|
-pub fn[T : @internal.HomomorphismNat] Matrix::from_nat_matrix(
+pub fn[T : HomomorphismNat] Matrix::from_nat_matrix(
   self : Matrix[Int],
 ) -> Matrix[T] {
-  self.map(@internal.HomomorphismNat::from_nat)
+  self.map(HomomorphismNat::from_nat)
 }
 
 ///|
 pub fn[T : Compare + Num + Div + Tolerance] Matrix::power_method(
   self : Matrix[T],
   max_iterations : Int,
-) -> (T, Vector[T]) {
+) -> (T, Vector[T])? {
   guard self.is_square() else {
     abort("Matrix must be square for power method")
   }
   let n = self.row
+  if n == 0 {
+    abort("Matrix::power_method requires a non-empty square matrix")
+  }
+  let tol = T::tolerance()
   let mut x = Vector::makei(n, fn(_) { T::one() })
-  let mut lambda = T::zero()
   for _ in 0..<max_iterations {
     let y = self.mul_vec(x)
-    let mut max_val = T::zero()
+    let mut scale = T::zero()
     for i in 0..<n {
-      if y[i].abs() > max_val.abs() {
-        max_val = y[i]
+      let candidate = y[i].abs()
+      if candidate > scale {
+        scale = candidate
       }
     }
-    let new_lambda = max_val
-    x = y.map(fn(v) { v / new_lambda })
-    if (new_lambda - lambda).abs() < Tolerance::tolerance() {
-      return (new_lambda, x)
+    if scale <= tol {
+      return None
     }
-    lambda = new_lambda
+    x = y.map(fn(v) { v / scale })
+    let ax = self.mul_vec(x)
+    let mut numerator = T::zero()
+    let mut denominator = T::zero()
+    for i in 0..<n {
+      numerator = numerator + x[i] * ax[i]
+      denominator = denominator + x[i] * x[i]
+    }
+    if denominator.abs() <= tol {
+      return None
+    }
+    let lambda = numerator / denominator
+    let mut residual = T::zero()
+    for i in 0..<n {
+      let delta = (ax[i] - x[i] * lambda).abs()
+      if delta > residual {
+        residual = delta
+      }
+    }
+    if residual <= tol {
+      return Some((lambda, x))
+    }
   }
-  (lambda, x)
+  None
 }
 
 ///|
@@ -512,18 +645,30 @@ pub fn[T] Matrix::horizontal_combine(
 ) -> Matrix[T] {
   guard self.row == other.row
   let row = self.row
+  if row == 0 {
+    return { row: 0, col: self.col + other.col, data: [] }
+  }
   let self_col = self.col
   let other_col = other.col
   let self_data = self.data
   let other_data = other.data
   let new_col = self_col + other_col
+  if new_col == 0 {
+    return Matrix::make(row, 0, fn(_, _) { abort("unreachable") })
+  }
   let data = Array::makei(row, fn(i) {
-    let new_row = Array::make(new_col, self_data[0][0])
     let row_self = self_data[i]
+    let row_other = other_data[i]
+    let new_row = if self_col > 0 {
+      Array::make(new_col, row_self[0])
+    } else if other_col > 0 {
+      Array::make(new_col, row_other[0])
+    } else {
+      []
+    }
     for j in 0..<self_col {
       new_row[j] = row_self[j]
     }
-    let row_other = other_data[i]
     for j in 0..<other_col {
       new_row[self_col + j] = row_other[j]
     }
@@ -553,33 +698,42 @@ pub fn[T] Matrix::vertical_combine(
 }
 
 ///|
-pub fn[T : Add + Div + @internal.HomomorphismNat] Matrix::mean(
+pub fn[T : Add + Div + HomomorphismNat] Matrix::mean(
   self : Matrix[T],
 ) -> T {
+  let count = self.row * self.col
+  guard count > 0 else {
+    abort("Matrix::mean requires at least one element")
+  }
   let mut sum = T::from_nat(0)
   self.each(fn(x) { sum = sum + x })
-  let count = self.row * self.col
   sum / T::from_nat(count)
 }
 
 ///|
-pub fn[T : Add + Sub + Mul + Div + @internal.HomomorphismNat] Matrix::variance(
+pub fn[T : Add + Sub + Mul + Div + HomomorphismNat] Matrix::variance(
   self : Matrix[T],
 ) -> T {
+  let count = self.row * self.col
+  guard count > 0 else {
+    abort("Matrix::variance requires at least one element")
+  }
   let m = self.mean()
   let mut sum_sq_diff = T::from_nat(0)
   self.each(fn(x) {
     let diff = x - m
     sum_sq_diff = sum_sq_diff + diff * diff
   })
-  let count = self.row * self.col
   sum_sq_diff / T::from_nat(count)
 }
 
 ///|
-pub fn[T : Add + Sub + Mul + Div + Sqrt + @internal.HomomorphismNat] Matrix::std_dev(
+pub fn[T : Add + Sub + Mul + Div + Sqrt + HomomorphismNat] Matrix::std_dev(
   self : Matrix[T],
 ) -> T {
+  guard self.row * self.col > 0 else {
+    abort("Matrix::std_dev requires at least one element")
+  }
   self.variance().sqrt()
 }
 
@@ -667,18 +821,43 @@ pub fn[T : Compare + Num + Inverse] Matrix::reduce_row_elimination(
 }
 
 ///|
-pub fn[T : Compare + Num + Div + Tolerance] Matrix::rank(
+pub fn[T : Compare + Num + Div + Inverse + Tolerance] Matrix::rank(
   self : Matrix[T],
 ) -> Int {
-  self.lu_decompose_internal().rank
+  let reduced = self.copy().reduce_row_elimination()
+  let mut rank = 0
+  for i in 0..<reduced.row {
+    let mut nonzero = false
+    for j in 0..<reduced.col {
+      if reduced.get(i, j).abs() >= T::tolerance() {
+        nonzero = true
+        break
+      }
+    }
+    if nonzero {
+      rank += 1
+    }
+  }
+  rank
 }
 
 ///|
 pub fn[T : Semiring] Matrix::pow(self : Matrix[T], power : Int) -> Matrix[T] {
-  loop (identity(self.col), power, self) {
-    (s, 0, _) => s
-    (s, 1, m) => s * m
-    (s, p, m) => continue (if (p & 1) == 1 { s * m } else { s }, p >> 1, m * m)
+  guard self.is_square() else {
+    abort("Matrix must be square to calculate powers")
+  }
+  guard power >= 0 else {
+    abort("Matrix::pow requires a non-negative exponent")
+  }
+  for state = identity(self.col), exp = power, base = self {
+    if exp == 0 {
+      break state
+    }
+    if exp == 1 {
+      break state * base
+    }
+    let next_state = if (exp & 1) == 1 { state * base } else { state }
+    continue next_state, exp >> 1, base * base
   }
 }
 
@@ -769,23 +948,48 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::is_invertible(
 }
 
 ///|
-pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::is_positive_definite(
+pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::cholesky_decomposition(
   self : Matrix[T],
-) -> Bool {
-  if not(self.is_symmetric()) {
-    return false
+) -> Matrix[T]? {
+  if !self.is_symmetric() {
+    return None
   }
-  let (eigenvals, _) = self.eigen()
-  for val in eigenvals {
-    if val <= T::zero() {
-      return false
+  let n = self.row
+  let l = Matrix::new(n, n, T::zero())
+  let l_data = l.data
+  let self_data = self.data
+  for i in 0..<n {
+    for j in 0..<=i {
+      let mut sum = T::zero()
+      for k in 0..<j {
+        sum = sum + l_data[i][k] * l_data[j][k]
+      }
+      if i == j {
+        let val = self_data[i][i] - sum
+        if val <= T::tolerance() {
+          return None
+        }
+        l_data[i][i] = val.sqrt()
+      } else {
+        l_data[i][j] = T::one() / l_data[j][j] * (self_data[i][j] - sum)
+      }
     }
   }
-  true
+  Some(l)
 }
 
 ///|
-fn[T : Compare + Num + Div + Sqrt] Matrix::eigen_2x2(
+pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::is_positive_definite(
+  self : Matrix[T],
+) -> Bool {
+  match self.cholesky_decomposition() {
+    Some(_) => true
+    None => false
+  }
+}
+
+///|
+fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::eigen_2x2(
   self : Matrix[T],
 ) -> (Vector[T], Matrix[T]) {
   let self_data = self.data
@@ -799,12 +1003,18 @@ fn[T : Compare + Num + Div + Sqrt] Matrix::eigen_2x2(
   let mid = (a + d) * half
   let det = a * d - b * c
   let disc_prime = mid * mid - det
-  let (l1, l2) = if disc_prime >= T::zero() {
-    let s = disc_prime.sqrt()
-    (mid + s, mid - s)
-  } else {
-    (mid, mid)
+  if disc_prime < -T::tolerance() {
+    abort(
+      "Matrix::eigen currently requires real eigenvalues; complex eigenvalues require luna complex support",
+    )
   }
+  let s = if disc_prime.abs() <= T::tolerance() {
+    T::zero()
+  } else {
+    disc_prime.sqrt()
+  }
+  let l1 = mid + s
+  let l2 = mid - s
   let mut v11 = T::one()
   let mut v21 = T::zero()
   let mut v12 = T::zero()
@@ -839,6 +1049,11 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::eigen(
   guard self.is_square() else {
     abort("Matrix must be square for eigenvalue computation")
   }
+  guard self.is_symmetric() else {
+    abort(
+      "Matrix::eigen currently supports only symmetric real matrices; general real matrices require complex eigenvalue support",
+    )
+  }
   if self.row == 2 && self.col == 2 {
     return self.eigen_2x2()
   }
@@ -849,6 +1064,14 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::eigen(
 fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
   matrix : Matrix[T],
 ) -> (Vector[T], Matrix[T]) {
+  guard matrix.is_square() else {
+    abort("qr_algorithm requires a square matrix")
+  }
+  guard matrix.is_symmetric() else {
+    abort(
+      "qr_algorithm currently supports only symmetric real matrices; general real matrices require complex eigenvalue support",
+    )
+  }
   let n = matrix.row
   let a = matrix.copy()
   let a_data = a.data

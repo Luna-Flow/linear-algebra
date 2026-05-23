@@ -65,30 +65,30 @@ test "transpose_iteration" {
   inspect(sum, content="15")
   let idx_hits = Array::make(6, 0)
   t.eachi(fn(idx, v) { idx_hits[idx] = v })
-  inspect(idx_hits.to_string(), content="[0, 3, 1, 4, 2, 5]")
+  debug_inspect(idx_hits, content="[0, 3, 1, 4, 2, 5]")
   let row0 = Array::make(2, 0)
   let mut ri = 0
   t.each_row(0, fn(x) {
     row0[ri] = x
     ri += 1
   })
-  inspect(row0, content="[0, 3]")
+  debug_inspect(row0, content="[0, 3]")
   let row1 = Array::make(2, 0)
   t.eachi_row(1, fn(c, x) { row1[c] = x })
-  inspect(row1, content="[1, 4]")
+  debug_inspect(row1, content="[1, 4]")
   let col1 = Array::make(3, 0)
   let mut ci = 0
   t.each_col(1, fn(x) {
     col1[ci] = x
     ci += 1
   })
-  inspect(col1, content="[3, 4, 5]")
+  debug_inspect(col1, content="[3, 4, 5]")
   let col0 = Array::make(3, 0)
   t.eachi_col(0, fn(r, x) { col0[r] = x })
-  inspect(col0.to_string(), content="[0, 1, 2]")
+  debug_inspect(col0, content="[0, 1, 2]")
   let pairs = Array::make(6, 0)
   t.each_row_col(fn(r, c, v) { pairs[r * 2 + c] = v })
-  inspect(pairs.to_string(), content="[0, 3, 1, 4, 2, 5]")
+  debug_inspect(pairs, content="[0, 3, 1, 4, 2, 5]")
 }
 
 ///|
@@ -164,8 +164,8 @@ test "transpose_extraction" {
   let t = base.to_transpose()
 
   // row/col extraction
-  inspect(t.row_to_array(2), content="[2, 5]")
-  inspect(t.col_to_array(0).to_string(), content="[0, 1, 2]")
+  debug_inspect(t.row_to_array(2), content="[2, 5]")
+  debug_inspect(t.col_to_array(0), content="[0, 1, 2]")
   inspect(t.row_to_vector(1), content="|1, 4|")
   inspect(t.col_to_vector(1), content="|3, 4, 5|")
 }
@@ -219,7 +219,7 @@ test "transpose_conversion" {
 
   // copy, transpose (unwrap), and materialize
   let t_copy = t.copy()
-  inspect(t_copy, content="|0, 3|\n|1, 4|\n|2, 5|")
+  inspect(t_copy.to_string(), content="|0, 3|\n|1, 4|\n|2, 5|")
   inspect(
     t.transpose(),
     content=(

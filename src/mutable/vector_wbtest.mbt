@@ -1,4 +1,5 @@
 ///|
+using @debug {debug_inspect}
 using @qc {quick_check_fn, trait Shrink}
 
 ///|
@@ -150,7 +151,7 @@ test "S_v * p = v * p" {
 test "iter" {
   let v = Vector::from_array([1, 2, 3])
   let arr = v.iter().to_array()
-  inspect(arr.to_string(), content="[1, 2, 3]")
+  debug_inspect(arr, content="[1, 2, 3]")
 }
 
 ///|
