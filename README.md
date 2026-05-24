@@ -2,9 +2,9 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.8 - Algorithms & Stability
+## v0.2.9 - API Cleanup & Testing
 
-With **v0.2.8**, we have introduced robust numerical methods including LU-based solvers, QR-based eigensolver internals, Eigenvalue computations, and improved error handling for linear algebra operations.
+With **v0.2.9**, we focused on release hardening: tightening the public API surface, correcting outdated documentation, and expanding property-based testing for key algebraic and numerical laws.
 
 ### New Algorithms
 - **LU Decomposition**: Implemented Gaussian elimination with partial pivoting for numerically stable `determinant`, `inverse`, and `rank` calculations.
@@ -48,6 +48,10 @@ We provide documentation in multiple languages:
 
 ## Recent Changes
 
+- **API Cleanup & Testing (0.2.9)**:
+  - ✨ **Visibility Tightening**: Hid internal QR/Hessenberg helper functions from the public `mutable` package surface.
+  - 📝 **Docs Alignment**: Updated API docs and README notes to match actual storage/layout and algorithm behavior.
+  - ✅ **Property Tests**: Added randomized algebraic and numerical property checks for Cholesky, determinant/rank/inverse alignment, and row-swap determinant laws.
 - **Algorithms (0.2.8)**:
   - ✨ **Decompositions**: Added LU (internal for Det/Rank), QR, and Eigenvalue decompositions.
   - ✨ **Stability**: Shifted `determinant` and `rank` to use partial pivoting LU for better numerical stability.
