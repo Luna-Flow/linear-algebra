@@ -2,70 +2,115 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.9 - API Cleanup & Testing
+Linear algebra support for MoonBit, maintained as part of LunaFlow.
 
-With **v0.2.9**, we focused on release hardening: tightening the public API surface, correcting outdated documentation, and expanding property-based testing for key algebraic and numerical laws.
+Current package version: `0.2.9`
 
-### New Algorithms
-- **LU Decomposition**: Implemented Gaussian elimination with partial pivoting for numerically stable `determinant`, `inverse`, and `rank` calculations.
-- **QR-Based Eigensolver Internals**: Added Hessenberg reduction and QR iteration support for symmetric real eigenvalue computation.
-- **Eigenvalues**: Implemented `eigen` for symmetric real matrices and `power_method` for best-effort dominant real eigenpair approximation on general square matrices.
-- **Row Operations**: Added `reduce_row_elimination` for Gaussian elimination.
+## Overview
 
-### High-Performance Design
-- **Native Transpose Optimization**: Matrix multiplication on Native backend now utilizes a transposition-based strategy, achieving **>200% speedup** for large matrices compared to naive methods.
-- **Zero-Overhead Construction**: `Matrix::make` and `Matrix::new` rewritten to eliminate all division and modulo operations during initialization.
-- **Hybrid Matrix Multiplication**: Automatically switches between `i-j-k` (register-optimized) and `i-k-j` (cache-friendly) strategies on other backends.
-- **Secondary Utility Acceleration**: Audited functions like `mapi` and `each_row_col` to eliminate division/modulo overhead (up to 60% faster).
-- **Backend-Specific Optimization**: Internal implementations are tailored for different targets (Wasm/JS vs. Native) to leverage specific engine strengths.
-- **Zero-Copy Transpose**: Optimized identity-based multiplication and materialization.
+This repository provides two matrix/vector packages with intentionally different execution models:
 
-### Package Positioning
-- **`immut`**: Value semantics, immutable updates, and predictable materialized results. This package is the baseline for shared algebraic behavior.
-- **`mutable`**: Execution-oriented matrices with in-place operations, transpose views, and backend-specific optimization paths. This package is intended for performance-sensitive workloads.
-- **Shared Core, Different Execution Model**: The two packages aim to keep core algebraic operations aligned, but they do not expose identical mutation or access semantics.
+- `Luna-Flow/linear-algebra/immut`: immutable, value-oriented matrices and vectors.
+- `Luna-Flow/linear-algebra/mutable`: mutation-oriented matrices and vectors with backend-specific implementations.
 
-### API Guidance & Performance
-- **Core Algebraic API**: Constructors and core operations such as `make`, `map`, `transpose`, `+`, `-`, `*`, `trace`, and matrix/vector conversions are intended to behave consistently across the two packages.
-- **Random Access**: In `mutable`, for high-performance scenarios requiring frequent random access, we **strongly recommend** using `.get(i, j)` and `.set(i, j, val)` directly. These avoid row-accessor overhead and are the fastest way to interact with elements.
-- **Bulk Operations**: In `mutable`, prefer built-in tools like `.each_row_col()` or `.map_inplace()` over manual loops with indexing for maximum optimization.
-- **Structured Views**: In `mutable`, prefer `row_view()` / `col_view()` when you need repeated row or column work with explicit semantics. Treat `m[row]` / `Lens` as convenience syntax rather than the primary performance API.
-- **Accessor Semantics**: `immut` uses read-only row accessors, while `mutable` exposes backend-specific row access paths, structured row/column views, and transpose views. Performance-sensitive code should rely on the documented package-specific access APIs instead of assuming identical indexing internals.
+They share the same core algebraic direction for constructors and basic operators, but they do not promise identical access semantics or the same performance profile.
 
-### Key Features
-- **Mutable & Immutable Support**: Full suites for both `Matrix` and `Vector` types with distinct semantics.
-- **Advanced Operations**: Includes LU/QR decomposition, determinant, inverse, rank, eigenvalues, and more.
-- **Execution Specialization**: `mutable` provides efficient `Transpose` views and in-place update APIs for performance-oriented code.
-- **Correctness First**: Rigorous testing including edge cases and cross-package consistency checks for shared operations.
+## Package Split
 
-### Documentation
-Comprehensive API documentation is available at [mooncakes.io](https://mooncakes.io/docs/Luna-Flow/linear-algebra).
+### `immut`
 
-We provide documentation in multiple languages:
-- 🇺🇸 **English** (`doc/en_US`)
-- 🇨🇳 **简体中文** (`doc/zh_CN`)
-- 🇯🇵 **日本語** (`doc/ja_JP`)
+Use `immut` when you want persistent values and explicit copy-on-update behavior.
 
-## Recent Changes
+- Dense immutable `Matrix` and `Vector`
+- Functional `MatrixFn`
+- Core algebraic operations such as `map`, `transpose`, `scale`, `pow`, `trace`, `determinant`, `swap_rows`, and `swap_cols`
+- Conversions between arrays, vectors, row matrices, column matrices, and scaled matrices
 
-- **API Cleanup & Testing (0.2.9)**:
-  - ✨ **Visibility Tightening**: Hid internal QR/Hessenberg helper functions from the public `mutable` package surface.
-  - 📝 **Docs Alignment**: Updated API docs and README notes to match actual storage/layout and algorithm behavior.
-  - ✅ **Property Tests**: Added randomized algebraic and numerical property checks for Cholesky, determinant/rank/inverse alignment, and row-swap determinant laws.
-- **Algorithms (0.2.8)**:
-  - ✨ **Decompositions**: Added LU (internal for Det/Rank), QR, and Eigenvalue decompositions.
-  - ✨ **Stability**: Shifted `determinant` and `rank` to use partial pivoting LU for better numerical stability.
-- **Native Optimization (0.2.7)**:
-  - 🚀 **Matrix Multiplication**: Implemented transposition + dot-product strategy for Native, outperforming naive implementations by >2x.
-  - 🚀 **Matrix Construction**: Optimized `make`, `new`, `transpose` to use direct loop unrolling and Array ops, removing expensive integer division.
-  - 📝 **Docs**: Clarified `Lens` vs `get/set` usage for performance-critical code.
-- **Performance Overhaul (0.2.4)**:
-  - 🚀 Optimized secondary utilities (`mapi`, `each_row_col`, etc.).
-  - 🚀 Hybrid Matrix multiplication (register and cache aware).
-  - 🚀 Accelerated Vector dot product and linear combinations.
-- **Renaming**: 
-  - `map_row()` / `map_col()` -> `map_row_inplace()` / `map_col_inplace()`
-  - `eachij()` -> `each_row_col()`
-- **Fixes**:
-  - Corrected determinant for 0x0 matrices.
-  - Fixed copy-on-conversion behavior between vectors and matrices.
+### `mutable`
+
+Use `mutable` when you want in-place updates and higher-performance execution paths.
+
+- Mutable `Matrix` and `Vector`
+- `Transpose` views
+- `RowView` and `ColView` for repeated structured row/column access
+- Advanced numerical routines such as `determinant`, `inverse`, `rank`, `cholesky_decomposition`, `eigen`, and `power_method`
+- Backend-specific implementations for `js`, `wasm`, `wasm-gc`, and `native`
+
+## API Guidance
+
+- Shared operations such as `make`, `transpose`, `+`, `-`, `*`, `trace`, and matrix/vector conversions are intended to stay semantically aligned across `immut` and `mutable`.
+- `immut` keeps updates explicit: methods like `set`, `swap_rows`, and `swap_cols` return new values.
+- `mutable` is optimized around direct element access and structural views. For hot paths, prefer `.get(i, j)` and `.set(i, j, value)`.
+- In `mutable`, prefer `row_view()` / `col_view()` when you repeatedly work on one row or column. Treat `matrix[row]` as convenience syntax rather than the primary performance API.
+- Internal decomposition helpers are intentionally not part of the public API. Public matrix methods expose the supported numerical operations directly.
+
+## Installation
+
+```bash
+moon add Luna-Flow/linear-algebra
+```
+
+## Quick Start
+
+### Immutable package
+
+```moonbit
+let a = @immut.Matrix::from_2d_array([[1, 2], [3, 4]])
+let b : @immut.Matrix[Int] = @immut.Matrix::identity(2)
+let c = a * b
+let d = a.set(0, 1, 9)
+let column = @immut.Vector::from_array([1, 1]).to_col_matrix()
+let product = c * column
+```
+
+### Mutable package
+
+```moonbit
+let m = @mutable.Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
+m.set(0, 1, 9.0)
+
+let det = m.determinant()
+let maybe_inv = m.inverse()
+let row0 = m.row_view(0).to_array()
+```
+
+## Documentation
+
+API documentation is published on [mooncakes.io](https://mooncakes.io/docs/Luna-Flow/linear-algebra).
+
+Repository docs are maintained in:
+
+- `doc/en_US`
+- `doc/zh_CN`
+- `doc/ja_JP`
+
+## What Changed Since 0.2.8
+
+The `0.2.9` line includes the following real changes after the `0.2.8` baseline:
+
+- `mutable.Matrix` construction and backend-specialized execution paths were further optimized, including follow-up decomposition cleanup.
+- `mutable` gained `RowView` and `ColView`, making repeated row/column work explicit without materializing copies.
+- Cross-package consistency tests were added to keep shared `immut`/`mutable` algebraic behavior aligned.
+- Immutable matrix semantics were corrected in edge cases, and immutable vector storage contracts were tightened.
+- Mutable LU-based numerical routines were fixed to preserve pivot permutations correctly and to behave more robustly around numerical corner cases.
+- Property-based and regression coverage expanded substantially for immutable behavior, determinant/rank/inverse laws, and cross-package invariants.
+- Public docs were rewritten to match the real API contracts and package semantics more closely.
+- MoonBit dependencies were upgraded:
+  - `Luna-Flow/luna-generic`: `0.2.2` -> `0.2.3`
+  - `moonbitlang/quickcheck`: `0.9.10` -> `0.14.0`
+- The old in-repo benchmark package and helper scripts were removed from the maintained surface.
+
+## Development
+
+Useful local commands:
+
+```bash
+moon fmt
+moon check
+moon test --enable-coverage
+./run_test.sh
+```
+
+`run_test.sh` exercises the `mutable` package on `wasm-gc`, `js`, `native`, and `wasm`.
+
+Contribution guidance is available in [CONTRIBUTING.md](./CONTRIBUTING.md).
