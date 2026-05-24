@@ -6,6 +6,11 @@ pub struct Matrix[T] {
 } derive(Eq)
 
 ///|
+pub impl[T] HasShape for Matrix[T] with shape(self) {
+  (self.row, self.col)
+}
+
+///|
 pub fn[T] Matrix::make(
   row : Int,
   col : Int,
@@ -821,21 +826,47 @@ pub fn[T : Compare + Num + Inverse] Matrix::reduce_row_elimination(
 }
 
 ///|
-pub fn[T : Compare + Num + Div + Inverse + Tolerance] Matrix::rank(
+pub fn[T : Compare + Num + Div + Tolerance] Matrix::rank(
   self : Matrix[T],
 ) -> Int {
-  let reduced = self.copy().reduce_row_elimination()
   let mut rank = 0
-  for i in 0..<reduced.row {
-    let mut nonzero = false
-    for j in 0..<reduced.col {
-      if reduced.get(i, j).abs() >= T::tolerance() {
-        nonzero = true
-        break
+  let reduced = self.copy()
+  let row_count = reduced.row
+  let col_count = reduced.col
+  let data = reduced.data
+  let tol = T::tolerance()
+  let mut pivot_col = 0
+  for pivot_row in 0..<row_count {
+    while pivot_col < col_count {
+      let mut max_row = pivot_row
+      let mut max_abs = data[pivot_row][pivot_col].abs()
+      for candidate_row in (pivot_row + 1)..<row_count {
+        let candidate_abs = data[candidate_row][pivot_col].abs()
+        if candidate_abs > max_abs {
+          max_abs = candidate_abs
+          max_row = candidate_row
+        }
       }
-    }
-    if nonzero {
+      if max_abs < tol {
+        pivot_col += 1
+        continue
+      }
+      reduced.swap_rows(pivot_row, max_row)
+      let pivot = data[pivot_row][pivot_col]
+      for eliminate_row in (pivot_row + 1)..<row_count {
+        let factor = data[eliminate_row][pivot_col] / pivot
+        if factor.abs() < tol {
+          data[eliminate_row][pivot_col] = T::zero()
+          continue
+        }
+        data[eliminate_row][pivot_col] = T::zero()
+        for col in (pivot_col + 1)..<col_count {
+          data[eliminate_row][col] = data[eliminate_row][col] - factor * data[pivot_row][col]
+        }
+      }
       rank += 1
+      pivot_col += 1
+      break
     }
   }
   rank
@@ -1074,74 +1105,70 @@ fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
   }
   let n = matrix.row
   let a = matrix.copy()
-  let a_data = a.data
   let q_total = identity(n)
+  let a_data = a.data
   let q_total_data = q_total.data
+  let tol = T::tolerance()
   let mut m = n
   let max_iterations = 1000
   while m > 1 {
+    if a_data[m - 1][m - 2].abs() <= tol {
+      a_data[m - 1][m - 2] = T::zero()
+      m -= 1
+      continue
+    }
     let mut iter = 0
-    while iter < max_iterations {
-      if a_data[m - 1][m - 2].abs() <= T::tolerance() {
-        break
-      }
+    while iter < max_iterations && a_data[m - 1][m - 2].abs() > tol {
       let two = T::one() + T::one()
-      let a_m2_m2 = a_data[m - 2][m - 2]
-      let a_m1_m1 = a_data[m - 1][m - 1]
-      let d = (a_m2_m2 - a_m1_m1) / two
-      let mut sgn = T::one()
-      if d < T::zero() {
-        sgn = -T::one()
+      let d = (a_data[m - 2][m - 2] - a_data[m - 1][m - 1]) / two
+      let b = a_data[m - 1][m - 2]
+      let sign = if d < T::zero() { -T::one() } else { T::one() }
+      let den = d.abs() + (d * d + b * b).sqrt()
+      let mu = if den <= tol {
+        a_data[m - 1][m - 1] - b.abs()
+      } else {
+        a_data[m - 1][m - 1] - sign * b * b / den
       }
-      let a_m1_m2 = a_data[m - 1][m - 2]
-      let num = sgn * a_m1_m2 * a_m1_m2
-      let den = d.abs() + (d * d + a_m1_m2 * a_m1_m2).sqrt()
-      let mu = a_m1_m1 - num / den
-      for i in 0..<m {
-        a_data[i][i] -= mu
-      }
-      let sub_a = Matrix::new(m, m, T::zero())
-      let sub_a_data = sub_a.data
-      for i in 0..<m {
-        let row_i = a_data[i]
-        let sub_row_i = sub_a_data[i]
-        for j in 0..<m {
-          sub_row_i[j] = row_i[j]
-        }
-      }
-      let (sub_q, sub_r) = qr_decomposition(sub_a)
-      let sub_q_data = sub_q.data
-      let new_sub_a = sub_r * sub_q
-      let new_sub_a_data = new_sub_a.data
-      for i in 0..<m {
-        let row_i = a_data[i]
-        let new_sub_row_i = new_sub_a_data[i]
-        for j in 0..<m {
-          row_i[j] = new_sub_row_i[j]
-        }
-        row_i[i] += mu
-      }
-      let temp_cols = Matrix::new(n, m, T::zero())
-      let temp_cols_data = temp_cols.data
-      for i in 0..<n {
-        let row_q_total = q_total_data[i]
-        let row_temp_cols = temp_cols_data[i]
-        for j in 0..<m {
-          let mut sum = T::zero()
-          for k in 0..<m {
-            sum += row_q_total[k] * sub_q_data[k][j]
+      let mut x = a_data[0][0] - mu
+      let mut z = a_data[1][0]
+      for k in 0..<(m - 1) {
+        let norm = (x * x + z * z).sqrt()
+        if norm <= tol {
+          if k + 1 < m - 1 {
+            x = a_data[k + 1][k]
+            z = a_data[k + 2][k]
           }
-          row_temp_cols[j] = sum
+          continue
         }
-      }
-      for i in 0..<n {
-        let row_q_total = q_total_data[i]
-        let row_temp_cols = temp_cols_data[i]
-        for j in 0..<m {
-          row_q_total[j] = row_temp_cols[j]
+        let c = x / norm
+        let s = -z / norm
+        for j in k..<m {
+          let top = a_data[k][j]
+          let bottom = a_data[k + 1][j]
+          a_data[k][j] = c * top - s * bottom
+          a_data[k + 1][j] = s * top + c * bottom
+        }
+        for i in 0..<m {
+          let left = a_data[i][k]
+          let right = a_data[i][k + 1]
+          a_data[i][k] = c * left - s * right
+          a_data[i][k + 1] = s * left + c * right
+        }
+        for i in 0..<n {
+          let left = q_total_data[i][k]
+          let right = q_total_data[i][k + 1]
+          q_total_data[i][k] = c * left - s * right
+          q_total_data[i][k + 1] = s * left + c * right
+        }
+        if k + 1 < m - 1 {
+          x = a_data[k + 1][k]
+          z = a_data[k + 2][k]
         }
       }
       iter += 1
+    }
+    if a_data[m - 1][m - 2].abs() <= tol {
+      a_data[m - 1][m - 2] = T::zero()
     }
     m -= 1
   }
@@ -1150,45 +1177,84 @@ fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
 }
 
 ///|
-fn[T : Compare + AddMonoid + Sub + Mul + Div + Tolerance + Sqrt] qr_decomposition(
+fn[T : Compare + Num + Div + Tolerance + Sqrt] qr_decomposition(
   matrix : Matrix[T],
 ) -> (Matrix[T], Matrix[T]) {
   let m = matrix.row
   let n = matrix.col
-  let q = Matrix::new(m, n, T::zero())
-  let r = Matrix::new(n, n, T::zero())
+  let q = identity(m)
+  let r = matrix.copy()
+  let two = T::one() + T::one()
+  let tol = T::tolerance()
   let q_data = q.data
   let r_data = r.data
-  let matrix_data = matrix.data
-  for j in 0..<n {
-    for i in 0..<m {
-      q_data[i][j] = matrix_data[i][j]
+  let limit = if m < n { m } else { n }
+  for k in 0..<limit {
+    let mut norm_sq = T::zero()
+    for i in k..<m {
+      norm_sq += r_data[i][k] * r_data[i][k]
     }
-    for k in 0..<j {
-      let mut dot_product = T::zero()
-      for i in 0..<m {
-        dot_product += q_data[i][k] * q_data[i][j]
+    let norm = norm_sq.sqrt()
+    if norm <= tol {
+      continue
+    }
+    let alpha = if r_data[k][k] >= T::zero() { -norm } else { norm }
+    let v = Array::make(m - k, T::zero())
+    v[0] = r_data[k][k] - alpha
+    for i in (k + 1)..<m {
+      v[i - k] = r_data[i][k]
+    }
+    let mut vnorm_sq = T::zero()
+    for i in 0..<v.length() {
+      vnorm_sq += v[i] * v[i]
+    }
+    let vnorm = vnorm_sq.sqrt()
+    if vnorm <= tol {
+      continue
+    }
+    for i in 0..<v.length() {
+      v[i] /= vnorm
+    }
+    for j in k..<n {
+      let mut dot = T::zero()
+      for i in 0..<v.length() {
+        dot += v[i] * r_data[k + i][j]
       }
-      r_data[k][j] = dot_product
-      let r_val = r_data[k][j]
-      for i in 0..<m {
-        q_data[i][j] -= r_val * q_data[i][k]
+      for i in 0..<v.length() {
+        r_data[k + i][j] -= two * v[i] * dot
       }
     }
-    let mut norm = T::zero()
     for i in 0..<m {
-      let val = q_data[i][j]
-      norm += val * val
+      let mut dot = T::zero()
+      for t in 0..<v.length() {
+        dot += q_data[i][k + t] * v[t]
+      }
+      for t in 0..<v.length() {
+        q_data[i][k + t] -= two * dot * v[t]
+      }
     }
-    norm = norm.sqrt()
-    r_data[j][j] = norm
-    if norm > T::tolerance() {
-      for i in 0..<m {
-        q_data[i][j] /= norm
+    for i in (k + 1)..<m {
+      if r_data[i][k].abs() <= tol {
+        r_data[i][k] = T::zero()
       }
     }
   }
-  (q, r)
+  let q_out = Matrix::new(m, n, T::zero())
+  let q_out_data = q_out.data
+  for i in 0..<m {
+    for j in 0..<n {
+      q_out_data[i][j] = q_data[i][j]
+    }
+  }
+  let r_out = Matrix::new(n, n, T::zero())
+  let r_out_data = r_out.data
+  let row_limit = if m < n { m } else { n }
+  for i in 0..<row_limit {
+    for j in 0..<n {
+      r_out_data[i][j] = r_data[i][j]
+    }
+  }
+  (q_out, r_out)
 }
 
 ///|

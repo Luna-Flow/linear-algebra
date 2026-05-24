@@ -6,6 +6,11 @@ pub struct Matrix[T] {
 } derive(Eq)
 
 ///|
+pub impl[T] HasShape for Matrix[T] with shape(self) {
+  (self.row, self.col)
+}
+
+///|
 pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Array[T] {
   self.data[row]
 }
@@ -675,21 +680,47 @@ pub fn[T : Compare + Num + Inverse] Matrix::reduce_row_elimination(
 }
 
 ///|
-pub fn[T : Compare + Num + Div + Inverse + Tolerance] Matrix::rank(
+pub fn[T : Compare + Num + Div + Tolerance] Matrix::rank(
   self : Matrix[T],
 ) -> Int {
-  let reduced = self.copy().reduce_row_elimination()
   let mut rank = 0
-  for i in 0..<reduced.row {
-    let mut nonzero = false
-    for j in 0..<reduced.col {
-      if reduced.get(i, j).abs() >= T::tolerance() {
-        nonzero = true
-        break
+  let reduced = self.copy()
+  let row_count = reduced.row
+  let col_count = reduced.col
+  let data = reduced.data
+  let tol = T::tolerance()
+  let mut pivot_col = 0
+  for pivot_row in 0..<row_count {
+    while pivot_col < col_count {
+      let mut max_row = pivot_row
+      let mut max_abs = data[pivot_row][pivot_col].abs()
+      for candidate_row in (pivot_row + 1)..<row_count {
+        let candidate_abs = data[candidate_row][pivot_col].abs()
+        if candidate_abs > max_abs {
+          max_abs = candidate_abs
+          max_row = candidate_row
+        }
       }
-    }
-    if nonzero {
+      if max_abs < tol {
+        pivot_col += 1
+        continue
+      }
+      reduced.swap_rows(pivot_row, max_row)
+      let pivot = data[pivot_row][pivot_col]
+      for eliminate_row in (pivot_row + 1)..<row_count {
+        let factor = data[eliminate_row][pivot_col] / pivot
+        if factor.abs() < tol {
+          data[eliminate_row][pivot_col] = T::zero()
+          continue
+        }
+        data[eliminate_row][pivot_col] = T::zero()
+        for col in (pivot_col + 1)..<col_count {
+          data[eliminate_row][col] = data[eliminate_row][col] - factor * data[pivot_row][col]
+        }
+      }
       rank += 1
+      pivot_col += 1
+      break
     }
   }
   rank
@@ -1011,92 +1042,69 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
     )
   }
   let n = matrix.row
-  // First reduce to Hessenberg form
   let (h, q_total) = matrix.hessenberg_reduction()
-  let a = h // works on Hessenberg matrix 'a'
+  let a = h
   let mut m = n
   let max_iterations = 1000
   let tol = T::tolerance()
   while m > 1 {
+    if a.data[m - 1][m - 2].abs() <= tol {
+      a.data[m - 1][m - 2] = T::zero()
+      m -= 1
+      continue
+    }
     let mut iter = 0
-    while iter < max_iterations {
-      // Check for convergence
-      if a.data[m - 1][m - 2].abs() <= tol {
-        break
-      }
-
-      // Calculate Wilkinson shift
+    while iter < max_iterations && a.data[m - 1][m - 2].abs() > tol {
       let two = T::one() + T::one()
       let d = (a.data[m - 2][m - 2] - a.data[m - 1][m - 1]) / two
-      let mut sgn = T::one()
-      if d < T::zero() {
-        sgn = -T::one()
+      let b = a.data[m - 1][m - 2]
+      let sign = if d < T::zero() { -T::one() } else { T::one() }
+      let den = d.abs() + (d * d + b * b).sqrt()
+      let mu = if den <= tol {
+        a.data[m - 1][m - 1] - b.abs()
+      } else {
+        a.data[m - 1][m - 1] - sign * b * b / den
       }
-      let a_m1_m2 = a.data[m - 1][m - 2]
-      let num = sgn * a_m1_m2 * a_m1_m2
-      let den = d.abs() + (d * d + num.abs()).sqrt() // num is a^2, always positive in term, but careful
-      let mu = a.data[m - 1][m - 1] - num / den
-
-      // Implicit Q Theorem / Francis Step would be better here for Hessenberg
-      // But for now we stick to explicit QR on shifted matrix, 
-      // but optimized to not re-allocate everything.
-
-      // A_new = R * Q + mu * I = Q^T * (A - mu*I) * Q + mu*I = Q^T * A * Q
-
-      // 1. Shift diagonal
-      for i in 0..<m {
-        a.data[i][i] = a.data[i][i] - mu
-      }
-
-      // 2. QR decomposition of the shifted block
-      // Ideally we should use Givens rotations for Hessenberg QR to stay O(n^2)
-      // Falling back to standard QR on the block for now, but strictly on the submatrix
-      // We need to implement a 'submatrix QR' to be efficient. 
-      // For now, we manually extract/embed to avoid full Matrix::new where possible, 
-      // but 'qr_decomposition' currently allocates. 
-      // TODO: Implement Givens rotation based QR step for Hessenberg matrices.
-
-      // Extract submatrix [0..m][0..m]
-      let sub_a = Matrix::new(m, m, T::zero())
-      for i in 0..<m {
-        // Optimization: Hessenberg matrix only has non-zeros in upper triangular + 1 subdiagonal
-        let start_col = if i > 0 { i - 1 } else { 0 }
-        for j in start_col..<m {
-          sub_a.data[i][j] = a.data[i][j]
-        }
-      }
-      let (sub_q, sub_r) = qr_decomposition(sub_a)
-
-      // Update A = R * Q + mu * I
-      // This A is the new block.
-      let new_sub_a = sub_r * sub_q
-
-      // Copy back and add shift
-      for i in 0..<m {
-        for j in 0..<m {
-          a.data[i][j] = new_sub_a.data[i][j]
-        }
-        a.data[i][i] = a.data[i][i] + mu
-      }
-
-      // Update global Q
-      // Q_total = Q_total * [Q_sub, 0; 0, I]
-      let temp_cols = Matrix::new(n, m, T::zero())
-      for i in 0..<n {
-        for j in 0..<m {
-          let mut sum = T::zero()
-          for k in 0..<m {
-            sum = sum + q_total.data[i][k] * sub_q.data[k][j]
+      let mut x = a.data[0][0] - mu
+      let mut z = a.data[1][0]
+      for k in 0..<(m - 1) {
+        let norm = (x * x + z * z).sqrt()
+        if norm <= tol {
+          if k + 1 < m - 1 {
+            x = a.data[k + 1][k]
+            z = a.data[k + 2][k]
           }
-          temp_cols.data[i][j] = sum
+          continue
         }
-      }
-      for i in 0..<n {
-        for j in 0..<m {
-          q_total.data[i][j] = temp_cols.data[i][j]
+        let c = x / norm
+        let s = -z / norm
+        for j in k..<m {
+          let top = a.data[k][j]
+          let bottom = a.data[k + 1][j]
+          a.data[k][j] = c * top - s * bottom
+          a.data[k + 1][j] = s * top + c * bottom
+        }
+        for i in 0..<m {
+          let left = a.data[i][k]
+          let right = a.data[i][k + 1]
+          a.data[i][k] = c * left - s * right
+          a.data[i][k + 1] = s * left + c * right
+        }
+        for i in 0..<n {
+          let left = q_total.data[i][k]
+          let right = q_total.data[i][k + 1]
+          q_total.data[i][k] = c * left - s * right
+          q_total.data[i][k + 1] = s * left + c * right
+        }
+        if k + 1 < m - 1 {
+          x = a.data[k + 1][k]
+          z = a.data[k + 2][k]
         }
       }
       iter += 1
+    }
+    if a.data[m - 1][m - 2].abs() <= tol {
+      a.data[m - 1][m - 2] = T::zero()
     }
     m -= 1
   }
@@ -1105,40 +1113,80 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
 }
 
 ///|
-pub fn[T : Compare + AddMonoid + Sub + Mul + Div + Tolerance + Sqrt] qr_decomposition(
+pub fn[T : Compare + Num + Div + Tolerance + Sqrt] qr_decomposition(
   matrix : Matrix[T],
 ) -> (Matrix[T], Matrix[T]) {
   let m = matrix.row
   let n = matrix.col
-  let q = Matrix::new(m, n, T::zero())
-  let r = Matrix::new(n, n, T::zero())
-  for j in 0..<n {
-    for i in 0..<m {
-      q.data[i][j] = matrix.data[i][j]
+  let q = identity(m)
+  let r = matrix.copy()
+  let two = T::one() + T::one()
+  let tol = T::tolerance()
+  let limit = if m < n { m } else { n }
+  for k in 0..<limit {
+    let mut norm_sq = T::zero()
+    for i in k..<m {
+      norm_sq += r.data[i][k] * r.data[i][k]
     }
-    for k in 0..<j {
-      let mut dot_product = T::zero()
-      for i in 0..<m {
-        dot_product += q.data[i][k] * q.data[i][j]
+    let norm = norm_sq.sqrt()
+    if norm <= tol {
+      continue
+    }
+    let alpha = if r.data[k][k] >= T::zero() { -norm } else { norm }
+    let v = Array::make(m - k, T::zero())
+    v[0] = r.data[k][k] - alpha
+    for i in (k + 1)..<m {
+      v[i - k] = r.data[i][k]
+    }
+    let mut vnorm_sq = T::zero()
+    for i in 0..<v.length() {
+      vnorm_sq += v[i] * v[i]
+    }
+    let vnorm = vnorm_sq.sqrt()
+    if vnorm <= tol {
+      continue
+    }
+    for i in 0..<v.length() {
+      v[i] /= vnorm
+    }
+    for j in k..<n {
+      let mut dot = T::zero()
+      for i in 0..<v.length() {
+        dot += v[i] * r.data[k + i][j]
       }
-      r.data[k][j] = dot_product
-      for i in 0..<m {
-        q.data[i][j] -= r.data[k][j] * q.data[i][k]
+      for i in 0..<v.length() {
+        r.data[k + i][j] -= two * v[i] * dot
       }
     }
-    let mut norm = T::zero()
     for i in 0..<m {
-      norm += q.data[i][j] * q.data[i][j]
+      let mut dot = T::zero()
+      for t in 0..<v.length() {
+        dot += q.data[i][k + t] * v[t]
+      }
+      for t in 0..<v.length() {
+        q.data[i][k + t] -= two * dot * v[t]
+      }
     }
-    norm = norm.sqrt()
-    r.data[j][j] = norm
-    if norm > T::tolerance() {
-      for i in 0..<m {
-        q.data[i][j] /= norm
+    for i in (k + 1)..<m {
+      if r.data[i][k].abs() <= tol {
+        r.data[i][k] = T::zero()
       }
     }
   }
-  (q, r)
+  let q_out = Matrix::new(m, n, T::zero())
+  for i in 0..<m {
+    for j in 0..<n {
+      q_out.data[i][j] = q.data[i][j]
+    }
+  }
+  let r_out = Matrix::new(n, n, T::zero())
+  let row_limit = if m < n { m } else { n }
+  for i in 0..<row_limit {
+    for j in 0..<n {
+      r_out.data[i][j] = r.data[i][j]
+    }
+  }
+  (q_out, r_out)
 }
 
 ///|
