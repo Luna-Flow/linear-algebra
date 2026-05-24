@@ -6,12 +6,12 @@
 
 ```moonbit
 struct Vector[T] {
-  data : IArray[T]
+  data : VecCore[T]
 } derive(Eq)
 ```
 
 - **Description**
-  Represents an immutable vector, with data stored in an immutable array `IArray[T]`.
+  Represents an immutable vector. Internally it is backed by `VecCore[T]`, the package alias for the core persistent vector storage. The public library alias for this abstraction is `VecLib[T]`.
 
 - **Fields**
   - `data` - The immutable array containing the vector elements.

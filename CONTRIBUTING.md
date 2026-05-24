@@ -38,6 +38,23 @@ We sincerely thank all the developers who have contributed to this project. Whet
 
   Alternatively, you can use the `ready_to_pr.sh` script to automatically format the code, run checks, generate test coverage files, and create `.mbti` files.
 
+- Prefer `using`-imported names over fully-qualified package calls when the imported names are used repeatedly in a file.
+
+  Preferred:
+
+  ```moonbit
+  using @internal { ensure_square, ensure_mul_compatible, trait HasShape }
+  ```
+
+  Avoid repeated forms such as:
+
+  ```moonbit
+  @internal.ensure_square(self)
+  @internal.ensure_mul_compatible(a, b)
+  ```
+
+- Avoid introducing new direct dependencies on `moonbitlang/core/immut/array` helpers when an equivalent `immut/vector`-level helper or local wrapper already exists. Prefer the project-level abstraction over the raw package helper.
+
 ## 2. Naming Conventions
 
 ### 2.1 Variable Naming

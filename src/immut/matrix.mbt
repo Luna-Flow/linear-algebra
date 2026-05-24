@@ -1,23 +1,22 @@
 ///|
-/// Create a new type called IArray, which is an alias for
-/// the immutable array type.
-///
-type IArray[T] = @immut/array.T[T]
-
-///|
 /// Define a new type called Matrix, which is a 2D array of 
 /// elements of type T and have derived the Eq trait.
 /// 
 /// Parameters:
 /// - `row`: The number of rows in the matrix.
 /// - `col`: The number of columns in the matrix.
-/// - `data`: The data of the matrix, which is an immutable array of type `IArray[T]`.
+/// - `data`: The data of the matrix, which is stored as an immutable vector.
 /// 
 struct Matrix[T] {
   row : Int
   col : Int
-  data : IArray[T]
+  data : VecLib[T]
 } derive(Eq)
+
+///|
+pub impl[T] HasShape for Matrix[T] with shape(self) {
+  (self.row, self.col)
+}
 
 ///|
 /// Wrapper type enabling indexed access to elements of a container, typically
@@ -198,7 +197,7 @@ pub fn[T, U] Matrix::mapi(
 ) -> Matrix[U] {
   let row = self.row
   let col = self.col
-  let data = @immut/array.makei(row * col, fn(i) {
+  let data = Vector::makei(row * col, fn(i) {
     f(i / col, i % col, self.data[i])
   })
   { row, col, data }
@@ -223,12 +222,12 @@ pub fn[T, U] Matrix::mapi(
 /// 
 pub fn[T] Matrix::make(row : Int, col : Int, f : (Int, Int) -> T) -> Matrix[T] {
   if row == 0 || col == 0 {
-    return { row, col, data: @immut/array.from_array([]) }
+    return { row, col, data: Vector::from_array([]) }
   }
   {
     row,
     col,
-    data: @immut/array.makei(row * col, fn(i) { f(i / col, i % col) }),
+    data: Vector::makei(row * col, fn(i) { f(i / col, i % col) }),
   }
 }
 
@@ -270,7 +269,7 @@ pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
 /// ```
 pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
   if arr.is_empty() {
-    return { row: 0, col: 0, data: @immut/array.from_array([]) }
+    return { row: 0, col: 0, data: Vector::from_array([]) }
   }
   let col = arr[0].length()
   for row in arr {
@@ -289,7 +288,7 @@ pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
 ///
 /// * `row` : The number of rows in the resulting matrix.
 /// * `col` : The number of columns in the resulting matrix.
-/// * `arr` : The immutable array containing the matrix elements in row-major
+/// * `arr` : The immutable vector containing the matrix elements in row-major
 ///   order.
 ///
 /// Returns a new matrix with the specified dimensions containing the elements
@@ -300,7 +299,7 @@ pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
 /// Example:
 ///
 /// ```moonbit
-/// let arr = @immut/array.from_array([1, 2, 3, 4, 5, 6])
+/// let arr = Vector::from_array([1, 2, 3, 4, 5, 6])
 /// let m = Matrix::from_array(2, 3, arr)
 /// inspect(m, content=
 ///   #||1, 2, 3|
@@ -311,7 +310,7 @@ pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
 pub fn[T] Matrix::from_array(
   row : Int,
   col : Int,
-  arr : IArray[T],
+  arr : VecLib[T],
 ) -> Matrix[T] {
   guard arr.length() == row * col else {
     abort("Invalid array length for matrix")
@@ -408,19 +407,28 @@ pub impl[T : Mul + Add + Zero] Mul for Matrix[T] with mul(
   let row = self.row
   let col = other.col
   let inner = self.col
-  guard inner == other.row
+  ensure_mul_compatible(self, other)
   if row == 0 || col == 0 {
     return Matrix::make(row, col, fn(_, _) { abort("unreachable") })
   }
   if inner == 0 {
     return Matrix::new(row, col, T::zero())
   }
-  let data = @immut/array.makei(row * col, fn(i) {
+  let left_data = self.data
+  let right_data = other.data
+  let right_t = Vector::makei(col * inner, fn(idx) {
+    let out_col = idx / inner
+    let k = idx % inner
+    right_data[k * col + out_col]
+  })
+  let data = Vector::makei(row * col, fn(i) {
     let r = i / col
     let c = i % col
-    let mut sum = self[r][0] * other[0][c]
+    let left_offset = r * inner
+    let right_offset = c * inner
+    let mut sum = left_data[left_offset] * right_t[right_offset]
     for k in 1..<inner {
-      sum = sum + self[r][k] * other[k][c]
+      sum = sum + left_data[left_offset + k] * right_t[right_offset + k]
     }
     sum
   })
@@ -451,7 +459,7 @@ pub impl[T : Add] Add for Matrix[T] with add(
   guard self.col == other.col
   guard self.row == other.row
   {
-    data: array_zip_with(self.data, other.data, T::add),
+    data: self.data.zip_with(other.data, T::add),
     row: self.row,
     col: self.col,
   }
@@ -756,9 +764,8 @@ pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
 /// ```
 ///
 pub fn[T] Matrix::to_array(self : Matrix[T]) -> Array[T] {
-  // IArray to Array conversion
   let arr = []
-  self.data.each(fn(x) { arr.push(x) })
+  self.data.iter().each(fn(x) { arr.push(x) })
   arr
 }
 
@@ -796,6 +803,20 @@ pub fn[T] Matrix::to_2d_array(self : Matrix[T]) -> Array[Array[T]] {
 }
 
 ///|
+fn[T] swap_dense_rows(data : Array[T], row_size : Int, r1 : Int, r2 : Int) -> Unit {
+  if r1 == r2 {
+    return
+  }
+  let offset1 = r1 * row_size
+  let offset2 = r2 * row_size
+  for j in 0..<row_size {
+    let temp = data[offset1 + j]
+    data[offset1 + j] = data[offset2 + j]
+    data[offset2 + j] = temp
+  }
+}
+
+///|
 /// Compute the determinant of a matrix.
 /// 
 /// Parameters
@@ -806,28 +827,74 @@ pub fn[T] Matrix::to_2d_array(self : Matrix[T]) -> Array[Array[T]] {
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// inspect(m.determinant(), content="-2")
 /// ```
-pub fn[T : Mul + Add + One + Neg + Zero] Matrix::determinant(
+pub fn[T : Compare + Num + Div + One + Neg] Matrix::determinant(
   self : Matrix[T],
 ) -> T {
   let n = self.row
-  guard n == self.col
-  if n == 0 {
-    return T::one()
-  }
-  letrec view = (f, j) => match j {
-    1 => f(0, 0)
-    n => {
-      let mut det = T::zero()
-      for i in 0..<n {
-        let sub_view = (j, k) => f(j + 1, if k < i { k } else { k + 1 })
-        let sign = if i % 2 == 0 { T::one() } else { -T::one() }
-        det += sign * f(0, i) * view(sub_view, n - 1)
+  ensure_square(self)
+  match n {
+    0 => T::one()
+    1 => self.data[0]
+    2 => {
+      let a = self.data
+      a[0] * a[3] - a[1] * a[2]
+    }
+    3 => {
+      let a = self.data
+      a[0] * (a[4] * a[8] - a[5] * a[7]) -
+      a[1] * (a[3] * a[8] - a[5] * a[6]) +
+      a[2] * (a[3] * a[7] - a[4] * a[6])
+    }
+    4 => {
+      let a = self.data
+      let s01 = a[0] * a[5] - a[1] * a[4]
+      let s02 = a[0] * a[6] - a[2] * a[4]
+      let s03 = a[0] * a[7] - a[3] * a[4]
+      let s12 = a[1] * a[6] - a[2] * a[5]
+      let s13 = a[1] * a[7] - a[3] * a[5]
+      let s23 = a[2] * a[7] - a[3] * a[6]
+      let c01 = a[8] * a[13] - a[9] * a[12]
+      let c02 = a[8] * a[14] - a[10] * a[12]
+      let c03 = a[8] * a[15] - a[11] * a[12]
+      let c12 = a[9] * a[14] - a[10] * a[13]
+      let c13 = a[9] * a[15] - a[11] * a[13]
+      let c23 = a[10] * a[15] - a[11] * a[14]
+      s01 * c23 - s02 * c13 + s03 * c12 + s12 * c03 - s13 * c02 + s23 * c01
+    }
+    _ => {
+      let work = self.to_array()
+      let mut sign = T::one()
+      for k in 0..<(n - 1) {
+        let mut pivot_row = k
+        let mut pivot_abs = work[k * n + k].abs()
+        for i in (k + 1)..<n {
+          let candidate = work[i * n + k].abs()
+          if candidate > pivot_abs {
+            pivot_abs = candidate
+            pivot_row = i
+          }
+        }
+        if work[pivot_row * n + k] == T::zero() {
+          return T::zero()
+        }
+        if pivot_row != k {
+          swap_dense_rows(work, n, pivot_row, k)
+          sign = -sign
+        }
+        let pivot = work[k * n + k]
+        let denom = if k == 0 { T::one() } else { work[(k - 1) * n + (k - 1)] }
+        for i in (k + 1)..<n {
+          let left = work[i * n + k]
+          for j in (k + 1)..<n {
+            let idx = i * n + j
+            work[idx] = (work[idx] * pivot - left * work[k * n + j]) / denom
+          }
+          work[i * n + k] = T::zero()
+        }
       }
-      det
+      sign * work[n * n - 1]
     }
   }
-
-  view((i, j) => self[i][j], n)
 }
 
 ///|

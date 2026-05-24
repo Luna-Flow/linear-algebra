@@ -44,7 +44,7 @@ test "matrix constructors and conversions stay aligned" {
   let imm_from_array = @immut.Matrix::from_array(
     2,
     2,
-    @immut/array.from_array([1, 2, 3, 4]),
+    @immut.Vector::from_array([1, 2, 3, 4]),
   )
   let mutable_from_array = @mutable.Matrix::from_array(2, 2, [1, 2, 3, 4])
   debug_inspect(

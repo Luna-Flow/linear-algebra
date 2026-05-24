@@ -6,12 +6,12 @@
 
 ```moonbit
 struct Vector[T] {
-  data : IArray[T]
+  data : VecCore[T]
 } derive(Eq)
 ```
 
 - **描述**
-  表示一个不可变的向量，底层存储在不可变数组 `IArray[T]` 中。
+  表示一个不可变的向量。它内部由 `VecCore[T]` 支撑，`VecCore[T]` 是本包对 core 持久向量存储的别名；对外推荐使用库级别别名 `VecLib[T]` 来理解这层抽象。
 
 - **字段**
   - `data` - 存储向量元素的不可变数组。

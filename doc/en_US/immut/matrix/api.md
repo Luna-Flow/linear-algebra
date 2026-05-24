@@ -8,12 +8,12 @@
 struct Matrix[T] {
   row : Int
   col : Int
-  data : IArray[T]
+  data : Vector[T]
 } derive(Eq)
 ```
 
 - **Description**
-  Represents an immutable matrix, with data stored in row-major order in an immutable array `IArray[T]`.
+  Represents an immutable matrix, with data stored in row-major order in an immutable vector `Vector[T]`.
 
 ### Semantic Notes
 
@@ -24,7 +24,7 @@ struct Matrix[T] {
 - **Fields**
   - `row` - The number of rows.
   - `col` - The number of columns.
-  - `data` - The immutable array containing the matrix elements.
+  - `data` - The immutable vector containing the matrix elements.
 
 - **Functions and Methods**
 

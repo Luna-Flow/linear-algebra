@@ -8,12 +8,12 @@
 struct Matrix[T] {
   row : Int
   col : Int
-  data : IArray[T]
+  data : Vector[T]
 } derive(Eq)
 ```
 
 - **描述**
-  表示一个不可变的矩阵，数据按行优先顺序存储在不可变数组 `IArray[T]` 中。
+  表示一个不可变的矩阵，数据按行优先顺序存储在不可变向量 `Vector[T]` 中。
 
 ### 语义说明
 
@@ -24,7 +24,7 @@ struct Matrix[T] {
 - **字段**
   - `row` - 矩阵的行数。
   - `col` - 矩阵的列数。
-  - `data` - 存储矩阵元素的不可变数组。
+  - `data` - 存储矩阵元素的不可变向量。
 
 - **函数与方法**
 

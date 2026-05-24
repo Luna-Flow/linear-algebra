@@ -2,6 +2,12 @@
 package "Luna-Flow/linear-algebra/internal"
 
 // Values
+pub fn[M : HasShape] ensure_col_in_bounds(M, Int) -> Unit
+pub fn[M : HasShape] ensure_index_in_bounds(M, Int, Int) -> Unit
+pub fn[A : HasShape, B : HasShape] ensure_mul_compatible(A, B) -> Unit
+pub fn[M : HasShape] ensure_row_in_bounds(M, Int) -> Unit
+pub fn[A : HasShape, B : HasShape] ensure_same_shape(A, B) -> Unit
+pub fn[M : HasShape] ensure_square(M) -> Unit
 
 // Errors
 
@@ -10,9 +16,11 @@ package "Luna-Flow/linear-algebra/internal"
 // Type aliases
 
 // Traits
+pub(open) trait HasShape {
+  shape(Self) -> (Int, Int)
+}
 pub trait HomomorphismNat {
   from_nat(Int) -> Self
 }
 pub impl HomomorphismNat for Float
 pub impl HomomorphismNat for Double
-

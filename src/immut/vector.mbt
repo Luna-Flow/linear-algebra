@@ -18,8 +18,14 @@
 /// ```
 ///
 struct Vector[T] {
-  data : IArray[T]
+  data : VecCore[T]
 } derive(Eq)
+
+///|
+pub type VecCore[T] = @core_vector.Vector[T]
+
+///|
+pub type VecLib[T] = Vector[T]
 
 ///|
 /// Generates an arbitrary `Vector[T]` for property-based testing.
@@ -33,7 +39,7 @@ struct Vector[T] {
 /// Returns an arbitrary `Vector[T]` where each element is generated using the
 /// `Arbitrary` implementation of type `T`.
 pub impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
-  Vector::{ data: @immut/array.makei(size, i => T::arbitrary(i, rng)) }
+  Vector::{ data: @core_vector.makei(size, i => T::arbitrary(i, rng)) }
 }
 
 ///|
@@ -175,7 +181,7 @@ pub fn[T] Vector::to_col_matrix(self : Vector[T]) -> Matrix[T] {
 /// ```
 ///
 pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
-  { data: self.data, row: 1, col: self.length() }
+  { data: self, row: 1, col: self.length() }
 }
 
 ///|
@@ -197,7 +203,7 @@ pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
 /// ```
 ///
 pub fn[T] Vector::make(n : Int, elem : T) -> Vector[T] {
-  Vector::{ data: @immut/array.make(n, elem) }
+  Vector::{ data: @core_vector.make(n, elem) }
 }
 
 ///|
@@ -221,7 +227,7 @@ pub fn[T] Vector::make(n : Int, elem : T) -> Vector[T] {
 /// ```
 ///
 pub fn[T] Vector::makei(n : Int, f : (Int) -> T) -> Vector[T] {
-  Vector::{ data: @immut/array.makei(n, f) }
+  Vector::{ data: @core_vector.makei(n, f) }
 }
 
 ///|
@@ -357,7 +363,7 @@ pub fn[T : Mul] Vector::right_scale(self : Vector[T], scalar : T) -> Vector[T] {
 /// ```
 ///
 pub fn[T] Vector::from_array(arr : Array[T]) -> Vector[T] {
-  Vector::{ data: @immut/array.from_array(arr) }
+  Vector::{ data: @core_vector.from_array(arr) }
 }
 
 ///|
@@ -599,13 +605,13 @@ pub fn[T : Mul] Vector::tensor_product(
 ///
 /// Panics if the two input arrays have different lengths.
 fn[X, Y, Z] array_zip_with(
-  a1 : IArray[X],
-  a2 : IArray[Y],
+  a1 : VecCore[X],
+  a2 : VecCore[Y],
   f : (X, Y) -> Z,
-) -> IArray[Z] {
+) -> VecCore[Z] {
   let n = a1.length()
   guard n == a2.length()
-  @immut/array.makei(n, i => f(a1[i], a2[i]))
+  @core_vector.makei(n, i => f(a1[i], a2[i]))
 }
 
 ///|

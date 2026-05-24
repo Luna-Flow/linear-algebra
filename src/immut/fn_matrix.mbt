@@ -18,6 +18,11 @@ struct MatrixFn[T] {
 }
 
 ///|
+pub impl[T] HasShape for MatrixFn[T] with shape(self) {
+  self.grid
+}
+
+///|
 /// Gets a row of the matrix as an indexed accessor.
 ///
 /// Parameters:
@@ -670,25 +675,12 @@ pub fn[T, U, W] MatrixFn::zip_with(
 ///
 /// Panics if the matrix is not square (number of rows does not equal number of
 /// columns).
-pub fn[T : Mul + Add + One + Neg + Zero] MatrixFn::determinant(
+pub fn[T : Compare + Num + Div + One + Neg] MatrixFn::determinant(
   self : MatrixFn[T],
 ) -> T {
-  let (n, m) = self.grid
-  guard m == n else { abort("determinant: not a square matrix") }
-  letrec view = (f, i) => match i {
-    1 => f(0, 0)
-    n => {
-      let mut det = T::zero()
-      for i in 0..<n {
-        let sub_view = (j, k) => f(j + 1, if k < i { k } else { k + 1 })
-        let sign = if i % 2 == 0 { T::one() } else { -T::one() }
-        det += sign * f(0, i) * view(sub_view, n - 1)
-      }
-      det
-    }
-  }
-
-  view((i, j) => self[i][j], n)
+  ensure_square(self)
+  let (row, col) = self.grid
+  Matrix::make(row, col, fn(i, j) { (self.data)(i, j) }).determinant()
 }
 
 ///|

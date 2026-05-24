@@ -3,7 +3,7 @@ package "Luna-Flow/linear-algebra/immut"
 
 import {
   "Luna-Flow/luna-generic",
-  "moonbitlang/core/immut/array",
+  "moonbitlang/core/immut/vector",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
 }
@@ -21,9 +21,9 @@ type Matrix[T] derive(Eq)
 pub fn[T : Add] Matrix::add_constant(Self[T], T) -> Self[T]
 pub fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]
 pub fn[T] Matrix::col(Self[T]) -> Int
-pub fn[T : Mul + Add + @luna-generic.One + Neg + @luna-generic.Zero] Matrix::determinant(Self[T]) -> T
+pub fn[T : Compare + @luna-generic.Num + Div + @luna-generic.One + Neg] Matrix::determinant(Self[T]) -> T
 pub fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
-pub fn[T] Matrix::from_array(Int, Int, @array.T[T]) -> Self[T]
+pub fn[T] Matrix::from_array(Int, Int, Vector[T]) -> Self[T]
 pub fn[T] Matrix::horizontal_combine(Self[T], Self[T]) -> Self[T]
 pub fn[T : @luna-generic.One + @luna-generic.Zero] Matrix::identity(Int) -> Self[T]
 pub fn[T] Matrix::is_square(Self[T]) -> Bool
@@ -55,7 +55,7 @@ pub impl[T : Add + Neg] Sub for Matrix[T]
 
 type MatrixFn[T]
 pub fn[T : @luna-generic.Conjugate] MatrixFn::adjoint(Self[T]) -> Self[T]
-pub fn[T : Mul + Add + @luna-generic.One + Neg + @luna-generic.Zero] MatrixFn::determinant(Self[T]) -> T
+pub fn[T : Compare + @luna-generic.Num + Div + @luna-generic.One + Neg] MatrixFn::determinant(Self[T]) -> T
 pub fn[T, U] MatrixFn::fold(Self[T], init~ : U, (U, T) -> U) -> U
 pub fn[T] MatrixFn::from_2d_array(Array[Array[T]]) -> Self[T]
 pub fn[T] MatrixFn::horizontal_combine(Self[T], Self[T]) -> Self[T]
@@ -104,6 +104,7 @@ pub impl[T : Show] Show for Vector[T]
 pub impl[T : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[T]
 
 // Type aliases
+pub type VecCore[T] = @vector.Vector[T]
+pub type VecLib[T] = Vector[T]
 
 // Traits
-

@@ -7,5 +7,4 @@ import "wbtest" {
   "Luna-Flow/luna-generic",
   "moonbitlang/core/debug" @debug,
   "moonbitlang/quickcheck" @qc,
-  "moonbitlang/core/immut/array" @immut/array,
 }

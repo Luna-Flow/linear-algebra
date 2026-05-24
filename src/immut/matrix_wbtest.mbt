@@ -329,7 +329,7 @@ test "matrix_creation_methods" {
   inspect(m2, content="|0, 1|\n|1, 2|")
 
   // Test Matrix::from_array
-  let arr = @immut/array.from_array([1, 2, 3, 4])
+  let arr = Vector::from_array([1, 2, 3, 4])
   let m3 = Matrix::from_array(2, 2, arr)
   inspect(m3, content="|1, 2|\n|3, 4|")
 }
@@ -368,7 +368,7 @@ test "matrix_zero_inner_dimension_multiplication" {
 }
 
 test "panic matrix_from_array/invalid_length" {
-  let arr = @immut/array.from_array([1, 2, 3])
+  let arr = Vector::from_array([1, 2, 3])
   ignore(Matrix::from_array(2, 2, arr))
 }
 
