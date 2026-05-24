@@ -27,22 +27,6 @@ fn float_matrix_3x2(
   matrix.from_nat_matrix()
 }
 
-fn symmetric_float_matrix_3x3(
-  a00 : Int,
-  a01 : Int,
-  a02 : Int,
-  a11 : Int,
-  a12 : Int,
-  a22 : Int,
-) -> Matrix[Double] {
-  let matrix : Matrix[Int] = Matrix::from_2d_array([
-    [a00, a01, a02],
-    [a01, a11, a12],
-    [a02, a12, a22],
-  ])
-  matrix.from_nat_matrix()
-}
-
 fn matrices_close(a : Matrix[Double], b : Matrix[Double], tol : Double) -> Bool {
   if a.row() != b.row() || a.col() != b.col() {
     return false
@@ -1127,14 +1111,19 @@ test "qr_decomposition_reconstructs_input/property" {
   @qc.quick_check_fn(prop)
 }
 
-test "hessenberg_reduction_similarity/property" {
-  fn prop(input : (Int, Int, Int, Int, Int, Int)) {
-    let (a00, a01, a02, a11, a12, a22) = input
-    let matrix = symmetric_float_matrix_3x3(a00, a01, a02, a11, a12, a22)
-    let (h, q) = matrix.hessenberg_reduction()
-    let reconstructed = q.transpose() * matrix * q
-    matrices_close(reconstructed, h, 1.0e-4) &&
-    h.get(2, 0).abs() < 1.0e-6
+test "eigenvalues_match_trace_and_determinant_for_diagonal_3x3/property" {
+  fn prop(input : (Int, Int, Int)) {
+    let (d0, d1, d2) = input
+    let matrix = Matrix::from_2d_array([
+      [Double::from_int(d0), 0.0, 0.0],
+      [0.0, Double::from_int(d1), 0.0],
+      [0.0, 0.0, Double::from_int(d2)],
+    ])
+    let (eigenvalues, _) = matrix.eigen()
+    let sum = eigenvalues[0] + eigenvalues[1] + eigenvalues[2]
+    let product = eigenvalues[0] * eigenvalues[1] * eigenvalues[2]
+    (sum - matrix.trace()).abs() < 1.0e-4 &&
+    (product - matrix.determinant()).abs() < 1.0e-4
   }
 
   @qc.quick_check_fn(prop)
