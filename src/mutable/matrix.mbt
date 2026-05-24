@@ -804,6 +804,10 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
 }
 
 ///|
+/// Computes the inverse of a square matrix using LU decomposition with partial pivoting.
+///
+/// This method factorizes the matrix once and then solves against the identity
+/// matrix. If successful, the resulting matrix is the inverse.
 pub fn[T : Compare + Field + Num + Tolerance] Matrix::inverse(
   self : Matrix[T],
 ) -> Matrix[T]? {
@@ -949,7 +953,7 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::eigen(
 ///|
 /// Reduces the matrix to Upper Hessenberg form using Householder similarity transformations.
 /// Returns (H, Q) where H is the Hessenberg matrix and Q is the unitary matrix such that A = Q * H * Q^T.
-pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::hessenberg_reduction(
+fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::hessenberg_reduction(
   self : Matrix[T],
 ) -> (Matrix[T], Matrix[T]) {
   let n = self.row
@@ -1030,7 +1034,7 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] Matrix::hessenberg_reduction(
 }
 
 ///|
-pub fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
+fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
   matrix : Matrix[T],
 ) -> (Vector[T], Matrix[T]) {
   guard matrix.is_square() else {
@@ -1113,7 +1117,7 @@ pub fn[T : Compare + Num + Div + Sqrt + Tolerance] qr_algorithm(
 }
 
 ///|
-pub fn[T : Compare + Num + Div + Tolerance + Sqrt] qr_decomposition(
+fn[T : Compare + Num + Div + Tolerance + Sqrt] qr_decomposition(
   matrix : Matrix[T],
 ) -> (Matrix[T], Matrix[T]) {
   let m = matrix.row

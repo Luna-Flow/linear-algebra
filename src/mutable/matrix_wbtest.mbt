@@ -6,6 +6,61 @@ impl Show for AdjointReal with to_string(self) { self.0.to_string() }
 
 impl Show for AdjointReal with output(self, logger) { logger.write_object(self.0) }
 
+fn float_matrix_2x2(a00 : Int, a01 : Int, a10 : Int, a11 : Int) -> Matrix[Double] {
+  let matrix : Matrix[Int] = Matrix::from_2d_array([[a00, a01], [a10, a11]])
+  matrix.from_nat_matrix()
+}
+
+fn float_matrix_3x2(
+  a00 : Int,
+  a01 : Int,
+  a10 : Int,
+  a11 : Int,
+  a20 : Int,
+  a21 : Int,
+) -> Matrix[Double] {
+  let matrix : Matrix[Int] = Matrix::from_2d_array([
+    [a00, a01],
+    [a10, a11],
+    [a20, a21],
+  ])
+  matrix.from_nat_matrix()
+}
+
+fn symmetric_float_matrix_3x3(
+  a00 : Int,
+  a01 : Int,
+  a02 : Int,
+  a11 : Int,
+  a12 : Int,
+  a22 : Int,
+) -> Matrix[Double] {
+  let matrix : Matrix[Int] = Matrix::from_2d_array([
+    [a00, a01, a02],
+    [a01, a11, a12],
+    [a02, a12, a22],
+  ])
+  matrix.from_nat_matrix()
+}
+
+fn matrices_close(a : Matrix[Double], b : Matrix[Double], tol : Double) -> Bool {
+  if a.row() != b.row() || a.col() != b.col() {
+    return false
+  }
+  for i in 0..<a.row() {
+    for j in 0..<a.col() {
+      if (a.get(i, j) - b.get(i, j)).abs() > tol {
+        return false
+      }
+    }
+  }
+  true
+}
+
+fn nonzero_double(n : Int) -> Double {
+  Double::from_int(if n >= 0 { n + 1 } else { n - 1 })
+}
+
 ///|
 /// Tests the functionality of row and column mapping operations on matrices.
 ///
@@ -1054,6 +1109,94 @@ test "matrix_multiplication_associativity/property" {
     let b = as_matrix(b_in)
     let c = as_matrix(c_in)
     ((a * b) * c).to_array() == (a * (b * c)).to_array()
+  }
+
+  @qc.quick_check_fn(prop)
+}
+
+test "qr_decomposition_reconstructs_input/property" {
+  fn prop(input : ((Int, Int), (Int, Int), (Int, Int))) {
+    let ((a00, a01), (a10, a11), (a20, a21)) = input
+    let matrix = float_matrix_3x2(a00, a01, a10, a11, a20, a21)
+    let (q, r) = qr_decomposition(matrix.copy())
+    let identity_2 : Matrix[Double] = identity(2)
+    matrices_close(q * r, matrix, 1.0e-4) &&
+    matrices_close(q.transpose() * q, identity_2, 1.0e-4)
+  }
+
+  @qc.quick_check_fn(prop)
+}
+
+test "hessenberg_reduction_similarity/property" {
+  fn prop(input : (Int, Int, Int, Int, Int, Int)) {
+    let (a00, a01, a02, a11, a12, a22) = input
+    let matrix = symmetric_float_matrix_3x3(a00, a01, a02, a11, a12, a22)
+    let (h, q) = matrix.hessenberg_reduction()
+    let reconstructed = q.transpose() * matrix * q
+    matrices_close(reconstructed, h, 1.0e-4) &&
+    h.get(2, 0).abs() < 1.0e-6
+  }
+
+  @qc.quick_check_fn(prop)
+}
+
+test "eigenvalues_match_trace_and_determinant_for_symmetric_2x2/property" {
+  fn prop(input : (Int, Int, Int)) {
+    let (a00, a01, a11) = input
+    let matrix = float_matrix_2x2(a00, a01, a01, a11)
+    let (eigenvalues, eigenvectors) = matrix.eigen()
+    let _ = eigenvectors
+    ((eigenvalues[0] + eigenvalues[1]) - matrix.trace()).abs() < 1.0e-4 &&
+    ((eigenvalues[0] * eigenvalues[1]) - matrix.determinant()).abs() < 1.0e-4
+  }
+
+  @qc.quick_check_fn(prop)
+}
+
+test "cholesky_reconstructs_spd_matrix/property" {
+  fn prop(input : ((Int, Int), (Int, Int))) {
+    let ((b00, b01), (b10, b11)) = input
+    let basis = float_matrix_2x2(b00, b01, b10, b11)
+    let identity_2 : Matrix[Double] = identity(2)
+    let spd = basis.transpose() * basis + identity_2
+    let chol = spd.cholesky_decomposition()
+    guard chol is Some(_) else { false }
+    let l = chol.unwrap()
+    matrices_close(l * l.transpose(), spd, 1.0e-4) &&
+    spd.is_positive_definite()
+  }
+
+  @qc.quick_check_fn(prop)
+}
+
+test "upper_triangular_inverse_det_rank_align/property" {
+  fn prop(input : ((Int, Int, Int), (Int, Int, Int))) {
+    let ((d0, d1, d2), (u01, u02, u12)) = input
+    let matrix = Matrix::from_2d_array([
+      [nonzero_double(d0), Double::from_int(u01), Double::from_int(u02)],
+      [0.0, nonzero_double(d1), Double::from_int(u12)],
+      [0.0, 0.0, nonzero_double(d2)],
+    ])
+    let inv = matrix.inverse()
+    guard inv is Some(_) else { false }
+    let identity_3 : Matrix[Double] = identity(3)
+    let expected_det = matrix.get(0, 0) * matrix.get(1, 1) * matrix.get(2, 2)
+    matrix.rank() == 3 &&
+    (matrix.determinant() - expected_det).abs() < 1.0e-4 &&
+    matrices_close(matrix * inv.unwrap(), identity_3, 1.0e-4)
+  }
+
+  @qc.quick_check_fn(prop)
+}
+
+test "row_swap_flips_determinant_preserves_rank/property" {
+  fn prop(input : (Int, Int, Int, Int)) {
+    let (a00, a01, a10, a11) = input
+    let matrix = float_matrix_2x2(a00, a01, a10, a11)
+    let swapped = matrix.copy()
+    swapped.swap_rows(0, 1)
+    (swapped.determinant() + matrix.determinant()).abs() < 1.0e-4 &&
+    swapped.rank() == matrix.rank()
   }
 
   @qc.quick_check_fn(prop)

@@ -2,7 +2,9 @@
 package "Luna-Flow/linear-algebra/immut"
 
 import {
+  "Luna-Flow/linear-algebra/internal",
   "Luna-Flow/luna-generic",
+  "moonbitlang/core/debug",
   "moonbitlang/core/immut/vector",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
@@ -47,8 +49,9 @@ pub fn[T] Matrix::to_array(Self[T]) -> Array[T]
 pub fn[T : Add + @luna-generic.Zero] Matrix::trace(Self[T]) -> T
 pub fn[T] Matrix::transpose(Self[T]) -> Self[T]
 pub fn[T] Matrix::vertical_combine(Self[T], Self[T]) -> Self[T]
+pub impl[T] @internal.HasShape for Matrix[T]
 pub impl[T : Add] Add for Matrix[T]
-pub impl[T : Mul + Add] Mul for Matrix[T]
+pub impl[T : Mul + Add + @luna-generic.Zero] Mul for Matrix[T]
 pub impl[T : Neg] Neg for Matrix[T]
 pub impl[T : Show] Show for Matrix[T]
 pub impl[T : Add + Neg] Sub for Matrix[T]
@@ -73,12 +76,14 @@ pub fn[T] MatrixFn::swap_rows(Self[T], Int, Int) -> Self[T]
 pub fn[T] MatrixFn::transpose(Self[T]) -> Self[T]
 pub fn[T] MatrixFn::vertical_combine(Self[T], Self[T]) -> Self[T]
 pub fn[T, U, W] MatrixFn::zip_with(Self[T], Self[U], (T, U) -> W) -> Self[W]
+pub impl[T] @internal.HasShape for MatrixFn[T]
 pub impl[T : Add] Add for MatrixFn[T]
 pub impl[T : Eq] Eq for MatrixFn[T]
 pub impl[T : Neg] Neg for MatrixFn[T]
 pub impl[T : Show] Show for MatrixFn[T]
 pub impl[T : Add + Neg] Sub for MatrixFn[T]
 
+#alias(VecLib)
 type Vector[T] derive(Eq)
 pub fn[T : Add] Vector::add_constant(Self[T], T) -> Self[T]
 pub fn[T] Vector::from_array(Array[T]) -> Self[T]
@@ -101,10 +106,11 @@ pub impl[T : Add] Add for Vector[T]
 pub impl[T : Mul] Mul for Vector[T]
 pub impl[T : Neg] Neg for Vector[T]
 pub impl[T : Show] Show for Vector[T]
+pub impl[T : @debug.Debug] @debug.Debug for Vector[T]
 pub impl[T : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[T]
 
 // Type aliases
-pub type VecCore[T] = @vector.Vector[T]
-pub type VecLib[T] = Vector[T]
+pub using @vector {type Vector as VecCore}
 
 // Traits
+

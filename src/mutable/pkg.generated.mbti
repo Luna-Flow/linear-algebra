@@ -4,6 +4,7 @@ package "Luna-Flow/linear-algebra/mutable"
 import {
   "Luna-Flow/linear-algebra/internal",
   "Luna-Flow/luna-generic",
+  "moonbitlang/core/debug",
   "moonbitlang/core/quickcheck",
   "moonbitlang/core/quickcheck/splitmix",
 }
@@ -12,10 +13,6 @@ import {
 pub fn[T : @luna-generic.Zero + @luna-generic.One] identity(Int) -> Matrix[T]
 
 pub fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]
-
-pub fn[T : Compare + @luna-generic.Num + Div + Sqrt + Tolerance] qr_algorithm(Matrix[T]) -> (Vector[T], Matrix[T])
-
-pub fn[T : Compare + @luna-generic.Num + Div + Tolerance + Sqrt] qr_decomposition(Matrix[T]) -> (Matrix[T], Matrix[T])
 
 // Errors
 
@@ -68,7 +65,6 @@ pub fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
 pub fn[T] Matrix::from_array(Int, Int, Array[T]) -> Self[T]
 pub fn[T : @internal.HomomorphismNat] Matrix::from_nat_matrix(Self[Int]) -> Self[T]
 pub fn[T] Matrix::get(Self[T], Int, Int) -> T
-pub fn[T : Compare + @luna-generic.Num + Div + Sqrt + Tolerance] Matrix::hessenberg_reduction(Self[T]) -> (Self[T], Self[T])
 pub fn[T] Matrix::horizontal_combine(Self[T], Self[T]) -> Self[T]
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::inverse(Self[T]) -> Self[T]?
 pub fn[T : Compare + @luna-generic.Num + Div + Tolerance] Matrix::is_invertible(Self[T]) -> Bool
@@ -113,6 +109,7 @@ pub fn[T : @luna-generic.AddMonoid] Matrix::trace(Self[T]) -> T
 pub fn[T] Matrix::transpose(Self[T]) -> Self[T]
 pub fn[T : Add + Sub + Mul + Div + @internal.HomomorphismNat] Matrix::variance(Self[T]) -> T
 pub fn[T] Matrix::vertical_combine(Self[T], Self[T]) -> Self[T]
+pub impl[T] @internal.HasShape for Matrix[T]
 pub impl[T : Add] Add for Matrix[T]
 pub impl[T : @luna-generic.AddMonoid + Mul] Mul for Matrix[T]
 pub impl[T : Neg] Neg for Matrix[T]
@@ -208,19 +205,21 @@ pub impl[T : Eq] Eq for Vector[T]
 pub impl[T : Mul] Mul for Vector[T]
 pub impl[T : Neg] Neg for Vector[T]
 pub impl[T : Show] Show for Vector[T]
+pub impl[T : @debug.Debug] @debug.Debug for Vector[T]
 pub impl[T : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[T]
 
 // Type aliases
 
 // Traits
 pub trait Sqrt {
-  sqrt(Self) -> Self
+  fn sqrt(Self) -> Self
 }
 pub impl Sqrt for Float
 pub impl Sqrt for Double
 
 pub trait Tolerance {
-  tolerance() -> Self
+  fn tolerance() -> Self
 }
 pub impl Tolerance for Float
 pub impl Tolerance for Double
+

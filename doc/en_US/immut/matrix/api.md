@@ -128,7 +128,7 @@ struct Matrix[T] {
 
   - **`fn[T : Mul + Add + One + Neg + Zero] determinant(self : Matrix[T]) -> T`**
     - **Description**
-        Computes the determinant of a square matrix using cofactor expansion.
+        Computes the determinant of a square matrix using small-size specializations and a partial-pivoting elimination path for larger matrices.
 
   ---
 

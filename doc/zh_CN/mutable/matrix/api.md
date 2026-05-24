@@ -644,25 +644,6 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] qr_decomposition(self) -> (Matrix[T], Matrix[T])`**
-    - **描述**
-        进行QR分解，将矩阵分解为正交矩阵Q和上三角矩阵R
-
-    - **参数**
-      - `self: Matrix[T]` - 要分解的矩阵
-
-    - **返回值**
-      `(Matrix[T], Matrix[T])` - Q矩阵和R矩阵
-
-    - **示例**
-
-      ```moonbit
-      let m = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
-      let (q, r) = m.qr_decomposition()
-      ```
-
-  ---
-
   - **`fn[T : Add + Div + Default] mean(self) -> T`**
     - **描述**
         计算矩阵所有元素的平均值

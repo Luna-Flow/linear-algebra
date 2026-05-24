@@ -8,7 +8,7 @@
 struct Matrix[T] {
   row : Int
   col : Int
-  data : Array[Array[T]]
+  // backend-specific internal storage
 } derive(Eq)
 ```
 
@@ -25,7 +25,7 @@ struct Matrix[T] {
 - **Bulk Operations**: Prefer built-in tools like `.each_row_col()` or `.map_inplace()` over manual loops with indexing for maximum optimization.
 
 - **Description**
-  This struct represents a mutable matrix for execution-oriented workloads. The default implementation stores rows in nested arrays, and target-specific backends may use different internal layouts while preserving the documented core algebraic behavior.
+  This struct represents a mutable matrix for execution-oriented workloads. Internal storage is backend-specific: the JS target uses nested arrays, while Native and Wasm targets use flat row-major storage. The documented algebraic behavior is intended to remain aligned across targets.
 
 ### Semantic Notes
 
@@ -120,14 +120,14 @@ struct Matrix[T] {
 
   - **`fn[T] Matrix::op_get(self, row) -> Lens[T]`**
     - **Description**
-        Gets an accessor for the specified row of the matrix, used for reading and modifying elements in that row
+        Gets a backend-specific row accessor used by the `m[row][col]` syntax for reading and modifying elements.
 
     - **Parameters**
       - `self: Matrix[T]` - Matrix to access
       - `row: Int` - Row index (starting from 0)
 
     - **Returns**
-      `Lens[T]` - Accessor object for that row
+      A backend-specific row access handle. On Native and Wasm targets this is a `Lens[T]`; on JS it is the underlying row array.
 
     - **Performance Note**
       Calling `m[row]` allocates a new `Lens` object and two closures. For performance-critical bulk operations, prefer:
@@ -139,13 +139,13 @@ struct Matrix[T] {
 
   - **`fn[T] Matrix::row_view(self, row) -> RowView[T]`**
     - **Description**
-        Creates a mutable structured view over a matrix row.
+        Creates a mutable structured view over a matrix row. The view stays linked to the underlying matrix rather than copying row data.
 
   ---
 
   - **`fn[T] Matrix::col_view(self, col) -> ColView[T]`**
     - **Description**
-        Creates a mutable structured view over a matrix column.
+        Creates a mutable structured view over a matrix column. The view stays linked to the underlying matrix rather than copying column data.
 
   ---
 
@@ -644,25 +644,6 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] qr_decomposition(self) -> (Matrix[T], Matrix[T])`**
-    - **Description**
-        Performs QR decomposition, decomposing the matrix into an orthogonal matrix Q and an upper triangular matrix R
-
-    - **Parameters**
-      - `self: Matrix[T]` - Matrix to decompose
-
-    - **Returns**
-      `(Matrix[T], Matrix[T])` - Q matrix and R matrix
-
-    - **Example**
-
-      ```moonbit
-      let m = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
-      let (q, r) = m.qr_decomposition()
-      ```
-
-  ---
-
   - **`fn[T : Add + Div + Default] mean(self) -> T`**
     - **Description**
         Computes the mean of all elements in the matrix
@@ -1049,7 +1030,7 @@ struct Matrix[T] {
 
   - **`fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] inverse(self) -> Matrix[T]?`**
     - **Description**
-        Computes the inverse of a square matrix using the Gauss-Jordan elimination method
+        Computes the inverse of a square matrix by solving against the identity matrix using the library's LU decomposition with partial pivoting
 
     - **Parameters**
       - `self: Matrix[T]` - The square matrix to compute the inverse of

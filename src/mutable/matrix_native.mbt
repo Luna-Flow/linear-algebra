@@ -2200,12 +2200,10 @@ pub fn[T : Compare + Num + Div + Tolerance] Matrix::determinant(
 }
 
 ///|
-/// Computes the inverse of a square matrix using the Gauss-Jordan elimination method.
+/// Computes the inverse of a square matrix using LU decomposition with partial pivoting.
 ///
-/// This method constructs an augmented matrix by horizontally combining the original
-/// matrix with an identity matrix of the same size, then applies row elimination to
-/// reduce it to reduced row echelon form (RREF). If successful, the right half of
-/// the resulting matrix contains the inverse.
+/// This method factorizes the matrix once and then solves against the identity
+/// matrix. If successful, the resulting matrix is the inverse.
 ///
 /// Parameters:
 ///
