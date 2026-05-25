@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Linear Algebra Benchmark Studio</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <h1>Linear Algebra Benchmark</h1>
+          <p class="hero-text">
+            Dense and structured workloads, sampled across multiple input sizes,
+            with `nalgebra` as the baseline and one-click local reruns.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <button id="rerun-full" class="action action-primary">Rerun Full Benchmark</button>
+          <button id="rerun-smoke" class="action">Smoke Rerun</button>
+          <label class="toggle">
+            <input type="checkbox" id="include-rust" checked />
+            <span>Include Rust baseline</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="auto-refresh" checked />
+            <span>Auto refresh</span>
+          </label>
+        </div>
+      </header>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Median Runtime by Backend</h2>
+          </div>
+          <div class="phase-switch">
+            <button class="phase-button active" data-phase="warm">Warm</button>
+            <button class="phase-button" data-phase="cold">Cold</button>
+          </div>
+        </div>
+        <div class="chart-card-shell chart-card-shell-single">
+          <p class="chart-slot-head">Backend comparison</p>
+          <div id="overall-chart" class="chart-card chart-card-single"></div>
+        </div>
+      </section>
+
+      <section id="operations" class="operations-list"></section>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+  </html>
