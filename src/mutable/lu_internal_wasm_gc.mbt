@@ -1,0 +1,108 @@
+priv struct LuDecomposition[T] {
+  lu : Matrix[T]
+  permutation : Array[Int]
+  swap_count : Int
+  singular : Bool
+}
+
+fn[T : Compare + Field + Num + Tolerance] Matrix::lu_decompose_internal(
+  self : Matrix[T],
+) -> LuDecomposition[T] {
+  let lu = self.copy()
+  let n = lu.row
+  let data = lu.data
+  let permutation = Array::makei(n, fn(i) { i })
+  let mut swap_count = 0
+  let mut singular = false
+  for j in 0..<n {
+    let mut max_row = j
+    for i in (j + 1)..<n {
+      if data[i * n + j].abs() > data[max_row * n + j].abs() {
+        max_row = i
+      }
+    }
+    if max_row != j {
+      lu.swap_rows(j, max_row)
+      let temp = permutation[j]
+      permutation[j] = permutation[max_row]
+      permutation[max_row] = temp
+      swap_count += 1
+    }
+    let pivot = data[j * n + j]
+    if pivot.abs() < T::tolerance() {
+      singular = true
+      continue
+    }
+    for i in (j + 1)..<n {
+      let row_offset = i * n
+      let factor = data[row_offset + j] / pivot
+      data[row_offset + j] = factor
+      for k in (j + 1)..<n {
+        data[row_offset + k] = data[row_offset + k] - factor * data[j * n + k]
+      }
+    }
+  }
+  { lu, permutation, swap_count, singular }
+}
+
+fn[T : Num] LuDecomposition::determinant_internal(
+  self : LuDecomposition[T],
+) -> T {
+  if self.singular {
+    return T::zero()
+  }
+  let n = self.lu.row
+  let lu_data = self.lu.data
+  let mut det = if (self.swap_count & 1) == 0 {
+    T::one()
+  } else {
+    -T::one()
+  }
+  for i in 0..<n {
+    det *= lu_data[i * n + i]
+  }
+  det
+}
+
+fn[T : Compare + Field + Num + Tolerance] LuDecomposition::solve_identity_internal(
+  self : LuDecomposition[T],
+) -> Matrix[T]? {
+  if self.singular {
+    return None
+  }
+  let n = self.lu.row
+  let lu_data = self.lu.data
+  let permutation = self.permutation
+  let work = Array::make(n, T::zero())
+  let x = Matrix::new(n, n, T::zero())
+  let x_data = x.data
+  for rhs_col in 0..<n {
+    for i in 0..<n {
+      let mut acc = if permutation[i] == rhs_col {
+        T::one()
+      } else {
+        T::zero()
+      }
+      let row_offset = i * n
+      for k in 0..<i {
+        acc = acc - lu_data[row_offset + k] * work[k]
+      }
+      work[i] = acc
+    }
+    for step in 0..<n {
+      let i = n - 1 - step
+      let pivot_offset = i * n + i
+      let pivot = lu_data[pivot_offset]
+      if pivot.abs() < T::tolerance() {
+        return None
+      }
+      let mut acc = work[i]
+      let row_offset = i * n
+      for k in (i + 1)..<n {
+        acc = acc - lu_data[row_offset + k] * x_data[k * n + rhs_col]
+      }
+      x_data[row_offset + rhs_col] = acc / pivot
+    }
+  }
+  Some(x)
+}
