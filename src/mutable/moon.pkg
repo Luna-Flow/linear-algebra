@@ -12,20 +12,19 @@ import "wbtest" {
 
 options(
   targets: {
-    "lu_internal.mbt": [ "not", "js", "wasm", "native" ],
-    "lu_internal_native.mbt": [ "native" ],
-    "lu_internal_wasm.mbt": [ "wasm" ],
-    "matrix_view.mbt": [ "not", "js", "wasm", "native" ],
+    "lu_internal_native.mbt": [ "native", "js" ],
+    "lu_internal_wasm.mbt": [ "wasm", "wasm-gc" ],
+    "matrix_view.mbt": [ "js", "wasm", "wasm-gc", "native" ],
     "matrix_view_js.mbt": [ "js" ],
     "matrix_view_native.mbt": [ "native" ],
-    "matrix_view_wasm.mbt": [ "wasm" ],
-    "matrix.mbt": [ "not", "js", "wasm", "native" ],
+    "matrix_view_wasm.mbt": [ "wasm", "wasm-gc" ],
+    "matrix.mbt": [ "js", "wasm", "wasm-gc", "native" ],
     "matrix_js.mbt": [ "js" ],
     "matrix_native.mbt": [ "native" ],
-    "matrix_wasm.mbt": [ "wasm" ],
-    "transpose.mbt": [ "not", "js", "wasm", "native" ],
+    "matrix_wasm.mbt": [ "wasm", "wasm-gc" ],
+    "transpose.mbt": [ "js", "wasm", "wasm-gc", "native" ],
     "transpose_js.mbt": [ "js" ],
     "transpose_native.mbt": [ "native" ],
-    "transpose_wasm.mbt": [ "wasm" ],
+    "transpose_wasm.mbt": [ "wasm", "wasm-gc" ],
   },
 )

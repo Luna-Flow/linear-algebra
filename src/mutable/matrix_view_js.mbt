@@ -1,15 +1,5 @@
-pub struct RowView[T] {
-  data : Matrix[T]
-  row : Int
-}
-
-pub struct ColView[T] {
-  data : Matrix[T]
-  col : Int
-}
-
 pub fn[T] Matrix::row_view(self : Matrix[T], row : Int) -> RowView[T] {
-  { data: self, row }
+  { data: self, row, offset: row * self.col }
 }
 
 pub fn[T] Matrix::col_view(self : Matrix[T], col : Int) -> ColView[T] {
@@ -18,9 +8,9 @@ pub fn[T] Matrix::col_view(self : Matrix[T], col : Int) -> ColView[T] {
 
 pub fn[T] RowView::length(self : RowView[T]) -> Int { self.data.col() }
 pub fn[T] ColView::length(self : ColView[T]) -> Int { self.data.row() }
-pub fn[T] RowView::get(self : RowView[T], col : Int) -> T { self.data.get(self.row, col) }
+pub fn[T] RowView::get(self : RowView[T], col : Int) -> T { self.data.data[self.offset + col] }
 pub fn[T] ColView::get(self : ColView[T], row : Int) -> T { self.data.get(row, self.col) }
-pub fn[T] RowView::set(self : RowView[T], col : Int, val : T) -> Unit { self.data.set(self.row, col, val) }
+pub fn[T] RowView::set(self : RowView[T], col : Int, val : T) -> Unit { self.data.data[self.offset + col] = val }
 pub fn[T] ColView::set(self : ColView[T], row : Int, val : T) -> Unit { self.data.set(row, self.col, val) }
 pub fn[T] RowView::op_get(self : RowView[T], col : Int) -> T { self.get(col) }
 pub fn[T] ColView::op_get(self : ColView[T], row : Int) -> T { self.get(row) }

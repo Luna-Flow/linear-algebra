@@ -37,21 +37,6 @@ pub fn[T] Transpose::set(
 }
 
 ///|
-/// Matrix transpose view providing transposed access to an underlying matrix
-/// without copying data.
-///
-/// Example:
-///
-/// ```moonbit
-/// let m = @mutable.Matrix::make(2, 3, fn(i, j) { i * 3 + j })
-/// let t = m.to_transpose()
-/// inspect(t.row(), content="3")  // Original matrix cols become rows
-/// inspect(t.col(), content="2")  // Original matrix rows become cols
-/// ```
-///
-pub struct Transpose[T](Matrix[T])
-
-///|
 /// Adds two transposed matrices element-wise.
 ///
 /// Parameters:

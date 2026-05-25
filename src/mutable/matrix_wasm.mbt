@@ -1,46 +1,4 @@
 ///|
-/// Two-dimensional matrix with mutable elements stored in row-major order.
-///
-/// Fields:
-///
-/// Since this struct is not marked with any visibility modifier, it is abstract
-/// and users can only pass its value around without direct access to its
-/// internal structure.
-///
-/// Example:
-///
-/// ```moonbit
-/// // Create a 2x3 matrix filled with zeros
-/// let m = @mutable.Matrix::new(2, 3, 0)
-/// inspect(m, content="|0, 0, 0|\n|0, 0, 0|")
-/// // Create from a 2D array
-/// let m2 = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// inspect(m2, content="|1, 2, 3|\n|4, 5, 6|") 
-/// // Access and modify elements
-/// m2[0][1] = 10
-/// inspect(m2[0][1], content="10")
-///
-/// // Get dimensions
-/// inspect(m2.row(), content="2")
-/// inspect(m2.col(), content="3")
-///
-/// // Create identity matrix
-/// let id : Matrix[Int] = @mutable.identity(3)
-/// inspect(id, content= "|1, 0, 0|\n|0, 1, 0|\n|0, 0, 1|")
-/// ```
-///
-struct Matrix[T] {
-  row : Int
-  col : Int
-  data : Array[T]
-} derive(Eq)
-
-///|
-pub impl[T] HasShape for Matrix[T] with shape(self) {
-  (self.row, self.col)
-}
-
-///|
 /// Indexing interface that provides mutable access to elements along a matrix
 /// row.
 ///
@@ -76,14 +34,6 @@ pub impl[T] HasShape for Matrix[T] with shape(self) {
 /// inspect(row_lens[1], content="9")
 /// ```
 ///
-struct Lens[T] {
-  data : Matrix[T]
-  fst : Int
-  offset : Int
-  is_transpose : Bool
-}
-
-///|
 /// Returns the number of rows in the matrix.
 ///
 /// Parameters:

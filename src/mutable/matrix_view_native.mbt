@@ -1,14 +1,3 @@
-pub struct RowView[T] {
-  data : Matrix[T]
-  row : Int
-  offset : Int
-}
-
-pub struct ColView[T] {
-  data : Matrix[T]
-  col : Int
-}
-
 pub fn[T] Matrix::row_view(self : Matrix[T], row : Int) -> RowView[T] {
   { data: self, row, offset: row * self.col }
 }
