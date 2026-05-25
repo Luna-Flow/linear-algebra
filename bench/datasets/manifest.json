@@ -3,7 +3,7 @@
     {
       "case_id": "mul_dense_32",
       "dtype": "double",
-      "family": "dense_uniform",
+      "family": "dense_square",
       "generator_meta": {
         "distribution": "uniform[-1,1]",
         "seed": 4097
@@ -18,7 +18,7 @@
     {
       "case_id": "mul_dense_64",
       "dtype": "double",
-      "family": "dense_uniform",
+      "family": "dense_square",
       "generator_meta": {
         "distribution": "uniform[-1,1]",
         "seed": 4098
@@ -31,12 +31,27 @@
       }
     },
     {
+      "case_id": "mul_dense_96",
+      "dtype": "double",
+      "family": "dense_square",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 4099
+      },
+      "operation": "mul",
+      "shape": {
+        "cols": 96,
+        "rhs_cols": 96,
+        "rows": 96
+      }
+    },
+    {
       "case_id": "mul_rect_48x32x48",
       "dtype": "double",
       "family": "dense_rectangular",
       "generator_meta": {
         "distribution": "uniform[-1,1]",
-        "seed": 4099
+        "seed": 4100
       },
       "operation": "mul",
       "shape": {
@@ -51,7 +66,7 @@
       "family": "dense_rectangular",
       "generator_meta": {
         "distribution": "uniform[-1,1]",
-        "seed": 4100
+        "seed": 4101
       },
       "operation": "mul",
       "shape": {
@@ -61,9 +76,24 @@
       }
     },
     {
+      "case_id": "mul_rect_96x64x96",
+      "dtype": "double",
+      "family": "dense_rectangular",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 4102
+      },
+      "operation": "mul",
+      "shape": {
+        "cols": 64,
+        "rhs_cols": 96,
+        "rows": 96
+      }
+    },
+    {
       "case_id": "mul_vec_dense_128",
       "dtype": "double",
-      "family": "dense_uniform",
+      "family": "dense_square",
       "generator_meta": {
         "distribution": "uniform[-1,1]",
         "seed": 8193
@@ -78,7 +108,7 @@
     {
       "case_id": "mul_vec_dense_192",
       "dtype": "double",
-      "family": "dense_uniform",
+      "family": "dense_square",
       "generator_meta": {
         "distribution": "uniform[-1,1]",
         "seed": 8194
@@ -93,7 +123,7 @@
     {
       "case_id": "mul_vec_dense_256",
       "dtype": "double",
-      "family": "dense_uniform",
+      "family": "dense_square",
       "generator_meta": {
         "distribution": "uniform[-1,1]",
         "seed": 8195
@@ -108,7 +138,7 @@
     {
       "case_id": "det_dense_8",
       "dtype": "double",
-      "family": "dense_uniform",
+      "family": "dense_square",
       "generator_meta": {
         "distribution": "uniform[-1,1]",
         "seed": 12289
@@ -121,27 +151,12 @@
       }
     },
     {
-      "case_id": "det_near_singular_16",
+      "case_id": "det_dense_16",
       "dtype": "double",
-      "family": "near_singular",
+      "family": "dense_square",
       "generator_meta": {
-        "distribution": "structured",
+        "distribution": "uniform[-1,1]",
         "seed": 12290
-      },
-      "operation": "determinant",
-      "shape": {
-        "cols": 16,
-        "rhs_cols": 0,
-        "rows": 16
-      }
-    },
-    {
-      "case_id": "det_upper_tri_16",
-      "dtype": "double",
-      "family": "upper_triangular",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 12291
       },
       "operation": "determinant",
       "shape": {
@@ -153,10 +168,100 @@
     {
       "case_id": "det_dense_24",
       "dtype": "double",
-      "family": "dense_uniform",
+      "family": "dense_square",
       "generator_meta": {
         "distribution": "uniform[-1,1]",
+        "seed": 12291
+      },
+      "operation": "determinant",
+      "shape": {
+        "cols": 24,
+        "rhs_cols": 0,
+        "rows": 24
+      }
+    },
+    {
+      "case_id": "det_near_singular_8",
+      "dtype": "double",
+      "family": "near_singular_square",
+      "generator_meta": {
+        "distribution": "structured",
         "seed": 12292
+      },
+      "operation": "determinant",
+      "shape": {
+        "cols": 8,
+        "rhs_cols": 0,
+        "rows": 8
+      }
+    },
+    {
+      "case_id": "det_near_singular_16",
+      "dtype": "double",
+      "family": "near_singular_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 12293
+      },
+      "operation": "determinant",
+      "shape": {
+        "cols": 16,
+        "rhs_cols": 0,
+        "rows": 16
+      }
+    },
+    {
+      "case_id": "det_near_singular_24",
+      "dtype": "double",
+      "family": "near_singular_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 12294
+      },
+      "operation": "determinant",
+      "shape": {
+        "cols": 24,
+        "rhs_cols": 0,
+        "rows": 24
+      }
+    },
+    {
+      "case_id": "det_upper_tri_8",
+      "dtype": "double",
+      "family": "upper_triangular_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 12295
+      },
+      "operation": "determinant",
+      "shape": {
+        "cols": 8,
+        "rhs_cols": 0,
+        "rows": 8
+      }
+    },
+    {
+      "case_id": "det_upper_tri_16",
+      "dtype": "double",
+      "family": "upper_triangular_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 12296
+      },
+      "operation": "determinant",
+      "shape": {
+        "cols": 16,
+        "rhs_cols": 0,
+        "rows": 16
+      }
+    },
+    {
+      "case_id": "det_upper_tri_24",
+      "dtype": "double",
+      "family": "upper_triangular_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 12297
       },
       "operation": "determinant",
       "shape": {
@@ -168,7 +273,7 @@
     {
       "case_id": "inverse_dense_8",
       "dtype": "double",
-      "family": "dense_shifted",
+      "family": "dense_shifted_square",
       "generator_meta": {
         "distribution": "uniform[-1,1]+I",
         "seed": 16385
@@ -181,11 +286,11 @@
       }
     },
     {
-      "case_id": "inverse_spd_16",
+      "case_id": "inverse_dense_16",
       "dtype": "double",
-      "family": "spd",
+      "family": "dense_shifted_square",
       "generator_meta": {
-        "distribution": "gram+lambdaI",
+        "distribution": "uniform[-1,1]+I",
         "seed": 16386
       },
       "operation": "inverse",
@@ -196,12 +301,42 @@
       }
     },
     {
-      "case_id": "inverse_perm_16",
+      "case_id": "inverse_dense_24",
       "dtype": "double",
-      "family": "permutation",
+      "family": "dense_shifted_square",
       "generator_meta": {
-        "distribution": "structured",
+        "distribution": "uniform[-1,1]+I",
         "seed": 16387
+      },
+      "operation": "inverse",
+      "shape": {
+        "cols": 24,
+        "rhs_cols": 0,
+        "rows": 24
+      }
+    },
+    {
+      "case_id": "inverse_spd_8",
+      "dtype": "double",
+      "family": "spd_square",
+      "generator_meta": {
+        "distribution": "gram+lambdaI",
+        "seed": 16388
+      },
+      "operation": "inverse",
+      "shape": {
+        "cols": 8,
+        "rhs_cols": 0,
+        "rows": 8
+      }
+    },
+    {
+      "case_id": "inverse_spd_16",
+      "dtype": "double",
+      "family": "spd_square",
+      "generator_meta": {
+        "distribution": "gram+lambdaI",
+        "seed": 16389
       },
       "operation": "inverse",
       "shape": {
@@ -213,10 +348,55 @@
     {
       "case_id": "inverse_spd_24",
       "dtype": "double",
-      "family": "spd",
+      "family": "spd_square",
       "generator_meta": {
         "distribution": "gram+lambdaI",
-        "seed": 16388
+        "seed": 16390
+      },
+      "operation": "inverse",
+      "shape": {
+        "cols": 24,
+        "rhs_cols": 0,
+        "rows": 24
+      }
+    },
+    {
+      "case_id": "inverse_perm_8",
+      "dtype": "double",
+      "family": "permutation_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 16391
+      },
+      "operation": "inverse",
+      "shape": {
+        "cols": 8,
+        "rhs_cols": 0,
+        "rows": 8
+      }
+    },
+    {
+      "case_id": "inverse_perm_16",
+      "dtype": "double",
+      "family": "permutation_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 16392
+      },
+      "operation": "inverse",
+      "shape": {
+        "cols": 16,
+        "rhs_cols": 0,
+        "rows": 16
+      }
+    },
+    {
+      "case_id": "inverse_perm_24",
+      "dtype": "double",
+      "family": "permutation_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 16393
       },
       "operation": "inverse",
       "shape": {
@@ -241,12 +421,27 @@
       }
     },
     {
-      "case_id": "rank_rect_def_64x48",
+      "case_id": "rank_rect_48x36",
       "dtype": "double",
-      "family": "rank_deficient_rect",
+      "family": "dense_rectangular",
       "generator_meta": {
-        "distribution": "structured",
+        "distribution": "uniform[-1,1]",
         "seed": 20482
+      },
+      "operation": "rank",
+      "shape": {
+        "cols": 36,
+        "rhs_cols": 0,
+        "rows": 48
+      }
+    },
+    {
+      "case_id": "rank_rect_64x48",
+      "dtype": "double",
+      "family": "dense_rectangular",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 20483
       },
       "operation": "rank",
       "shape": {
@@ -256,12 +451,87 @@
       }
     },
     {
-      "case_id": "rank_square_near_singular_64",
+      "case_id": "rank_rect_def_32x24",
       "dtype": "double",
-      "family": "near_singular",
+      "family": "rank_deficient_rectangular",
       "generator_meta": {
         "distribution": "structured",
-        "seed": 20483
+        "seed": 20484
+      },
+      "operation": "rank",
+      "shape": {
+        "cols": 24,
+        "rhs_cols": 0,
+        "rows": 32
+      }
+    },
+    {
+      "case_id": "rank_rect_def_48x36",
+      "dtype": "double",
+      "family": "rank_deficient_rectangular",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 20485
+      },
+      "operation": "rank",
+      "shape": {
+        "cols": 36,
+        "rhs_cols": 0,
+        "rows": 48
+      }
+    },
+    {
+      "case_id": "rank_rect_def_64x48",
+      "dtype": "double",
+      "family": "rank_deficient_rectangular",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 20486
+      },
+      "operation": "rank",
+      "shape": {
+        "cols": 48,
+        "rhs_cols": 0,
+        "rows": 64
+      }
+    },
+    {
+      "case_id": "rank_square_near_singular_32",
+      "dtype": "double",
+      "family": "near_singular_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 20487
+      },
+      "operation": "rank",
+      "shape": {
+        "cols": 32,
+        "rhs_cols": 0,
+        "rows": 32
+      }
+    },
+    {
+      "case_id": "rank_square_near_singular_48",
+      "dtype": "double",
+      "family": "near_singular_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 20488
+      },
+      "operation": "rank",
+      "shape": {
+        "cols": 48,
+        "rhs_cols": 0,
+        "rows": 48
+      }
+    },
+    {
+      "case_id": "rank_square_near_singular_64",
+      "dtype": "double",
+      "family": "near_singular_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 20489
       },
       "operation": "rank",
       "shape": {
@@ -286,27 +556,12 @@
       }
     },
     {
-      "case_id": "rref_rank_def_64",
-      "dtype": "double",
-      "family": "rank_deficient_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 24578
-      },
-      "operation": "reduce_row_elimination",
-      "shape": {
-        "cols": 64,
-        "rhs_cols": 0,
-        "rows": 64
-      }
-    },
-    {
       "case_id": "rref_rect_48x36",
       "dtype": "double",
       "family": "dense_rectangular",
       "generator_meta": {
         "distribution": "uniform[-1,1]",
-        "seed": 24579
+        "seed": 24578
       },
       "operation": "reduce_row_elimination",
       "shape": {
@@ -316,9 +571,69 @@
       }
     },
     {
+      "case_id": "rref_rect_64x48",
+      "dtype": "double",
+      "family": "dense_rectangular",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 24579
+      },
+      "operation": "reduce_row_elimination",
+      "shape": {
+        "cols": 48,
+        "rhs_cols": 0,
+        "rows": 64
+      }
+    },
+    {
+      "case_id": "rref_rank_def_32",
+      "dtype": "double",
+      "family": "rank_deficient_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 24580
+      },
+      "operation": "reduce_row_elimination",
+      "shape": {
+        "cols": 32,
+        "rhs_cols": 0,
+        "rows": 32
+      }
+    },
+    {
+      "case_id": "rref_rank_def_48",
+      "dtype": "double",
+      "family": "rank_deficient_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 24581
+      },
+      "operation": "reduce_row_elimination",
+      "shape": {
+        "cols": 48,
+        "rhs_cols": 0,
+        "rows": 48
+      }
+    },
+    {
+      "case_id": "rref_rank_def_64",
+      "dtype": "double",
+      "family": "rank_deficient_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 24582
+      },
+      "operation": "reduce_row_elimination",
+      "shape": {
+        "cols": 64,
+        "rhs_cols": 0,
+        "rows": 64
+      }
+    },
+    {
       "case_id": "chol_spd_16",
       "dtype": "double",
-      "family": "spd",
+      "family": "spd_square",
       "generator_meta": {
         "distribution": "gram+lambdaI",
         "seed": 28673
@@ -333,7 +648,7 @@
     {
       "case_id": "chol_spd_32",
       "dtype": "double",
-      "family": "spd",
+      "family": "spd_square",
       "generator_meta": {
         "distribution": "gram+lambdaI",
         "seed": 28674
@@ -348,7 +663,7 @@
     {
       "case_id": "chol_spd_48",
       "dtype": "double",
-      "family": "spd",
+      "family": "spd_square",
       "generator_meta": {
         "distribution": "gram+lambdaI",
         "seed": 28675
@@ -363,7 +678,7 @@
     {
       "case_id": "eigen_sym_16",
       "dtype": "double",
-      "family": "symmetric",
+      "family": "symmetric_square",
       "generator_meta": {
         "distribution": "symmetric_uniform",
         "seed": 32769
@@ -378,7 +693,7 @@
     {
       "case_id": "eigen_sym_24",
       "dtype": "double",
-      "family": "symmetric",
+      "family": "symmetric_square",
       "generator_meta": {
         "distribution": "symmetric_uniform",
         "seed": 32770
@@ -393,7 +708,7 @@
     {
       "case_id": "eigen_sym_32",
       "dtype": "double",
-      "family": "symmetric",
+      "family": "symmetric_square",
       "generator_meta": {
         "distribution": "symmetric_uniform",
         "seed": 32771
@@ -408,7 +723,7 @@
     {
       "case_id": "power_dom_24",
       "dtype": "double",
-      "family": "dominant_symmetric",
+      "family": "dominant_symmetric_square",
       "generator_meta": {
         "distribution": "diagonal_plus_symmetric_noise",
         "seed": 36865
@@ -423,7 +738,7 @@
     {
       "case_id": "power_dom_32",
       "dtype": "double",
-      "family": "dominant_symmetric",
+      "family": "dominant_symmetric_square",
       "generator_meta": {
         "distribution": "diagonal_plus_symmetric_noise",
         "seed": 36866
@@ -438,7 +753,7 @@
     {
       "case_id": "power_dom_48",
       "dtype": "double",
-      "family": "dominant_symmetric",
+      "family": "dominant_symmetric_square",
       "generator_meta": {
         "distribution": "diagonal_plus_symmetric_noise",
         "seed": 36867
@@ -451,6 +766,6 @@
       }
     }
   ],
-  "dataset_version": "v1",
+  "dataset_version": "v2",
   "dtype": "double"
 }

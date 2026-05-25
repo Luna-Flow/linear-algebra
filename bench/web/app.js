@@ -14,6 +14,54 @@ const backendOrder = [
   "moonbit/wasm",
   "moonbit/wasm-gc",
 ];
+const operationOrder = [
+  "mul",
+  "mul_vec",
+  "determinant",
+  "inverse",
+  "rank",
+  "reduce_row_elimination",
+  "cholesky_decomposition",
+  "eigen",
+  "power_method",
+];
+const familyOrder = [
+  "dense_square",
+  "dense_rectangular",
+  "dense_shifted_square",
+  "spd_square",
+  "symmetric_square",
+  "dominant_symmetric_square",
+  "upper_triangular_square",
+  "near_singular_square",
+  "rank_deficient_rectangular",
+  "rank_deficient_square",
+  "permutation_square",
+];
+const operationLabels = {
+  mul: "Matrix multiplication",
+  mul_vec: "Matrix-vector multiplication",
+  determinant: "Determinant",
+  inverse: "Matrix inverse",
+  rank: "Rank",
+  reduce_row_elimination: "Row reduction",
+  cholesky_decomposition: "Cholesky decomposition",
+  eigen: "Eigen decomposition",
+  power_method: "Power method",
+};
+const familyLabels = {
+  dense_square: "Dense square baseline",
+  dense_rectangular: "Dense rectangular baseline",
+  dense_shifted_square: "Shifted dense square",
+  spd_square: "Symmetric positive definite",
+  symmetric_square: "Symmetric square",
+  dominant_symmetric_square: "Dominant symmetric spectrum",
+  upper_triangular_square: "Upper triangular",
+  near_singular_square: "Near-singular square",
+  rank_deficient_rectangular: "Rank-deficient rectangular",
+  rank_deficient_square: "Rank-deficient square",
+  permutation_square: "Permutation square",
+};
 
 let currentPhase = "warm";
 let latestResults = { rows: [] };
@@ -42,8 +90,7 @@ function toMs(ns) {
 }
 
 function sizeMetric(row) {
-  const { rows, cols, rhs_cols } = row.shape;
-  return rows * cols * Math.max(rhs_cols || cols, 1);
+  return scaleDescriptor(row).value;
 }
 
 function groupedRows() {
@@ -66,18 +113,96 @@ function aggregateByBackend(rows) {
     .sort((a, b) => compareBackendKey(a.key, b.key));
 }
 
-function groupByOperation(rows) {
+function groupByProject(rows) {
   const groups = new Map();
   for (const row of rows) {
-    const list = groups.get(row.operation) ?? [];
+    const key = projectKey(row);
+    const list = groups.get(key) ?? [];
     list.push(row);
-    groups.set(row.operation, list);
+    groups.set(key, list);
   }
-  return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b));
+  return [...groups.entries()].sort(([leftKey, leftRows], [rightKey, rightRows]) => {
+    const left = leftRows[0];
+    const right = rightRows[0];
+    const opDiff = compareOrdered(left.operation, right.operation, operationOrder);
+    if (opDiff !== 0) {
+      return opDiff;
+    }
+    const familyDiff = compareOrdered(left.family, right.family, familyOrder);
+    if (familyDiff !== 0) {
+      return familyDiff;
+    }
+    return leftKey.localeCompare(rightKey);
+  });
 }
 
-function panelTitle(operation) {
-  return operation.replaceAll("_", " ");
+function humanize(value) {
+  return value.replaceAll("_", " ");
+}
+
+function operationLabel(operation) {
+  return operationLabels[operation] ?? humanize(operation);
+}
+
+function familyLabel(family) {
+  return familyLabels[family] ?? humanize(family);
+}
+
+function projectKey(row) {
+  return `${row.operation}/${row.family}`;
+}
+
+function projectDomId(row) {
+  return projectKey(row).replaceAll("/", "--");
+}
+
+function panelTitle(row) {
+  return `${operationLabel(row.operation)} · ${familyLabel(row.family)}`;
+}
+
+function compareOrdered(left, right, order) {
+  const leftIndex = order.indexOf(left);
+  const rightIndex = order.indexOf(right);
+  const normalizedLeft = leftIndex === -1 ? Number.MAX_SAFE_INTEGER : leftIndex;
+  const normalizedRight = rightIndex === -1 ? Number.MAX_SAFE_INTEGER : rightIndex;
+  if (normalizedLeft !== normalizedRight) {
+    return normalizedLeft - normalizedRight;
+  }
+  return left.localeCompare(right);
+}
+
+function scaleDescriptor(row) {
+  const { rows, cols, rhs_cols } = row.shape;
+  if (row.operation === "mul") {
+    return {
+      value: rows * cols * rhs_cols,
+      axisLabel: "work scale (m*k*n)",
+      detail: `${rows}x${cols} · ${cols}x${rhs_cols}`,
+    };
+  }
+  if (row.operation === "mul_vec") {
+    return {
+      value: rows,
+      axisLabel: "matrix size (n)",
+      detail: `${rows}x${cols}`,
+    };
+  }
+  if (rhs_cols === 0 && rows === cols) {
+    return {
+      value: rows,
+      axisLabel: "matrix size (n)",
+      detail: `${rows}x${cols}`,
+    };
+  }
+  return {
+    value: rows * cols,
+    axisLabel: "work scale (m*n)",
+    detail: `${rows}x${cols}`,
+  };
+}
+
+function distinctCaseCount(rows) {
+  return new Set(rows.map((row) => row.case_id)).size;
 }
 
 function compareBackendKey(left, right) {
@@ -287,14 +412,17 @@ function renderLineChart(target, chartId, rows, title) {
     renderEmptyState(target, title);
     return;
   }
+  const descriptor = scaleDescriptor(rows[0]);
   const grouped = new Map();
   for (const row of rows) {
+    const scale = scaleDescriptor(row);
     const key = `${row.toolchain}/${row.backend}`;
     const list = grouped.get(key) ?? [];
     list.push({
-      x: sizeMetric(row),
+      x: scale.value,
       y: toMs(row.median_ns),
       caseId: row.case_id,
+      detail: scale.detail,
     });
     grouped.set(key, list);
   }
@@ -338,10 +466,10 @@ function renderLineChart(target, chartId, rows, title) {
               return items[0].dataset.label;
             },
             label(context) {
-              return `size ${context.raw.x}, ${context.raw.y.toFixed(3)} ms`;
+              return `${descriptor.axisLabel}: ${context.raw.x}, ${context.raw.y.toFixed(3)} ms`;
             },
             afterLabel(context) {
-              return `case ${context.raw.caseId}`;
+              return `${context.raw.detail}, case ${context.raw.caseId}`;
             },
           },
         },
@@ -351,7 +479,7 @@ function renderLineChart(target, chartId, rows, title) {
           type: "linear",
           title: {
             display: true,
-            text: "input size",
+            text: descriptor.axisLabel,
             color: "#5c635e",
             font: {
               family: "Menlo, Monaco, Consolas, monospace",
@@ -392,41 +520,45 @@ function renderLineChart(target, chartId, rows, title) {
 }
 
 function renderOperationPanels(rows) {
-  const operations = groupByOperation(rows);
+  const projects = groupByProject(rows);
   for (const chartId of [...chartRegistry.keys()]) {
     if (chartId !== "overall") {
       destroyChart(chartId);
     }
   }
-  operationsEl.innerHTML = operations.map(([operation, opRows]) => {
-    const caseCount = opRows.length;
+  operationsEl.innerHTML = projects.map(([_, projectRows]) => {
+    const firstRow = projectRows[0];
+    const domId = projectDomId(firstRow);
+    const caseCount = distinctCaseCount(projectRows);
+    const descriptor = scaleDescriptor(firstRow);
     return `
       <article class="panel operation-panel">
         <div class="operation-head">
           <div class="operation-copy">
-            <h2 class="operation-title">${panelTitle(operation)}</h2>
-            <p class="operation-note">One scaling curve and one backend comparison for ${caseCount} samples in the current ${currentPhase} phase.</p>
+            <h2 class="operation-title">${panelTitle(firstRow)}</h2>
+            <p class="operation-note">${caseCount} scale points in the current ${currentPhase} phase. Scale axis: ${descriptor.axisLabel}.</p>
           </div>
         </div>
         <div class="operation-layout">
           <div class="chart-slot chart-card-shell">
             <p class="chart-slot-head">Scaling curve</p>
-            <div class="chart-card" data-line-chart="${operation}"></div>
+            <div class="chart-card" data-line-chart="${domId}"></div>
           </div>
           <div class="chart-slot chart-card-shell">
             <p class="chart-slot-head">Backend comparison</p>
-            <div class="chart-card" data-bar-chart="${operation}"></div>
+            <div class="chart-card" data-bar-chart="${domId}"></div>
           </div>
         </div>
       </article>
     `;
   }).join("");
 
-  for (const [operation, opRows] of operations) {
-    const lineHost = document.querySelector(`[data-line-chart="${operation}"]`);
-    const barHost = document.querySelector(`[data-bar-chart="${operation}"]`);
-    renderLineChart(lineHost, `line:${operation}`, opRows, "Scaling curve");
-    renderBarChart(barHost, `bar:${operation}`, aggregateByBackend(opRows), "Backend comparison");
+  for (const [project, projectRows] of projects) {
+    const domId = projectDomId(projectRows[0]);
+    const lineHost = document.querySelector(`[data-line-chart="${domId}"]`);
+    const barHost = document.querySelector(`[data-bar-chart="${domId}"]`);
+    renderLineChart(lineHost, `line:${project}`, projectRows, "Scaling curve");
+    renderBarChart(barHost, `bar:${project}`, aggregateByBackend(projectRows), "Backend comparison");
   }
 }
 

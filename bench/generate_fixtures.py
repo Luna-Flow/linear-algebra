@@ -18,7 +18,7 @@ REGISTRY_OUT = MOONBIT_DIR / "generated_registry.mbt"
 RUST_DIR = ROOT / "bench" / "rust_baseline" / "src"
 RUST_OUT = RUST_DIR / "generated_cases.rs"
 
-DATASET_VERSION = "v1"
+DATASET_VERSION = "v2"
 GOLDEN_GAMMA = 0x9E3779B97F4A7C15
 SPLITMIX_MULT1 = 0xBF58476D1CE4E5B9
 SPLITMIX_MULT2 = 0x94D049BB133111EB
@@ -288,7 +288,7 @@ def make_cases() -> list[Case]:
     add_case(
         "mul_dense_32",
         "mul",
-        "dense_uniform",
+        "dense_square",
         32,
         32,
         32,
@@ -302,7 +302,7 @@ def make_cases() -> list[Case]:
     add_case(
         "mul_dense_64",
         "mul",
-        "dense_uniform",
+        "dense_square",
         64,
         64,
         64,
@@ -314,19 +314,33 @@ def make_cases() -> list[Case]:
 
     rng = SplitMix64(0x1003)
     add_case(
+        "mul_dense_96",
+        "mul",
+        "dense_square",
+        96,
+        96,
+        96,
+        0x1003,
+        dense_matrix(96, 96, rng),
+        dense_matrix(96, 96, rng),
+        distribution="uniform[-1,1]",
+    )
+
+    rng = SplitMix64(0x1004)
+    add_case(
         "mul_rect_48x32x48",
         "mul",
         "dense_rectangular",
         48,
         32,
         48,
-        0x1003,
+        0x1004,
         dense_matrix(48, 32, rng),
         dense_matrix(32, 48, rng),
         distribution="uniform[-1,1]",
     )
 
-    rng = SplitMix64(0x1004)
+    rng = SplitMix64(0x1005)
     add_case(
         "mul_rect_72x48x72",
         "mul",
@@ -334,9 +348,23 @@ def make_cases() -> list[Case]:
         72,
         48,
         72,
-        0x1004,
+        0x1005,
         dense_matrix(72, 48, rng),
         dense_matrix(48, 72, rng),
+        distribution="uniform[-1,1]",
+    )
+
+    rng = SplitMix64(0x1006)
+    add_case(
+        "mul_rect_96x64x96",
+        "mul",
+        "dense_rectangular",
+        96,
+        64,
+        96,
+        0x1006,
+        dense_matrix(96, 64, rng),
+        dense_matrix(64, 96, rng),
         distribution="uniform[-1,1]",
     )
 
@@ -344,7 +372,7 @@ def make_cases() -> list[Case]:
     add_case(
         "mul_vec_dense_128",
         "mul_vec",
-        "dense_uniform",
+        "dense_square",
         128,
         128,
         1,
@@ -358,7 +386,7 @@ def make_cases() -> list[Case]:
     add_case(
         "mul_vec_dense_192",
         "mul_vec",
-        "dense_uniform",
+        "dense_square",
         192,
         192,
         1,
@@ -372,7 +400,7 @@ def make_cases() -> list[Case]:
     add_case(
         "mul_vec_dense_256",
         "mul_vec",
-        "dense_uniform",
+        "dense_square",
         256,
         256,
         1,
@@ -386,7 +414,7 @@ def make_cases() -> list[Case]:
     add_case(
         "det_dense_8",
         "determinant",
-        "dense_uniform",
+        "dense_square",
         8,
         8,
         0,
@@ -398,51 +426,121 @@ def make_cases() -> list[Case]:
 
     rng = SplitMix64(0x3002)
     add_case(
-        "det_near_singular_16",
+        "det_dense_16",
         "determinant",
-        "near_singular",
+        "dense_square",
         16,
         16,
         0,
         0x3002,
+        dense_matrix(16, 16, rng),
+        [],
+        distribution="uniform[-1,1]",
+    )
+
+    rng = SplitMix64(0x3003)
+    add_case(
+        "det_dense_24",
+        "determinant",
+        "dense_square",
+        24,
+        24,
+        0,
+        0x3003,
+        dense_matrix(24, 24, rng),
+        [],
+        distribution="uniform[-1,1]",
+    )
+
+    rng = SplitMix64(0x3004)
+    add_case(
+        "det_near_singular_8",
+        "determinant",
+        "near_singular_square",
+        8,
+        8,
+        0,
+        0x3004,
+        make_near_singular(8, rng),
+        [],
+        distribution="structured",
+    )
+
+    rng = SplitMix64(0x3005)
+    add_case(
+        "det_near_singular_16",
+        "determinant",
+        "near_singular_square",
+        16,
+        16,
+        0,
+        0x3005,
         make_near_singular(16, rng),
         [],
         distribution="structured",
     )
 
-    rng = SplitMix64(0x3003)
+    rng = SplitMix64(0x3006)
+    add_case(
+        "det_near_singular_24",
+        "determinant",
+        "near_singular_square",
+        24,
+        24,
+        0,
+        0x3006,
+        make_near_singular(24, rng),
+        [],
+        distribution="structured",
+    )
+
+    rng = SplitMix64(0x3007)
+    add_case(
+        "det_upper_tri_8",
+        "determinant",
+        "upper_triangular_square",
+        8,
+        8,
+        0,
+        0x3007,
+        make_upper_triangular(8, rng),
+        [],
+        distribution="structured",
+    )
+
+    rng = SplitMix64(0x3008)
     add_case(
         "det_upper_tri_16",
         "determinant",
-        "upper_triangular",
+        "upper_triangular_square",
         16,
         16,
         0,
-        0x3003,
+        0x3008,
         make_upper_triangular(16, rng),
         [],
         distribution="structured",
     )
 
-    rng = SplitMix64(0x3004)
+    rng = SplitMix64(0x3009)
     add_case(
-        "det_dense_24",
+        "det_upper_tri_24",
         "determinant",
-        "dense_uniform",
+        "upper_triangular_square",
         24,
         24,
         0,
-        0x3004,
-        dense_matrix(24, 24, rng),
+        0x3009,
+        make_upper_triangular(24, rng),
         [],
-        distribution="uniform[-1,1]",
+        distribution="structured",
     )
 
     rng = SplitMix64(0x4001)
     add_case(
         "inverse_dense_8",
         "inverse",
-        "dense_shifted",
+        "dense_shifted_square",
         8,
         8,
         0,
@@ -454,43 +552,111 @@ def make_cases() -> list[Case]:
 
     rng = SplitMix64(0x4002)
     add_case(
-        "inverse_spd_16",
+        "inverse_dense_16",
         "inverse",
-        "spd",
+        "dense_shifted_square",
         16,
         16,
         0,
         0x4002,
+        add_matrices(dense_matrix(16, 16, rng), identity_matrix(16, scale=2.0)),
+        [],
+        distribution="uniform[-1,1]+I",
+    )
+
+    rng = SplitMix64(0x4003)
+    add_case(
+        "inverse_dense_24",
+        "inverse",
+        "dense_shifted_square",
+        24,
+        24,
+        0,
+        0x4003,
+        add_matrices(dense_matrix(24, 24, rng), identity_matrix(24, scale=2.25)),
+        [],
+        distribution="uniform[-1,1]+I",
+    )
+
+    rng = SplitMix64(0x4004)
+    add_case(
+        "inverse_spd_8",
+        "inverse",
+        "spd_square",
+        8,
+        8,
+        0,
+        0x4004,
+        make_spd(8, rng, diagonal_bias=3.5),
+        [],
+        distribution="gram+lambdaI",
+    )
+
+    rng = SplitMix64(0x4005)
+    add_case(
+        "inverse_spd_16",
+        "inverse",
+        "spd_square",
+        16,
+        16,
+        0,
+        0x4005,
         make_spd(16, rng, diagonal_bias=4.0),
         [],
         distribution="gram+lambdaI",
     )
 
+    rng = SplitMix64(0x4006)
+    add_case(
+        "inverse_spd_24",
+        "inverse",
+        "spd_square",
+        24,
+        24,
+        0,
+        0x4006,
+        make_spd(24, rng, diagonal_bias=4.25),
+        [],
+        distribution="gram+lambdaI",
+    )
+
+    add_case(
+        "inverse_perm_8",
+        "inverse",
+        "permutation_square",
+        8,
+        8,
+        0,
+        0x4007,
+        make_permutation(8),
+        [],
+        distribution="structured",
+    )
+
     add_case(
         "inverse_perm_16",
         "inverse",
-        "permutation",
+        "permutation_square",
         16,
         16,
         0,
-        0x4003,
+        0x4008,
         make_permutation(16),
         [],
         distribution="structured",
     )
 
-    rng = SplitMix64(0x4004)
     add_case(
-        "inverse_spd_24",
+        "inverse_perm_24",
         "inverse",
-        "spd",
+        "permutation_square",
         24,
         24,
         0,
-        0x4004,
-        make_spd(24, rng, diagonal_bias=4.25),
+        0x4009,
+        make_permutation(24),
         [],
-        distribution="gram+lambdaI",
+        distribution="structured",
     )
 
     rng = SplitMix64(0x5001)
@@ -509,27 +675,111 @@ def make_cases() -> list[Case]:
 
     rng = SplitMix64(0x5002)
     add_case(
-        "rank_rect_def_64x48",
+        "rank_rect_48x36",
         "rank",
-        "rank_deficient_rect",
+        "dense_rectangular",
+        48,
+        36,
+        0,
+        0x5002,
+        dense_matrix(48, 36, rng),
+        [],
+        distribution="uniform[-1,1]",
+    )
+
+    rng = SplitMix64(0x5003)
+    add_case(
+        "rank_rect_64x48",
+        "rank",
+        "dense_rectangular",
         64,
         48,
         0,
-        0x5002,
+        0x5003,
+        dense_matrix(64, 48, rng),
+        [],
+        distribution="uniform[-1,1]",
+    )
+
+    rng = SplitMix64(0x5004)
+    add_case(
+        "rank_rect_def_32x24",
+        "rank",
+        "rank_deficient_rectangular",
+        32,
+        24,
+        0,
+        0x5004,
+        make_rect_rank_deficient(32, 24, rng),
+        [],
+        distribution="structured",
+    )
+
+    rng = SplitMix64(0x5005)
+    add_case(
+        "rank_rect_def_48x36",
+        "rank",
+        "rank_deficient_rectangular",
+        48,
+        36,
+        0,
+        0x5005,
+        make_rect_rank_deficient(48, 36, rng),
+        [],
+        distribution="structured",
+    )
+
+    rng = SplitMix64(0x5006)
+    add_case(
+        "rank_rect_def_64x48",
+        "rank",
+        "rank_deficient_rectangular",
+        64,
+        48,
+        0,
+        0x5006,
         make_rect_rank_deficient(64, 48, rng),
         [],
         distribution="structured",
     )
 
-    rng = SplitMix64(0x5003)
+    rng = SplitMix64(0x5007)
+    add_case(
+        "rank_square_near_singular_32",
+        "rank",
+        "near_singular_square",
+        32,
+        32,
+        0,
+        0x5007,
+        make_near_singular(32, rng),
+        [],
+        distribution="structured",
+    )
+
+    rng = SplitMix64(0x5008)
+    add_case(
+        "rank_square_near_singular_48",
+        "rank",
+        "near_singular_square",
+        48,
+        48,
+        0,
+        0x5008,
+        make_near_singular(48, rng),
+        [],
+        distribution="structured",
+    )
+
+    rng = SplitMix64(0x5009)
     add_case(
         "rank_square_near_singular_64",
         "rank",
-        "near_singular",
+        "near_singular_square",
         64,
         64,
         0,
-        0x5003,
+        0x5009,
         make_near_singular(64, rng),
         [],
         distribution="structured",
@@ -551,37 +801,79 @@ def make_cases() -> list[Case]:
 
     rng = SplitMix64(0x6002)
     add_case(
-        "rref_rank_def_64",
-        "reduce_row_elimination",
-        "rank_deficient_square",
-        64,
-        64,
-        0,
-        0x6002,
-        make_rank_deficient(64, rng),
-        [],
-        distribution="structured",
-    )
-
-    rng = SplitMix64(0x6003)
-    add_case(
         "rref_rect_48x36",
         "reduce_row_elimination",
         "dense_rectangular",
         48,
         36,
         0,
-        0x6003,
+        0x6002,
         dense_matrix(48, 36, rng),
         [],
         distribution="uniform[-1,1]",
+    )
+
+    rng = SplitMix64(0x6003)
+    add_case(
+        "rref_rect_64x48",
+        "reduce_row_elimination",
+        "dense_rectangular",
+        64,
+        48,
+        0,
+        0x6003,
+        dense_matrix(64, 48, rng),
+        [],
+        distribution="uniform[-1,1]",
+    )
+
+    rng = SplitMix64(0x6004)
+    add_case(
+        "rref_rank_def_32",
+        "reduce_row_elimination",
+        "rank_deficient_square",
+        32,
+        32,
+        0,
+        0x6004,
+        make_rank_deficient(32, rng),
+        [],
+        distribution="structured",
+    )
+
+    rng = SplitMix64(0x6005)
+    add_case(
+        "rref_rank_def_48",
+        "reduce_row_elimination",
+        "rank_deficient_square",
+        48,
+        48,
+        0,
+        0x6005,
+        make_rank_deficient(48, rng),
+        [],
+        distribution="structured",
+    )
+
+    rng = SplitMix64(0x6006)
+    add_case(
+        "rref_rank_def_64",
+        "reduce_row_elimination",
+        "rank_deficient_square",
+        64,
+        64,
+        0,
+        0x6006,
+        make_rank_deficient(64, rng),
+        [],
+        distribution="structured",
     )
 
     rng = SplitMix64(0x7001)
     add_case(
         "chol_spd_16",
         "cholesky_decomposition",
-        "spd",
+        "spd_square",
         16,
         16,
         0,
@@ -595,7 +887,7 @@ def make_cases() -> list[Case]:
     add_case(
         "chol_spd_32",
         "cholesky_decomposition",
-        "spd",
+        "spd_square",
         32,
         32,
         0,
@@ -609,7 +901,7 @@ def make_cases() -> list[Case]:
     add_case(
         "chol_spd_48",
         "cholesky_decomposition",
-        "spd",
+        "spd_square",
         48,
         48,
         0,
@@ -623,7 +915,7 @@ def make_cases() -> list[Case]:
     add_case(
         "eigen_sym_16",
         "eigen",
-        "symmetric",
+        "symmetric_square",
         16,
         16,
         0,
@@ -637,7 +929,7 @@ def make_cases() -> list[Case]:
     add_case(
         "eigen_sym_24",
         "eigen",
-        "symmetric",
+        "symmetric_square",
         24,
         24,
         0,
@@ -651,7 +943,7 @@ def make_cases() -> list[Case]:
     add_case(
         "eigen_sym_32",
         "eigen",
-        "symmetric",
+        "symmetric_square",
         32,
         32,
         0,
@@ -665,7 +957,7 @@ def make_cases() -> list[Case]:
     add_case(
         "power_dom_24",
         "power_method",
-        "dominant_symmetric",
+        "dominant_symmetric_square",
         24,
         24,
         0,
@@ -679,7 +971,7 @@ def make_cases() -> list[Case]:
     add_case(
         "power_dom_32",
         "power_method",
-        "dominant_symmetric",
+        "dominant_symmetric_square",
         32,
         32,
         0,
@@ -693,7 +985,7 @@ def make_cases() -> list[Case]:
     add_case(
         "power_dom_48",
         "power_method",
-        "dominant_symmetric",
+        "dominant_symmetric_square",
         48,
         48,
         0,
