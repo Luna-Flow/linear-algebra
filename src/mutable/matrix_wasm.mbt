@@ -1173,13 +1173,13 @@ pub fn[T : Semiring] Matrix::pow(self : Matrix[T], power : Int) -> Matrix[T] {
 ///
 /// Parameters:
 ///
-/// * `self` : The matrix to be reduced to row echelon form.
+/// * `self` : The matrix to be reduced to reduced row echelon form.
 ///
 /// Returns the same matrix instance after performing the row elimination
 /// operations.
 ///
-/// Panics if any pivot element cannot be inverted (i.e., when `val.inv()` is
-/// called on a zero element that wasn't properly handled).
+/// Columns whose remaining entries are all zero are skipped. Pivot inversion is
+/// only performed after a nonzero pivot has been selected.
 ///
 /// Example:
 ///
