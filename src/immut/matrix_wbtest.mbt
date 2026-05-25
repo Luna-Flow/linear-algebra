@@ -273,6 +273,14 @@ test {
   inspect(m4.determinant(), content="4")
   inspect(m1.determinant(), content="-2")
   inspect(m5.determinant(), content="1")
+  let toeplitz = Matrix::from_2d_array([
+    [2, -1, 0, 0, 0],
+    [-1, 2, -1, 0, 0],
+    [0, -1, 2, -1, 0],
+    [0, 0, -1, 2, -1],
+    [0, 0, 0, -1, 2],
+  ])
+  inspect(toeplitz.determinant(), content="6")
   let m = Matrix::make(3, 3, fn(i, _) -> Int { i }).pow(10)
   inspect(
     m,

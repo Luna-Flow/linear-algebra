@@ -148,9 +148,9 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Mul + Add + One + Neg + Zero] determinant(self : Matrix[T]) -> T`**
+  - **`fn[T : Compare + Num + Div] determinant(self : Matrix[T]) -> T`**
     - **説明**
-        正方行列の行列式を計算します（余因子展開を使用）。
+        正方行列の行列式を計算します（小規模行列は特化公式、大規模行列は fraction-free 消去を使用）。
 
   ---
 

@@ -148,9 +148,9 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Mul + Add + One + Neg + Zero] determinant(self : Matrix[T]) -> T`**
+  - **`fn[T : Compare + Num + Div] determinant(self : Matrix[T]) -> T`**
     - **描述**
-        计算方阵的行列式（采用代数余子式展开）。
+        计算方阵的行列式（小规模矩阵使用特化公式，大规模矩阵使用 fraction-free 消元）。
 
   ---
 

@@ -126,9 +126,9 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Mul + Add + One + Neg + Zero] determinant(self : Matrix[T]) -> T`**
+  - **`fn[T : Compare + Num + Div] determinant(self : Matrix[T]) -> T`**
     - **Description**
-        Computes the determinant of a square matrix using small-size specializations and a partial-pivoting elimination path for larger matrices.
+        Computes the determinant of a square matrix using small-size specializations and a fraction-free elimination path for larger matrices.
 
   ---
 

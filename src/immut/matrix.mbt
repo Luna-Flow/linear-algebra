@@ -827,7 +827,7 @@ fn[T] swap_dense_rows(data : Array[T], row_size : Int, r1 : Int, r2 : Int) -> Un
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// inspect(m.determinant(), content="-2")
 /// ```
-pub fn[T : Compare + Num + Div + One + Neg] Matrix::determinant(
+pub fn[T : Compare + Num + Div] Matrix::determinant(
   self : Matrix[T],
 ) -> T {
   let n = self.row

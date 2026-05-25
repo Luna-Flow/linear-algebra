@@ -675,7 +675,7 @@ pub fn[T, U, W] MatrixFn::zip_with(
 ///
 /// Panics if the matrix is not square (number of rows does not equal number of
 /// columns).
-pub fn[T : Compare + Num + Div + One + Neg] MatrixFn::determinant(
+pub fn[T : Compare + Num + Div] MatrixFn::determinant(
   self : MatrixFn[T],
 ) -> T {
   ensure_square(self)
