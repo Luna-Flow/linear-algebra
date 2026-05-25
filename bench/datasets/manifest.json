@@ -1,0 +1,456 @@
+{
+  "cases": [
+    {
+      "case_id": "mul_dense_32",
+      "dtype": "double",
+      "family": "dense_uniform",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 4097
+      },
+      "operation": "mul",
+      "shape": {
+        "cols": 32,
+        "rhs_cols": 32,
+        "rows": 32
+      }
+    },
+    {
+      "case_id": "mul_dense_64",
+      "dtype": "double",
+      "family": "dense_uniform",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 4098
+      },
+      "operation": "mul",
+      "shape": {
+        "cols": 64,
+        "rhs_cols": 64,
+        "rows": 64
+      }
+    },
+    {
+      "case_id": "mul_rect_48x32x48",
+      "dtype": "double",
+      "family": "dense_rectangular",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 4099
+      },
+      "operation": "mul",
+      "shape": {
+        "cols": 32,
+        "rhs_cols": 48,
+        "rows": 48
+      }
+    },
+    {
+      "case_id": "mul_rect_72x48x72",
+      "dtype": "double",
+      "family": "dense_rectangular",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 4100
+      },
+      "operation": "mul",
+      "shape": {
+        "cols": 48,
+        "rhs_cols": 72,
+        "rows": 72
+      }
+    },
+    {
+      "case_id": "mul_vec_dense_128",
+      "dtype": "double",
+      "family": "dense_uniform",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 8193
+      },
+      "operation": "mul_vec",
+      "shape": {
+        "cols": 128,
+        "rhs_cols": 1,
+        "rows": 128
+      }
+    },
+    {
+      "case_id": "mul_vec_dense_192",
+      "dtype": "double",
+      "family": "dense_uniform",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 8194
+      },
+      "operation": "mul_vec",
+      "shape": {
+        "cols": 192,
+        "rhs_cols": 1,
+        "rows": 192
+      }
+    },
+    {
+      "case_id": "mul_vec_dense_256",
+      "dtype": "double",
+      "family": "dense_uniform",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 8195
+      },
+      "operation": "mul_vec",
+      "shape": {
+        "cols": 256,
+        "rhs_cols": 1,
+        "rows": 256
+      }
+    },
+    {
+      "case_id": "det_dense_8",
+      "dtype": "double",
+      "family": "dense_uniform",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 12289
+      },
+      "operation": "determinant",
+      "shape": {
+        "cols": 8,
+        "rhs_cols": 0,
+        "rows": 8
+      }
+    },
+    {
+      "case_id": "det_near_singular_16",
+      "dtype": "double",
+      "family": "near_singular",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 12290
+      },
+      "operation": "determinant",
+      "shape": {
+        "cols": 16,
+        "rhs_cols": 0,
+        "rows": 16
+      }
+    },
+    {
+      "case_id": "det_upper_tri_16",
+      "dtype": "double",
+      "family": "upper_triangular",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 12291
+      },
+      "operation": "determinant",
+      "shape": {
+        "cols": 16,
+        "rhs_cols": 0,
+        "rows": 16
+      }
+    },
+    {
+      "case_id": "det_dense_24",
+      "dtype": "double",
+      "family": "dense_uniform",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 12292
+      },
+      "operation": "determinant",
+      "shape": {
+        "cols": 24,
+        "rhs_cols": 0,
+        "rows": 24
+      }
+    },
+    {
+      "case_id": "inverse_dense_8",
+      "dtype": "double",
+      "family": "dense_shifted",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]+I",
+        "seed": 16385
+      },
+      "operation": "inverse",
+      "shape": {
+        "cols": 8,
+        "rhs_cols": 0,
+        "rows": 8
+      }
+    },
+    {
+      "case_id": "inverse_spd_16",
+      "dtype": "double",
+      "family": "spd",
+      "generator_meta": {
+        "distribution": "gram+lambdaI",
+        "seed": 16386
+      },
+      "operation": "inverse",
+      "shape": {
+        "cols": 16,
+        "rhs_cols": 0,
+        "rows": 16
+      }
+    },
+    {
+      "case_id": "inverse_perm_16",
+      "dtype": "double",
+      "family": "permutation",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 16387
+      },
+      "operation": "inverse",
+      "shape": {
+        "cols": 16,
+        "rhs_cols": 0,
+        "rows": 16
+      }
+    },
+    {
+      "case_id": "inverse_spd_24",
+      "dtype": "double",
+      "family": "spd",
+      "generator_meta": {
+        "distribution": "gram+lambdaI",
+        "seed": 16388
+      },
+      "operation": "inverse",
+      "shape": {
+        "cols": 24,
+        "rhs_cols": 0,
+        "rows": 24
+      }
+    },
+    {
+      "case_id": "rank_rect_32x24",
+      "dtype": "double",
+      "family": "dense_rectangular",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 20481
+      },
+      "operation": "rank",
+      "shape": {
+        "cols": 24,
+        "rhs_cols": 0,
+        "rows": 32
+      }
+    },
+    {
+      "case_id": "rank_rect_def_64x48",
+      "dtype": "double",
+      "family": "rank_deficient_rect",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 20482
+      },
+      "operation": "rank",
+      "shape": {
+        "cols": 48,
+        "rhs_cols": 0,
+        "rows": 64
+      }
+    },
+    {
+      "case_id": "rank_square_near_singular_64",
+      "dtype": "double",
+      "family": "near_singular",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 20483
+      },
+      "operation": "rank",
+      "shape": {
+        "cols": 64,
+        "rhs_cols": 0,
+        "rows": 64
+      }
+    },
+    {
+      "case_id": "rref_rect_32x24",
+      "dtype": "double",
+      "family": "dense_rectangular",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 24577
+      },
+      "operation": "reduce_row_elimination",
+      "shape": {
+        "cols": 24,
+        "rhs_cols": 0,
+        "rows": 32
+      }
+    },
+    {
+      "case_id": "rref_rank_def_64",
+      "dtype": "double",
+      "family": "rank_deficient_square",
+      "generator_meta": {
+        "distribution": "structured",
+        "seed": 24578
+      },
+      "operation": "reduce_row_elimination",
+      "shape": {
+        "cols": 64,
+        "rhs_cols": 0,
+        "rows": 64
+      }
+    },
+    {
+      "case_id": "rref_rect_48x36",
+      "dtype": "double",
+      "family": "dense_rectangular",
+      "generator_meta": {
+        "distribution": "uniform[-1,1]",
+        "seed": 24579
+      },
+      "operation": "reduce_row_elimination",
+      "shape": {
+        "cols": 36,
+        "rhs_cols": 0,
+        "rows": 48
+      }
+    },
+    {
+      "case_id": "chol_spd_16",
+      "dtype": "double",
+      "family": "spd",
+      "generator_meta": {
+        "distribution": "gram+lambdaI",
+        "seed": 28673
+      },
+      "operation": "cholesky_decomposition",
+      "shape": {
+        "cols": 16,
+        "rhs_cols": 0,
+        "rows": 16
+      }
+    },
+    {
+      "case_id": "chol_spd_32",
+      "dtype": "double",
+      "family": "spd",
+      "generator_meta": {
+        "distribution": "gram+lambdaI",
+        "seed": 28674
+      },
+      "operation": "cholesky_decomposition",
+      "shape": {
+        "cols": 32,
+        "rhs_cols": 0,
+        "rows": 32
+      }
+    },
+    {
+      "case_id": "chol_spd_48",
+      "dtype": "double",
+      "family": "spd",
+      "generator_meta": {
+        "distribution": "gram+lambdaI",
+        "seed": 28675
+      },
+      "operation": "cholesky_decomposition",
+      "shape": {
+        "cols": 48,
+        "rhs_cols": 0,
+        "rows": 48
+      }
+    },
+    {
+      "case_id": "eigen_sym_16",
+      "dtype": "double",
+      "family": "symmetric",
+      "generator_meta": {
+        "distribution": "symmetric_uniform",
+        "seed": 32769
+      },
+      "operation": "eigen",
+      "shape": {
+        "cols": 16,
+        "rhs_cols": 0,
+        "rows": 16
+      }
+    },
+    {
+      "case_id": "eigen_sym_24",
+      "dtype": "double",
+      "family": "symmetric",
+      "generator_meta": {
+        "distribution": "symmetric_uniform",
+        "seed": 32770
+      },
+      "operation": "eigen",
+      "shape": {
+        "cols": 24,
+        "rhs_cols": 0,
+        "rows": 24
+      }
+    },
+    {
+      "case_id": "eigen_sym_32",
+      "dtype": "double",
+      "family": "symmetric",
+      "generator_meta": {
+        "distribution": "symmetric_uniform",
+        "seed": 32771
+      },
+      "operation": "eigen",
+      "shape": {
+        "cols": 32,
+        "rhs_cols": 0,
+        "rows": 32
+      }
+    },
+    {
+      "case_id": "power_dom_24",
+      "dtype": "double",
+      "family": "dominant_symmetric",
+      "generator_meta": {
+        "distribution": "diagonal_plus_symmetric_noise",
+        "seed": 36865
+      },
+      "operation": "power_method",
+      "shape": {
+        "cols": 24,
+        "rhs_cols": 0,
+        "rows": 24
+      }
+    },
+    {
+      "case_id": "power_dom_32",
+      "dtype": "double",
+      "family": "dominant_symmetric",
+      "generator_meta": {
+        "distribution": "diagonal_plus_symmetric_noise",
+        "seed": 36866
+      },
+      "operation": "power_method",
+      "shape": {
+        "cols": 32,
+        "rhs_cols": 0,
+        "rows": 32
+      }
+    },
+    {
+      "case_id": "power_dom_48",
+      "dtype": "double",
+      "family": "dominant_symmetric",
+      "generator_meta": {
+        "distribution": "diagonal_plus_symmetric_noise",
+        "seed": 36867
+      },
+      "operation": "power_method",
+      "shape": {
+        "cols": 48,
+        "rhs_cols": 0,
+        "rows": 48
+      }
+    }
+  ],
+  "dataset_version": "v1",
+  "dtype": "double"
+}

@@ -1,0 +1,34 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/linear-algebra/perf_support"
+
+// Values
+pub fn case_json_payload(Case, UInt64) -> String
+
+pub fn case_names() -> Array[String]
+
+pub let cases : Array[Case]
+
+pub let dataset_version : String
+
+pub fn find_case(String) -> Case?
+
+pub fn run_case_once(Case) -> UInt64
+
+// Errors
+
+// Types and methods
+pub struct Case {
+  id : String
+  operation : String
+  family : String
+  rows : Int
+  cols : Int
+  rhs_cols : Int
+  data_a : Array[Double]
+  data_b : Array[Double]
+}
+
+// Type aliases
+
+// Traits
+

@@ -1,0 +1,8 @@
+import {
+  "moonbitlang/core/env",
+  "Luna-Flow/linear-algebra/perf_support" @support,
+}
+
+options(
+  "is-main": true,
+)
