@@ -5,7 +5,7 @@ priv struct LuDecomposition[T] {
   singular : Bool
 }
 
-fn[T : Compare + Num + Div + Tolerance] Matrix::lu_decompose_internal(
+fn[T : Compare + Field + Num + Tolerance] Matrix::lu_decompose_internal(
   self : Matrix[T],
 ) -> LuDecomposition[T] {
   let lu = self.copy()

@@ -1,9 +1,4 @@
 ///|
-pub trait HomomorphismNat {
-  from_nat(Int) -> Self
-}
-
-///|
 pub(open) trait HasShape {
   shape(Self) -> (Int, Int)
 }
@@ -56,14 +51,4 @@ pub fn[A : HasShape, B : HasShape] ensure_mul_compatible(a : A, b : B) -> Unit {
   guard a_cols == b_rows else {
     abort("Matrix dimensions are not compatible for multiplication")
   }
-}
-
-///|
-pub impl HomomorphismNat for Float with from_nat(n : Int) -> Float {
-  Float::from_int(n)
-}
-
-///|
-pub impl HomomorphismNat for Double with from_nat(n : Int) -> Double {
-  Double::from_int(n)
 }

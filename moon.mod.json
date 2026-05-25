@@ -2,7 +2,7 @@
   "name": "Luna-Flow/linear-algebra",
   "version": "0.2.10",
   "deps": {
-    "Luna-Flow/luna-generic": "0.2.3",
+    "Luna-Flow/luna-generic": "0.3.0",
     "moonbitlang/quickcheck": "0.14.0"
   },
   "readme": "README.md",

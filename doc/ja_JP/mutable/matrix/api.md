@@ -207,9 +207,9 @@ pub struct ColView[T] { ... }
 
   ---
 
-  - **`fn[T : Compare + Num + Sub + Inverse] reduce_row_elimination(self) -> Matrix[T]`**
+  - **`fn[T : Compare + Field + Num] reduce_row_elimination(self) -> Matrix[T]`**
     - **説明**
-        ガウス消元法により行階段形に簡約します。
+        体上の Gauss-Jordan 消去により行最簡形へ簡約します。
 
   ---
 
@@ -225,7 +225,7 @@ pub struct ColView[T] { ... }
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] determinant(self) -> T`**
+  - **`fn[T : Compare + Field + Num + Tolerance] determinant(self) -> T`**
     - **説明**
         行列式を計算します。
 
@@ -237,9 +237,9 @@ pub struct ColView[T] { ... }
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] eigen(self) -> (Array[T], Matrix[T])`**
+  - **`fn[T : Compare + Field + Num + Sqrt + Tolerance] eigen(self) -> (Vector[T], Matrix[T])`**
     - **説明**
-        固有値と固有ベクトルを計算します。
+        実対称行列の固有値と固有ベクトルを計算します。
 
 ---
 

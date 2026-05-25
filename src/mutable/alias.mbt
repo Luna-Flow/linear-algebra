@@ -3,7 +3,6 @@ using @lg {
   trait One,
   trait Zero,
   trait Conjugate,
-  trait Inverse,
   trait AddMonoid,
   trait MulMonoid,
   trait Semiring,
@@ -18,4 +17,4 @@ using @qc_core {trait Arbitrary}
 using @debug {trait Debug, type Repr}
 
 ///|
-using @internal {trait HomomorphismNat, trait HasShape}
+using @internal {trait HasShape}

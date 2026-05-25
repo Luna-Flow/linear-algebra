@@ -437,9 +437,9 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Num + Sub + Inverse] reduce_row_elimination(self) -> Matrix[T]`**
+  - **`fn[T : Compare + Field + Num] reduce_row_elimination(self) -> Matrix[T]`**
     - **描述**
-        使用高斯消元法将矩阵化简为行最简形
+        在域上使用 Gauss-Jordan 消元将矩阵化简为行最简形
 
     - **参数**
       - `self: Matrix[T]` - 要化简的矩阵
@@ -563,7 +563,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] determinant(self) -> T`**
+  - **`fn[T : Compare + Field + Num + Tolerance] determinant(self) -> T`**
     - **描述**
         计算方阵的行列式值
 
@@ -582,7 +582,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Add + Default] trace(self) -> T`**
+  - **`fn[T : AddMonoid] trace(self) -> T`**
     - **描述**
         计算方阵的迹（主对角线元素之和）。对于非方阵会直接终止程序。
 
@@ -601,33 +601,32 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] eigen(self) -> (Array[T], Matrix[T])`**
+  - **`fn[T : Compare + Field + Num + Sqrt + Tolerance] eigen(self) -> (Vector[T], Matrix[T])`**
     - **描述**
-        计算方阵的特征值和特征向量
+        计算实对称方阵的特征值和特征向量
 
     - **参数**
-      - `self: Matrix[T]` - 要计算特征值和特征向量的方阵
+      - `self: Matrix[T]` - 要计算谱分解的实对称方阵
 
     - **返回值**
-      `(Array[T], Matrix[T])` - 第一个元素是特征值数组，第二个元素是特征向量矩阵
+      `(Vector[T], Matrix[T])` - 特征值向量，以及按列存放对应特征向量的矩阵
 
     - **示例**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[4.0, 2.0], [1.0, 3.0]])
+      let m = Matrix::from_2d_array([[6.0, -2.0], [-2.0, 9.0]])
       let (eigenvalues, eigenvectors) = m.eigen()
       ```
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] power_method(self, ~max_iterations : Int = 1000, ~tolerance_val : T? = None) -> (T, Vector[T])?`**
+  - **`fn[T : Compare + Field + Num + Tolerance] power_method(self, max_iterations) -> (T, Vector[T])?`**
     - **描述**
         使用幂法近似计算矩阵的主导实特征对（best-effort）
 
     - **参数**
       - `self: Matrix[T]` - 要计算的方阵
-      - `max_iterations: Int` - 最大迭代次数（默认1000）
-      - `tolerance_val: T?` - 收敛容忍度（可选）
+      - `max_iterations: Int` - 最大迭代次数
 
     - **返回值**
       `(T, Vector[T])?` - 收敛时返回 `Some((lambda, v))`，若迭代退化或在上限内未收敛则返回 `None`
@@ -635,8 +634,8 @@ struct Matrix[T] {
     - **示例**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[4.0, 2.0], [1.0, 3.0]])
-      match m.power_method() {
+      let m = Matrix::from_2d_array([[6.0, -2.0], [-2.0, 9.0]])
+      match m.power_method(100) {
         Some((eigenvalue, eigenvector)) => ignore((eigenvalue, eigenvector))
         None => println("幂法未收敛")
       }
@@ -644,9 +643,12 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Add + Div + Default] mean(self) -> T`**
+  - **`fn[T : Field] mean(self) -> T`**
     - **描述**
         计算矩阵所有元素的平均值
+        ，并且整个过程完全在标量域 `T` 内完成。实现会使用 `T::zero()` 和
+        `T::one()` 同时累计元素和与元素个数，因此这里不存在隐藏的
+        `Int -> T` 转换。
 
     - **参数**
       - `self: Matrix[T]` - 要计算平均值的矩阵
@@ -657,15 +659,17 @@ struct Matrix[T] {
     - **示例**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+      let m = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
       let avg = m.mean()  // 计算平均值：(1+2+3+4)/4 = 2.5
       ```
 
   ---
 
-  - **`fn[T : SMul[T] + Add + Div + Default] variance(self) -> T`**
+  - **`fn[T : Field] variance(self) -> T`**
     - **描述**
         计算矩阵所有元素的方差
+        ，并且整个过程完全在标量域 `T` 内完成。与 `mean` 一样，元素个数会
+        直接以 `T` 类型累计，而不是从整数嵌入得到。
 
     - **参数**
       - `self: Matrix[T]` - 要计算方差的矩阵
@@ -682,9 +686,11 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Add + Div + Sqrt[T] + Default] std_dev(self) -> T`**
+  - **`fn[T : Field + Sqrt] std_dev(self) -> T`**
     - **描述**
         计算矩阵所有元素的标准差
+        ，并且整个过程保持在标量域 `T` 内。该方法基于 `variance`，因此同样
+        不包含任何隐藏的整数到标量提升。
 
     - **参数**
       - `self: Matrix[T]` - 要计算标准差的矩阵
@@ -701,7 +707,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] is_symmetric(self) -> Bool`**
+  - **`fn[T : Compare + Num + Tolerance] is_symmetric(self) -> Bool`**
     - **描述**
         检查矩阵是否为对称矩阵
 
@@ -720,7 +726,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] is_positive_definite(self) -> Bool`**
+  - **`fn[T : Compare + Field + Num + Sqrt + Tolerance] is_positive_definite(self) -> Bool`**
     - **描述**
         检查矩阵是否为正定矩阵
 
@@ -739,7 +745,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Add + Neg + Mul + Default] matrix_power(self, n) -> Matrix[T]`**
+  - **`fn[T : Semiring] matrix_power(self, n) -> Matrix[T]`**
     - **描述**
         计算矩阵的n次幂
 
@@ -759,7 +765,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Add + Mul + Neg + Div + Default] frobenius_norm(self) -> T`**
+  - **`fn[T : AddMonoid + Mul + Sqrt] frobenius_norm(self) -> T`**
     - **描述**
         计算矩阵的Frobenius范数
 
@@ -772,7 +778,7 @@ struct Matrix[T] {
     - **示例**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+      let m = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
       let norm = m.frobenius_norm()  // 计算Frobenius范数
       ```
 
@@ -816,7 +822,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Num + Sub + Inverse] Matrix::rank(self) -> Int`**
+  - **`fn[T : Compare + Field + Num + Tolerance] Matrix::rank(self) -> Int`**
     - **描述**
         使用行约化计算矩阵的秩
 
@@ -952,7 +958,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] eigen(self) -> (Vector[T], Matrix[T])`**
+  - **`fn[T : Compare + Field + Num + Sqrt + Tolerance] eigen(self) -> (Vector[T], Matrix[T])`**
     - **描述**
         使用 QR 算法计算实对称方阵的特征值和特征向量
 
@@ -976,7 +982,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Add + Mul + Sub + Div + Num + Tolerance] power_method(self, max_iterations) -> (T, Vector[T])?`**
+  - **`fn[T : Compare + Field + Num + Tolerance] power_method(self, max_iterations) -> (T, Vector[T])?`**
     - **描述**
         使用幂法近似计算主导实特征对（best-effort）
 
@@ -1002,7 +1008,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Add + Mul + Sub + Num + Div + Sqrt + SMul] eigen_2x2(self) -> Vector[T]`**
+  - **`fn[T : Compare + Field + Num + Sqrt + Tolerance] eigen_2x2(self) -> Vector[T]`**
     - **描述**
         使用解析方法计算2x2矩阵的特征值
 
@@ -1025,7 +1031,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] determinant(self) -> T`**
+  - **`fn[T : Compare + Field + Num + Tolerance] determinant(self) -> T`**
     - **描述**
         使用基于LU分解和部分选主元的高效算法计算方阵的行列式
 
@@ -1047,9 +1053,9 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] inverse(self) -> Matrix[T]?`**
+  - **`fn[T : Compare + Field + Num + Tolerance] inverse(self) -> Matrix[T]?`**
     - **描述**
-        使用高斯-约旦消元法计算方阵的逆矩阵
+        先做 LU 分解，再对单位矩阵求解以计算方阵的逆矩阵
 
     - **参数**
       - `self: Matrix[T]` - 要计算逆矩阵的方阵
@@ -1072,7 +1078,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] is_invertible(self) -> Bool`**
+  - **`fn[T : Compare + Field + Num + Tolerance] is_invertible(self) -> Bool`**
     - **描述**
         检查矩阵是否可逆（非奇异）
 
@@ -1098,28 +1104,49 @@ struct Matrix[T] {
 
 ## 数值特征定义
 
-### SMul[T]
+### Field
 
 ```moonbit
-trait SMul[T] {
-  op_smul(T, T) -> T
+trait Field {
 }
 ```
 
 - **描述**
-  标量乘法特征，定义了类型 T 的标量乘法操作
+  从 `Luna-Flow/luna-generic` 导入的域特征，在代码中通常会起别名写作
+  `@lg`，用于需要真实除法并同时依赖加法与乘法结构的算法。
 
-- **方法**
-  - **`op_smul(T, T) -> T`**
-    - **描述**: 执行标量乘法运算
-    - **参数**: 两个类型为 T 的值
-    - **返回值**: 乘法结果
+### 整数到浮点的映射
 
-### Tolerance[T]
+- **描述**
+  本包不再维护专门的自然数同态 trait。若整数矩阵要进入会产生浮点结果的
+  API，需要先由调用方从 `Luna-Flow/luna-generic` 导入 `Integral`
+  trait，在代码中通常写作 `@lg`，再显式使用 `Integral::to_float` 或
+  `Integral::to_double` 做映射。
+
+- **语义**
+  本包中的统计 API 被刻意设计为 `T -> T`：它们只对矩阵现有的标量类型做
+  运算，并通过 `T::one()` 计数。因此，把整数矩阵转换成浮点矩阵是调用方的
+  显式职责，而不是库内部的隐式行为。
+
+- **示例**
+
+  ```moonbit
+  using @lg { trait Integral }
+
+  let ints = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let doubles = ints.map(fn(n) { Integral::to_double(n) })
+  let avg = doubles.mean()
+  ```
+
+- **风险**
+  `Integral -> Float/Double` 转换在超出目标浮点类型精确整数范围时可能丢失精度。
+  若精度重要，调用方需要在转换前自行处理这类风险。
+
+### Tolerance
 
 ```moonbit
-trait Tolerance[T] {
-  tolerance() -> T
+trait Tolerance {
+  tolerance() -> Self
 }
 ```
 
@@ -1127,15 +1154,15 @@ trait Tolerance[T] {
   容忍度特征，定义了数值计算中的容忍度阈值
 
 - **方法**
-  - **`tolerance() -> T`**
-    - **描述**: 返回类型 T 的容忍度值
+  - **`tolerance() -> Self`**
+    - **描述**: 返回标量类型的容忍度值
     - **返回值**: 容忍度阈值
 
-### Sqrt[T]
+### Sqrt
 
 ```moonbit
-trait Sqrt[T] {
-  sqrt(T) -> T
+trait Sqrt {
+  sqrt(Self) -> Self
 }
 ```
 
@@ -1143,7 +1170,7 @@ trait Sqrt[T] {
   平方根特征，定义了类型 T 的平方根运算
 
 - **方法**
-  - **`sqrt(T) -> T`**
+  - **`sqrt(Self) -> Self`**
     - **描述**: 计算平方根
     - **参数**: 要计算平方根的值
     - **返回值**: 平方根结果

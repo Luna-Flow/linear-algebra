@@ -1,3 +1,5 @@
+using @lg { trait Integral }
+
 struct AdjointReal(Int)
 
 impl Conjugate for AdjointReal with conjugate(self) { self }
@@ -8,7 +10,7 @@ impl Show for AdjointReal with output(self, logger) { logger.write_object(self.0
 
 fn float_matrix_2x2(a00 : Int, a01 : Int, a10 : Int, a11 : Int) -> Matrix[Double] {
   let matrix : Matrix[Int] = Matrix::from_2d_array([[a00, a01], [a10, a11]])
-  matrix.from_nat_matrix()
+  matrix.map(fn(n) { Integral::to_double(n) })
 }
 
 fn float_matrix_3x2(
@@ -24,7 +26,7 @@ fn float_matrix_3x2(
     [a10, a11],
     [a20, a21],
   ])
-  matrix.from_nat_matrix()
+  matrix.map(fn(n) { Integral::to_double(n) })
 }
 
 fn matrices_close(a : Matrix[Double], b : Matrix[Double], tol : Double) -> Bool {
@@ -221,6 +223,21 @@ test "reduce_row_elimination" {
 }
 
 ///|
+test "reduce_row_elimination/skips_zero_pivot_columns" {
+  let m = Matrix::from_2d_array([
+    [0.0, 2.0, 1.0],
+    [0.0, 0.0, 3.0],
+  ])
+  inspect(
+    m.reduce_row_elimination(),
+    content=(
+      #||0, 1, 0|
+      #||0, 0, 1|
+    ),
+  )
+}
+
+///|
 /// Tests the functionality of matrix combination operations.
 ///
 /// This test verifies that both horizontal and vertical matrix combination
@@ -346,14 +363,20 @@ test "rank of matrix" {
 
 ///|
 test "rank of matrix 2" {
-  let m1 : Matrix[Float] = Matrix::from_2d_array([[1, 2], [3, 4]]).from_nat_matrix()
-  let m2 : Matrix[Double] = Matrix::from_2d_array([[1, 2], [2, 4]]).from_nat_matrix()
-  let m3 : Matrix[Float] = Matrix::from_2d_array([[0, 0], [0, 0]]).from_nat_matrix()
+  let m1 : Matrix[Float] = Matrix::from_2d_array([[1, 2], [3, 4]]).map(fn(n) {
+    Integral::to_float(n)
+  })
+  let m2 : Matrix[Double] = Matrix::from_2d_array([[1, 2], [2, 4]]).map(fn(n) {
+    Integral::to_double(n)
+  })
+  let m3 : Matrix[Float] = Matrix::from_2d_array([[0, 0], [0, 0]]).map(fn(n) {
+    Integral::to_float(n)
+  })
   let m4 : Matrix[Double] = Matrix::from_2d_array([
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9],
-  ]).from_nat_matrix()
+  ]).map(fn(n) { Integral::to_double(n) })
   let r1 = m1.rank()
   let r2 = m2.rank()
   let r3 = m3.rank()
@@ -397,12 +420,16 @@ test "trace of matrix" {
 /// Tests trace calculation with different numeric types.
 test "trace with different types" {
   // Test with Float type
-  let m_float : Matrix[Float] = Matrix::from_2d_array([[1, 2], [3, 4]]).from_nat_matrix()
+  let m_float : Matrix[Float] = Matrix::from_2d_array([[1, 2], [3, 4]]).map(fn(n) {
+    Integral::to_float(n)
+  })
   let trace_float = m_float.trace()
   inspect(trace_float, content="5")
 
   // Test with Double type  
-  let m_double : Matrix[Double] = Matrix::from_2d_array([[2, 1], [1, 3]]).from_nat_matrix()
+  let m_double : Matrix[Double] = Matrix::from_2d_array([[2, 1], [1, 3]]).map(fn(n) {
+    Integral::to_double(n)
+  })
   let trace_double = m_double.trace()
   inspect(trace_double, content="5")
 }

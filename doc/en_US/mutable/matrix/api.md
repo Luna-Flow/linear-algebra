@@ -437,9 +437,9 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Num + Sub + Inverse] reduce_row_elimination(self) -> Matrix[T]`**
+  - **`fn[T : Compare + Field + Num] reduce_row_elimination(self) -> Matrix[T]`**
     - **Description**
-        Reduces the matrix to row echelon form using Gaussian elimination
+        Reduces the matrix to reduced row echelon form using Gauss-Jordan elimination over a field
 
     - **Parameters**
       - `self: Matrix[T]` - Matrix to reduce
@@ -563,7 +563,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] determinant(self) -> T`**
+  - **`fn[T : Compare + Field + Num + Tolerance] determinant(self) -> T`**
     - **Description**
         Computes the determinant value of a square matrix
 
@@ -582,7 +582,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Add + Default] trace(self) -> T`**
+  - **`fn[T : AddMonoid] trace(self) -> T`**
     - **Description**
         Computes the trace of a square matrix (sum of main diagonal elements). Panics for non-square matrices.
 
@@ -601,33 +601,32 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] eigen(self) -> (Array[T], Matrix[T])`**
+  - **`fn[T : Compare + Field + Num + Sqrt + Tolerance] eigen(self) -> (Vector[T], Matrix[T])`**
     - **Description**
-        Computes eigenvalues and eigenvectors of a square matrix
+        Computes eigenpairs for symmetric real matrices
 
     - **Parameters**
-      - `self: Matrix[T]` - Square matrix to compute eigenvalues and eigenvectors for
+      - `self: Matrix[T]` - Symmetric square matrix to compute eigenpairs for
 
     - **Returns**
-      `(Array[T], Matrix[T])` - First element is eigenvalue array, second element is eigenvector matrix
+      `(Vector[T], Matrix[T])` - Eigenvalue vector and a matrix whose columns are the corresponding eigenvectors
 
     - **Example**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[4.0, 2.0], [1.0, 3.0]])
+      let m = Matrix::from_2d_array([[6.0, -2.0], [-2.0, 9.0]])
       let (eigenvalues, eigenvectors) = m.eigen()
       ```
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] power_method(self, ~max_iterations : Int = 1000, ~tolerance_val : T? = None) -> (T, Vector[T])?`**
+  - **`fn[T : Compare + Field + Num + Tolerance] power_method(self, max_iterations) -> (T, Vector[T])?`**
     - **Description**
         Computes a best-effort dominant real eigenpair approximation using the power method
 
     - **Parameters**
       - `self: Matrix[T]` - Square matrix to compute for
-      - `max_iterations: Int` - Maximum number of iterations (default 1000)
-      - `tolerance_val: T?` - Convergence tolerance (optional)
+      - `max_iterations: Int` - Maximum number of iterations
 
     - **Returns**
       `(T, Vector[T])?` - `Some((lambda, v))` on convergence, or `None` if the iteration degenerates or does not converge within the limit
@@ -635,8 +634,8 @@ struct Matrix[T] {
     - **Example**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[4.0, 2.0], [1.0, 3.0]])
-      match m.power_method() {
+      let m = Matrix::from_2d_array([[6.0, -2.0], [-2.0, 9.0]])
+      match m.power_method(100) {
         Some((eigenvalue, eigenvector)) => ignore((eigenvalue, eigenvector))
         None => println("power method did not converge")
       }
@@ -644,9 +643,13 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Add + Div + Default] mean(self) -> T`**
+  - **`fn[T : Field] mean(self) -> T`**
     - **Description**
         Computes the mean of all elements in the matrix
+        entirely inside the scalar domain `T`. The implementation accumulates
+        both the element sum and the element count using `T::zero()` and
+        `T::one()`, so this API does not perform any hidden `Int -> T`
+        conversion.
 
     - **Parameters**
       - `self: Matrix[T]` - Matrix to compute mean for
@@ -657,15 +660,18 @@ struct Matrix[T] {
     - **Example**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+      let m = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
       let avg = m.mean()  // Compute mean: (1+2+3+4)/4 = 2.5
       ```
 
   ---
 
-  - **`fn[T : SMul[T] + Add + Div + Default] variance(self) -> T`**
+  - **`fn[T : Field] variance(self) -> T`**
     - **Description**
         Computes the variance of all elements in the matrix
+        entirely inside the scalar domain `T`. As with `mean`, the element
+        count is accumulated as a value of type `T` instead of being embedded
+        from an integer.
 
     - **Parameters**
       - `self: Matrix[T]` - Matrix to compute variance for
@@ -682,9 +688,11 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Add + Div + Sqrt[T] + Default] std_dev(self) -> T`**
+  - **`fn[T : Field + Sqrt] std_dev(self) -> T`**
     - **Description**
         Computes the standard deviation of all elements in the matrix
+        in the scalar domain `T`. This method builds on `variance`, so it also
+        avoids any hidden integer-to-scalar coercion.
 
     - **Parameters**
       - `self: Matrix[T]` - Matrix to compute standard deviation for
@@ -701,7 +709,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] is_symmetric(self) -> Bool`**
+  - **`fn[T : Compare + Num + Tolerance] is_symmetric(self) -> Bool`**
     - **Description**
         Checks if the matrix is symmetric
 
@@ -720,7 +728,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Tolerance[T] + Ord + Neg + Add + Mul + Div + Sqrt[T] + Default] is_positive_definite(self) -> Bool`**
+  - **`fn[T : Compare + Field + Num + Sqrt + Tolerance] is_positive_definite(self) -> Bool`**
     - **Description**
         Checks if the matrix is positive definite
 
@@ -739,7 +747,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : SMul[T] + Add + Neg + Mul + Default] matrix_power(self, n) -> Matrix[T]`**
+  - **`fn[T : Semiring] matrix_power(self, n) -> Matrix[T]`**
     - **Description**
         Computes the n-th power of a matrix
 
@@ -759,7 +767,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Add + Mul + Neg + Div + Default] frobenius_norm(self) -> T`**
+  - **`fn[T : AddMonoid + Mul + Sqrt] frobenius_norm(self) -> T`**
     - **Description**
         Computes the Frobenius norm of the matrix
 
@@ -772,7 +780,7 @@ struct Matrix[T] {
     - **Example**
 
       ```moonbit
-      let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+      let m = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
       let norm = m.frobenius_norm()  // Compute Frobenius norm
       ```
 
@@ -797,7 +805,7 @@ struct Matrix[T] {
 
     ---
 
-  - **`fn[T : Compare + Num + Sub + Inverse] Matrix::rank(self) -> Int`**
+  - **`fn[T : Compare + Field + Num + Tolerance] Matrix::rank(self) -> Int`**
     - **Description**
         Calculates the rank of the matrix using row reduction
 
@@ -933,7 +941,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Add + Mul + Sub + Neg + Num + Div + Sqrt + Tolerance] eigen(self) -> (Vector[T], Matrix[T])`**
+  - **`fn[T : Compare + Field + Num + Sqrt + Tolerance] eigen(self) -> (Vector[T], Matrix[T])`**
     - **Description**
         Computes eigenpairs for symmetric real matrices using the QR algorithm
 
@@ -957,7 +965,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Add + Mul + Sub + Div + Num + Tolerance] power_method(self, max_iterations) -> (T, Vector[T])?`**
+  - **`fn[T : Compare + Field + Num + Tolerance] power_method(self, max_iterations) -> (T, Vector[T])?`**
     - **Description**
         Computes a best-effort dominant real eigenpair approximation using the power method
 
@@ -983,7 +991,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Add + Mul + Sub + Num + Div + Sqrt + SMul] eigen_2x2(self) -> Vector[T]`**
+  - **`fn[T : Compare + Field + Num + Sqrt + Tolerance] eigen_2x2(self) -> Vector[T]`**
     - **Description**
         Computes eigenvalues for 2x2 matrices analytically
 
@@ -1006,7 +1014,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] determinant(self) -> T`**
+  - **`fn[T : Compare + Field + Num + Tolerance] determinant(self) -> T`**
     - **Description**
         Calculates the determinant of a square matrix using an efficient algorithm based on LU decomposition with partial pivoting
 
@@ -1028,7 +1036,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Num + Sub + Inverse + Zero + One + Tolerance + Div] inverse(self) -> Matrix[T]?`**
+  - **`fn[T : Compare + Field + Num + Tolerance] inverse(self) -> Matrix[T]?`**
     - **Description**
         Computes the inverse of a square matrix by solving against the identity matrix using the library's LU decomposition with partial pivoting
 
@@ -1053,7 +1061,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Compare + Sub + Mul + Div + Zero + One + Num + Tolerance] is_invertible(self) -> Bool`**
+  - **`fn[T : Compare + Field + Num + Tolerance] is_invertible(self) -> Bool`**
     - **Description**
         Checks if a matrix is invertible (non-singular)
 
@@ -1079,28 +1087,53 @@ struct Matrix[T] {
 
 ## Numeric Trait Definitions
 
-### SMul[T]
+### Field
 
 ```moonbit
-trait SMul[T] {
-  op_smul(T, T) -> T
+trait Field {
 }
 ```
 
 - **Description**
-  Scalar multiplication trait that defines scalar multiplication operations for type T
+  Field trait imported from `Luna-Flow/luna-generic` (typically aliased as
+  `@lg` in code), used for algorithms that require true division together with
+  additive and multiplicative structure.
 
-- **Methods**
-  - **`op_smul(T, T) -> T`**
-    - **Description**: Performs scalar multiplication operation
-    - **Parameters**: Two values of type T
-    - **Returns**: Result of multiplication
+### Integer-To-Float Mapping
 
-### Tolerance[T]
+- **Description**
+  This package no longer maintains a dedicated natural-number homomorphism trait.
+  If an integer matrix needs to flow into APIs that produce floating-point
+  results, import `Integral` from `Luna-Flow/luna-generic` (usually written as
+  `@lg` in code) and explicitly map it first with `Integral::to_float` or
+  `Integral::to_double`.
+
+- **Semantics**
+  Statistics APIs in this package are intentionally `T -> T`: they only operate
+  on the matrix's existing scalar type and count elements using `T::one()`.
+  Converting an integer matrix into a floating-point matrix is therefore an
+  explicit caller responsibility, not an implicit library behavior.
+
+- **Example**
+
+  ```moonbit
+  using @lg { trait Integral }
+
+  let ints = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let doubles = ints.map(fn(n) { Integral::to_double(n) })
+  let avg = doubles.mean()
+  ```
+
+- **Risk**
+  `Integral -> Float/Double` conversion may lose exactness outside the exact
+  integer range of the target floating-point type. Callers must handle that
+  precision risk themselves before conversion.
+
+### Tolerance
 
 ```moonbit
-trait Tolerance[T] {
-  tolerance() -> T
+trait Tolerance {
+  tolerance() -> Self
 }
 ```
 
@@ -1108,15 +1141,15 @@ trait Tolerance[T] {
   Tolerance trait that defines tolerance thresholds for numerical computations
 
 - **Methods**
-  - **`tolerance() -> T`**
-    - **Description**: Returns tolerance value for type T
+  - **`tolerance() -> Self`**
+    - **Description**: Returns tolerance value for the scalar type
     - **Returns**: Tolerance threshold
 
-### Sqrt[T]
+### Sqrt
 
 ```moonbit
-trait Sqrt[T] {
-  sqrt(T) -> T
+trait Sqrt {
+  sqrt(Self) -> Self
 }
 ```
 
@@ -1124,7 +1157,7 @@ trait Sqrt[T] {
   Square root trait that defines square root operations for type T
 
 - **Methods**
-  - **`sqrt(T) -> T`**
+  - **`sqrt(Self) -> Self`**
     - **Description**: Computes square root
     - **Parameters**: Value to compute square root for
     - **Returns**: Square root result

@@ -24,10 +24,3 @@ pub fn[M : HasShape] ensure_square(M) -> Unit
 pub(open) trait HasShape {
   fn shape(Self) -> (Int, Int)
 }
-
-pub trait HomomorphismNat {
-  fn from_nat(Int) -> Self
-}
-pub impl HomomorphismNat for Float
-pub impl HomomorphismNat for Double
-

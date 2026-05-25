@@ -172,7 +172,7 @@ test "vector tensor and matrix conversion laws stay aligned" {
   let mutable_w = @mutable.Vector::from_array([3, 4, 5])
   let mutable_diag_rhs = @mutable.Vector::from_array([3, 4])
 
-  inspect(
+  debug_inspect(
     imm_v.tensor_product(imm_w).to_array(),
     content="[3, 4, 5, 6, 8, 10]",
   )
