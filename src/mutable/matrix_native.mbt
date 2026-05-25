@@ -1704,8 +1704,8 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::eigen(
 ///|
 /// Implements the QR algorithm for computing eigenvalues and eigenvectors.
 /// 
-/// This is the core algorithm that iteratively applies QR decomposition
-/// to converge to a matrix with eigenvalues on the diagonal.
+/// This path first reduces the symmetric matrix to tridiagonal form and then
+/// applies an implicit symmetric tridiagonal iteration to recover eigenpairs.
 fn[T : Compare + Field + Num + Sqrt + Tolerance] qr_algorithm(
   matrix : Matrix[T],
 ) -> (Vector[T], Matrix[T]) {
@@ -1717,85 +1717,179 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] qr_algorithm(
       "qr_algorithm currently supports only symmetric real matrices; general real matrices require complex eigenvalue support",
     )
   }
+  let (diagonal, off_diagonal, eigenvectors) = householder_tridiagonalize(matrix)
+  symmetric_tridiagonal_eigen(diagonal, off_diagonal, eigenvectors)
+}
+
+///|
+fn[T : Compare + Field + Num + Sqrt + Tolerance] householder_tridiagonalize(
+  matrix : Matrix[T],
+) -> (Array[T], Array[T], Matrix[T]) {
   let n = matrix.row
-  let a = matrix.copy()
-  let q_total = identity(n)
-  let a_data = a.data
-  let q_total_data = q_total.data
-  let tol = T::tolerance()
-  let mut m = n
-  let max_iterations = 1000
-  while m > 1 {
-    if a_data[(m - 1) * n + (m - 2)].abs() <= tol {
-      a_data[(m - 1) * n + (m - 2)] = T::zero()
-      m -= 1
-      continue
-    }
-    let mut iter = 0
-    while iter < max_iterations && a_data[(m - 1) * n + (m - 2)].abs() > tol {
-      let two = T::one() + T::one()
-      let d = (a_data[(m - 2) * n + (m - 2)] - a_data[(m - 1) * n + (m - 1)]) /
-        two
-      let b = a_data[(m - 1) * n + (m - 2)]
-      let sign = if d < T::zero() { -T::one() } else { T::one() }
-      let den = d.abs() + (d * d + b * b).sqrt()
-      let mu = if den <= tol {
-        a_data[(m - 1) * n + (m - 1)] - b.abs()
-      } else {
-        a_data[(m - 1) * n + (m - 1)] - sign * b * b / den
+  let q = matrix.copy()
+  let q_data = q.data
+  let diagonal = Array::make(n, T::zero())
+  let off_diagonal = Array::make(n, T::zero())
+  if n == 0 {
+    return (diagonal, off_diagonal, q)
+  }
+  for i = n - 1; i >= 1; i = i - 1 {
+    let l = i - 1
+    let mut h = T::zero()
+    let mut scale = T::zero()
+    if l > 0 {
+      for k in 0..<(l + 1) {
+        scale = scale + q_data[i * n + k].abs()
       }
-      let mut x = a_data[0] - mu
-      let mut z = a_data[n]
-      for k in 0..<(m - 1) {
-        let norm = (x * x + z * z).sqrt()
-        if norm <= tol {
-          if k + 1 < m - 1 {
-            x = a_data[(k + 1) * n + k]
-            z = a_data[(k + 2) * n + k]
+      if scale <= T::tolerance() {
+        off_diagonal[i] = q_data[i * n + l]
+      } else {
+        for k in 0..<(l + 1) {
+          let idx = i * n + k
+          q_data[idx] /= scale
+          h = h + q_data[idx] * q_data[idx]
+        }
+        let f = q_data[i * n + l]
+        let g_abs = h.sqrt()
+        let g = if f >= T::zero() { -g_abs } else { g_abs }
+        off_diagonal[i] = scale * g
+        h = h - f * g
+        q_data[i * n + l] = f - g
+        let mut f_acc = T::zero()
+        for j in 0..<(l + 1) {
+          q_data[j * n + i] = q_data[i * n + j] / h
+          let mut g_acc = T::zero()
+          for k in 0..<(j + 1) {
+            g_acc = g_acc + q_data[j * n + k] * q_data[i * n + k]
           }
-          continue
+          for k in (j + 1)..<(l + 1) {
+            g_acc = g_acc + q_data[k * n + j] * q_data[i * n + k]
+          }
+          off_diagonal[j] = g_acc / h
+          f_acc = f_acc + off_diagonal[j] * q_data[i * n + j]
         }
-        let c = x / norm
-        let s = -z / norm
-        for j in k..<m {
-          let top_idx = k * n + j
-          let bottom_idx = (k + 1) * n + j
-          let top = a_data[top_idx]
-          let bottom = a_data[bottom_idx]
-          a_data[top_idx] = c * top - s * bottom
-          a_data[bottom_idx] = s * top + c * bottom
+        let hh = f_acc / (h + h)
+        for j in 0..<(l + 1) {
+          let f_j = q_data[i * n + j]
+          let g_j = off_diagonal[j] - hh * f_j
+          off_diagonal[j] = g_j
+          for k in 0..<(j + 1) {
+            let idx = j * n + k
+            q_data[idx] = q_data[idx] -
+              (f_j * off_diagonal[k] + g_j * q_data[i * n + k])
+          }
         }
-        for i in 0..<m {
-          let left_idx = i * n + k
-          let right_idx = i * n + (k + 1)
-          let left = a_data[left_idx]
-          let right = a_data[right_idx]
-          a_data[left_idx] = c * left - s * right
-          a_data[right_idx] = s * left + c * right
+      }
+    } else {
+      off_diagonal[i] = q_data[i * n + l]
+    }
+    diagonal[i] = h
+  }
+  diagonal[0] = T::zero()
+  off_diagonal[0] = T::zero()
+  for i in 0..<n {
+    let l = i - 1
+    if diagonal[i].abs() > T::tolerance() && l >= 0 {
+      for j in 0..<(l + 1) {
+        let mut g = T::zero()
+        for k in 0..<(l + 1) {
+          g = g + q_data[i * n + k] * q_data[k * n + j]
         }
-        for i in 0..<n {
-          let left_idx = i * n + k
-          let right_idx = i * n + (k + 1)
-          let left = q_total_data[left_idx]
-          let right = q_total_data[right_idx]
-          q_total_data[left_idx] = c * left - s * right
-          q_total_data[right_idx] = s * left + c * right
+        for k in 0..<(l + 1) {
+          q_data[k * n + j] = q_data[k * n + j] - g * q_data[k * n + i]
         }
-        if k + 1 < m - 1 {
-          x = a_data[(k + 1) * n + k]
-          z = a_data[(k + 2) * n + k]
-        }
+      }
+    }
+    diagonal[i] = q_data[i * n + i]
+    q_data[i * n + i] = T::one()
+    if l >= 0 {
+      for j in 0..<(l + 1) {
+        q_data[j * n + i] = T::zero()
+        q_data[i * n + j] = T::zero()
+      }
+    }
+  }
+  (diagonal, off_diagonal, q)
+}
+
+///|
+fn[T : Compare + Field + Num + Sqrt + Tolerance] symmetric_tridiagonal_eigen(
+  diagonal : Array[T],
+  off_diagonal : Array[T],
+  eigenvectors : Matrix[T],
+) -> (Vector[T], Matrix[T]) {
+  let n = diagonal.length()
+  if n == 0 {
+    return (Vector::from_array([]), eigenvectors)
+  }
+  let d = diagonal
+  let e = off_diagonal
+  let z_data = eigenvectors.data
+  for i in 1..<n {
+    e[i - 1] = e[i]
+  }
+  e[n - 1] = T::zero()
+  let tol = T::tolerance()
+  let two = T::one() + T::one()
+  for l in 0..<n {
+    let mut iter = 0
+    while true {
+      let mut m = l
+      while m < n - 1 &&
+        e[m].abs() > tol * (d[m].abs() + d[m + 1].abs() + T::one()) {
+        m += 1
+      }
+      if m == l {
+        break
+      }
+      if iter >= 60 {
+        abort("symmetric_tridiagonal_eigen did not converge")
       }
       iter += 1
+      let mut g = (d[l + 1] - d[l]) / (two * e[l])
+      let mut r = (g * g + T::one()).sqrt()
+      if g < T::zero() {
+        r = -r
+      }
+      g = d[m] - d[l] + e[l] / (g + r)
+      let mut s = T::one()
+      let mut c = T::one()
+      let mut p = T::zero()
+      for i = m - 1; i >= l; i = i - 1 {
+        let f = s * e[i]
+        let b = c * e[i]
+        if f.abs() >= g.abs() {
+          c = g / f
+          r = (c * c + T::one()).sqrt()
+          e[i + 1] = f * r
+          s = T::one() / r
+          c = c * s
+        } else {
+          s = f / g
+          r = (s * s + T::one()).sqrt()
+          e[i + 1] = g * r
+          c = T::one() / r
+          s = s * c
+        }
+        g = d[i + 1] - p
+        r = (d[i] - g) * s + two * c * b
+        p = s * r
+        d[i + 1] = g + p
+        g = c * r - b
+        for k in 0..<n {
+          let idx_right = k * n + (i + 1)
+          let idx_left = k * n + i
+          let value = z_data[idx_right]
+          z_data[idx_right] = s * z_data[idx_left] + c * value
+          z_data[idx_left] = c * z_data[idx_left] - s * value
+        }
+      }
+      d[l] = d[l] - p
+      e[l] = g
+      e[m] = T::zero()
     }
-    if a_data[(m - 1) * n + (m - 2)].abs() <= tol {
-      a_data[(m - 1) * n + (m - 2)] = T::zero()
-    }
-    m -= 1
   }
-
-  let eigenvalues = Vector::makei(n, i => a_data[i * n + i])
-  (eigenvalues, q_total)
+  (Vector::from_array(d.copy()), eigenvectors)
 }
 
 ///|

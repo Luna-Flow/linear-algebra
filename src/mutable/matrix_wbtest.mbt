@@ -572,6 +572,39 @@ test "eigenvector verification" {
 }
 
 ///|
+test "eigenvector verification/3x3_symmetric" {
+  let m = Matrix::from_2d_array([
+    [4.0, 1.0, 1.0],
+    [1.0, 3.0, 0.0],
+    [1.0, 0.0, 2.0],
+  ])
+  let (eigenvals, eigenvecs) = m.eigen()
+
+  fn vectors_are_close(
+    v1 : Vector[Double],
+    v2 : Vector[Double],
+    tol : Double,
+  ) -> Bool {
+    if v1.length() != v2.length() {
+      return false
+    }
+    for i in 0..<v1.length() {
+      if (v1[i] - v2[i]).abs() > tol {
+        return false
+      }
+    }
+    true
+  }
+
+  for i in 0..<3 {
+    let v = eigenvecs.col_to_vector(i)
+    let lhs = m.mul_vec(v)
+    let rhs = v.map(x => x * eigenvals[i])
+    inspect(vectors_are_close(lhs, rhs, 1.0e-6), content="true")
+  }
+}
+
+///|
 /// Tests the determinant calculation for various matrices.
 test "determinant calculation" {
   // Test 2x2 matrix
