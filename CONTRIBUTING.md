@@ -142,6 +142,14 @@ Developers are encouraged to use MoonBit LSP’s AI-generated code comments to i
 - Keep commits small and focused on a single feature or fix.
 - Avoid large, monolithic commits that include multiple unrelated changes.
 
+## 5.3 Release Checklist
+
+- Before publishing to mooncakes, bump the version in `moon.mod.json`.
+- Update `README.md` if the current package summary or release notes no longer match the repository state.
+- Run `moon check` and the repository test workflow locally before publishing.
+- When triggering the GitHub Actions publish workflow, enter the exact same version string as the one in `moon.mod.json`.
+- If mooncakes reports a duplicate version, do not retry the same version. Bump the version first.
+
 ## 6. Code Review
 
 - If you are not a maintainer or collaborator, contact them before modifying dependencies or version numbers in `moon.mod.json`.
