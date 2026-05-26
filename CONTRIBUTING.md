@@ -1,6 +1,7 @@
 # Contribution Guidelines
 
-View Contribution Guidelines in [zh_CN](https://github.com/Luna-Flow/linear-algebra/tree/main/doc/zh_CN/CONTRIBUTING.md) | [ja_JP](https://github.com/Luna-Flow/linear-algebra/tree/main/doc/ja_JP/CONTRIBUTING.md)
+This guide tracks the current repository workflow and follows the same release
+baseline as the rest of the docs: **`0.2.10`**.
 
 ## To Contributors
 
@@ -144,15 +145,15 @@ Developers are encouraged to use MoonBit LSP’s AI-generated code comments to i
 
 ## 5.3 Release Checklist
 
-- Before publishing to mooncakes, bump the version in `moon.mod.json`.
+- Before publishing to mooncakes, make sure `moon.mod` has already been bumped to the intended unreleased version.
 - Update `README.md` if the current package summary or release notes no longer match the repository state.
 - Run `moon check` and the repository test workflow locally before publishing.
-- When triggering the GitHub Actions publish workflow, enter the exact same version string as the one in `moon.mod.json`.
+- When triggering the GitHub Actions publish workflow, enter the exact same version string as the one in `moon.mod`.
 - If mooncakes reports a duplicate version, do not retry the same version. Bump the version first.
 
 ## 6. Code Review
 
-- If you are not a maintainer or collaborator, contact them before modifying dependencies or version numbers in `moon.mod.json`.
+- If you are not a maintainer or collaborator, contact them before modifying dependencies or version numbers in `moon.mod`.
 - All code submissions must undergo **code review**.
 - Code reviews should focus on code quality, style, performance, and security.
 - Reviewers should provide constructive feedback to improve the code.

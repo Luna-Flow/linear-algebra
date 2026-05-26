@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       release_version:
-        description: "Version to publish. Must exactly match moon.mod.json."
+        description: "Version to publish. Must exactly match moon.mod."
         required: true
         type: string
 jobs:
@@ -22,8 +22,11 @@ jobs:
           moonrun --version
       - name: verify release version
         run: |
-          PKG_VERSION=$(sed -n 's/.*"version": "\(.*\)",/\1/p' moon.mod.json)
-          echo "moon.mod.json version: $PKG_VERSION"
+          test -f moon.mod
+          test ! -f moon.mod.json
+          test -f README.md
+          PKG_VERSION=$(sed -n 's/^version = "\(.*\)"$/\1/p' moon.mod)
+          echo "moon.mod version: $PKG_VERSION"
           echo "workflow input version: ${{ inputs.release_version }}"
           test -n "$PKG_VERSION"
           test "$PKG_VERSION" = "${{ inputs.release_version }}"

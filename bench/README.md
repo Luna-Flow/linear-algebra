@@ -1,7 +1,15 @@
 # Benchmarking
 
-This repository ships a benchmark harness for comparing the `mutable` package
-across MoonBit backends and, optionally, against a Rust `nalgebra` baseline.
+This benchmark documentation reflects the current repository state and stays
+aligned with the current package baseline.
+
+This repository ships a steady-state benchmark harness for comparing the
+`mutable` package across MoonBit backends and, optionally, against a Rust
+`nalgebra` public-API baseline with minimal local fallbacks for operations
+without a direct one-call API.
+
+A scheduled GitHub Actions workflow at `.github/workflows/benchmark.yml` runs
+the benchmark matrix in CI and uploads the generated result artifacts.
 
 ## Fixtures
 
@@ -42,8 +50,21 @@ just bench-web
 
 Then open `http://127.0.0.1:8123`.
 
+The benchmark runner builds MoonBit benchmarks with `moon bench --release` and
+the Rust baseline with Cargo's `bench` profile inheriting `release`.
+Use `just bench-clean` only when you explicitly want a cold rebuild.
+
 ## Output
 
 - `bench/results/summary.md`
 - `bench/results/summary.json`
 - `bench/results/raw/summary.json`
+
+`bench/results/summary.json` is the canonical benchmark exchange format. The
+markdown summary and local web dashboard are derived from the same schema.
+
+All reported rows are steady-state benchmark measurements. Cold-start timing is
+not collected, stored, or rendered.
+
+`src/perf_runner` remains available for single-case checksum diagnostics, but
+its JSON payload is not part of the benchmark result schema.
