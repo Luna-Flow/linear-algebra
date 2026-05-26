@@ -1,5 +1,7 @@
 # @mutable.Vector
 
+This page tracks the current repository implementation and is written as the `0.2.11` API baseline.
+
 ---
 
 ## @mutable.Vector[T]
@@ -15,6 +17,11 @@ pub struct Vector[T](Array[T])
 
 - **Description**
   Represents a mutable vector, which is a wrapper around `Array[T]`. Elements can be accessed and modified via indexing.
+
+### Semantic Notes
+
+- `@mutable.Vector` is mutation-oriented: indexing writes and `*_inplace` APIs modify the existing value.
+- The non-`inplace` algebraic helpers still return fresh vectors so that code can choose between execution-oriented mutation and value-producing transforms explicitly.
 
 - **Functions and Methods**
 

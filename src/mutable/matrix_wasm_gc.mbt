@@ -1966,6 +1966,7 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
     abort("Matrix::power_method requires a non-empty square matrix")
   }
   let tol = T::tolerance()
+  let result = Array::make(n, T::zero())
   let x = Array::make(n, T::one())
   let y = Array::make(n, T::zero())
   let ax = Array::make(n, T::zero())
@@ -2004,7 +2005,10 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
       }
     }
     if residual <= tol {
-      return Some((lambda, Vector(x.copy())))
+      for i in 0..<n {
+        result[i] = x[i]
+      }
+      return Some((lambda, Vector(result)))
     }
   }
   None

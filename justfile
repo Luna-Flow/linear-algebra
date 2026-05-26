@@ -10,17 +10,18 @@ bench-generate:
 
 bench:
   just bench-generate
-  moon clean --target-dir "{{bench-target-dir}}"
   BENCH_FLAGS="--target-dir {{bench-target-dir}} ${BENCH_FLAGS:-}" python3 bench/run.py
 
 bench-smoke:
   just bench-generate
-  moon clean --target-dir "{{bench-target-dir}}"
   BENCH_FLAGS="--smoke --target-dir {{bench-target-dir}} ${BENCH_FLAGS:-}" python3 bench/run.py
 
 bench-web:
   just bench-generate
   python3 bench/web/server.py
+
+bench-clean:
+  moon clean --target-dir "{{bench-target-dir}}"
 
 bench-python-check:
   PYTHONDONTWRITEBYTECODE=1 python3 -m py_compile bench/run.py bench/generate_fixtures.py bench/web/server.py

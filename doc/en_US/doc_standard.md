@@ -1,5 +1,7 @@
 # Documentation Standard
 
+This repository's documentation should describe the **current implementation on the branch**. As of `2026-05-26`, the active documentation baseline is **`0.2.11`**.
+
 ## Document Types and Organization
 
 ### Main Document Types
@@ -14,7 +16,7 @@
 - Organized by package/file, for example:
   
   ```txt
-  docs/
+  doc/
     |- en_US
     |- ja_JP 
     |- zh_CN
@@ -33,6 +35,7 @@
 
 - Further subdivided by `vector`, `matrix` etc. files under each package
 - Maintain consistency between documentation and code structure
+- Do not document unreleased APIs unless they already exist in the repository implementation
 
 ## Shared Rules For `mutable` And `immutable`
 

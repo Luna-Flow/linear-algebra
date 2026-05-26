@@ -24,3 +24,4 @@ pub fn[M : HasShape] ensure_square(M) -> Unit
 pub(open) trait HasShape {
   fn shape(Self) -> (Int, Int)
 }
+

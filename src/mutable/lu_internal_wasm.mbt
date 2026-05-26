@@ -108,3 +108,46 @@ fn[T : Compare + Field + Num + Tolerance] LuDecomposition::solve_internal(
   }
   Some(x)
 }
+
+fn[T : Compare + Field + Num + Tolerance] LuDecomposition::solve_identity_internal(
+  self : LuDecomposition[T],
+) -> Matrix[T]? {
+  if self.singular {
+    return None
+  }
+  let n = self.lu.row
+  let lu_data = self.lu.data
+  let permutation = self.permutation
+  let work = Array::make(n, T::zero())
+  let x = Matrix::new(n, n, T::zero())
+  let x_data = x.data
+  for rhs_col in 0..<n {
+    for i in 0..<n {
+      let mut acc = if permutation[i] == rhs_col {
+        T::one()
+      } else {
+        T::zero()
+      }
+      let row_offset = i * n
+      for k in 0..<i {
+        acc = acc - lu_data[row_offset + k] * work[k]
+      }
+      work[i] = acc
+    }
+    for step in 0..<n {
+      let i = n - 1 - step
+      let pivot_offset = i * n + i
+      let pivot = lu_data[pivot_offset]
+      if pivot.abs() < T::tolerance() {
+        return None
+      }
+      let mut acc = work[i]
+      let row_offset = i * n
+      for k in (i + 1)..<n {
+        acc = acc - lu_data[row_offset + k] * x_data[k * n + rhs_col]
+      }
+      x_data[row_offset + rhs_col] = acc / pivot
+    }
+  }
+  Some(x)
+}

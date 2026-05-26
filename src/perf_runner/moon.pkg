@@ -1,5 +1,7 @@
 import {
+  "moonbitlang/core/bench",
   "moonbitlang/core/env",
+  "moonbitlang/core/string",
   "Luna-Flow/linear-algebra/perf_support" @support,
 }
 

@@ -76,7 +76,9 @@ pub fn run_prepared_case_once(prepared : PreparedCase) -> UInt64 {
       checksum_int(prepared.matrix_a.rank())
     }
     "reduce_row_elimination" => {
-      checksum_matrix(prepared.matrix_a.reduce_row_elimination())
+      // Benchmark runs reuse one prepared case, so mutating kernels must work
+      // on a fresh matrix to keep every timed iteration comparable.
+      checksum_matrix(prepared.matrix_a.copy().reduce_row_elimination())
     }
     "cholesky_decomposition" => {
       match prepared.matrix_a.cholesky_decomposition() {
@@ -131,8 +133,8 @@ fn[T : AddMonoid + Field + Num] require_numeric_traits(_ : T) -> Unit {
 }
 
 ///|
-pub fn case_json_payload(case_item : Case, checksum : UInt64) -> String {
-  "{\"dataset_version\":\"" +
+pub fn case_diagnostic_payload(case_item : Case, checksum : UInt64) -> String {
+  "{\"kind\":\"diagnostic\",\"dataset_version\":\"" +
   dataset_version +
   "\",\"case_id\":\"" +
   case_item.id +

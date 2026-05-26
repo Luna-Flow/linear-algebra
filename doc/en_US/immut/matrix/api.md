@@ -1,5 +1,7 @@
 # @immut.Matrix
 
+This page tracks the current repository implementation and is written as the `0.2.11` API baseline.
+
 ---
 
 ## @immut.Matrix[T]
@@ -20,6 +22,7 @@ struct Matrix[T] {
 - `@immut.Matrix` uses value semantics. Operations such as `set`, `swap_rows`, and `swap_cols` return a new matrix instead of mutating the original value.
 - The `m[row][col]` syntax is a read-only convenience accessor built on `Indexed[T]`.
 - This package is the baseline for shared algebraic behavior. It intentionally does not provide `inplace` update APIs or transpose-view mutation facilities.
+- In `0.2.11`, this package remains the semantic reference point for APIs shared with `@mutable`.
 
 - **Fields**
   - `row` - The number of rows.

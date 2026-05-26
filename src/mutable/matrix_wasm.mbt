@@ -1978,9 +1978,11 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
     abort("Matrix::power_method requires a non-empty square matrix")
   }
   let tol = T::tolerance()
-  let mut x = Vector::makei(n, _ => T::one())
+  let x = Array::make(n, T::one())
+  let y = Array::make(n, T::zero())
+  let ax = Array::make(n, T::zero())
   for _ in 0..<max_iterations {
-    let y = self.mul_vec(x)
+    self.mul_vec_into(Vector(x), y)
     let mut scale = T::zero()
     for i in 0..<n {
       let candidate = y[i].abs()
@@ -1991,13 +1993,16 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
     if scale <= tol {
       return None
     }
-    x = y.map(v => v / scale)
-    let ax = self.mul_vec(x)
+    for i in 0..<n {
+      x[i] = y[i] / scale
+    }
+    self.mul_vec_into(Vector(x), ax)
     let mut numerator = T::zero()
     let mut denominator = T::zero()
     for i in 0..<n {
-      numerator = numerator + x[i] * ax[i]
-      denominator = denominator + x[i] * x[i]
+      let xi = x[i]
+      numerator = numerator + xi * ax[i]
+      denominator = denominator + xi * xi
     }
     if denominator.abs() <= tol {
       return None
@@ -2011,7 +2016,7 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
       }
     }
     if residual <= tol {
-      return Some((lambda, x))
+      return Some((lambda, Vector(x.copy())))
     }
   }
   None
@@ -2040,16 +2045,34 @@ pub fn[T : AddMonoid + Mul] Matrix::mul_vec(
     abort("Matrix and vector dimensions are not compatible for multiplication")
   }
   let res_data = Array::make(m, T::zero())
+  self.mul_vec_into(vector, res_data)
+  Vector(res_data)
+}
+
+fn[T : AddMonoid + Mul] Matrix::mul_vec_into(
+  self : Matrix[T],
+  vector : Vector[T],
+  out : Array[T],
+) -> Unit {
+  let m = self.row
+  let n = self.col
+  let v_data = vector.0
+  guard n == v_data.length() else {
+    abort("Matrix and vector dimensions are not compatible for multiplication")
+  }
+  guard m == out.length() else {
+    abort("Output buffer length mismatch for matrix-vector multiplication")
+  }
+  let data = self.data
   let mut idx = 0
   for i = 0; i < m; i = i + 1 {
     let mut sum = T::zero()
     for j = 0; j < n; j = j + 1 {
-      sum = sum + self.data[idx] * v_data[j]
+      sum = sum + data[idx] * v_data[j]
       idx += 1
     }
-    res_data[i] = sum
+    out[i] = sum
   }
-  Vector(res_data)
 }
 
 ///|
@@ -2236,7 +2259,7 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::inverse(
   if lu.singular {
     return None
   }
-  lu.solve_internal(identity(n))
+  lu.solve_identity_internal()
 }
 
 ///|

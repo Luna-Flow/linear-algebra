@@ -98,8 +98,7 @@ h1 {
   transition: transform 180ms ease, background 180ms ease;
 }
 
-.action:hover,
-.phase-button:hover {
+.action:hover {
   transform: translateY(-1px);
 }
 
@@ -133,27 +132,6 @@ h1 {
   align-items: end;
   gap: 18px;
   margin-bottom: 28px;
-}
-
-.phase-switch {
-  display: inline-flex;
-  gap: 8px;
-  padding: 6px;
-  border-radius: 999px;
-  background: rgba(24, 32, 40, 0.06);
-}
-
-.phase-button {
-  border: none;
-  border-radius: 999px;
-  padding: 10px 14px;
-  background: transparent;
-  cursor: pointer;
-}
-
-.phase-button.active {
-  background: white;
-  box-shadow: 0 8px 18px rgba(24, 32, 40, 0.08);
 }
 
 .chart-card {
@@ -249,6 +227,42 @@ h1 {
   width: min(100%, 760px);
 }
 
+.overall-metadata {
+  margin-top: 8px;
+}
+
+.metadata-card {
+  display: grid;
+  gap: 10px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(24, 32, 40, 0.08);
+}
+
+.metadata-row {
+  display: grid;
+  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.metadata-label,
+.metadata-value {
+  font-family: Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.metadata-label {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.metadata-value {
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
 .chart-canvas {
   display: block;
   width: 100%;
@@ -265,5 +279,10 @@ h1 {
   .operation-head {
     align-items: start;
     flex-direction: column;
+  }
+
+  .metadata-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 }

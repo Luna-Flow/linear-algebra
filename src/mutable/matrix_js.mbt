@@ -747,54 +747,20 @@ pub impl[T : AddMonoid + Mul] Mul for Matrix[T] with mul(
   let col = other.col
   let inner = self.col
   guard inner == other.row
-  // Hybrid Strategy for Performance:
-  // 1. Small Case (N <= 64): Use i-j-k (dot-product) order to maximize register accumulation.
-  //    Manual indexing hoisting is applied here to minimize instructions in the innermost loop.
-  // 2. Large Case (N > 64): Use i-k-j (scan line) order to maximize L1/L2 cache locality.
-  //    Natural indexing (i * n + j) is preferred to trigger compiler strength reduction and bounds check elimination.
-  // Optimization: Transpose 'other' (B) to 'b_t' so that we can access columns of B continuously.
-  // This changes the access pattern from random (strided) to sequential, which is much faster.
-  // Threshold selected to balance the cost of transposition vs cache misses.
-  if col >= 16 && inner >= 16 {
-    let b_t = Array::make(col * inner, T::zero())
-    for r = 0; r < inner; r = r + 1 {
-      let r_off = r * col
-      for c = 0; c < col; c = c + 1 {
-        b_t[c * inner + r] = other.data[r_off + c]
-      }
-    }
-    let data = Array::make(row * col, T::zero())
-    let mut data_idx = 0
-    for i = 0; i < row; i = i + 1 {
-      let a_row_off = i * inner
+  let data = Array::make(row * col, T::zero())
+  let mut res_idx = 0
+  for i = 0; i < row; i = i + 1 {
+    let self_row_start = i * inner
+    for k = 0; k < inner; k = k + 1 {
+      let aik = self.data[self_row_start + k]
+      let other_row_start = k * col
       for j = 0; j < col; j = j + 1 {
-        let b_row_off = j * inner
-        let mut sum = T::zero()
-        for k = 0; k < inner; k = k + 1 {
-          sum = sum + self.data[a_row_off + k] * b_t[b_row_off + k]
-        }
-        data[data_idx] = sum
-        data_idx = data_idx + 1
+        data[res_idx + j] = data[res_idx + j] + aik * other.data[other_row_start + j]
       }
     }
-    { row, col, data }
-  } else {
-    // Fallback for smaller matrices: standard i-j-k loop
-    // This avoids the allocation overhead of transposition for small N.
-    let data = Array::make(row * col, T::zero())
-    for i = 0; i < row; i = i + 1 {
-      let row_offset = i * col
-      let self_row_offset = i * inner
-      for j = 0; j < col; j = j + 1 {
-        let mut sum = T::zero()
-        for k = 0; k < inner; k = k + 1 {
-          sum = sum + self.data[self_row_offset + k] * other.data[k * col + j]
-        }
-        data[row_offset + j] = sum
-      }
-    }
-    { row, col, data }
+    res_idx += col
   }
+  { row, col, data }
 }
 
 ///|
@@ -2008,9 +1974,11 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
     abort("Matrix::power_method requires a non-empty square matrix")
   }
   let tol = T::tolerance()
-  let mut x = Vector::makei(n, _ => T::one())
+  let x = Array::make(n, T::one())
+  let y = Array::make(n, T::zero())
+  let ax = Array::make(n, T::zero())
   for _ in 0..<max_iterations {
-    let y = self.mul_vec(x)
+    self.mul_vec_into(Vector(x), y)
     let mut scale = T::zero()
     for i in 0..<n {
       let candidate = y[i].abs()
@@ -2021,13 +1989,16 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
     if scale <= tol {
       return None
     }
-    x = y.map(v => v / scale)
-    let ax = self.mul_vec(x)
+    for i in 0..<n {
+      x[i] = y[i] / scale
+    }
+    self.mul_vec_into(Vector(x), ax)
     let mut numerator = T::zero()
     let mut denominator = T::zero()
     for i in 0..<n {
-      numerator = numerator + x[i] * ax[i]
-      denominator = denominator + x[i] * x[i]
+      let xi = x[i]
+      numerator = numerator + xi * ax[i]
+      denominator = denominator + xi * xi
     }
     if denominator.abs() <= tol {
       return None
@@ -2041,7 +2012,7 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
       }
     }
     if residual <= tol {
-      return Some((lambda, x))
+      return Some((lambda, Vector(x.copy())))
     }
   }
   None
@@ -2070,16 +2041,34 @@ pub fn[T : AddMonoid + Mul] Matrix::mul_vec(
     abort("Matrix and vector dimensions are not compatible for multiplication")
   }
   let res_data = Array::make(m, T::zero())
+  self.mul_vec_into(vector, res_data)
+  Vector(res_data)
+}
+
+fn[T : AddMonoid + Mul] Matrix::mul_vec_into(
+  self : Matrix[T],
+  vector : Vector[T],
+  out : Array[T],
+) -> Unit {
+  let m = self.row
+  let n = self.col
+  let v_data = vector.0
+  guard n == v_data.length() else {
+    abort("Matrix and vector dimensions are not compatible for multiplication")
+  }
+  guard m == out.length() else {
+    abort("Output buffer length mismatch for matrix-vector multiplication")
+  }
+  let data = self.data
   let mut idx = 0
   for i = 0; i < m; i = i + 1 {
     let mut sum = T::zero()
     for j = 0; j < n; j = j + 1 {
-      sum = sum + self.data[idx] * v_data[j]
+      sum = sum + data[idx] * v_data[j]
       idx += 1
     }
-    res_data[i] = sum
+    out[i] = sum
   }
-  Vector(res_data)
 }
 
 ///|
@@ -2266,7 +2255,7 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::inverse(
   if lu.singular {
     return None
   }
-  lu.solve_internal(identity(n))
+  lu.solve_identity_internal()
 }
 
 ///|

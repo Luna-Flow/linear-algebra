@@ -1,5 +1,7 @@
 # @mutable.Matrix
 
+This page tracks the current repository implementation and is written as the `0.2.11` API baseline.
+
 ---
 
 ## @mutable.Matrix[T]
@@ -8,7 +10,7 @@
 struct Matrix[T] {
   row : Int
   col : Int
-  // backend-specific internal storage
+  data : Array[T]
 } derive(Eq)
 ```
 
@@ -25,13 +27,15 @@ struct Matrix[T] {
 - **Bulk Operations**: Prefer built-in tools like `.each_row_col()` or `.map_inplace()` over manual loops with indexing for maximum optimization.
 
 - **Description**
-  This struct represents a mutable matrix for execution-oriented workloads. Internal storage is backend-specific: the JS target uses nested arrays, while Native and Wasm targets use flat row-major storage. The documented algebraic behavior is intended to remain aligned across targets.
+  This struct represents a mutable matrix for execution-oriented workloads. In `0.2.11`, the public storage model is a shared flat `Array[T]` in row-major order across backends, while individual kernels may still be tuned per target.
 
 ### Semantic Notes
 
 - `@mutable.Matrix` is intentionally mutation-oriented. Operations such as `set`, `swap_rows`, `swap_cols`, and `map_inplace` modify the matrix in place.
 - The package exposes extra execution APIs such as `RowView`, `ColView`, `Transpose`, in-place row/column transforms, and decomposition-oriented helpers. These are not expected to match `immut` one-for-one.
 - For code shared across the two packages, rely on the common algebraic surface (`make`, `map`, `transpose`, `+`, `-`, `*`, `trace`, conversions) rather than assuming identical accessor or mutation semantics.
+- `RowView` and `ColView` are live views over the underlying matrix. Conversions such as `to_array()` and `to_vector()` materialize copies, while `get`, `set`, `map_inplace`, `iter`, `each`, and `eachi` operate on the linked view.
+- The earlier backend-specific storage divergence has effectively been flattened away at the matrix data-model level; what remains backend-specific is execution tuning, not the main container shape.
 
 - **Fields**
   - `row` - Number of rows in the matrix

@@ -1,5 +1,7 @@
 # @immut.Vector
 
+This page tracks the current repository implementation and is written as the `0.2.11` API baseline.
+
 ---
 
 ## @immut.Vector[T]
@@ -12,6 +14,12 @@ struct Vector[T] {
 
 - **Description**
   Represents an immutable vector. Internally it is backed by `VecCore[T]`, the package alias for the core persistent vector storage. The public library alias for this abstraction is `VecLib[T]`.
+
+### Semantic Notes
+
+- `@immut.Vector` uses value semantics consistently: operations such as `set`, `map`, `left_scale`, and `right_scale` return new values.
+- This package is intended to stay aligned with the shared algebraic subset exposed by `@mutable.Vector`, while intentionally excluding in-place mutation APIs.
+- The optimized core immutable vector implementation is now part of the library's storage story, not just an internal detail, because it supports the flattened and more uniform execution model across packages.
 
 - **Fields**
   - `data` - The immutable array containing the vector elements.

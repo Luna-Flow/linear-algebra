@@ -63,26 +63,17 @@ const familyLabels = {
   permutation_square: "Permutation square",
 };
 
-let currentPhase = "warm";
-let latestResults = { rows: [] };
+let latestResults = { mode: "steady_state", rows: [] };
 let autoRefresh = true;
 
 const operationsEl = document.getElementById("operations");
 const overallChartEl = document.getElementById("overall-chart");
+const overallMetadataEl = document.getElementById("overall-metadata");
 
 document.getElementById("rerun-full").addEventListener("click", () => triggerRun(false));
 document.getElementById("rerun-smoke").addEventListener("click", () => triggerRun(true));
 document.getElementById("auto-refresh").addEventListener("change", (event) => {
   autoRefresh = event.target.checked;
-});
-
-document.querySelectorAll(".phase-button").forEach((button) => {
-  button.addEventListener("click", () => {
-    currentPhase = button.dataset.phase;
-    document.querySelectorAll(".phase-button").forEach((node) => node.classList.remove("active"));
-    button.classList.add("active");
-    render();
-  });
 });
 
 function toMs(ns) {
@@ -94,7 +85,7 @@ function sizeMetric(row) {
 }
 
 function groupedRows() {
-  return latestResults.rows.filter((row) => row.phase === currentPhase && row.status === "ok");
+  return latestResults.rows.filter((row) => row.status === "ok");
 }
 
 function aggregateByBackend(rows) {
@@ -109,6 +100,37 @@ function aggregateByBackend(rows) {
     .map(([key, values]) => ({
       key,
       value: values.reduce((sum, item) => sum + item, 0) / values.length,
+    }))
+    .sort((a, b) => compareBackendKey(a.key, b.key));
+}
+
+function aggregateRelativeByBackend(rows) {
+  const ratiosByBackend = new Map();
+  const cases = new Map();
+  for (const row of rows) {
+    const list = cases.get(row.case_id) ?? [];
+    list.push(row);
+    cases.set(row.case_id, list);
+  }
+
+  for (const caseRows of cases.values()) {
+    const rustBaseline = caseRows.find((row) => `${row.toolchain}/${row.backend}` === "rust-nalgebra/native");
+    const baseline = rustBaseline?.median_ns ?? Math.min(...caseRows.map((row) => row.median_ns).filter((value) => value > 0));
+    if (!Number.isFinite(baseline) || baseline <= 0) {
+      continue;
+    }
+    for (const row of caseRows) {
+      const key = `${row.toolchain}/${row.backend}`;
+      const ratios = ratiosByBackend.get(key) ?? [];
+      ratios.push(row.median_ns / baseline);
+      ratiosByBackend.set(key, ratios);
+    }
+  }
+
+  return [...ratiosByBackend.entries()]
+    .map(([key, ratios]) => ({
+      key,
+      value: Math.exp(ratios.reduce((sum, ratio) => sum + Math.log(ratio), 0) / ratios.length),
     }))
     .sort((a, b) => compareBackendKey(a.key, b.key));
 }
@@ -333,13 +355,23 @@ function renderEmptyState(target, title) {
   target.innerHTML = `<p class="panel-subtle">${title}: no data yet.</p>`;
 }
 
-function renderBarChart(target, chartId, items, title) {
+function renderBarChart(target, chartId, items, title, options = {}) {
+  const {
+    valueLabel = "Median runtime",
+    chartValue = (value) => toMs(value),
+    valueFormatter = (value) => `${value.toFixed(2)} ms`,
+    yTickFormatter = (value) => `${value.toFixed(value >= 1 ? 0 : 3)} ms`,
+    yScaleType = "logarithmic",
+    minYOverride = null,
+    tickStepSize = null,
+  } = options;
   destroyChart(chartId);
   if (!items.length) {
     renderEmptyState(target, title);
     return;
   }
-  const valuesMs = items.map((item) => toMs(item.value));
+  const chartValues = items.map((item) => chartValue(item.value));
+  const minY = minYOverride ?? logScaleMin(chartValues);
   const canvas = prepareChartHost(target);
   const chart = new Chart(canvas, {
     type: "bar",
@@ -347,8 +379,8 @@ function renderBarChart(target, chartId, items, title) {
       labels: items.map((item) => item.key),
       datasets: [
         {
-          label: "Median runtime",
-          data: valuesMs,
+          label: valueLabel,
+          data: chartValues,
           backgroundColor: items.map((_, index) => palette[index % palette.length]),
           borderRadius: 0,
           borderSkipped: false,
@@ -357,30 +389,39 @@ function renderBarChart(target, chartId, items, title) {
       ],
     },
     options: {
-      ...chartOptions({ title, minY: logScaleMin(valuesMs) }),
+      ...chartOptions({ title, minY }),
       layout: {
         padding: {
           top: 28,
         },
       },
       plugins: {
-        ...chartOptions({ title, minY: logScaleMin(valuesMs) }).plugins,
+        ...chartOptions({ title, minY }).plugins,
         legend: {
           display: false,
         },
         tooltip: {
-          ...chartOptions({ title, minY: logScaleMin(valuesMs) }).plugins.tooltip,
+          ...chartOptions({ title, minY }).plugins.tooltip,
           callbacks: {
             label(context) {
-              return `${context.dataset.label}: ${context.parsed.y.toFixed(2)} ms`;
+              return `${context.dataset.label}: ${valueFormatter(context.parsed.y)}`;
             },
           },
         },
       },
       scales: {
-        ...chartOptions({ title, minY: logScaleMin(valuesMs) }).scales,
+        ...chartOptions({ title, minY }).scales,
         y: {
-          ...chartOptions({ title, minY: logScaleMin(valuesMs) }).scales.y,
+          ...chartOptions({ title, minY }).scales.y,
+          type: yScaleType,
+          min: minY,
+          ticks: {
+            ...chartOptions({ title, minY }).scales.y.ticks,
+            stepSize: tickStepSize ?? undefined,
+            callback(value) {
+              return yTickFormatter(Number(value));
+            },
+          },
         },
       },
     },
@@ -395,8 +436,8 @@ function renderBarChart(target, chartId, items, title) {
           ctx.font = "600 11px Menlo, Monaco, Consolas, monospace";
           ctx.textAlign = "center";
           meta.data.forEach((bar, index) => {
-            const value = items[index].value;
-            ctx.fillText(`${toMs(value).toFixed(2)} ms`, bar.x, bar.y - 10);
+            const value = chartValues[index];
+            ctx.fillText(valueFormatter(value), bar.x, bar.y - 10);
           });
           ctx.restore();
         },
@@ -404,6 +445,56 @@ function renderBarChart(target, chartId, items, title) {
     ],
   });
   chartRegistry.set(chartId, chart);
+}
+
+function formatMetadataValue(value) {
+  if (Array.isArray(value)) {
+    return value.join(", ");
+  }
+  if (typeof value === "boolean") {
+    return value ? "true" : "false";
+  }
+  return String(value);
+}
+
+function renderOverallMetadata() {
+  const metadata = latestResults.metadata ?? {};
+  const run = metadata.run ?? {};
+  const environment = metadata.environment ?? {};
+  const measurement = metadata.measurement?.moonbit ?? {};
+  const rows = [
+    ["started_at", run.started_at],
+    ["finished_at", latestResults.finished_at],
+    ["dataset_version", run.dataset_version],
+    ["targets", run.targets],
+    ["include_rust", run.include_rust],
+    ["mode", run.mode],
+    ["smoke", run.smoke],
+    ["moon_sample_count", measurement.sample_count],
+    ["moon_warmup_ns", measurement.warmup_ns],
+    ["moon_target_sample_ns", measurement.target_sample_ns],
+    ["platform", environment.platform],
+    ["python", environment.python],
+    ["moon", environment.moon],
+    ["cargo", environment.cargo],
+    ["rustc", environment.rustc],
+  ].filter(([, value]) => value !== undefined && value !== null && value !== "");
+
+  if (!rows.length) {
+    overallMetadataEl.innerHTML = "";
+    return;
+  }
+
+  overallMetadataEl.innerHTML = `
+    <div class="metadata-card">
+      ${rows.map(([label, value]) => `
+        <div class="metadata-row">
+          <span class="metadata-label">${label}</span>
+          <span class="metadata-value">${formatMetadataValue(value)}</span>
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
 function renderLineChart(target, chartId, rows, title) {
@@ -536,7 +627,7 @@ function renderOperationPanels(rows) {
         <div class="operation-head">
           <div class="operation-copy">
             <h2 class="operation-title">${panelTitle(firstRow)}</h2>
-            <p class="operation-note">${caseCount} scale points in the current ${currentPhase} phase. Scale axis: ${descriptor.axisLabel}.</p>
+            <p class="operation-note">${caseCount} scale points. Scale axis: ${descriptor.axisLabel}.</p>
           </div>
         </div>
         <div class="operation-layout">
@@ -564,7 +655,22 @@ function renderOperationPanels(rows) {
 
 function render() {
   const rows = groupedRows();
-  renderBarChart(overallChartEl, "overall", aggregateByBackend(rows), `Overall ${currentPhase} medians`);
+  renderBarChart(
+    overallChartEl,
+    "overall",
+    aggregateRelativeByBackend(rows),
+    "Overall relative to Rust baseline",
+    {
+      valueLabel: "Geometric mean runtime ratio",
+      chartValue: (value) => value,
+      valueFormatter: (value) => `${value.toFixed(2)}x`,
+      yTickFormatter: (value) => `${value.toFixed(value >= 10 ? 0 : 2)}x`,
+      yScaleType: "linear",
+      minYOverride: 0,
+      tickStepSize: 1,
+    },
+  );
+  renderOverallMetadata();
   renderOperationPanels(rows);
 }
 

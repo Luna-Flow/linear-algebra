@@ -1,5 +1,7 @@
 # @immut.Matrix
 
+本页描述当前仓库实现，并作为 `0.2.11` 的 API 基线。
+
 ---
 
 ## @immut.Matrix[T]
@@ -20,6 +22,7 @@ struct Matrix[T] {
 - `@immut.Matrix` 采用值语义。`set`、`swap_rows`、`swap_cols` 这类操作都会返回新矩阵，而不是修改原值。
 - `m[row][col]` 是基于 `Indexed[T]` 的只读便捷访问方式。
 - 这个包是共享代数语义的基线，不提供 `inplace` 更新 API，也不提供可变的转置视图能力。
+- 在 `0.2.11` 中，这个包仍然是与 `@mutable` 共享 API 语义时的参考基准。
 
 - **字段**
   - `row` - 矩阵的行数。

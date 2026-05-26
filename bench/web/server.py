@@ -98,7 +98,10 @@ class BenchmarkHandler(SimpleHTTPRequestHandler):
                 payload = json.loads(RESULTS_PATH.read_text(encoding="utf-8"))
                 self.respond_json(payload)
             else:
-                self.respond_json({"rows": [], "status": "empty"}, status=HTTPStatus.NOT_FOUND)
+                self.respond_json(
+                    {"mode": "steady_state", "rows": [], "status": "empty"},
+                    status=HTTPStatus.NOT_FOUND,
+                )
             return
         super().do_GET()
 

@@ -1,8 +1,12 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "Luna-Flow/linear-algebra/perf_support"
 
+import {
+  "Luna-Flow/linear-algebra/mutable",
+}
+
 // Values
-pub fn case_json_payload(Case, UInt64) -> String
+pub fn case_diagnostic_payload(Case, UInt64) -> String
 
 pub fn case_names() -> Array[String]
 
@@ -12,7 +16,13 @@ pub let dataset_version : String
 
 pub fn find_case(String) -> Case?
 
+pub fn find_prepared_case(String) -> PreparedCase?
+
+pub fn prepare_case(Case) -> PreparedCase
+
 pub fn run_case_once(Case) -> UInt64
+
+pub fn run_prepared_case_once(PreparedCase) -> UInt64
 
 // Errors
 
@@ -28,7 +38,13 @@ pub struct Case {
   data_b : Array[Double]
 }
 
+pub struct PreparedCase {
+  case_item : Case
+  matrix_a : @mutable.Matrix[Double]
+  matrix_b : @mutable.Matrix[Double]
+  vector_b : @mutable.Vector[Double]
+}
+
 // Type aliases
 
 // Traits
-
