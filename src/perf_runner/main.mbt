@@ -4,6 +4,7 @@ fn main {
   let repeat = find_repeat_arg(args)
   let sample_count = find_samples_arg(args)
   let warmup_count = find_warmup_arg(args)
+  let case_path = find_case_path_arg(args)
   guard repeat > 0 else {
     abort("repeat must be positive")
   }
@@ -15,35 +16,58 @@ fn main {
   }
   match find_case_arg(args) {
     Some(case_id) =>
-      match @support.find_prepared_case(case_id) {
+      match @support.find_case(case_id) {
         Some(case_item) => {
+          let prepared = @support.prepare_case_from_fixture(case_item, case_path)
+          let scratch = case_item.mutation_policy == "scratch_per_sample"
           if sample_count == 0 {
-            let checksum = run_repeat(case_item, repeat)
-            println(@support.case_diagnostic_payload(case_item.case_item, checksum))
+            let checksum = run_repeat(prepared, repeat, scratch)
+            println(@support.case_diagnostic_payload(case_item, checksum))
           } else {
-            run_warmup(case_item, repeat, warmup_count)
-            let samples = collect_samples(case_item, repeat, sample_count)
-            println(benchmark_payload(case_item.case_item, samples, repeat))
+            run_warmup(prepared, repeat, warmup_count, scratch)
+            let samples = collect_samples(prepared, repeat, sample_count, scratch)
+            println(benchmark_payload(case_item, samples, repeat))
           }
         }
         None => abort("unknown benchmark case: " + case_id)
       }
     None =>
       abort(
-        "usage: moon run src/perf_runner <case-id> [--repeat <n>] [--samples <n>] [--warmup <n>]",
+        "usage: moon run src/perf_runner <case-id> --case-file <path> [--repeat <n>] [--samples <n>] [--warmup <n>]",
       )
   }
 }
 
 ///|
 fn find_case_arg(args : Array[String]) -> String? {
-  for i = args.length() - 1; i >= 0; i = i - 1 {
-    let candidate = args[i]
-    if @support.find_prepared_case(candidate) is Some(_) {
+  let mut skip_next = false
+  for candidate in args {
+    if skip_next {
+      skip_next = false
+      continue
+    }
+    if candidate == "--repeat" ||
+      candidate == "--samples" ||
+      candidate == "--warmup" ||
+      candidate == "--case-file" {
+      skip_next = true
+      continue
+    }
+    if @support.find_case(candidate) is Some(_) {
       return Some(candidate)
     }
   }
   None
+}
+
+///|
+fn find_case_path_arg(args : Array[String]) -> String {
+  for i = 0; i + 1 < args.length(); i = i + 1 {
+    if args[i] == "--case-file" {
+      return args[i + 1]
+    }
+  }
+  abort("missing --case-file")
 }
 
 ///|
@@ -81,18 +105,20 @@ fn parse_int_arg(flag : String, value : String) -> Int {
 }
 
 ///|
-fn run_repeat(case_item : @support.PreparedCase, repeat : Int) -> UInt64 {
-  let mut checksum = 0UL
-  for _ in 0..<repeat {
-    checksum = @support.run_prepared_case_once(case_item)
-  }
-  checksum
+fn run_repeat(case_item : @support.PreparedCase, repeat : Int, scratch : Bool) -> UInt64 {
+  let scratch_cases = prepare_repeat_cases(case_item, repeat, scratch)
+  run_prepared_cases(scratch_cases)
 }
 
 ///|
-fn run_warmup(case_item : @support.PreparedCase, repeat : Int, warmup_count : Int) -> Unit {
+fn run_warmup(
+  case_item : @support.PreparedCase,
+  repeat : Int,
+  warmup_count : Int,
+  scratch : Bool,
+) -> Unit {
   for _ in 0..<warmup_count {
-    ignore(run_repeat(case_item, repeat))
+    ignore(run_repeat(case_item, repeat, scratch))
   }
 }
 
@@ -101,16 +127,46 @@ fn collect_samples(
   case_item : @support.PreparedCase,
   repeat : Int,
   sample_count : Int,
+  scratch : Bool,
 ) -> Array[Int] {
   let samples = []
   for _ in 0..<sample_count {
+    let scratch_cases = prepare_repeat_cases(case_item, repeat, scratch)
     let start = @bench.monotonic_clock_start()
-    ignore(run_repeat(case_item, repeat))
+    ignore(run_prepared_cases(scratch_cases))
     let elapsed_us = @bench.monotonic_clock_end(start)
     let elapsed_ns = (elapsed_us * 1000.0).to_int()
     samples.push(elapsed_ns / repeat)
   }
   samples
+}
+
+///|
+fn prepare_repeat_cases(
+  case_item : @support.PreparedCase,
+  repeat : Int,
+  scratch : Bool,
+) -> Array[@support.PreparedCase] {
+  let out = []
+  for _ in 0..<repeat {
+    if scratch {
+      out.push(@support.prepare_case(case_item.case_item))
+    } else {
+      out.push(case_item)
+    }
+  }
+  out
+}
+
+///|
+fn run_prepared_cases(
+  cases : Array[@support.PreparedCase],
+) -> UInt64 {
+  let mut checksum = 0UL
+  for case_item in cases {
+    checksum = @support.run_prepared_case_inplace(case_item, false)
+  }
+  checksum
 }
 
 ///|
@@ -123,6 +179,20 @@ fn benchmark_payload(case_item : @support.Case, samples : Array[Int], repeat : I
   case_item.operation +
   "\",\"family\":\"" +
   case_item.family +
+  "\",\"workload_tier\":\"" +
+  case_item.workload_tier +
+  "\",\"structure\":\"" +
+  case_item.structure +
+  "\",\"timing_scope\":\"" +
+  case_item.timing_scope +
+  "\",\"input_layout\":\"" +
+  case_item.input_layout +
+  "\",\"mutation_policy\":\"" +
+  case_item.mutation_policy +
+  "\",\"size_tier\":\"" +
+  case_item.size_tier +
+  "\",\"cost_model\":\"" +
+  case_item.cost_model +
   "\",\"rows\":" +
   case_item.rows.to_string() +
   ",\"cols\":" +

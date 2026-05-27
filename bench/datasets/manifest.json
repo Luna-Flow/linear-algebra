@@ -1,771 +1,1634 @@
 {
+  "dataset_version": "v3",
+  "dtype": "double",
   "cases": [
     {
-      "case_id": "mul_dense_32",
-      "dtype": "double",
-      "family": "dense_square",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 4097
-      },
+      "case_id": "mul_baseline_dense_64",
       "operation": "mul",
-      "shape": {
-        "cols": 32,
-        "rhs_cols": 32,
-        "rows": 32
-      }
-    },
-    {
-      "case_id": "mul_dense_64",
-      "dtype": "double",
       "family": "dense_square",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 4098
-      },
-      "operation": "mul",
+      "workload_tier": "baseline",
+      "structure": "dense",
       "shape": {
+        "rows": 64,
         "cols": 64,
-        "rhs_cols": 64,
-        "rows": 64
+        "rhs_cols": 64
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "medium",
+      "cost_model": "gemm_flops",
+      "generator_meta": {
+        "seed": 4097,
+        "distribution": "uniform[-1,1]"
       }
     },
     {
-      "case_id": "mul_dense_96",
-      "dtype": "double",
+      "case_id": "mul_baseline_dense_128",
+      "operation": "mul",
       "family": "dense_square",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 4099
-      },
-      "operation": "mul",
+      "workload_tier": "baseline",
+      "structure": "dense",
       "shape": {
-        "cols": 96,
-        "rhs_cols": 96,
-        "rows": 96
-      }
-    },
-    {
-      "case_id": "mul_rect_48x32x48",
-      "dtype": "double",
-      "family": "dense_rectangular",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 4100
-      },
-      "operation": "mul",
-      "shape": {
-        "cols": 32,
-        "rhs_cols": 48,
-        "rows": 48
-      }
-    },
-    {
-      "case_id": "mul_rect_72x48x72",
-      "dtype": "double",
-      "family": "dense_rectangular",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 4101
-      },
-      "operation": "mul",
-      "shape": {
-        "cols": 48,
-        "rhs_cols": 72,
-        "rows": 72
-      }
-    },
-    {
-      "case_id": "mul_rect_96x64x96",
-      "dtype": "double",
-      "family": "dense_rectangular",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 4102
-      },
-      "operation": "mul",
-      "shape": {
-        "cols": 64,
-        "rhs_cols": 96,
-        "rows": 96
-      }
-    },
-    {
-      "case_id": "mul_vec_dense_128",
-      "dtype": "double",
-      "family": "dense_square",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 8193
-      },
-      "operation": "mul_vec",
-      "shape": {
+        "rows": 128,
         "cols": 128,
-        "rhs_cols": 1,
-        "rows": 128
+        "rhs_cols": 128
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "large",
+      "cost_model": "gemm_flops",
+      "generator_meta": {
+        "seed": 4098,
+        "distribution": "uniform[-1,1]"
       }
     },
     {
-      "case_id": "mul_vec_dense_192",
-      "dtype": "double",
+      "case_id": "mul_baseline_dense_256",
+      "operation": "mul",
       "family": "dense_square",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 8194
-      },
-      "operation": "mul_vec",
+      "workload_tier": "baseline",
+      "structure": "dense",
       "shape": {
-        "cols": 192,
-        "rhs_cols": 1,
-        "rows": 192
-      }
-    },
-    {
-      "case_id": "mul_vec_dense_256",
-      "dtype": "double",
-      "family": "dense_square",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 8195
-      },
-      "operation": "mul_vec",
-      "shape": {
+        "rows": 256,
         "cols": 256,
-        "rhs_cols": 1,
-        "rows": 256
-      }
-    },
-    {
-      "case_id": "det_dense_8",
-      "dtype": "double",
-      "family": "dense_square",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 12289
+        "rhs_cols": 256
       },
-      "operation": "determinant",
-      "shape": {
-        "cols": 8,
-        "rhs_cols": 0,
-        "rows": 8
-      }
-    },
-    {
-      "case_id": "det_dense_16",
       "dtype": "double",
-      "family": "dense_square",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "large",
+      "cost_model": "gemm_flops",
       "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 12290
-      },
-      "operation": "determinant",
-      "shape": {
-        "cols": 16,
-        "rhs_cols": 0,
-        "rows": 16
+        "seed": 4099,
+        "distribution": "uniform[-1,1]"
       }
     },
     {
-      "case_id": "det_dense_24",
-      "dtype": "double",
-      "family": "dense_square",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 12291
-      },
-      "operation": "determinant",
-      "shape": {
-        "cols": 24,
-        "rhs_cols": 0,
-        "rows": 24
-      }
-    },
-    {
-      "case_id": "det_near_singular_8",
-      "dtype": "double",
-      "family": "near_singular_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 12292
-      },
-      "operation": "determinant",
-      "shape": {
-        "cols": 8,
-        "rhs_cols": 0,
-        "rows": 8
-      }
-    },
-    {
-      "case_id": "det_near_singular_16",
-      "dtype": "double",
-      "family": "near_singular_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 12293
-      },
-      "operation": "determinant",
-      "shape": {
-        "cols": 16,
-        "rhs_cols": 0,
-        "rows": 16
-      }
-    },
-    {
-      "case_id": "det_near_singular_24",
-      "dtype": "double",
-      "family": "near_singular_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 12294
-      },
-      "operation": "determinant",
-      "shape": {
-        "cols": 24,
-        "rhs_cols": 0,
-        "rows": 24
-      }
-    },
-    {
-      "case_id": "det_upper_tri_8",
-      "dtype": "double",
-      "family": "upper_triangular_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 12295
-      },
-      "operation": "determinant",
-      "shape": {
-        "cols": 8,
-        "rhs_cols": 0,
-        "rows": 8
-      }
-    },
-    {
-      "case_id": "det_upper_tri_16",
-      "dtype": "double",
-      "family": "upper_triangular_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 12296
-      },
-      "operation": "determinant",
-      "shape": {
-        "cols": 16,
-        "rhs_cols": 0,
-        "rows": 16
-      }
-    },
-    {
-      "case_id": "det_upper_tri_24",
-      "dtype": "double",
-      "family": "upper_triangular_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 12297
-      },
-      "operation": "determinant",
-      "shape": {
-        "cols": 24,
-        "rhs_cols": 0,
-        "rows": 24
-      }
-    },
-    {
-      "case_id": "inverse_dense_8",
-      "dtype": "double",
-      "family": "dense_shifted_square",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]+I",
-        "seed": 16385
-      },
-      "operation": "inverse",
-      "shape": {
-        "cols": 8,
-        "rhs_cols": 0,
-        "rows": 8
-      }
-    },
-    {
-      "case_id": "inverse_dense_16",
-      "dtype": "double",
-      "family": "dense_shifted_square",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]+I",
-        "seed": 16386
-      },
-      "operation": "inverse",
-      "shape": {
-        "cols": 16,
-        "rhs_cols": 0,
-        "rows": 16
-      }
-    },
-    {
-      "case_id": "inverse_dense_24",
-      "dtype": "double",
-      "family": "dense_shifted_square",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]+I",
-        "seed": 16387
-      },
-      "operation": "inverse",
-      "shape": {
-        "cols": 24,
-        "rhs_cols": 0,
-        "rows": 24
-      }
-    },
-    {
-      "case_id": "inverse_spd_8",
-      "dtype": "double",
-      "family": "spd_square",
-      "generator_meta": {
-        "distribution": "gram+lambdaI",
-        "seed": 16388
-      },
-      "operation": "inverse",
-      "shape": {
-        "cols": 8,
-        "rhs_cols": 0,
-        "rows": 8
-      }
-    },
-    {
-      "case_id": "inverse_spd_16",
-      "dtype": "double",
-      "family": "spd_square",
-      "generator_meta": {
-        "distribution": "gram+lambdaI",
-        "seed": 16389
-      },
-      "operation": "inverse",
-      "shape": {
-        "cols": 16,
-        "rhs_cols": 0,
-        "rows": 16
-      }
-    },
-    {
-      "case_id": "inverse_spd_24",
-      "dtype": "double",
-      "family": "spd_square",
-      "generator_meta": {
-        "distribution": "gram+lambdaI",
-        "seed": 16390
-      },
-      "operation": "inverse",
-      "shape": {
-        "cols": 24,
-        "rhs_cols": 0,
-        "rows": 24
-      }
-    },
-    {
-      "case_id": "inverse_perm_8",
-      "dtype": "double",
-      "family": "permutation_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 16391
-      },
-      "operation": "inverse",
-      "shape": {
-        "cols": 8,
-        "rhs_cols": 0,
-        "rows": 8
-      }
-    },
-    {
-      "case_id": "inverse_perm_16",
-      "dtype": "double",
-      "family": "permutation_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 16392
-      },
-      "operation": "inverse",
-      "shape": {
-        "cols": 16,
-        "rhs_cols": 0,
-        "rows": 16
-      }
-    },
-    {
-      "case_id": "inverse_perm_24",
-      "dtype": "double",
-      "family": "permutation_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 16393
-      },
-      "operation": "inverse",
-      "shape": {
-        "cols": 24,
-        "rhs_cols": 0,
-        "rows": 24
-      }
-    },
-    {
-      "case_id": "rank_rect_32x24",
-      "dtype": "double",
+      "case_id": "mul_structured_rect_256x64x256",
+      "operation": "mul",
       "family": "dense_rectangular",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 20481
-      },
-      "operation": "rank",
+      "workload_tier": "structured",
+      "structure": "rectangular_dense",
       "shape": {
-        "cols": 24,
-        "rhs_cols": 0,
-        "rows": 32
-      }
-    },
-    {
-      "case_id": "rank_rect_48x36",
-      "dtype": "double",
-      "family": "dense_rectangular",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 20482
-      },
-      "operation": "rank",
-      "shape": {
-        "cols": 36,
-        "rhs_cols": 0,
-        "rows": 48
-      }
-    },
-    {
-      "case_id": "rank_rect_64x48",
-      "dtype": "double",
-      "family": "dense_rectangular",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 20483
-      },
-      "operation": "rank",
-      "shape": {
-        "cols": 48,
-        "rhs_cols": 0,
-        "rows": 64
-      }
-    },
-    {
-      "case_id": "rank_rect_def_32x24",
-      "dtype": "double",
-      "family": "rank_deficient_rectangular",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 20484
-      },
-      "operation": "rank",
-      "shape": {
-        "cols": 24,
-        "rhs_cols": 0,
-        "rows": 32
-      }
-    },
-    {
-      "case_id": "rank_rect_def_48x36",
-      "dtype": "double",
-      "family": "rank_deficient_rectangular",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 20485
-      },
-      "operation": "rank",
-      "shape": {
-        "cols": 36,
-        "rhs_cols": 0,
-        "rows": 48
-      }
-    },
-    {
-      "case_id": "rank_rect_def_64x48",
-      "dtype": "double",
-      "family": "rank_deficient_rectangular",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 20486
-      },
-      "operation": "rank",
-      "shape": {
-        "cols": 48,
-        "rhs_cols": 0,
-        "rows": 64
-      }
-    },
-    {
-      "case_id": "rank_square_near_singular_32",
-      "dtype": "double",
-      "family": "near_singular_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 20487
-      },
-      "operation": "rank",
-      "shape": {
-        "cols": 32,
-        "rhs_cols": 0,
-        "rows": 32
-      }
-    },
-    {
-      "case_id": "rank_square_near_singular_48",
-      "dtype": "double",
-      "family": "near_singular_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 20488
-      },
-      "operation": "rank",
-      "shape": {
-        "cols": 48,
-        "rhs_cols": 0,
-        "rows": 48
-      }
-    },
-    {
-      "case_id": "rank_square_near_singular_64",
-      "dtype": "double",
-      "family": "near_singular_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 20489
-      },
-      "operation": "rank",
-      "shape": {
+        "rows": 256,
         "cols": 64,
-        "rhs_cols": 0,
-        "rows": 64
+        "rhs_cols": 256
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "large",
+      "cost_model": "gemm_flops",
+      "generator_meta": {
+        "seed": 4113,
+        "distribution": "uniform[-1,1]"
       }
     },
     {
-      "case_id": "rref_rect_32x24",
-      "dtype": "double",
+      "case_id": "mul_structured_rect_384x96x384",
+      "operation": "mul",
       "family": "dense_rectangular",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 24577
-      },
-      "operation": "reduce_row_elimination",
+      "workload_tier": "structured",
+      "structure": "rectangular_dense",
       "shape": {
-        "cols": 24,
-        "rhs_cols": 0,
-        "rows": 32
+        "rows": 384,
+        "cols": 96,
+        "rhs_cols": 384
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "large",
+      "cost_model": "gemm_flops",
+      "generator_meta": {
+        "seed": 4114,
+        "distribution": "uniform[-1,1]"
       }
     },
     {
-      "case_id": "rref_rect_48x36",
-      "dtype": "double",
+      "case_id": "mul_pathological_rect_256x128x64",
+      "operation": "mul",
       "family": "dense_rectangular",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 24578
-      },
-      "operation": "reduce_row_elimination",
+      "workload_tier": "pathological",
+      "structure": "shape_mismatch_dense",
       "shape": {
-        "cols": 36,
-        "rhs_cols": 0,
-        "rows": 48
+        "rows": 256,
+        "cols": 128,
+        "rhs_cols": 64
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "large",
+      "cost_model": "gemm_flops",
+      "generator_meta": {
+        "seed": 4115,
+        "distribution": "uniform[-1,1]"
       }
     },
     {
-      "case_id": "rref_rect_64x48",
+      "case_id": "mul_vec_baseline_dense_256",
+      "operation": "mul_vec",
+      "family": "dense_square",
+      "workload_tier": "baseline",
+      "structure": "dense",
+      "shape": {
+        "rows": 256,
+        "cols": 256,
+        "rhs_cols": 1
+      },
       "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "large",
+      "cost_model": "gemv_flops",
+      "generator_meta": {
+        "seed": 8193,
+        "distribution": "uniform[-1,1]"
+      }
+    },
+    {
+      "case_id": "mul_vec_baseline_dense_512",
+      "operation": "mul_vec",
+      "family": "dense_square",
+      "workload_tier": "baseline",
+      "structure": "dense",
+      "shape": {
+        "rows": 512,
+        "cols": 512,
+        "rhs_cols": 1
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "large",
+      "cost_model": "gemv_flops",
+      "generator_meta": {
+        "seed": 8194,
+        "distribution": "uniform[-1,1]"
+      }
+    },
+    {
+      "case_id": "mul_vec_baseline_dense_1024",
+      "operation": "mul_vec",
+      "family": "dense_square",
+      "workload_tier": "baseline",
+      "structure": "dense",
+      "shape": {
+        "rows": 1024,
+        "cols": 1024,
+        "rhs_cols": 1
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "large",
+      "cost_model": "gemv_flops",
+      "generator_meta": {
+        "seed": 8195,
+        "distribution": "uniform[-1,1]"
+      }
+    },
+    {
+      "case_id": "mul_vec_structured_dom_512",
+      "operation": "mul_vec",
+      "family": "dense_square",
+      "workload_tier": "structured",
+      "structure": "diagonal_dominant",
+      "shape": {
+        "rows": 512,
+        "cols": 512,
+        "rhs_cols": 1
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "large",
+      "cost_model": "gemv_flops",
+      "generator_meta": {
+        "seed": 8209,
+        "distribution": "dominant_symmetric"
+      }
+    },
+    {
+      "case_id": "mul_vec_pathological_projector_1024x256",
+      "operation": "mul_vec",
       "family": "dense_rectangular",
-      "generator_meta": {
-        "distribution": "uniform[-1,1]",
-        "seed": 24579
-      },
-      "operation": "reduce_row_elimination",
+      "workload_tier": "pathological",
+      "structure": "projector_like",
       "shape": {
-        "cols": 48,
-        "rhs_cols": 0,
-        "rows": 64
+        "rows": 1024,
+        "cols": 256,
+        "rhs_cols": 1
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "large",
+      "cost_model": "gemv_flops",
+      "generator_meta": {
+        "seed": 8210,
+        "distribution": "projector_like"
       }
     },
     {
-      "case_id": "rref_rank_def_32",
-      "dtype": "double",
-      "family": "rank_deficient_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 24580
-      },
-      "operation": "reduce_row_elimination",
+      "case_id": "det_baseline_shifted_16",
+      "operation": "determinant",
+      "family": "dense_shifted_square",
+      "workload_tier": "baseline",
+      "structure": "dense_shifted",
       "shape": {
+        "rows": 16,
+        "cols": 16,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 12289,
+        "distribution": "uniform[-1,1]+I"
+      }
+    },
+    {
+      "case_id": "det_baseline_shifted_32",
+      "operation": "determinant",
+      "family": "dense_shifted_square",
+      "workload_tier": "baseline",
+      "structure": "dense_shifted",
+      "shape": {
+        "rows": 32,
         "cols": 32,
-        "rhs_cols": 0,
-        "rows": 32
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 12290,
+        "distribution": "uniform[-1,1]+I"
       }
     },
     {
-      "case_id": "rref_rank_def_48",
-      "dtype": "double",
-      "family": "rank_deficient_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 24581
-      },
-      "operation": "reduce_row_elimination",
+      "case_id": "det_baseline_shifted_48",
+      "operation": "determinant",
+      "family": "dense_shifted_square",
+      "workload_tier": "baseline",
+      "structure": "dense_shifted",
       "shape": {
+        "rows": 48,
         "cols": 48,
-        "rhs_cols": 0,
-        "rows": 48
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 12291,
+        "distribution": "uniform[-1,1]+I"
       }
     },
     {
-      "case_id": "rref_rank_def_64",
-      "dtype": "double",
-      "family": "rank_deficient_square",
-      "generator_meta": {
-        "distribution": "structured",
-        "seed": 24582
-      },
-      "operation": "reduce_row_elimination",
+      "case_id": "det_structured_upper_tri_16",
+      "operation": "determinant",
+      "family": "upper_triangular_square",
+      "workload_tier": "structured",
+      "structure": "upper_triangular",
       "shape": {
+        "rows": 16,
+        "cols": 16,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 12305,
+        "distribution": "structured"
+      }
+    },
+    {
+      "case_id": "det_structured_upper_tri_32",
+      "operation": "determinant",
+      "family": "upper_triangular_square",
+      "workload_tier": "structured",
+      "structure": "upper_triangular",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 12306,
+        "distribution": "structured"
+      }
+    },
+    {
+      "case_id": "det_structured_upper_tri_48",
+      "operation": "determinant",
+      "family": "upper_triangular_square",
+      "workload_tier": "structured",
+      "structure": "upper_triangular",
+      "shape": {
+        "rows": 48,
+        "cols": 48,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 12307,
+        "distribution": "structured"
+      }
+    },
+    {
+      "case_id": "det_pathological_near_singular_16",
+      "operation": "determinant",
+      "family": "near_singular_square",
+      "workload_tier": "pathological",
+      "structure": "near_singular",
+      "shape": {
+        "rows": 16,
+        "cols": 16,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 12321,
+        "distribution": "structured"
+      }
+    },
+    {
+      "case_id": "det_pathological_near_singular_32",
+      "operation": "determinant",
+      "family": "near_singular_square",
+      "workload_tier": "pathological",
+      "structure": "near_singular",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 12322,
+        "distribution": "structured"
+      }
+    },
+    {
+      "case_id": "det_pathological_near_singular_48",
+      "operation": "determinant",
+      "family": "near_singular_square",
+      "workload_tier": "pathological",
+      "structure": "near_singular",
+      "shape": {
+        "rows": 48,
+        "cols": 48,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 12323,
+        "distribution": "structured"
+      }
+    },
+    {
+      "case_id": "inverse_baseline_shifted_16",
+      "operation": "inverse",
+      "family": "dense_shifted_square",
+      "workload_tier": "baseline",
+      "structure": "dense_shifted",
+      "shape": {
+        "rows": 16,
+        "cols": 16,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 16385,
+        "distribution": "uniform[-1,1]+I"
+      }
+    },
+    {
+      "case_id": "inverse_baseline_shifted_32",
+      "operation": "inverse",
+      "family": "dense_shifted_square",
+      "workload_tier": "baseline",
+      "structure": "dense_shifted",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 16386,
+        "distribution": "uniform[-1,1]+I"
+      }
+    },
+    {
+      "case_id": "inverse_baseline_shifted_48",
+      "operation": "inverse",
+      "family": "dense_shifted_square",
+      "workload_tier": "baseline",
+      "structure": "dense_shifted",
+      "shape": {
+        "rows": 48,
+        "cols": 48,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 16387,
+        "distribution": "uniform[-1,1]+I"
+      }
+    },
+    {
+      "case_id": "inverse_structured_spd_16",
+      "operation": "inverse",
+      "family": "spd_square",
+      "workload_tier": "structured",
+      "structure": "spd",
+      "shape": {
+        "rows": 16,
+        "cols": 16,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 16401,
+        "distribution": "gram+lambdaI"
+      }
+    },
+    {
+      "case_id": "inverse_structured_spd_32",
+      "operation": "inverse",
+      "family": "spd_square",
+      "workload_tier": "structured",
+      "structure": "spd",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 16402,
+        "distribution": "gram+lambdaI"
+      }
+    },
+    {
+      "case_id": "inverse_structured_spd_48",
+      "operation": "inverse",
+      "family": "spd_square",
+      "workload_tier": "structured",
+      "structure": "spd",
+      "shape": {
+        "rows": 48,
+        "cols": 48,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 16403,
+        "distribution": "gram+lambdaI"
+      }
+    },
+    {
+      "case_id": "inverse_pathological_small_gap_16",
+      "operation": "inverse",
+      "family": "near_singular_square",
+      "workload_tier": "pathological",
+      "structure": "ill_conditioned",
+      "shape": {
+        "rows": 16,
+        "cols": 16,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 16417,
+        "distribution": "near_singular+I"
+      }
+    },
+    {
+      "case_id": "inverse_pathological_small_gap_32",
+      "operation": "inverse",
+      "family": "near_singular_square",
+      "workload_tier": "pathological",
+      "structure": "ill_conditioned",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 16418,
+        "distribution": "near_singular+I"
+      }
+    },
+    {
+      "case_id": "inverse_pathological_small_gap_48",
+      "operation": "inverse",
+      "family": "near_singular_square",
+      "workload_tier": "pathological",
+      "structure": "ill_conditioned",
+      "shape": {
+        "rows": 48,
+        "cols": 48,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 16419,
+        "distribution": "near_singular+I"
+      }
+    },
+    {
+      "case_id": "rank_baseline_dense_64x48",
+      "operation": "rank",
+      "family": "dense_rectangular",
+      "workload_tier": "baseline",
+      "structure": "dense_rectangular",
+      "shape": {
+        "rows": 64,
+        "cols": 48,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 20481,
+        "distribution": "uniform[-1,1]"
+      }
+    },
+    {
+      "case_id": "rank_baseline_dense_128x96",
+      "operation": "rank",
+      "family": "dense_rectangular",
+      "workload_tier": "baseline",
+      "structure": "dense_rectangular",
+      "shape": {
+        "rows": 128,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "large",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 20482,
+        "distribution": "uniform[-1,1]"
+      }
+    },
+    {
+      "case_id": "rank_baseline_dense_192x128",
+      "operation": "rank",
+      "family": "dense_rectangular",
+      "workload_tier": "baseline",
+      "structure": "dense_rectangular",
+      "shape": {
+        "rows": 192,
+        "cols": 128,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "large",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 20483,
+        "distribution": "uniform[-1,1]"
+      }
+    },
+    {
+      "case_id": "rank_structured_block_64x48",
+      "operation": "rank",
+      "family": "dense_rectangular",
+      "workload_tier": "structured",
+      "structure": "block_pattern",
+      "shape": {
+        "rows": 64,
+        "cols": 48,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 20497,
+        "distribution": "block_pattern"
+      }
+    },
+    {
+      "case_id": "rank_structured_block_128x96",
+      "operation": "rank",
+      "family": "dense_rectangular",
+      "workload_tier": "structured",
+      "structure": "block_pattern",
+      "shape": {
+        "rows": 128,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "large",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 20498,
+        "distribution": "block_pattern"
+      }
+    },
+    {
+      "case_id": "rank_structured_block_192x128",
+      "operation": "rank",
+      "family": "dense_rectangular",
+      "workload_tier": "structured",
+      "structure": "block_pattern",
+      "shape": {
+        "rows": 192,
+        "cols": 128,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "large",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 20499,
+        "distribution": "block_pattern"
+      }
+    },
+    {
+      "case_id": "rank_pathological_def_64x48",
+      "operation": "rank",
+      "family": "rank_deficient_rectangular",
+      "workload_tier": "pathological",
+      "structure": "rank_deficient",
+      "shape": {
+        "rows": 64,
+        "cols": 48,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 20513,
+        "distribution": "structured"
+      }
+    },
+    {
+      "case_id": "rank_pathological_def_128x96",
+      "operation": "rank",
+      "family": "rank_deficient_rectangular",
+      "workload_tier": "pathological",
+      "structure": "rank_deficient",
+      "shape": {
+        "rows": 128,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "large",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 20514,
+        "distribution": "structured"
+      }
+    },
+    {
+      "case_id": "rank_pathological_def_192x128",
+      "operation": "rank",
+      "family": "rank_deficient_rectangular",
+      "workload_tier": "pathological",
+      "structure": "rank_deficient",
+      "shape": {
+        "rows": 192,
+        "cols": 128,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "large",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 20515,
+        "distribution": "structured"
+      }
+    },
+    {
+      "case_id": "rref_baseline_dense_64x48",
+      "operation": "reduce_row_elimination",
+      "family": "dense_rectangular",
+      "workload_tier": "baseline",
+      "structure": "dense_rectangular",
+      "shape": {
+        "rows": 64,
+        "cols": 48,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 24577,
+        "distribution": "uniform[-1,1]"
+      }
+    },
+    {
+      "case_id": "rref_baseline_dense_128x96",
+      "operation": "reduce_row_elimination",
+      "family": "dense_rectangular",
+      "workload_tier": "baseline",
+      "structure": "dense_rectangular",
+      "shape": {
+        "rows": 128,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "large",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 24578,
+        "distribution": "uniform[-1,1]"
+      }
+    },
+    {
+      "case_id": "rref_baseline_dense_192x128",
+      "operation": "reduce_row_elimination",
+      "family": "dense_rectangular",
+      "workload_tier": "baseline",
+      "structure": "dense_rectangular",
+      "shape": {
+        "rows": 192,
+        "cols": 128,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "large",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 24579,
+        "distribution": "uniform[-1,1]"
+      }
+    },
+    {
+      "case_id": "rref_structured_block_64x48",
+      "operation": "reduce_row_elimination",
+      "family": "dense_rectangular",
+      "workload_tier": "structured",
+      "structure": "block_pattern",
+      "shape": {
+        "rows": 64,
+        "cols": 48,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 24593,
+        "distribution": "block_pattern"
+      }
+    },
+    {
+      "case_id": "rref_structured_block_128x96",
+      "operation": "reduce_row_elimination",
+      "family": "dense_rectangular",
+      "workload_tier": "structured",
+      "structure": "block_pattern",
+      "shape": {
+        "rows": 128,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "large",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 24594,
+        "distribution": "block_pattern"
+      }
+    },
+    {
+      "case_id": "rref_structured_block_192x128",
+      "operation": "reduce_row_elimination",
+      "family": "dense_rectangular",
+      "workload_tier": "structured",
+      "structure": "block_pattern",
+      "shape": {
+        "rows": 192,
+        "cols": 128,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "large",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 24595,
+        "distribution": "block_pattern"
+      }
+    },
+    {
+      "case_id": "rref_pathological_def_64",
+      "operation": "reduce_row_elimination",
+      "family": "rank_deficient_square",
+      "workload_tier": "pathological",
+      "structure": "rank_deficient",
+      "shape": {
+        "rows": 64,
         "cols": 64,
-        "rhs_cols": 0,
-        "rows": 64
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 24609,
+        "distribution": "structured"
       }
     },
     {
-      "case_id": "chol_spd_16",
-      "dtype": "double",
-      "family": "spd_square",
-      "generator_meta": {
-        "distribution": "gram+lambdaI",
-        "seed": 28673
+      "case_id": "rref_pathological_def_96",
+      "operation": "reduce_row_elimination",
+      "family": "rank_deficient_square",
+      "workload_tier": "pathological",
+      "structure": "rank_deficient",
+      "shape": {
+        "rows": 96,
+        "cols": 96,
+        "rhs_cols": 0
       },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 24610,
+        "distribution": "structured"
+      }
+    },
+    {
+      "case_id": "rref_pathological_def_128",
+      "operation": "reduce_row_elimination",
+      "family": "rank_deficient_square",
+      "workload_tier": "pathological",
+      "structure": "rank_deficient",
+      "shape": {
+        "rows": 128,
+        "cols": 128,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "large",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 24611,
+        "distribution": "structured"
+      }
+    },
+    {
+      "case_id": "chol_baseline_spd_32",
       "operation": "cholesky_decomposition",
-      "shape": {
-        "cols": 16,
-        "rhs_cols": 0,
-        "rows": 16
-      }
-    },
-    {
-      "case_id": "chol_spd_32",
-      "dtype": "double",
       "family": "spd_square",
-      "generator_meta": {
-        "distribution": "gram+lambdaI",
-        "seed": 28674
-      },
-      "operation": "cholesky_decomposition",
+      "workload_tier": "baseline",
+      "structure": "spd",
       "shape": {
+        "rows": 32,
         "cols": 32,
-        "rhs_cols": 0,
-        "rows": 32
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 28673,
+        "distribution": "gram+lambdaI"
       }
     },
     {
-      "case_id": "chol_spd_48",
-      "dtype": "double",
+      "case_id": "chol_baseline_spd_64",
+      "operation": "cholesky_decomposition",
       "family": "spd_square",
-      "generator_meta": {
-        "distribution": "gram+lambdaI",
-        "seed": 28675
+      "workload_tier": "baseline",
+      "structure": "spd",
+      "shape": {
+        "rows": 64,
+        "cols": 64,
+        "rhs_cols": 0
       },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 28674,
+        "distribution": "gram+lambdaI"
+      }
+    },
+    {
+      "case_id": "chol_baseline_spd_96",
       "operation": "cholesky_decomposition",
+      "family": "spd_square",
+      "workload_tier": "baseline",
+      "structure": "spd",
       "shape": {
-        "cols": 48,
-        "rhs_cols": 0,
-        "rows": 48
+        "rows": 96,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 28675,
+        "distribution": "gram+lambdaI"
       }
     },
     {
-      "case_id": "eigen_sym_16",
-      "dtype": "double",
-      "family": "symmetric_square",
-      "generator_meta": {
-        "distribution": "symmetric_uniform",
-        "seed": 32769
-      },
-      "operation": "eigen",
+      "case_id": "chol_structured_spd_32",
+      "operation": "cholesky_decomposition",
+      "family": "spd_square",
+      "workload_tier": "structured",
+      "structure": "well_conditioned_spd",
       "shape": {
-        "cols": 16,
-        "rhs_cols": 0,
-        "rows": 16
-      }
-    },
-    {
-      "case_id": "eigen_sym_24",
-      "dtype": "double",
-      "family": "symmetric_square",
-      "generator_meta": {
-        "distribution": "symmetric_uniform",
-        "seed": 32770
-      },
-      "operation": "eigen",
-      "shape": {
-        "cols": 24,
-        "rhs_cols": 0,
-        "rows": 24
-      }
-    },
-    {
-      "case_id": "eigen_sym_32",
-      "dtype": "double",
-      "family": "symmetric_square",
-      "generator_meta": {
-        "distribution": "symmetric_uniform",
-        "seed": 32771
-      },
-      "operation": "eigen",
-      "shape": {
+        "rows": 32,
         "cols": 32,
-        "rhs_cols": 0,
-        "rows": 32
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 28689,
+        "distribution": "gram+large_lambdaI"
       }
     },
     {
-      "case_id": "power_dom_24",
-      "dtype": "double",
-      "family": "dominant_symmetric_square",
-      "generator_meta": {
-        "distribution": "diagonal_plus_symmetric_noise",
-        "seed": 36865
-      },
-      "operation": "power_method",
+      "case_id": "chol_structured_spd_64",
+      "operation": "cholesky_decomposition",
+      "family": "spd_square",
+      "workload_tier": "structured",
+      "structure": "well_conditioned_spd",
       "shape": {
-        "cols": 24,
-        "rhs_cols": 0,
-        "rows": 24
+        "rows": 64,
+        "cols": 64,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 28690,
+        "distribution": "gram+large_lambdaI"
       }
     },
     {
-      "case_id": "power_dom_32",
-      "dtype": "double",
-      "family": "dominant_symmetric_square",
-      "generator_meta": {
-        "distribution": "diagonal_plus_symmetric_noise",
-        "seed": 36866
-      },
-      "operation": "power_method",
+      "case_id": "chol_structured_spd_96",
+      "operation": "cholesky_decomposition",
+      "family": "spd_square",
+      "workload_tier": "structured",
+      "structure": "well_conditioned_spd",
       "shape": {
+        "rows": 96,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 28691,
+        "distribution": "gram+large_lambdaI"
+      }
+    },
+    {
+      "case_id": "chol_pathological_spd_32",
+      "operation": "cholesky_decomposition",
+      "family": "spd_square",
+      "workload_tier": "pathological",
+      "structure": "weakly_spd",
+      "shape": {
+        "rows": 32,
         "cols": 32,
-        "rhs_cols": 0,
-        "rows": 32
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 28705,
+        "distribution": "gram+small_lambdaI"
       }
     },
     {
-      "case_id": "power_dom_48",
-      "dtype": "double",
-      "family": "dominant_symmetric_square",
-      "generator_meta": {
-        "distribution": "diagonal_plus_symmetric_noise",
-        "seed": 36867
-      },
-      "operation": "power_method",
+      "case_id": "chol_pathological_spd_64",
+      "operation": "cholesky_decomposition",
+      "family": "spd_square",
+      "workload_tier": "pathological",
+      "structure": "weakly_spd",
       "shape": {
-        "cols": 48,
-        "rhs_cols": 0,
-        "rows": 48
+        "rows": 64,
+        "cols": 64,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 28706,
+        "distribution": "gram+small_lambdaI"
+      }
+    },
+    {
+      "case_id": "chol_pathological_spd_96",
+      "operation": "cholesky_decomposition",
+      "family": "spd_square",
+      "workload_tier": "pathological",
+      "structure": "weakly_spd",
+      "shape": {
+        "rows": 96,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 28707,
+        "distribution": "gram+small_lambdaI"
+      }
+    },
+    {
+      "case_id": "eigen_baseline_sym_32",
+      "operation": "eigen",
+      "family": "symmetric_square",
+      "workload_tier": "baseline",
+      "structure": "symmetric",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 32769,
+        "distribution": "symmetric_uniform"
+      }
+    },
+    {
+      "case_id": "eigen_baseline_sym_64",
+      "operation": "eigen",
+      "family": "symmetric_square",
+      "workload_tier": "baseline",
+      "structure": "symmetric",
+      "shape": {
+        "rows": 64,
+        "cols": 64,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 32770,
+        "distribution": "symmetric_uniform"
+      }
+    },
+    {
+      "case_id": "eigen_baseline_sym_96",
+      "operation": "eigen",
+      "family": "symmetric_square",
+      "workload_tier": "baseline",
+      "structure": "symmetric",
+      "shape": {
+        "rows": 96,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 32771,
+        "distribution": "symmetric_uniform"
+      }
+    },
+    {
+      "case_id": "eigen_structured_clustered_32",
+      "operation": "eigen",
+      "family": "symmetric_square",
+      "workload_tier": "structured",
+      "structure": "clustered_spectrum",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 32785,
+        "distribution": "clustered_symmetric"
+      }
+    },
+    {
+      "case_id": "eigen_structured_clustered_64",
+      "operation": "eigen",
+      "family": "symmetric_square",
+      "workload_tier": "structured",
+      "structure": "clustered_spectrum",
+      "shape": {
+        "rows": 64,
+        "cols": 64,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 32786,
+        "distribution": "clustered_symmetric"
+      }
+    },
+    {
+      "case_id": "eigen_structured_clustered_96",
+      "operation": "eigen",
+      "family": "symmetric_square",
+      "workload_tier": "structured",
+      "structure": "clustered_spectrum",
+      "shape": {
+        "rows": 96,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 32787,
+        "distribution": "clustered_symmetric"
+      }
+    },
+    {
+      "case_id": "eigen_pathological_small_gap_32",
+      "operation": "eigen",
+      "family": "symmetric_square",
+      "workload_tier": "pathological",
+      "structure": "close_eigenvalues",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 32801,
+        "distribution": "small_gap_symmetric"
+      }
+    },
+    {
+      "case_id": "eigen_pathological_small_gap_64",
+      "operation": "eigen",
+      "family": "symmetric_square",
+      "workload_tier": "pathological",
+      "structure": "close_eigenvalues",
+      "shape": {
+        "rows": 64,
+        "cols": 64,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 32802,
+        "distribution": "small_gap_symmetric"
+      }
+    },
+    {
+      "case_id": "eigen_pathological_small_gap_96",
+      "operation": "eigen",
+      "family": "symmetric_square",
+      "workload_tier": "pathological",
+      "structure": "close_eigenvalues",
+      "shape": {
+        "rows": 96,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "scratch_per_sample",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 32803,
+        "distribution": "small_gap_symmetric"
+      }
+    },
+    {
+      "case_id": "power_baseline_dom_32",
+      "operation": "power_method",
+      "family": "dominant_symmetric_square",
+      "workload_tier": "baseline",
+      "structure": "dominant_symmetric",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 36865,
+        "distribution": "diagonal_plus_symmetric_noise"
+      }
+    },
+    {
+      "case_id": "power_baseline_dom_64",
+      "operation": "power_method",
+      "family": "dominant_symmetric_square",
+      "workload_tier": "baseline",
+      "structure": "dominant_symmetric",
+      "shape": {
+        "rows": 64,
+        "cols": 64,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 36866,
+        "distribution": "diagonal_plus_symmetric_noise"
+      }
+    },
+    {
+      "case_id": "power_baseline_dom_96",
+      "operation": "power_method",
+      "family": "dominant_symmetric_square",
+      "workload_tier": "baseline",
+      "structure": "dominant_symmetric",
+      "shape": {
+        "rows": 96,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 36867,
+        "distribution": "diagonal_plus_symmetric_noise"
+      }
+    },
+    {
+      "case_id": "power_structured_gap_32",
+      "operation": "power_method",
+      "family": "dominant_symmetric_square",
+      "workload_tier": "structured",
+      "structure": "large_spectral_gap",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 36881,
+        "distribution": "large_gap_dominant"
+      }
+    },
+    {
+      "case_id": "power_structured_gap_64",
+      "operation": "power_method",
+      "family": "dominant_symmetric_square",
+      "workload_tier": "structured",
+      "structure": "large_spectral_gap",
+      "shape": {
+        "rows": 64,
+        "cols": 64,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 36882,
+        "distribution": "large_gap_dominant"
+      }
+    },
+    {
+      "case_id": "power_structured_gap_96",
+      "operation": "power_method",
+      "family": "dominant_symmetric_square",
+      "workload_tier": "structured",
+      "structure": "large_spectral_gap",
+      "shape": {
+        "rows": 96,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 36883,
+        "distribution": "large_gap_dominant"
+      }
+    },
+    {
+      "case_id": "power_pathological_gap_32",
+      "operation": "power_method",
+      "family": "dominant_symmetric_square",
+      "workload_tier": "pathological",
+      "structure": "small_spectral_gap",
+      "shape": {
+        "rows": 32,
+        "cols": 32,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "small",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 36897,
+        "distribution": "small_gap_symmetric"
+      }
+    },
+    {
+      "case_id": "power_pathological_gap_64",
+      "operation": "power_method",
+      "family": "dominant_symmetric_square",
+      "workload_tier": "pathological",
+      "structure": "small_spectral_gap",
+      "shape": {
+        "rows": 64,
+        "cols": 64,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 36898,
+        "distribution": "small_gap_symmetric"
+      }
+    },
+    {
+      "case_id": "power_pathological_gap_96",
+      "operation": "power_method",
+      "family": "dominant_symmetric_square",
+      "workload_tier": "pathological",
+      "structure": "small_spectral_gap",
+      "shape": {
+        "rows": 96,
+        "cols": 96,
+        "rhs_cols": 0
+      },
+      "dtype": "double",
+      "timing_scope": "kernel_only",
+      "input_layout": "row_major_dense",
+      "mutation_policy": "reusable_input",
+      "size_tier": "medium",
+      "cost_model": "estimated_dense_work",
+      "generator_meta": {
+        "seed": 36899,
+        "distribution": "small_gap_symmetric"
       }
     }
-  ],
-  "dataset_version": "v2",
-  "dtype": "double"
+  ]
 }
