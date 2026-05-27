@@ -21,5 +21,6 @@ bench/**/__pycache__/
 bench/datasets/cases/*.json
 bench/results/
 src/perf_support/generated_*.mbt
+!src/perf_support/generated_registry.mbt
 bench/rust_baseline/src/generated_cases.rs
 NOTE.md
