@@ -1,29 +1,12 @@
 #[path = "../src/generated_cases.rs"]
 mod generated_cases;
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use generated_cases::{CASES, DATASET_VERSION};
+use criterion::{black_box, criterion_group, criterion_main, BatchSize, Criterion};
+use generated_cases::{CaseFile, CASES, DATASET_VERSION};
 use nalgebra::{DMatrix, DVector};
+use serde::Deserialize;
+use std::fs;
 use std::time::Duration;
-
-struct Shape {
-    rows: usize,
-    cols: usize,
-    rhs_cols: usize,
-}
-
-struct Inputs {
-    data_a: &'static [f64],
-    data_b: &'static [f64],
-}
-
-struct CaseFile {
-    case_id: &'static str,
-    operation: &'static str,
-    family: &'static str,
-    shape: Shape,
-    inputs: Inputs,
-}
 
 struct ApiPipeline {
     case_file: &'static CaseFile,
@@ -33,6 +16,19 @@ struct ApiPipeline {
     work_vector_a: DVector<f64>,
     work_vector_b: DVector<f64>,
     aux_vector: Vec<f64>,
+}
+
+#[derive(Deserialize)]
+struct FixtureInputs {
+    data_a: Vec<f64>,
+    data_b: Vec<f64>,
+}
+
+#[derive(Deserialize)]
+struct FixtureFile {
+    dataset_version: String,
+    case_id: String,
+    inputs: FixtureInputs,
 }
 
 fn matrix(rows: usize, cols: usize, data: &[f64]) -> DMatrix<f64> {
@@ -73,20 +69,26 @@ fn checksum_int(value: usize) -> u64 {
 
 impl ApiPipeline {
     fn new(case_file: &'static CaseFile) -> Self {
+        let fixture: FixtureFile = serde_json::from_str(
+            &fs::read_to_string(case_file.case_path).expect("read benchmark fixture"),
+        )
+        .expect("parse benchmark fixture");
+        assert_eq!(fixture.dataset_version, DATASET_VERSION);
+        assert_eq!(fixture.case_id, case_file.case_id);
         let rows = case_file.shape.rows;
         let cols = case_file.shape.cols;
         let rhs_cols = case_file.shape.rhs_cols;
         let square = rows.max(cols).max(rhs_cols);
         Self {
             case_file,
-            matrix_a: matrix(rows, cols, case_file.inputs.data_a),
+            matrix_a: matrix(rows, cols, &fixture.inputs.data_a),
             rhs_matrix: if case_file.operation == "mul" {
-                matrix(cols, rhs_cols, case_file.inputs.data_b)
+                matrix(cols, rhs_cols, &fixture.inputs.data_b)
             } else {
                 DMatrix::zeros(0, 0)
             },
             rhs_vector: if case_file.operation == "mul_vec" {
-                vector(case_file.inputs.data_b)
+                vector(&fixture.inputs.data_b)
             } else {
                 DVector::zeros(0)
             },
@@ -94,6 +96,10 @@ impl ApiPipeline {
             work_vector_b: DVector::zeros(square),
             aux_vector: vec![0.0; square],
         }
+    }
+
+    fn fresh(&self) -> Self {
+        Self::new(self.case_file)
     }
 
     fn run(&mut self) -> u64 {
@@ -221,11 +227,22 @@ impl ApiPipeline {
 }
 
 fn kernel_benchmarks(c: &mut Criterion) {
-    assert_eq!(DATASET_VERSION, "v2");
+    assert_eq!(DATASET_VERSION, "v3");
     for case_file in CASES {
-        let mut pipeline = ApiPipeline::new(case_file);
         let mut group = c.benchmark_group(case_file.operation);
-        group.bench_function(case_file.case_id, |b| b.iter(|| black_box(pipeline.run())));
+        if case_file.mutation_policy == "scratch_per_sample" {
+            let seed = ApiPipeline::new(case_file);
+            group.bench_function(case_file.case_id, |b| {
+                b.iter_batched_ref(
+                    || seed.fresh(),
+                    |pipeline| black_box(pipeline.run()),
+                    BatchSize::SmallInput,
+                )
+            });
+        } else {
+            let mut pipeline = ApiPipeline::new(case_file);
+            group.bench_function(case_file.case_id, |b| b.iter(|| black_box(pipeline.run())));
+        }
         group.finish();
     }
 }

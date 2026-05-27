@@ -4,7 +4,7 @@ This benchmark documentation reflects the current repository state and stays
 aligned with the current package baseline.
 
 This repository ships a steady-state benchmark harness for comparing the
-`mutable` package across MoonBit backends and, optionally, against a Rust
+`mutable` package on the MoonBit native backend and, optionally, against a Rust
 `nalgebra` public-API baseline with minimal local fallbacks for operations
 without a direct one-call API.
 
@@ -16,8 +16,8 @@ the benchmark matrix in CI and uploads the generated result artifacts.
 - `bench/datasets/manifest.json` lists the dataset version and case metadata.
 - `bench/datasets/cases/*.json` stores per-case literal inputs and is
   regenerated on demand.
-- `bench/generate_fixtures.py` regenerates both the JSON fixtures and the
-  MoonBit registry files in `src/perf_support/generated_*.mbt`.
+- `bench/generate_fixtures.py` regenerates the JSON fixtures plus compact
+  metadata registries for MoonBit and Rust.
 
 Only `manifest.json` is intended to stay reviewable in git. The per-case JSON
 files and generated MoonBit files are codegen outputs and are ignored.
@@ -49,6 +49,10 @@ just bench-web
 ```
 
 Then open `http://127.0.0.1:8123`.
+
+The benchmark runner now compiles only metadata into the MoonBit benchmark
+binary. Matrix payloads stay in `bench/datasets/cases/*.json` and are loaded at
+runtime by the native benchmark runner.
 
 The benchmark runner builds MoonBit benchmarks with `moon bench --release` and
 the Rust baseline with Cargo's `bench` profile inheriting `release`.

@@ -240,8 +240,8 @@ h1 {
 
 .metadata-row {
   display: grid;
-  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: minmax(0, 116px) minmax(0, 1fr);
+  gap: 12px;
   align-items: start;
 }
 

@@ -32,6 +32,7 @@ class RunState:
 
 
 STATE = RunState()
+LAST_RESULTS_PAYLOAD: dict | None = None
 LOCK = threading.Lock()
 
 
@@ -95,7 +96,19 @@ class BenchmarkHandler(SimpleHTTPRequestHandler):
             return
         if parsed.path == "/api/results":
             if RESULTS_PATH.exists():
-                payload = json.loads(RESULTS_PATH.read_text(encoding="utf-8"))
+                try:
+                    payload = json.loads(RESULTS_PATH.read_text(encoding="utf-8"))
+                except (json.JSONDecodeError, OSError):
+                    global LAST_RESULTS_PAYLOAD
+                    if LAST_RESULTS_PAYLOAD is not None:
+                        self.respond_json(LAST_RESULTS_PAYLOAD)
+                    else:
+                        self.respond_json(
+                            {"mode": "steady_state", "rows": [], "status": "warming"},
+                            status=HTTPStatus.SERVICE_UNAVAILABLE,
+                        )
+                    return
+                LAST_RESULTS_PAYLOAD = payload
                 self.respond_json(payload)
             else:
                 self.respond_json(
@@ -132,6 +145,9 @@ class BenchmarkHandler(SimpleHTTPRequestHandler):
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(data)))
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+        self.send_header("Pragma", "no-cache")
+        self.send_header("Expires", "0")
         self.end_headers()
         self.wfile.write(data)
 

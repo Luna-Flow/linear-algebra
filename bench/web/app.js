@@ -65,6 +65,7 @@ const familyLabels = {
 
 let latestResults = { mode: "steady_state", rows: [] };
 let autoRefresh = true;
+let refreshInFlight = false;
 
 const operationsEl = document.getElementById("operations");
 const overallChartEl = document.getElementById("overall-chart");
@@ -171,7 +172,7 @@ function familyLabel(family) {
 }
 
 function projectKey(row) {
-  return `${row.operation}/${row.family}`;
+  return `${row.operation}/${row.workload_tier}/${row.structure}`;
 }
 
 function projectDomId(row) {
@@ -179,7 +180,7 @@ function projectDomId(row) {
 }
 
 function panelTitle(row) {
-  return `${operationLabel(row.operation)} · ${familyLabel(row.family)}`;
+  return `${operationLabel(row.operation)} · ${humanize(row.workload_tier)} · ${humanize(row.structure)}`;
 }
 
 function compareOrdered(left, right, order) {
@@ -457,6 +458,31 @@ function formatMetadataValue(value) {
   return String(value);
 }
 
+const metadataLabels = {
+  started_at: "started",
+  finished_at: "finished",
+  dataset_version: "dataset",
+  targets: "targets",
+  include_rust: "rust",
+  mode: "mode",
+  smoke: "smoke",
+  moon_sample_count: "samples",
+  moon_warmup_ns: "warmup_ns",
+  moon_target_sample_ns: "target_ns",
+  moon_calibration_policy: "calib",
+  moon_scratch_preparation_excluded: "scratch_off",
+  moon_repeat_strategy: "repeat",
+  platform: "platform",
+  python: "python",
+  moon: "moon",
+  cargo: "cargo",
+  rustc: "rustc",
+};
+
+function metadataLabel(label) {
+  return metadataLabels[label] ?? label;
+}
+
 function renderOverallMetadata() {
   const metadata = latestResults.metadata ?? {};
   const run = metadata.run ?? {};
@@ -473,6 +499,9 @@ function renderOverallMetadata() {
     ["moon_sample_count", measurement.sample_count],
     ["moon_warmup_ns", measurement.warmup_ns],
     ["moon_target_sample_ns", measurement.target_sample_ns],
+    ["moon_calibration_policy", measurement.calibration_policy],
+    ["moon_scratch_preparation_excluded", measurement.scratch_preparation_excluded],
+    ["moon_repeat_strategy", measurement.repeat_strategy],
     ["platform", environment.platform],
     ["python", environment.python],
     ["moon", environment.moon],
@@ -489,7 +518,7 @@ function renderOverallMetadata() {
     <div class="metadata-card">
       ${rows.map(([label, value]) => `
         <div class="metadata-row">
-          <span class="metadata-label">${label}</span>
+          <span class="metadata-label">${metadataLabel(label)}</span>
           <span class="metadata-value">${formatMetadataValue(value)}</span>
         </div>
       `).join("")}
@@ -627,7 +656,7 @@ function renderOperationPanels(rows) {
         <div class="operation-head">
           <div class="operation-copy">
             <h2 class="operation-title">${panelTitle(firstRow)}</h2>
-            <p class="operation-note">${caseCount} scale points. Scale axis: ${descriptor.axisLabel}.</p>
+            <p class="operation-note">${caseCount} scale points. Scale axis: ${descriptor.axisLabel}. Timing: ${firstRow.timing_scope}. Mutation: ${firstRow.mutation_policy}.</p>
           </div>
         </div>
         <div class="operation-layout">
@@ -675,7 +704,12 @@ function render() {
 }
 
 async function fetchJson(url, options = {}) {
-  const response = await fetch(url, options);
+  const separator = url.includes("?") ? "&" : "?";
+  const stampedUrl = `${url}${separator}_ts=${Date.now()}`;
+  const response = await fetch(stampedUrl, {
+    cache: "no-store",
+    ...options,
+  });
   if (!response.ok) {
     throw new Error(`${url} -> ${response.status}`);
   }
@@ -718,13 +752,19 @@ async function triggerRun(smoke) {
   await refreshStatus();
 }
 
-setInterval(() => {
-  if (!autoRefresh) {
+async function refreshLoop() {
+  if (!autoRefresh || refreshInFlight) {
     return;
   }
-  refreshStatus();
-  refreshResults();
-}, 2500);
+  refreshInFlight = true;
+  try {
+    await refreshStatus();
+    await refreshResults();
+  } finally {
+    refreshInFlight = false;
+  }
+}
 
-await refreshStatus();
-await refreshResults();
+setInterval(refreshLoop, 2500);
+
+await refreshLoop();

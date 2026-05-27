@@ -5,6 +5,8 @@ edition = "2021"
 
 [dependencies]
 nalgebra = "0.33"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 
 [dev-dependencies]
 criterion = "0.5"
