@@ -26,8 +26,8 @@ the repository state after all changes landed since `0.2.10`.
 - **Kernel-Level Mutable Optimizations**: Follow-up backend kernel work reduced overhead in repeated matrix operations after the original storage unification pass.
 - **Dependency Upgrade**: The current repository depends on `Luna-Flow/luna-generic` `0.3.0` and `moonbitlang/quickcheck` `0.14.0`.
 - **Modern Moon Package Metadata**: The repository now carries `moon.mod` as the canonical package manifest format for the current toolchain generation.
-- **Release Workflow Confirmation**: The publish workflow requires an explicit version input that must match `moon.mod`, keeping release metadata aligned with the canonical manifest.
-- **Benchmark Harness & Dashboard**: The repository now ships a fixture-driven benchmark harness, runtime fixture loading, richer reporting, a local web dashboard, an optional Rust baseline, and a scheduled GitHub Actions benchmark workflow.
+- **Release Workflow Confirmation**: The publish workflow now reads the release version directly from `moon.mod`, keeping release metadata aligned with the canonical manifest.
+- **Benchmark Harness & Dashboard**: The repository now ships a fixture-driven benchmark harness, runtime fixture loading, richer reporting, a local web dashboard, and an optional Rust baseline for local or ad hoc comparison runs.
 
 ### API Guidance & Performance
 
@@ -84,7 +84,7 @@ Localized README files:
 
 | Version | Date | Status | Notes |
 | --- | --- | --- | --- |
-| `0.2.11` | 2026-05-27 | upcoming release baseline | Performance-tuned mutable kernels, dedicated wasm-gc backend, expanded benchmark workflow, richer reporting, and API/doc alignment |
+| `0.2.11` | 2026-05-27 | upcoming release baseline | Performance-tuned mutable kernels, dedicated wasm-gc backend, benchmark/reporting expansion, and API/doc alignment |
 | `0.2.10` | 2026-05-27 | previous release baseline | Unified flattened mutable storage, matrix views, consistency coverage, benchmark coverage, and release-process alignment |
 | `0.2.9` | 2026-02-03 | published on mooncakes | Published from the earlier `3328195` release state |
 | `0.2.8` | 2026-02-03 | historical baseline | Algorithms and stability milestone used as the comparison baseline for later work |
@@ -135,7 +135,7 @@ Before triggering the publish workflow:
 1. Bump `moon.mod` to the intended next release version before publishing.
 2. Update `README.md` so the release notes and version history match the package contents.
 3. Run `moon check` and `./run_test.sh`.
-4. Trigger `publish-package` and enter the exact version from `moon.mod` in the workflow input.
+4. Trigger `publish-package`; it will publish the version currently declared in `moon.mod`.
 
 If the workflow reports a duplicate version, the package manager already contains that version and a new version bump is required.
 

@@ -14,8 +14,8 @@ The benchmark subsystem is split across three MoonBit packages:
 - `src/perf_support`: public case metadata, runtime fixture loading, and case execution helpers.
 - `src/perf_runner`: a single-case diagnostic and sampling runner used by the reporting pipeline.
 
-A scheduled GitHub Actions workflow at `.github/workflows/benchmark.yml` runs
-the benchmark matrix in CI and uploads the generated result artifacts.
+Benchmark runs are intended for local execution and ad hoc comparison work
+rather than a dedicated scheduled GitHub Actions workflow.
 
 ## Fixtures
 

@@ -2,11 +2,6 @@ name: publish-package
 run-name: publish to mooncakes
 on:
   workflow_dispatch:
-    inputs:
-      release_version:
-        description: "Version to publish. Must exactly match moon.mod."
-        required: true
-        type: string
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -20,16 +15,16 @@ jobs:
         run: |
           moon version --all
           moonrun --version
-      - name: verify release version
+      - name: read release version
+        id: release
         run: |
           test -f moon.mod
           test ! -f moon.mod.json
           test -f README.md
           PKG_VERSION=$(sed -n 's/^version = "\(.*\)"$/\1/p' moon.mod)
           echo "moon.mod version: $PKG_VERSION"
-          echo "workflow input version: ${{ inputs.release_version }}"
           test -n "$PKG_VERSION"
-          test "$PKG_VERSION" = "${{ inputs.release_version }}"
+          echo "version=$PKG_VERSION" >> "$GITHUB_OUTPUT"
       - name: moon update
         run: |
           moon update
@@ -40,7 +35,7 @@ jobs:
       - name: publish
         run: |
           trap 'rm -f ~/.moon/credentials.json' EXIT
-          echo "publishing version ${{ inputs.release_version }}"
+          echo "publishing version ${{ steps.release.outputs.version }}"
           printf '%s' "$SECRET" > ~/.moon/credentials.json
           moon publish
         env:

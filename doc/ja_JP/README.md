@@ -25,8 +25,8 @@
 - **mutable カーネルの継続最適化**: `0.2.10` の統一ストレージ以降も、各バックエンドの繰り返し行列処理の実行オーバーヘッドをさらに削減しました。
 - **依存関係更新**: 現在のリポジトリは `Luna-Flow/luna-generic` `0.3.0` と `moonbitlang/quickcheck` `0.14.0` に依存しています。
 - **現行 Moon パッケージメタデータ**: このリポジトリは、現在のツールチェインにおける正規のパッケージマニフェストとして `moon.mod` を持っています。
-- **リリース確認フロー**: publish workflow は `moon.mod` と完全一致する明示的なバージョン入力を要求し、正規 manifest と release 入力を一致させます。
-- **Benchmark ハーネスとダッシュボード**: fixture 駆動の benchmark harness、ランタイム fixture 読み込み、より豊富なレポート、ローカル web dashboard、任意の Rust baseline、定期実行される GitHub Actions benchmark workflow を備えています。
+- **リリース確認フロー**: publish workflow は `moon.mod` に書かれたバージョンを直接読み取り、正規 manifest と release メタデータを一致させます。
+- **Benchmark ハーネスとダッシュボード**: fixture 駆動の benchmark harness、ランタイム fixture 読み込み、より豊富なレポート、ローカル web dashboard、そしてローカルまたは臨時比較向けの任意の Rust baseline を備えています。
 
 ### API 指針と性能
 
@@ -83,7 +83,7 @@ let row0 = m.row_view(0).to_array()
 
 | バージョン | 日付 | 状態 | 説明 |
 | --- | --- | --- | --- |
-| `0.2.11` | 2026-05-27 | 次期リリース基準 | mutable カーネル性能改善、専用 wasm-gc バックエンド、拡張 benchmark workflow、豊富なレポート、API/文書整合 |
+| `0.2.11` | 2026-05-27 | 次期リリース基準 | mutable カーネル性能改善、専用 wasm-gc バックエンド、benchmark/レポート拡張、API/文書整合 |
 | `0.2.10` | 2026-05-27 | 前回リリース基準 | 統一フラット mutable ストレージ、行列ビュー、整合性カバレッジ、benchmark 拡張、リリース手順整合 |
 | `0.2.9` | 2026-02-03 | mooncakes 公開済み | 以前の `3328195` リリース状態から公開 |
 | `0.2.8` | 2026-02-03 | 歴史的基準 | 後続作業のアルゴリズム・安定性比較の基準 |
@@ -134,7 +134,7 @@ publish workflow を起動する前に:
 1. `moon.mod` を目標リリースバージョンへ bump する。
 2. `README.md` を更新し、リリースノートとバージョン履歴をパッケージ内容に一致させる。
 3. `moon check` と `./run_test.sh` を実行する。
-4. `publish-package` を起動し、`moon.mod` と完全一致するバージョン文字列を workflow 入力へ指定する。
+4. `publish-package` を起動する。workflow は `moon.mod` に書かれたバージョンをそのまま使う。
 
 workflow が重複バージョンを報告した場合、そのバージョンは既に登録されています。先に新しいバージョンへ bump してください。
 

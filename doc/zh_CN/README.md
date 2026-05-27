@@ -25,8 +25,8 @@
 - **mutable 内核继续优化**：在 `0.2.10` 的统一存储基础上，后续提交继续收紧了多后端矩阵核心路径中的执行开销。
 - **依赖升级**：当前仓库依赖 `Luna-Flow/luna-generic` `0.3.0` 与 `moonbitlang/quickcheck` `0.14.0`。
 - **现代 Moon 包元数据**：仓库现在已经采用 `moon.mod` 作为当前工具链语境下的规范包清单格式。
-- **发布确认流程**：发布工作流现在要求显式输入版本号，并与 `moon.mod` 完全一致，以保证发布输入与规范 manifest 保持一致。
-- **Benchmark 基础设施与看板**：仓库现在提供基于 fixture 的 benchmark harness、运行时 fixture 加载、更丰富的报告输出、本地 web dashboard、可选 Rust baseline，以及定时 GitHub Actions benchmark workflow。
+- **发布确认流程**：发布工作流现在直接读取 `moon.mod` 中的版本号，以保证发布元数据和规范 manifest 保持一致。
+- **Benchmark 基础设施与看板**：仓库现在提供基于 fixture 的 benchmark harness、运行时 fixture 加载、更丰富的报告输出、本地 web dashboard，以及用于本地或临时对照的可选 Rust baseline。
 
 ### API 指导与性能建议
 
@@ -83,7 +83,7 @@ let row0 = m.row_view(0).to_array()
 
 | 版本 | 日期 | 状态 | 说明 |
 | --- | --- | --- | --- |
-| `0.2.11` | 2026-05-27 | 即将发布基线 | mutable 内核性能优化、独立 wasm-gc 后端、扩展 benchmark 工作流、更丰富报告与 API/文档对齐 |
+| `0.2.11` | 2026-05-27 | 即将发布基线 | mutable 内核性能优化、独立 wasm-gc 后端、benchmark/报告扩展与 API/文档对齐 |
 | `0.2.10` | 2026-05-27 | 上一发布基线 | 统一扁平化 mutable 存储、矩阵视图、一致性覆盖、benchmark 扩展与发布流程对齐 |
 | `0.2.9` | 2026-02-03 | 已发布到 mooncakes | 基于较早的 `3328195` 发布状态发布 |
 | `0.2.8` | 2026-02-03 | 历史基线 | 后续工作的算法与稳定性对比基线 |
@@ -134,7 +134,7 @@ moon test --enable-coverage
 1. 先把 `moon.mod` bump 到目标发布版本。
 2. 更新 `README.md`，确保发布说明与版本历史和包内容一致。
 3. 运行 `moon check` 与 `./run_test.sh`。
-4. 触发 `publish-package`，并在工作流输入中填写与 `moon.mod` 完全一致的版本号。
+4. 触发 `publish-package`；工作流会直接发布 `moon.mod` 里声明的版本。
 
 如果工作流提示版本重复，说明包管理器中已经存在该版本，需要先 bump 新版本。
 
