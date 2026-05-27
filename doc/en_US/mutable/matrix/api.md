@@ -131,7 +131,7 @@ struct Matrix[T] {
       - `row: Int` - Row index (starting from 0)
 
     - **Returns**
-      A backend-specific row access handle. On Native and Wasm targets this is a `Lens[T]`; on JS it is the underlying row array.
+      `Lens[T]` - Row access handle used by the `m[row][col]` syntax.
 
     - **Performance Note**
       Calling `m[row]` allocates a new `Lens` object and two closures. For performance-critical bulk operations, prefer:
@@ -790,7 +790,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Ord + Default] max_element(self) -> T`**
+  - **`fn[T : Compare] max_element(self) -> T`**
     - **Description**
         Finds the maximum element in the matrix
 
@@ -805,7 +805,26 @@ struct Matrix[T] {
       ```moonbit
       let m = Matrix::from_2d_array([[1, 5, 3], [2, 8, 1]])
       let max_val = m.max_element()  // Find maximum value: 8
-      `
+      ```
+
+  ---
+
+  - **`fn[T : Compare] min_element(self) -> T`**
+    - **Description**
+        Finds the minimum element in the matrix
+
+    - **Parameters**
+      - `self: Matrix[T]` - Matrix to search
+
+    - **Returns**
+      `T` - Minimum element in the matrix
+
+    - **Example**
+
+      ```moonbit
+      let m = Matrix::from_2d_array([[5, 2, 8], [1, 9, 3]])
+      let min_val = m.min_element()  // Find minimum value: 1
+      ```
 
     ---
 

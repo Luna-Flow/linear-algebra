@@ -2,9 +2,10 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.10 - Unified Storage & API Alignment
+## v0.2.11 - Performance, Benchmarks & API Alignment
 
-With **v0.2.10**, the repository documentation and release metadata stay aligned to the current package manifest.
+This documentation tracks the upcoming **v0.2.11** release content and reflects
+the repository state after all changes landed since `0.2.10`.
 
 ### Package Positioning
 
@@ -12,7 +13,7 @@ With **v0.2.10**, the repository documentation and release metadata stay aligned
 - **`mutable`**: Execution-oriented `Matrix` and `Vector` types with in-place updates, `Transpose` views, `RowView` / `ColView`, and backend-specific implementations for `js`, `wasm`, `wasm-gc`, and `native`.
 - **Shared Core, Different Execution Model**: Constructors and core algebraic operators remain aligned across packages, but mutation and access semantics are intentionally different.
 
-### What Defines v0.2.10
+### What Defines v0.2.11
 
 - **Matrix Views**: `mutable` now exposes `RowView` and `ColView` for repeated structured row/column work without materializing copies.
 - **Unified Flattened Storage**: `mutable.Matrix` now uses a shared flat `Array[T]` storage model across backends, instead of documenting backend-specific layout differences.
@@ -22,10 +23,11 @@ With **v0.2.10**, the repository documentation and release metadata stay aligned
 - **Dedicated Wasm GC Backend**: `mutable` now includes a dedicated `wasm-gc` backend rather than treating it as a thin variation of earlier backend code paths.
 - **Numeric Trait Cleanup**: Mutable numerical APIs now align more directly with `Field` / `Num` / `Tolerance` style constraints, while immutable determinant constraints were simplified.
 - **Symmetric Eigen Performance**: The symmetric real eigenpath has been accelerated as part of the current release line.
+- **Kernel-Level Mutable Optimizations**: Follow-up backend kernel work reduced overhead in repeated matrix operations after the original storage unification pass.
 - **Dependency Upgrade**: The current repository depends on `Luna-Flow/luna-generic` `0.3.0` and `moonbitlang/quickcheck` `0.14.0`.
 - **Modern Moon Package Metadata**: The repository now carries `moon.mod` as the canonical package manifest format for the current toolchain generation.
 - **Release Workflow Confirmation**: The publish workflow requires an explicit version input that must match `moon.mod`, keeping release metadata aligned with the canonical manifest.
-- **Benchmark Harness & Dashboard**: The repository now ships a fixture-driven benchmark harness, a local web dashboard, an optional Rust baseline, and a scheduled GitHub Actions benchmark workflow.
+- **Benchmark Harness & Dashboard**: The repository now ships a fixture-driven benchmark harness, runtime fixture loading, richer reporting, a local web dashboard, an optional Rust baseline, and a scheduled GitHub Actions benchmark workflow.
 
 ### API Guidance & Performance
 
@@ -41,6 +43,12 @@ With **v0.2.10**, the repository documentation and release metadata stay aligned
 - **Shared Data Model, Backend-Tuned Kernels**: `mutable` still ships backend-tuned execution paths for Native, Wasm, JS, and Wasm GC targets, but the core matrix storage model is now unified.
 - **Benchmark Infrastructure**: `bench/`, `src/perf_support`, and `src/perf_runner` now form a full steady-state benchmarking subsystem for backend comparison and diagnostic replay.
 - **Correctness First**: Coverage now includes immutable laws, cross-package consistency checks, determinant/rank/inverse alignment, and regression tests for numerical behavior.
+
+### Benchmark Packages
+
+- **`perf`**: Benchmark entry package used by `moon bench` for the steady-state matrix suite.
+- **`perf_support`**: Public fixture metadata, case registry, runtime loaders, and checksum-oriented execution helpers for benchmark cases.
+- **`perf_runner`**: Single-case diagnostic and sampling runner used for replay, local investigation, and richer benchmark artifact generation.
 
 ### Quick Start
 
@@ -76,17 +84,18 @@ Localized README files:
 
 | Version | Date | Status | Notes |
 | --- | --- | --- | --- |
-| `0.2.10` | 2026-05-27 | current package baseline | Unified flattened mutable storage, matrix views, consistency coverage, benchmark coverage, and release-process alignment |
+| `0.2.11` | 2026-05-27 | upcoming release baseline | Performance-tuned mutable kernels, dedicated wasm-gc backend, expanded benchmark workflow, richer reporting, and API/doc alignment |
+| `0.2.10` | 2026-05-27 | previous release baseline | Unified flattened mutable storage, matrix views, consistency coverage, benchmark coverage, and release-process alignment |
 | `0.2.9` | 2026-02-03 | published on mooncakes | Published from the earlier `3328195` release state |
 | `0.2.8` | 2026-02-03 | historical baseline | Algorithms and stability milestone used as the comparison baseline for later work |
 
 ## Current Repository Highlights
 
-- **Current Release Narrative (0.2.10)**:
-  - `mutable.Matrix` is now documented around a shared flat storage model across backends.
-  - `RowView` / `ColView`, cross-package consistency coverage, dedicated `wasm-gc` support, and numerical fixes are part of the current mainline story.
-  - Symmetric eigen performance, trait-bound cleanup, and the full benchmark harness/dashboard workflow are part of the current repository baseline.
-  - The documentation, release checklist, dependency story, benchmark workflow, and canonical `moon.mod` metadata flow are aligned to the current implementation state.
+- **Current Release Narrative (0.2.11)**:
+  - `mutable.Matrix` now combines the shared flat storage model from `0.2.10` with follow-up backend kernel optimizations and a dedicated `wasm-gc` implementation.
+  - Public numerical signatures are aligned around `Field` / `Num` / `Tolerance`, and immutable determinant documentation matches the simplified post-`0.2.10` constraint set.
+  - The benchmark stack now includes runtime-loaded fixtures, expanded case metadata, richer summary reporting, a local dashboard, optional Rust comparison runs, and diagnostic replay via `perf_runner`.
+  - The release checklist, benchmark docs, package overview, and localized READMEs are aligned to the `0.2.11` release story.
 
 - **Algorithms & Stability (0.2.8)**:
   - Added LU- and QR-related decomposition support used by determinant, inverse, rank, and eigen routines.

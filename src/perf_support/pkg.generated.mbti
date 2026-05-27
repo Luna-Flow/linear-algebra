@@ -3,6 +3,7 @@ package "Luna-Flow/linear-algebra/perf_support"
 
 import {
   "Luna-Flow/linear-algebra/mutable",
+  "moonbitlang/core/json",
 }
 
 // Values
@@ -20,9 +21,15 @@ pub fn find_prepared_case(String) -> PreparedCase?
 
 pub fn prepare_case(Case) -> PreparedCase
 
+pub fn prepare_case_from_fixture(Case, String) -> PreparedCase
+
 pub fn run_case_once(Case) -> UInt64
 
+pub fn run_prepared_case_inplace(PreparedCase, Bool) -> UInt64
+
 pub fn run_prepared_case_once(PreparedCase) -> UInt64
+
+pub fn sample_case_names() -> Array[String]
 
 // Errors
 
@@ -31,12 +38,25 @@ pub struct Case {
   id : String
   operation : String
   family : String
+  workload_tier : String
+  structure : String
+  timing_scope : String
+  input_layout : String
+  mutation_policy : String
+  size_tier : String
+  cost_model : String
   rows : Int
   cols : Int
   rhs_cols : Int
-  data_a : Array[Double]
-  data_b : Array[Double]
 }
+
+type CaseFixtureFile derive(@json.FromJson)
+
+type CaseFixtureInputs derive(@json.FromJson)
+
+type CaseFixtureShape derive(@json.FromJson)
+
+type LoadedCaseFixture
 
 pub struct PreparedCase {
   case_item : Case
@@ -48,3 +68,4 @@ pub struct PreparedCase {
 // Type aliases
 
 // Traits
+

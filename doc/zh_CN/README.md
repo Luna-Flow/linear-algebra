@@ -2,9 +2,9 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.10 - 统一存储与 API 对齐
+## v0.2.11 - 性能、Benchmark 与 API 对齐
 
-在 **v0.2.10** 中，仓库文档与发布元数据统一对齐到当前包清单。
+本文档描述即将发布的 **v0.2.11** 内容，覆盖 `0.2.10` 之后落地的实现与文档更新。
 
 ### 包定位
 
@@ -12,7 +12,7 @@
 - **`mutable`**：执行导向的 `Matrix` 与 `Vector` 类型，支持原地更新、`Transpose` 视图、`RowView` / `ColView`，并保留 `js`、`wasm`、`wasm-gc`、`native` 的后端优化实现。
 - **共享核心，不同执行模型**：构造器和核心代数操作在两个包之间保持对齐，但修改语义与访问语义是有意区分的。
 
-### v0.2.10 的核心变化
+### v0.2.11 的核心变化
 
 - **矩阵视图**：`mutable` 现在提供 `RowView` 和 `ColView`，便于反复进行结构化的行列操作，而不必物化拷贝。
 - **统一扁平化存储**：`mutable.Matrix` 现在在各后端上统一采用扁平 `Array[T]` 存储模型，不再把主存储布局按后端分别描述。
@@ -22,10 +22,11 @@
 - **独立的 Wasm GC 后端**：`mutable` 现在包含专门的 `wasm-gc` 后端实现，而不再只是早期后端路径的薄变体。
 - **数值 trait 约束清理**：可变数值 API 现在更直接地围绕 `Field` / `Num` / `Tolerance` 这组约束收敛，不可变 determinant 的约束也被简化。
 - **对称特征值路径加速**：针对实对称矩阵的 eigen 路径已经在当前发布线中得到加速。
+- **mutable 内核继续优化**：在 `0.2.10` 的统一存储基础上，后续提交继续收紧了多后端矩阵核心路径中的执行开销。
 - **依赖升级**：当前仓库依赖 `Luna-Flow/luna-generic` `0.3.0` 与 `moonbitlang/quickcheck` `0.14.0`。
 - **现代 Moon 包元数据**：仓库现在已经采用 `moon.mod` 作为当前工具链语境下的规范包清单格式。
 - **发布确认流程**：发布工作流现在要求显式输入版本号，并与 `moon.mod` 完全一致，以保证发布输入与规范 manifest 保持一致。
-- **Benchmark 基础设施与看板**：仓库现在提供基于 fixture 的 benchmark harness、本地 web dashboard、可选 Rust baseline，以及定时 GitHub Actions benchmark workflow。
+- **Benchmark 基础设施与看板**：仓库现在提供基于 fixture 的 benchmark harness、运行时 fixture 加载、更丰富的报告输出、本地 web dashboard、可选 Rust baseline，以及定时 GitHub Actions benchmark workflow。
 
 ### API 指导与性能建议
 
@@ -41,6 +42,12 @@
 - **共享数据模型 + 后端调优内核**：`mutable` 仍保留 Native、Wasm、JS、Wasm GC 的后端优化执行路径，但核心矩阵存储模型已经统一。
 - **Benchmark 基础设施**：`bench/`、`src/perf_support` 和 `src/perf_runner` 现在共同组成了完整的 steady-state benchmark 子系统，用于后端对比与诊断复现。
 - **正确性优先**：当前覆盖范围包括不可变语义检查、跨包一致性检查、determinant/rank/inverse 对齐，以及数值行为回归测试。
+
+### Benchmark 相关包
+
+- **`perf`**：供 `moon bench` 使用的 benchmark 入口包。
+- **`perf_support`**：公开 fixture 元数据、case 注册表、运行时加载器，以及用于执行 benchmark case 的辅助函数。
+- **`perf_runner`**：用于单 case 诊断、采样与结果复现的运行器。
 
 ### 快速开始
 
@@ -76,17 +83,18 @@ let row0 = m.row_view(0).to_array()
 
 | 版本 | 日期 | 状态 | 说明 |
 | --- | --- | --- | --- |
-| `0.2.10` | 2026-05-27 | 当前包基线 | 统一扁平化 mutable 存储、矩阵视图、一致性覆盖、benchmark 扩展与发布流程对齐 |
+| `0.2.11` | 2026-05-27 | 即将发布基线 | mutable 内核性能优化、独立 wasm-gc 后端、扩展 benchmark 工作流、更丰富报告与 API/文档对齐 |
+| `0.2.10` | 2026-05-27 | 上一发布基线 | 统一扁平化 mutable 存储、矩阵视图、一致性覆盖、benchmark 扩展与发布流程对齐 |
 | `0.2.9` | 2026-02-03 | 已发布到 mooncakes | 基于较早的 `3328195` 发布状态发布 |
 | `0.2.8` | 2026-02-03 | 历史基线 | 后续工作的算法与稳定性对比基线 |
 
 ## 当前仓库亮点
 
-- **当前版本主叙事（0.2.10）**：
-  - `mutable.Matrix` 现在围绕跨后端共享的扁平存储模型来组织文档与实现说明。
-  - `RowView` / `ColView`、跨包一致性覆盖、独立 `wasm-gc` 支持和数值修正，已经成为当前主线能力的一部分。
-  - 对称 eigen 性能提升、trait 边界清理，以及完整 benchmark harness / dashboard 工作流，都是当前仓库基线的一部分。
-  - 文档、发布清单、依赖叙事、benchmark workflow 以及规范的 `moon.mod` 元数据流程，已和当前实现状态对齐。
+- **当前版本主叙事（0.2.11）**：
+  - `mutable.Matrix` 在 `0.2.10` 统一扁平存储的基础上，继续获得了多后端核心路径优化和独立 `wasm-gc` 实现。
+  - 公共数值 API 已围绕 `Field` / `Num` / `Tolerance` 对齐，不可变 determinant 的文档也已同步到简化后的约束集合。
+  - benchmark 体系现在包含运行时 fixture 加载、扩展 case 元数据、更丰富 summary 输出、本地 dashboard、可选 Rust 对照，以及通过 `perf_runner` 进行诊断复现的路径。
+  - 发布清单、benchmark 文档、包概览与多语言 README 已统一到 `0.2.11` 的发布叙事。
 
 - **算法与稳定性（0.2.8）**：
   - 引入了 determinant、inverse、rank、eigen 相关能力所依赖的 LU / QR 分解支持。

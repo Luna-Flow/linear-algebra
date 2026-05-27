@@ -1,7 +1,7 @@
 # Contribution Guidelines
 
-This guide tracks the current repository workflow and follows the same release
-baseline as the rest of the docs: **`0.2.10`**.
+This guide tracks the current repository workflow and follows the same upcoming
+release baseline as the rest of the docs: **`0.2.11`**.
 
 ## To Contributors
 

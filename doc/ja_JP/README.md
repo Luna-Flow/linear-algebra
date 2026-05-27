@@ -2,9 +2,9 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.10 - 統一ストレージと API 整合
+## v0.2.11 - パフォーマンス、Benchmark、API 整合
 
-**v0.2.10** では、リポジトリのドキュメントとリリースメタデータを現在のパッケージマニフェストに揃えています。
+このドキュメントは、`0.2.10` 以降に入った変更を反映した、次期 **v0.2.11** の内容を説明します。
 
 ### パッケージの位置づけ
 
@@ -12,7 +12,7 @@
 - **`mutable`**: 実行指向の `Matrix` と `Vector` 型。原地更新、`Transpose` ビュー、`RowView` / `ColView` を備え、`js`、`wasm`、`wasm-gc`、`native` 向けの最適化実装を保持します。
 - **共有コア、異なる実行モデル**: コンストラクタと中核的な代数演算は両パッケージ間で揃えつつ、更新・アクセスのセマンティクスは意図的に分けています。
 
-### v0.2.10 を特徴づけるもの
+### v0.2.11 を特徴づけるもの
 
 - **行列ビュー**: `mutable` は `RowView` と `ColView` を公開し、コピーを実体化せずに構造化された行・列操作を繰り返せます。
 - **統一されたフラットストレージ**: `mutable.Matrix` はバックエンドをまたいで共有のフラット `Array[T]` ストレージモデルを採用し、主ストレージの説明をバックエンドごとに分けなくなりました。
@@ -22,10 +22,11 @@
 - **専用 Wasm GC バックエンド**: `mutable` は、従来バックエンドの薄い派生ではない専用の `wasm-gc` バックエンド実装を持つようになりました。
 - **数値 trait 境界の整理**: 可変数値 API は `Field` / `Num` / `Tolerance` を中心とした境界へより直接的に整えられ、不変 determinant の制約も簡素化されました。
 - **対称固有値経路の高速化**: 実対称行列向けの eigen 経路は現行リリースラインで高速化されています。
+- **mutable カーネルの継続最適化**: `0.2.10` の統一ストレージ以降も、各バックエンドの繰り返し行列処理の実行オーバーヘッドをさらに削減しました。
 - **依存関係更新**: 現在のリポジトリは `Luna-Flow/luna-generic` `0.3.0` と `moonbitlang/quickcheck` `0.14.0` に依存しています。
 - **現行 Moon パッケージメタデータ**: このリポジトリは、現在のツールチェインにおける正規のパッケージマニフェストとして `moon.mod` を持っています。
 - **リリース確認フロー**: publish workflow は `moon.mod` と完全一致する明示的なバージョン入力を要求し、正規 manifest と release 入力を一致させます。
-- **Benchmark ハーネスとダッシュボード**: fixture 駆動の benchmark harness、ローカル web dashboard、任意の Rust baseline、定期実行される GitHub Actions benchmark workflow を備えています。
+- **Benchmark ハーネスとダッシュボード**: fixture 駆動の benchmark harness、ランタイム fixture 読み込み、より豊富なレポート、ローカル web dashboard、任意の Rust baseline、定期実行される GitHub Actions benchmark workflow を備えています。
 
 ### API 指針と性能
 
@@ -41,6 +42,12 @@
 - **共有データモデル + バックエンド最適化カーネル**: `mutable` は Native、Wasm、JS、Wasm GC 向けの最適化実行経路を維持しつつ、コア行列ストレージモデルは統一されています。
 - **Benchmark 基盤**: `bench/`、`src/perf_support`、`src/perf_runner` が、バックエンド比較と診断再現のための完全な steady-state benchmark サブシステムを構成しています。
 - **正しさ優先**: 不変法則、パッケージ間整合性、determinant/rank/inverse の整合、数値挙動の回帰テストを含むカバレッジを備えています。
+
+### Benchmark 関連パッケージ
+
+- **`perf`**: `moon bench` 用の benchmark エントリパッケージです。
+- **`perf_support`**: fixture メタデータ、case レジストリ、ランタイムローダー、benchmark 実行補助 API を提供します。
+- **`perf_runner`**: 単一 case の診断、サンプリング、結果再現に使うランナーです。
 
 ### クイックスタート
 
@@ -76,17 +83,18 @@ let row0 = m.row_view(0).to_array()
 
 | バージョン | 日付 | 状態 | 説明 |
 | --- | --- | --- | --- |
-| `0.2.10` | 2026-05-27 | 現在のパッケージ基準 | 統一フラット mutable ストレージ、行列ビュー、整合性カバレッジ、benchmark 拡張、リリース手順整合 |
+| `0.2.11` | 2026-05-27 | 次期リリース基準 | mutable カーネル性能改善、専用 wasm-gc バックエンド、拡張 benchmark workflow、豊富なレポート、API/文書整合 |
+| `0.2.10` | 2026-05-27 | 前回リリース基準 | 統一フラット mutable ストレージ、行列ビュー、整合性カバレッジ、benchmark 拡張、リリース手順整合 |
 | `0.2.9` | 2026-02-03 | mooncakes 公開済み | 以前の `3328195` リリース状態から公開 |
 | `0.2.8` | 2026-02-03 | 歴史的基準 | 後続作業のアルゴリズム・安定性比較の基準 |
 
 ## 現在のリポジトリのハイライト
 
-- **現在のリリース叙述（0.2.10）**:
-  - `mutable.Matrix` は、バックエンドをまたぐ共有フラットストレージモデルを中心に文書化されています。
-  - `RowView` / `ColView`、パッケージ間整合性カバレッジ、専用 `wasm-gc` サポート、数値修正が現行メインラインの一部になっています。
-  - 対称 eigen の性能改善、trait 境界整理、完全な benchmark harness / dashboard workflow は現行リポジトリ基準の一部です。
-  - ドキュメント、リリースチェックリスト、依存関係の説明、benchmark workflow、そして正規の `moon.mod` メタデータ運用は現在の実装状態に整合しています。
+- **現在のリリース叙述（0.2.11）**:
+  - `mutable.Matrix` は `0.2.10` の共有フラットストレージを土台に、バックエンドカーネル最適化と専用 `wasm-gc` 実装を重ねた形で整理されています。
+  - 公開数値 API は `Field` / `Num` / `Tolerance` に揃えられ、不変 determinant のドキュメントも簡素化後の制約へ更新されています。
+  - benchmark スタックは、ランタイム fixture 読み込み、拡張 case メタデータ、詳細な summary 出力、ローカル dashboard、任意の Rust 比較、`perf_runner` による診断再現を含みます。
+  - リリースチェックリスト、benchmark 文書、パッケージ概要、多言語 README は `0.2.11` のリリースストーリーに整合しています。
 
 - **アルゴリズムと安定性（0.2.8）**:
   - determinant、inverse、rank、eigen 関連機能を支える LU / QR 分解サポートを追加しました。

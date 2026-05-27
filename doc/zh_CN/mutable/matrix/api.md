@@ -788,7 +788,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Ord + Default] max_element(self) -> T`**
+  - **`fn[T : Compare] max_element(self) -> T`**
     - **描述**
         找到矩阵中的最大元素
 
@@ -807,7 +807,7 @@ struct Matrix[T] {
 
   ---
 
-  - **`fn[T : Ord + Default] min_element(self) -> T`**
+  - **`fn[T : Compare] min_element(self) -> T`**
     - **描述**
         找到矩阵中的最小元素
 

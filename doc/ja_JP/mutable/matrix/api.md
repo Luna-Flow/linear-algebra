@@ -44,15 +44,18 @@ struct Matrix[T] {
 
 - **メソッド**
 
-  - **`fn[T] Matrix::make(row, col, f) -> Matrix[T]`**
+  - **`fn[A] Matrix::make(row, col, f) -> Matrix[A]`**
     - **説明**
         新しい行列を作成し、与えられた関数を使用してデータを初期化します。
     - **パラメータ**
       - `row: Int` - 行数
       - `col: Int` - 列数
-      - `f: (Int, Int) -> T` - データを初期化する関数（第 1 引数は行インデックス、第 2 引数は列インデックス）
+      - `f: (Int, Int) -> A` - データを初期化する関数（第 1 引数は行インデックス、第 2 引数は列インデックス）
     - **戻り値**
-      `Matrix[T]` - 新しく作成された行列オブジェクト
+      `Matrix[A]` - 新しく作成された行列オブジェクト
+
+    - **補足**
+      生成関数の戻り値型で結果の行列要素型が決まるため、既存行列の要素型 `T` に縛られません。
 
   ---
 
@@ -232,6 +235,18 @@ pub struct ColView[T] { ... }
   - **`fn[T : Compare + Field + Num + Tolerance] determinant(self) -> T`**
     - **説明**
         行列式を計算します。
+
+  ---
+
+  - **`fn[T : Compare] max_element(self) -> T`**
+    - **説明**
+        行列中の最大要素を返します。
+
+  ---
+
+  - **`fn[T : Compare] min_element(self) -> T`**
+    - **説明**
+        行列中の最小要素を返します。
 
   ---
 

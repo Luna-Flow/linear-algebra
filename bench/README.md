@@ -1,12 +1,18 @@
 # Benchmarking
 
-This benchmark documentation reflects the current repository state and stays
-aligned with the current package baseline.
+This benchmark documentation reflects the current repository state and is
+written for the upcoming `0.2.11` release line.
 
 This repository ships a steady-state benchmark harness for comparing the
 `mutable` package on the MoonBit native backend and, optionally, against a Rust
 `nalgebra` public-API baseline with minimal local fallbacks for operations
 without a direct one-call API.
+
+The benchmark subsystem is split across three MoonBit packages:
+
+- `src/perf`: the `moon bench` entry package.
+- `src/perf_support`: public case metadata, runtime fixture loading, and case execution helpers.
+- `src/perf_runner`: a single-case diagnostic and sampling runner used by the reporting pipeline.
 
 A scheduled GitHub Actions workflow at `.github/workflows/benchmark.yml` runs
 the benchmark matrix in CI and uploads the generated result artifacts.
@@ -21,6 +27,13 @@ the benchmark matrix in CI and uploads the generated result artifacts.
 
 Only `manifest.json` is intended to stay reviewable in git. The per-case JSON
 files and generated MoonBit files are codegen outputs and are ignored.
+
+## Why The Design Changed
+
+- Runtime fixture loading keeps the benchmark binary small and isolates code-size effects from matrix payload size.
+- Richer case metadata such as workload tier, structure, timing scope, input layout, mutation policy, size tier, and cost model lets the dashboard group performance changes by cause instead of only by operation name.
+- Steady-state measurement intentionally excludes cold start so backend/kernel comparisons focus on repeated computation cost rather than process startup or fixture I/O.
+- `scratch_per_sample` style mutation metadata exists because some operations mutate internal state and need per-sample fresh inputs to keep measurements comparable.
 
 ## Commands
 
