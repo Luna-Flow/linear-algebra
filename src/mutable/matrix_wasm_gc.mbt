@@ -750,9 +750,22 @@ pub impl[T : AddMonoid + Mul] Mul for Matrix[T] with mul(
     for k = 0; k < inner; k = k + 1 {
       let lhs = self_data[self_row_offset + k]
       let other_row_offset = k * col
-      for j = 0; j < col; j = j + 1 {
+      let mut j = 0
+      while j + 3 < col {
         let out_idx = result_row_offset + j
         data[out_idx] = data[out_idx] + lhs * other_data[other_row_offset + j]
+        data[out_idx + 1] = data[out_idx + 1] +
+          lhs * other_data[other_row_offset + j + 1]
+        data[out_idx + 2] = data[out_idx + 2] +
+          lhs * other_data[other_row_offset + j + 2]
+        data[out_idx + 3] = data[out_idx + 3] +
+          lhs * other_data[other_row_offset + j + 3]
+        j += 4
+      }
+      while j < col {
+        let out_idx = result_row_offset + j
+        data[out_idx] = data[out_idx] + lhs * other_data[other_row_offset + j]
+        j += 1
       }
     }
     result_row_offset += col
@@ -1971,7 +1984,7 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
   let y = Array::make(n, T::zero())
   let ax = Array::make(n, T::zero())
   for _ in 0..<max_iterations {
-    self.mul_vec_into(Vector(x), y)
+    self.mul_array_into(x, y)
     let mut scale = T::zero()
     for i in 0..<n {
       let candidate = y[i].abs()
@@ -1985,7 +1998,7 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
     for i in 0..<n {
       x[i] = y[i] / scale
     }
-    self.mul_vec_into(Vector(x), ax)
+    self.mul_array_into(x, ax)
     let mut numerator = T::zero()
     let mut denominator = T::zero()
     for i in 0..<n {
@@ -2037,18 +2050,17 @@ pub fn[T : AddMonoid + Mul] Matrix::mul_vec(
     abort("Matrix and vector dimensions are not compatible for multiplication")
   }
   let res_data = Array::make(m, T::zero())
-  self.mul_vec_into(vector, res_data)
+  self.mul_array_into(v_data, res_data)
   Vector(res_data)
 }
 
-fn[T : AddMonoid + Mul] Matrix::mul_vec_into(
+fn[T : AddMonoid + Mul] Matrix::mul_array_into(
   self : Matrix[T],
-  vector : Vector[T],
+  v_data : Array[T],
   out : Array[T],
 ) -> Unit {
   let m = self.row
   let n = self.col
-  let v_data = vector.0
   guard n == v_data.length() else {
     abort("Matrix and vector dimensions are not compatible for multiplication")
   }
@@ -2056,15 +2068,33 @@ fn[T : AddMonoid + Mul] Matrix::mul_vec_into(
     abort("Output buffer length mismatch for matrix-vector multiplication")
   }
   let data = self.data
-  let mut idx = 0
   for i = 0; i < m; i = i + 1 {
+    let row_offset = i * n
     let mut sum = T::zero()
-    for j = 0; j < n; j = j + 1 {
-      sum = sum + data[idx] * v_data[j]
-      idx += 1
+    let mut j = 0
+    while j + 3 < n {
+      sum = sum +
+        data[row_offset + j] * v_data[j] +
+        data[row_offset + j + 1] * v_data[j + 1] +
+        data[row_offset + j + 2] * v_data[j + 2] +
+        data[row_offset + j + 3] * v_data[j + 3]
+      j += 4
+    }
+    while j < n {
+      sum = sum + data[row_offset + j] * v_data[j]
+      j += 1
     }
     out[i] = sum
   }
+}
+
+fn[T : AddMonoid + Mul] Matrix::mul_vec_into(
+  self : Matrix[T],
+  vector : Vector[T],
+  out : Array[T],
+) -> Unit {
+  let v_data = vector.0
+  self.mul_array_into(v_data, out)
 }
 
 ///|
@@ -2188,6 +2218,14 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::determinant(
     abort("Matrix must be square to calculate determinant")
   }
   let n = self.row
+  if n >= 5 && (is_upper_triangular_fast(self) || is_lower_triangular_fast(self)) {
+    let data = self.data
+    let mut det = T::one()
+    for i = 0; i < n; i = i + 1 {
+      det *= data[i * n + i]
+    }
+    return det
+  }
   match n {
     0 => T::one()
     1 => self.data[0]
@@ -2247,6 +2285,27 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::inverse(
   if n == 0 {
     return Some(Matrix::new(0, 0, T::zero()))
   }
+  if is_identity_matrix_fast(self) {
+    return Some(self.copy())
+  }
+  if is_diagonal_matrix_fast(self) {
+    let data = self.data
+    let out = Matrix::new(n, n, T::zero())
+    let out_data = out.data
+    let tol = T::tolerance()
+    for i = 0; i < n; i = i + 1 {
+      let idx = i * n + i
+      let diag = data[idx]
+      if diag.abs() < tol {
+        return None
+      }
+      out_data[idx] = diag.inv()
+    }
+    return Some(out)
+  }
+  if is_permutation_matrix_fast(self) {
+    return Some(self.transpose())
+  }
   let lu = self.lu_decompose_internal()
   if lu.singular {
     return None
@@ -2299,6 +2358,27 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::cholesky_decomposit
     return None
   }
   let n = self.row
+  if n == 0 {
+    return Some(Matrix::new(0, 0, T::zero()))
+  }
+  if is_identity_matrix_fast(self) {
+    return Some(self.copy())
+  }
+  if is_diagonal_matrix_fast(self) {
+    let data = self.data
+    let out = Matrix::new(n, n, T::zero())
+    let out_data = out.data
+    let tol = T::tolerance()
+    for i = 0; i < n; i = i + 1 {
+      let idx = i * n + i
+      let diag = data[idx]
+      if diag <= tol {
+        return None
+      }
+      out_data[idx] = diag.sqrt()
+    }
+    return Some(out)
+  }
   let l = Matrix::new(n, n, T::zero())
   let self_data = self.data
   let l_data = l.data
@@ -2438,6 +2518,114 @@ pub fn[T : Compare + Num + Tolerance] Matrix::is_symmetric(
         T::tolerance() {
         return false
       }
+    }
+  }
+  true
+}
+
+fn[T : Compare + Num + Tolerance] is_upper_triangular_fast(matrix : Matrix[T]) -> Bool {
+  let n = matrix.row
+  let data = matrix.data
+  let tol = T::tolerance()
+  for i = 1; i < n; i = i + 1 {
+    let row_offset = i * n
+    for j = 0; j < i; j = j + 1 {
+      if data[row_offset + j].abs() > tol {
+        return false
+      }
+    }
+  }
+  true
+}
+
+fn[T : Compare + Num + Tolerance] is_lower_triangular_fast(matrix : Matrix[T]) -> Bool {
+  let n = matrix.row
+  let data = matrix.data
+  let tol = T::tolerance()
+  for i = 0; i < n; i = i + 1 {
+    let row_offset = i * n
+    for j = i + 1; j < n; j = j + 1 {
+      if data[row_offset + j].abs() > tol {
+        return false
+      }
+    }
+  }
+  true
+}
+
+fn[T : Compare + Zero + One + Num + Tolerance] is_identity_matrix_fast(
+  matrix : Matrix[T],
+) -> Bool {
+  if matrix.row != matrix.col {
+    return false
+  }
+  let n = matrix.row
+  let data = matrix.data
+  let tol = T::tolerance()
+  for i = 0; i < n; i = i + 1 {
+    let row_offset = i * n
+    for j = 0; j < n; j = j + 1 {
+      let expected = if i == j { T::one() } else { T::zero() }
+      if (data[row_offset + j] - expected).abs() > tol {
+        return false
+      }
+    }
+  }
+  true
+}
+
+fn[T : Compare + Zero + Num + Tolerance] is_diagonal_matrix_fast(matrix : Matrix[T]) -> Bool {
+  if matrix.row != matrix.col {
+    return false
+  }
+  let n = matrix.row
+  let data = matrix.data
+  let tol = T::tolerance()
+  for i = 0; i < n; i = i + 1 {
+    let row_offset = i * n
+    for j = 0; j < n; j = j + 1 {
+      if i != j && data[row_offset + j].abs() > tol {
+        return false
+      }
+    }
+  }
+  true
+}
+
+fn[T : Compare + Zero + One + Num + Tolerance] is_permutation_matrix_fast(
+  matrix : Matrix[T],
+) -> Bool {
+  if matrix.row != matrix.col {
+    return false
+  }
+  let n = matrix.row
+  let data = matrix.data
+  let tol = T::tolerance()
+  for i = 0; i < n; i = i + 1 {
+    let row_offset = i * n
+    let mut one_count = 0
+    for j = 0; j < n; j = j + 1 {
+      let value = data[row_offset + j]
+      if (value - T::one()).abs() <= tol {
+        one_count += 1
+      } else if value.abs() > tol {
+        return false
+      }
+    }
+    if one_count != 1 {
+      return false
+    }
+  }
+  for j = 0; j < n; j = j + 1 {
+    let mut one_count = 0
+    for i = 0; i < n; i = i + 1 {
+      let value = data[i * n + j]
+      if (value - T::one()).abs() <= tol {
+        one_count += 1
+      }
+    }
+    if one_count != 1 {
+      return false
     }
   }
   true

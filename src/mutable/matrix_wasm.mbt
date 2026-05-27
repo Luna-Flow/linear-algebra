@@ -741,43 +741,23 @@ pub impl[T : AddMonoid + Mul] Mul for Matrix[T] with mul(
   let col = other.col
   let inner = self.col
   guard inner == other.row
-  // Hybrid Strategy for Performance:
-  // 1. Small Case (N <= 64): Use i-j-k (dot-product) order to maximize register accumulation.
-  //    Manual indexing hoisting is applied here to minimize instructions in the innermost loop.
-  // 2. Large Case (N > 64): Use i-k-j (scan line) order to maximize L1/L2 cache locality.
-  //    Natural indexing (i * n + j) is preferred to trigger compiler strength reduction and bounds check elimination.
-  if row <= 64 && col <= 64 && inner <= 64 {
-    let data = Array::make(row * col, T::zero())
-    for i = 0; i < row; i = i + 1 {
-      let row_offset = i * col // self[i][...]
-      let self_row_offset = i * inner // result[i][...]
+  let data = Array::make(row * col, T::zero())
+  let self_data = self.data
+  let other_data = other.data
+  let mut result_row_offset = 0
+  for i = 0; i < row; i = i + 1 {
+    let self_row_offset = i * inner
+    for k = 0; k < inner; k = k + 1 {
+      let lhs = self_data[self_row_offset + k]
+      let other_row_offset = k * col
       for j = 0; j < col; j = j + 1 {
-        let mut sum = T::zero()
-        for k = 0; k < inner; k = k + 1 {
-          // Calculation equivalent to: result[i][j] += self[i][k] * other[k][j]
-          sum = sum + self.data[self_row_offset + k] * other.data[k * col + j]
-        }
-        data[row_offset + j] = sum
+        let out_idx = result_row_offset + j
+        data[out_idx] = data[out_idx] + lhs * other_data[other_row_offset + j]
       }
     }
-    { row, col, data }
-  } else {
-    let data = Array::make(row * col, T::zero())
-    let mut res_idx = 0
-    for i = 0; i < row; i = i + 1 {
-      let self_row_start = i * inner
-      for k = 0; k < inner; k = k + 1 {
-        let aik = self.data[self_row_start + k]
-        let other_row_start = k * col
-        for j = 0; j < col; j = j + 1 {
-          data[res_idx + j] = data[res_idx + j] +
-            aik * other.data[other_row_start + j]
-        }
-      }
-      res_idx += col
-    }
-    { row, col, data }
+    result_row_offset += col
   }
+  { row, col, data }
 }
 
 ///|
@@ -1152,35 +1132,40 @@ pub fn[T : Compare + Field + Num] Matrix::reduce_row_elimination(
 ) -> Matrix[T] {
   let r = self.row
   let c = self.col
+  let data = self.data
   let mut col = 0
   for i in 0..<r {
     while col < c {
       let mut max_row = i
       for j in (i + 1)..<r {
         // self[j][col].abs() > self[max_row][col].abs()
-        if self.data[j * c + col].abs() > self.data[max_row * c + col].abs() {
+        if data[j * c + col].abs() > data[max_row * c + col].abs() {
           max_row = j
         }
       }
       ignore(self.swap_rows(i, max_row))
-      // self[i][col]
-      if self.data[i * c + col] == T::zero() {
+      let pivot_offset = i * c + col
+      if data[pivot_offset] == T::zero() {
         col = col + 1
         continue
       }
-      // self[i][col]
-      let factor_inv = self.data[i * c + col].inv()
-      ignore(self.map_row_inplace(i, fn(x) { x * factor_inv }))
+      let factor_inv = data[pivot_offset].inv()
+      let pivot_row_offset = i * c
+      for k in 0..<c {
+        data[pivot_row_offset + k] = data[pivot_row_offset + k] * factor_inv
+      }
       for j in 0..<r {
         if j == i {
           continue
         }
-        // self[j][col]
-        let factor = self.data[j * c + col]
+        let row_offset = j * c
+        let factor = data[row_offset + col]
+        if factor == T::zero() {
+          continue
+        }
         for k in 0..<c {
-          // self[j][k] = self[j][k] - self[i][k] * factor
-          self.data[j * c + k] = self.data[j * c + k] -
-            self.data[i * c + k] * factor
+          data[row_offset + k] = data[row_offset + k] -
+            data[pivot_row_offset + k] * factor
         }
       }
       col = col + 1
@@ -1494,7 +1479,8 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::rank(
         }
         data[eliminate_offset + pivot_col] = T::zero()
         for col in (pivot_col + 1)..<col_count {
-          data[eliminate_offset + col] = data[eliminate_offset + col] - factor * data[pivot_row_offset + col]
+          data[eliminate_offset + col] = data[eliminate_offset + col] -
+            factor * data[pivot_row_offset + col]
         }
       }
       rank += 1
@@ -1978,11 +1964,12 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
     abort("Matrix::power_method requires a non-empty square matrix")
   }
   let tol = T::tolerance()
+  let result = Array::make(n, T::zero())
   let x = Array::make(n, T::one())
   let y = Array::make(n, T::zero())
   let ax = Array::make(n, T::zero())
   for _ in 0..<max_iterations {
-    self.mul_vec_into(Vector(x), y)
+    self.mul_array_into(x, y)
     let mut scale = T::zero()
     for i in 0..<n {
       let candidate = y[i].abs()
@@ -1996,7 +1983,7 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
     for i in 0..<n {
       x[i] = y[i] / scale
     }
-    self.mul_vec_into(Vector(x), ax)
+    self.mul_array_into(x, ax)
     let mut numerator = T::zero()
     let mut denominator = T::zero()
     for i in 0..<n {
@@ -2016,7 +2003,10 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
       }
     }
     if residual <= tol {
-      return Some((lambda, Vector(x.copy())))
+      for i in 0..<n {
+        result[i] = x[i]
+      }
+      return Some((lambda, Vector(result)))
     }
   }
   None
@@ -2045,18 +2035,17 @@ pub fn[T : AddMonoid + Mul] Matrix::mul_vec(
     abort("Matrix and vector dimensions are not compatible for multiplication")
   }
   let res_data = Array::make(m, T::zero())
-  self.mul_vec_into(vector, res_data)
+  self.mul_array_into(v_data, res_data)
   Vector(res_data)
 }
 
-fn[T : AddMonoid + Mul] Matrix::mul_vec_into(
+fn[T : AddMonoid + Mul] Matrix::mul_array_into(
   self : Matrix[T],
-  vector : Vector[T],
+  v_data : Array[T],
   out : Array[T],
 ) -> Unit {
   let m = self.row
   let n = self.col
-  let v_data = vector.0
   guard n == v_data.length() else {
     abort("Matrix and vector dimensions are not compatible for multiplication")
   }
@@ -2064,15 +2053,33 @@ fn[T : AddMonoid + Mul] Matrix::mul_vec_into(
     abort("Output buffer length mismatch for matrix-vector multiplication")
   }
   let data = self.data
-  let mut idx = 0
   for i = 0; i < m; i = i + 1 {
+    let row_offset = i * n
     let mut sum = T::zero()
-    for j = 0; j < n; j = j + 1 {
-      sum = sum + data[idx] * v_data[j]
-      idx += 1
+    let mut j = 0
+    while j + 3 < n {
+      sum = sum +
+        data[row_offset + j] * v_data[j] +
+        data[row_offset + j + 1] * v_data[j + 1] +
+        data[row_offset + j + 2] * v_data[j + 2] +
+        data[row_offset + j + 3] * v_data[j + 3]
+      j += 4
+    }
+    while j < n {
+      sum = sum + data[row_offset + j] * v_data[j]
+      j += 1
     }
     out[i] = sum
   }
+}
+
+fn[T : AddMonoid + Mul] Matrix::mul_vec_into(
+  self : Matrix[T],
+  vector : Vector[T],
+  out : Array[T],
+) -> Unit {
+  let v_data = vector.0
+  self.mul_array_into(v_data, out)
 }
 
 ///|
@@ -2196,6 +2203,14 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::determinant(
     abort("Matrix must be square to calculate determinant")
   }
   let n = self.row
+  if n >= 5 && (is_upper_triangular_fast(self) || is_lower_triangular_fast(self)) {
+    let data = self.data
+    let mut det = T::one()
+    for i = 0; i < n; i = i + 1 {
+      det *= data[i * n + i]
+    }
+    return det
+  }
   match n {
     0 => T::one()
     1 => self.data[0]
@@ -2255,6 +2270,27 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::inverse(
   if n == 0 {
     return Some(Matrix::new(0, 0, T::zero()))
   }
+  if is_identity_matrix_fast(self) {
+    return Some(self.copy())
+  }
+  if is_diagonal_matrix_fast(self) {
+    let data = self.data
+    let out = Matrix::new(n, n, T::zero())
+    let out_data = out.data
+    let tol = T::tolerance()
+    for i = 0; i < n; i = i + 1 {
+      let idx = i * n + i
+      let diag = data[idx]
+      if diag.abs() < tol {
+        return None
+      }
+      out_data[idx] = diag.inv()
+    }
+    return Some(out)
+  }
+  if is_permutation_matrix_fast(self) {
+    return Some(self.transpose())
+  }
   let lu = self.lu_decompose_internal()
   if lu.singular {
     return None
@@ -2307,22 +2343,48 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::cholesky_decomposit
     return None
   }
   let n = self.row
+  if n == 0 {
+    return Some(Matrix::new(0, 0, T::zero()))
+  }
+  if is_identity_matrix_fast(self) {
+    return Some(self.copy())
+  }
+  if is_diagonal_matrix_fast(self) {
+    let data = self.data
+    let out = Matrix::new(n, n, T::zero())
+    let out_data = out.data
+    let tol = T::tolerance()
+    for i = 0; i < n; i = i + 1 {
+      let idx = i * n + i
+      let diag = data[idx]
+      if diag <= tol {
+        return None
+      }
+      out_data[idx] = diag.sqrt()
+    }
+    return Some(out)
+  }
   let l = Matrix::new(n, n, T::zero())
+  let self_data = self.data
+  let l_data = l.data
+  let tol = T::tolerance()
   for i in 0..<n {
+    let i_offset = i * n
     for j in 0..<=i {
+      let j_offset = j * n
       let mut sum = T::zero()
       for k in 0..<j {
-        sum = sum + l.data[i * n + k] * l.data[j * n + k]
+        sum = sum + l_data[i_offset + k] * l_data[j_offset + k]
       }
       if i == j {
-        let val = self.data[i * n + i] - sum
-        if val <= T::tolerance() {
+        let val = self_data[i_offset + i] - sum
+        if val <= tol {
           return None
         }
-        l.data[i * n + i] = val.sqrt()
+        l_data[i_offset + i] = val.sqrt()
       } else {
-        l.data[i * n + j] =
-          T::one() / l.data[j * n + j] * (self.data[i * n + j] - sum)
+        l_data[i_offset + j] =
+          (self_data[i_offset + j] - sum) / l_data[j_offset + j]
       }
     }
   }
@@ -2441,6 +2503,114 @@ pub fn[T : Compare + Num + Tolerance] Matrix::is_symmetric(
         T::tolerance() {
         return false
       }
+    }
+  }
+  true
+}
+
+fn[T : Compare + Num + Tolerance] is_upper_triangular_fast(matrix : Matrix[T]) -> Bool {
+  let n = matrix.row
+  let data = matrix.data
+  let tol = T::tolerance()
+  for i = 1; i < n; i = i + 1 {
+    let row_offset = i * n
+    for j = 0; j < i; j = j + 1 {
+      if data[row_offset + j].abs() > tol {
+        return false
+      }
+    }
+  }
+  true
+}
+
+fn[T : Compare + Num + Tolerance] is_lower_triangular_fast(matrix : Matrix[T]) -> Bool {
+  let n = matrix.row
+  let data = matrix.data
+  let tol = T::tolerance()
+  for i = 0; i < n; i = i + 1 {
+    let row_offset = i * n
+    for j = i + 1; j < n; j = j + 1 {
+      if data[row_offset + j].abs() > tol {
+        return false
+      }
+    }
+  }
+  true
+}
+
+fn[T : Compare + Zero + One + Num + Tolerance] is_identity_matrix_fast(
+  matrix : Matrix[T],
+) -> Bool {
+  if matrix.row != matrix.col {
+    return false
+  }
+  let n = matrix.row
+  let data = matrix.data
+  let tol = T::tolerance()
+  for i = 0; i < n; i = i + 1 {
+    let row_offset = i * n
+    for j = 0; j < n; j = j + 1 {
+      let expected = if i == j { T::one() } else { T::zero() }
+      if (data[row_offset + j] - expected).abs() > tol {
+        return false
+      }
+    }
+  }
+  true
+}
+
+fn[T : Compare + Zero + Num + Tolerance] is_diagonal_matrix_fast(matrix : Matrix[T]) -> Bool {
+  if matrix.row != matrix.col {
+    return false
+  }
+  let n = matrix.row
+  let data = matrix.data
+  let tol = T::tolerance()
+  for i = 0; i < n; i = i + 1 {
+    let row_offset = i * n
+    for j = 0; j < n; j = j + 1 {
+      if i != j && data[row_offset + j].abs() > tol {
+        return false
+      }
+    }
+  }
+  true
+}
+
+fn[T : Compare + Zero + One + Num + Tolerance] is_permutation_matrix_fast(
+  matrix : Matrix[T],
+) -> Bool {
+  if matrix.row != matrix.col {
+    return false
+  }
+  let n = matrix.row
+  let data = matrix.data
+  let tol = T::tolerance()
+  for i = 0; i < n; i = i + 1 {
+    let row_offset = i * n
+    let mut one_count = 0
+    for j = 0; j < n; j = j + 1 {
+      let value = data[row_offset + j]
+      if (value - T::one()).abs() <= tol {
+        one_count += 1
+      } else if value.abs() > tol {
+        return false
+      }
+    }
+    if one_count != 1 {
+      return false
+    }
+  }
+  for j = 0; j < n; j = j + 1 {
+    let mut one_count = 0
+    for i = 0; i < n; i = i + 1 {
+      let value = data[i * n + j]
+      if (value - T::one()).abs() <= tol {
+        one_count += 1
+      }
+    }
+    if one_count != 1 {
+      return false
     }
   }
   true
