@@ -1,9 +1,9 @@
 import {
   "Luna-Flow/linear-algebra/mutable",
   "Luna-Flow/luna-generic" @lg,
-  "moonbitlang/core/json" @json,
-  "moonbitlang/x/fs" @fs,
+  "moonbitlang/core/json",
+  "moonbitlang/x/fs",
 }
 
-import "wbtest" {
-}
+import {
+} for "wbtest"

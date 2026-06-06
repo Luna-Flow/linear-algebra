@@ -32,6 +32,9 @@ jobs:
         run: |
           moon install
           moon check --target all
+      - name: repository tests
+        run: |
+          bash ./run_test.sh
       - name: publish
         run: |
           trap 'rm -f ~/.moon/credentials.json' EXIT

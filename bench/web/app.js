@@ -483,6 +483,67 @@ function metadataLabel(label) {
   return metadataLabels[label] ?? label;
 }
 
+function appendLabeledRow(target, label, value) {
+  const row = document.createElement("div");
+  row.className = "metadata-row";
+
+  const labelEl = document.createElement("span");
+  labelEl.className = "metadata-label";
+  labelEl.textContent = metadataLabel(label);
+
+  const valueEl = document.createElement("span");
+  valueEl.className = "metadata-value";
+  valueEl.textContent = formatMetadataValue(value);
+
+  row.append(labelEl, valueEl);
+  target.appendChild(row);
+}
+
+function createOperationPanel(firstRow, caseCount, descriptor) {
+  const article = document.createElement("article");
+  article.className = "panel operation-panel";
+
+  const head = document.createElement("div");
+  head.className = "operation-head";
+  const copy = document.createElement("div");
+  copy.className = "operation-copy";
+  const title = document.createElement("h2");
+  title.className = "operation-title";
+  title.textContent = panelTitle(firstRow);
+  const note = document.createElement("p");
+  note.className = "operation-note";
+  note.textContent = `${caseCount} scale points. Scale axis: ${descriptor.axisLabel}. Timing: ${firstRow.timing_scope}. Mutation: ${firstRow.mutation_policy}.`;
+  copy.append(title, note);
+  head.appendChild(copy);
+
+  const layout = document.createElement("div");
+  layout.className = "operation-layout";
+
+  const scalingSlot = document.createElement("div");
+  scalingSlot.className = "chart-slot chart-card-shell";
+  const scalingHead = document.createElement("p");
+  scalingHead.className = "chart-slot-head";
+  scalingHead.textContent = "Scaling curve";
+  const scalingCard = document.createElement("div");
+  scalingCard.className = "chart-card";
+  scalingCard.dataset.lineChart = projectDomId(firstRow);
+  scalingSlot.append(scalingHead, scalingCard);
+
+  const backendSlot = document.createElement("div");
+  backendSlot.className = "chart-slot chart-card-shell";
+  const backendHead = document.createElement("p");
+  backendHead.className = "chart-slot-head";
+  backendHead.textContent = "Backend comparison";
+  const backendCard = document.createElement("div");
+  backendCard.className = "chart-card";
+  backendCard.dataset.barChart = projectDomId(firstRow);
+  backendSlot.append(backendHead, backendCard);
+
+  layout.append(scalingSlot, backendSlot);
+  article.append(head, layout);
+  return article;
+}
+
 function renderOverallMetadata() {
   const metadata = latestResults.metadata ?? {};
   const run = metadata.run ?? {};
@@ -510,20 +571,17 @@ function renderOverallMetadata() {
   ].filter(([, value]) => value !== undefined && value !== null && value !== "");
 
   if (!rows.length) {
-    overallMetadataEl.innerHTML = "";
+    overallMetadataEl.textContent = "";
     return;
   }
 
-  overallMetadataEl.innerHTML = `
-    <div class="metadata-card">
-      ${rows.map(([label, value]) => `
-        <div class="metadata-row">
-          <span class="metadata-label">${metadataLabel(label)}</span>
-          <span class="metadata-value">${formatMetadataValue(value)}</span>
-        </div>
-      `).join("")}
-    </div>
-  `;
+  overallMetadataEl.textContent = "";
+  const card = document.createElement("div");
+  card.className = "metadata-card";
+  for (const [label, value] of rows) {
+    appendLabeledRow(card, label, value);
+  }
+  overallMetadataEl.appendChild(card);
 }
 
 function renderLineChart(target, chartId, rows, title) {
@@ -646,32 +704,13 @@ function renderOperationPanels(rows) {
       destroyChart(chartId);
     }
   }
-  operationsEl.innerHTML = projects.map(([_, projectRows]) => {
+  operationsEl.textContent = "";
+  for (const [_, projectRows] of projects) {
     const firstRow = projectRows[0];
-    const domId = projectDomId(firstRow);
     const caseCount = distinctCaseCount(projectRows);
     const descriptor = scaleDescriptor(firstRow);
-    return `
-      <article class="panel operation-panel">
-        <div class="operation-head">
-          <div class="operation-copy">
-            <h2 class="operation-title">${panelTitle(firstRow)}</h2>
-            <p class="operation-note">${caseCount} scale points. Scale axis: ${descriptor.axisLabel}. Timing: ${firstRow.timing_scope}. Mutation: ${firstRow.mutation_policy}.</p>
-          </div>
-        </div>
-        <div class="operation-layout">
-          <div class="chart-slot chart-card-shell">
-            <p class="chart-slot-head">Scaling curve</p>
-            <div class="chart-card" data-line-chart="${domId}"></div>
-          </div>
-          <div class="chart-slot chart-card-shell">
-            <p class="chart-slot-head">Backend comparison</p>
-            <div class="chart-card" data-bar-chart="${domId}"></div>
-          </div>
-        </div>
-      </article>
-    `;
-  }).join("");
+    operationsEl.appendChild(createOperationPanel(firstRow, caseCount, descriptor));
+  }
 
   for (const [project, projectRows] of projects) {
     const domId = projectDomId(projectRows[0]);

@@ -500,7 +500,7 @@ def estimated_flops(case: CaseMeta) -> int | None:
         return 2 * rows * cols * rhs_cols
     if case.operation == "mul_vec":
         return 2 * rows * cols
-    if case.operation in {"determinant", "inverse", "rank", "reduce_row_elimination", "cholesky_decomposition", "eigen"} and rows == cols:
+    if case.operation in {"determinant", "inverse", "rank", "reduce_row_elimination", "cholesky_decomposition", "eigen", "power_method"} and rows == cols:
         return n * n * n
     if case.operation in {"rank", "reduce_row_elimination"}:
         return rows * cols * min(rows, cols)
@@ -805,44 +805,68 @@ def load_existing_rust_rows(cases: list[CaseMeta]) -> list[BenchmarkRow]:
         return []
     payload = json.loads(summary_path.read_text(encoding="utf-8"))
     allowed_case_ids = {case.case_id for case in cases}
+    case_by_id = {case.case_id: case for case in cases}
     rows: list[BenchmarkRow] = []
     for row in payload.get("rows", []):
         if row.get("toolchain") != "rust-nalgebra":
             continue
         if row.get("case_id") not in allowed_case_ids and row.get("case_id") != "rust-baseline":
             continue
-        shape = row.get("shape", {})
-        rows.append(
-            BenchmarkRow(
-                toolchain=row["toolchain"],
-                backend=row["backend"],
-                operation=row["operation"],
-                case_id=row["case_id"],
-                family=row["family"],
-                workload_tier=row.get("workload_tier", ""),
-                structure=row.get("structure", ""),
-                timing_scope=row.get("timing_scope", "kernel_only"),
-                input_layout=row.get("input_layout", "row_major_dense"),
-                mutation_policy=row.get("mutation_policy", "reusable_input"),
-                size_tier=row.get("size_tier", ""),
-                cost_model=row.get("cost_model", "elements"),
-                shape=Shape(
-                    rows=int(shape.get("rows", 0)),
-                    cols=int(shape.get("cols", 0)),
-                    rhs_cols=int(shape.get("rhs_cols", 0)),
-                ),
-                samples=[int(value) for value in row.get("samples", [])],
-                median_ns=int(row.get("median_ns", 0)),
-                p90_ns=int(row.get("p90_ns", 0)),
-                mad_ns=int(row.get("mad_ns", 0)),
-                throughput_elements_per_s=float(row.get("throughput_elements_per_s", 0.0)),
-                throughput_estimated_flops_per_s=row.get("throughput_estimated_flops_per_s"),
-                throughput_estimated_bytes_per_s=row.get("throughput_estimated_bytes_per_s"),
-                normalization_basis=row.get("normalization_basis", "elements"),
-                checksum=str(row.get("checksum", "")),
-                status=row.get("status", "ok"),
+        if row.get("operation") not in RUST_SUPPORTED_OPS and row.get("case_id") != "rust-baseline":
+            continue
+        if row.get("case_id") == "rust-baseline":
+            shape = row.get("shape", {})
+            rows.append(
+                BenchmarkRow(
+                    toolchain=row["toolchain"],
+                    backend=row["backend"],
+                    operation=row["operation"],
+                    case_id=row["case_id"],
+                    family=row["family"],
+                    workload_tier=row.get("workload_tier", ""),
+                    structure=row.get("structure", ""),
+                    timing_scope=row.get("timing_scope", "kernel_only"),
+                    input_layout=row.get("input_layout", "row_major_dense"),
+                    mutation_policy=row.get("mutation_policy", "reusable_input"),
+                    size_tier=row.get("size_tier", ""),
+                    cost_model=row.get("cost_model", "elements"),
+                    shape=Shape(
+                        rows=int(shape.get("rows", 0)),
+                        cols=int(shape.get("cols", 0)),
+                        rhs_cols=int(shape.get("rhs_cols", 0)),
+                    ),
+                    samples=[int(value) for value in row.get("samples", [])],
+                    median_ns=int(row.get("median_ns", 0)),
+                    p90_ns=int(row.get("p90_ns", 0)),
+                    mad_ns=int(row.get("mad_ns", 0)),
+                    throughput_elements_per_s=float(row.get("throughput_elements_per_s", 0.0)),
+                    throughput_estimated_flops_per_s=row.get("throughput_estimated_flops_per_s"),
+                    throughput_estimated_bytes_per_s=row.get("throughput_estimated_bytes_per_s"),
+                    normalization_basis=row.get("normalization_basis", "elements"),
+                    checksum=str(row.get("checksum", "")),
+                    status=row.get("status", "ok"),
+                )
             )
+            continue
+        case = case_by_id.get(row.get("case_id"))
+        if case is None:
+            continue
+        shape = row.get("shape", {})
+        metrics = MetricSummary(
+            median_ns=int(row.get("median_ns", 0)),
+            p90_ns=int(row.get("p90_ns", row.get("median_ns", 0))),
+            mad_ns=int(row.get("mad_ns", 0)),
         )
+        normalized = benchmark_row(
+            case,
+            toolchain="rust-nalgebra",
+            backend=str(row.get("backend", "native")),
+            metrics=metrics,
+            status=row.get("status", "ok"),
+            samples=[int(value) for value in row.get("samples", [])],
+            checksum=str(row.get("checksum", "")),
+        )
+        rows.append(normalized)
     return rows
 
 
@@ -1022,6 +1046,7 @@ def main() -> int:
                 )
                 progress.tick(detail)
         except subprocess.CalledProcessError as exc:
+            RAW_DIR.mkdir(parents=True, exist_ok=True)
             error_path = RAW_DIR / "rust_error.txt"
             error_path.write_text(exc.stdout + "\n--- stderr ---\n" + exc.stderr, encoding="utf-8")
             rows.append(rust_build_failed_row())

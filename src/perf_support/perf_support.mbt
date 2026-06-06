@@ -77,75 +77,68 @@ pub fn sample_case_names() -> Array[String] {
 
 ///|
 pub fn run_case_once(case_item : Case) -> UInt64 {
-  run_prepared_case_once(prepare_case_from_fixture(case_item, default_case_path(case_item.id)))
+  run_prepared_case_once(
+    prepare_case_from_fixture(case_item, default_case_path(case_item.id)),
+  )
 }
 
 ///|
 pub fn run_prepared_case_once(prepared : PreparedCase) -> UInt64 {
-  run_prepared_case_inplace(prepared, prepared.case_item.mutation_policy == "scratch_per_sample")
+  run_prepared_case_inplace(
+    prepared,
+    prepared.case_item.mutation_policy == "scratch_per_sample",
+  )
 }
 
 ///|
-pub fn run_prepared_case_inplace(prepared : PreparedCase, scratch : Bool) -> UInt64 {
-  require_numeric_traits(0.0)
+pub fn run_prepared_case_inplace(
+  prepared : PreparedCase,
+  scratch : Bool,
+) -> UInt64 {
+  ignore(require_numeric_traits(0.0))
   let case_item = prepared.case_item
-  let matrix_a =
-    if scratch {
-      prepared.matrix_a.copy()
-    } else {
-      prepared.matrix_a
-    }
-  let matrix_b =
-    if scratch {
-      prepared.matrix_b.copy()
-    } else {
-      prepared.matrix_b
-    }
-  let vector_b =
-    if scratch {
-      @mutable.Vector::from_array(prepared.vector_b.iter().to_array())
-    } else {
-      prepared.vector_b
-    }
+  let matrix_a = if scratch {
+    prepared.matrix_a.copy()
+  } else {
+    prepared.matrix_a
+  }
+  let matrix_b = if scratch {
+    prepared.matrix_b.copy()
+  } else {
+    prepared.matrix_b
+  }
+  let vector_b = if scratch {
+    @mutable.Vector::from_array(prepared.vector_b.iter().to_array())
+  } else {
+    prepared.vector_b
+  }
   match case_item.operation {
-    "mul" => {
-      checksum_matrix(matrix_a * matrix_b)
-    }
-    "mul_vec" => {
-      checksum_vector(matrix_a.mul_vec(vector_b))
-    }
-    "determinant" => {
-      checksum_double(matrix_a.determinant())
-    }
-    "inverse" => {
+    "mul" => checksum_matrix(matrix_a * matrix_b)
+    "mul_vec" => checksum_vector(matrix_a.mul_vec(vector_b))
+    "determinant" => checksum_double(matrix_a.determinant())
+    "inverse" =>
       match matrix_a.inverse() {
         Some(value) => checksum_matrix(value)
         None => mix(seed_checksum(), 0xDEAD0001UL)
       }
-    }
-    "rank" => {
-      checksum_int(matrix_a.rank())
-    }
-    "reduce_row_elimination" => {
+    "rank" => checksum_int(matrix_a.rank())
+    "reduce_row_elimination" =>
       checksum_matrix(matrix_a.reduce_row_elimination())
-    }
-    "cholesky_decomposition" => {
+    "cholesky_decomposition" =>
       match matrix_a.cholesky_decomposition() {
         Some(value) => checksum_matrix(value)
         None => mix(seed_checksum(), 0xDEAD0002UL)
       }
-    }
     "eigen" => {
       let (values, vectors) = matrix_a.eigen()
       let acc = checksum_vector(values)
       fold_matrix(vectors, acc)
     }
-    "power_method" => {
+    "power_method" =>
       match matrix_a.power_method(80) {
         Some((value, vector)) => fold_vector(vector, checksum_double(value))
         None => mix(seed_checksum(), 0xDEAD0003UL)
       }
-    }
     _ => abort("unknown benchmark operation: " + case_item.operation)
   }
 }
@@ -156,9 +149,22 @@ pub fn prepare_case(case_item : Case) -> PreparedCase {
 }
 
 ///|
-pub fn prepare_case_from_fixture(case_item : Case, case_path : String) -> PreparedCase {
+pub fn prepare_case_from_fixture(
+  case_item : Case,
+  case_path : String,
+) -> PreparedCase {
   let fixture = load_case_fixture(case_item, case_path)
   prepare_case_from_arrays(case_item, fixture.data_a, fixture.data_b)
+}
+
+///|
+pub fn clone_prepared_case(prepared : PreparedCase) -> PreparedCase {
+  {
+    case_item: prepared.case_item,
+    matrix_a: prepared.matrix_a.copy(),
+    matrix_b: prepared.matrix_b.copy(),
+    vector_b: prepared.vector_b.copy(),
+  }
 }
 
 ///|
@@ -172,28 +178,22 @@ fn prepare_case_from_arrays(
     case_item.cols,
     data_a,
   )
-  let matrix_b =
-    if case_item.operation == "mul" {
-      @mutable.Matrix::from_array(
-        case_item.cols,
-        case_item.rhs_cols,
-        data_b,
-      )
-    } else {
-      @mutable.Matrix::new(0, 0, 0.0)
-    }
-  let vector_b =
-    if case_item.operation == "mul_vec" {
-      @mutable.Vector::from_array(data_b)
-    } else {
-      @mutable.Vector::from_array([])
-    }
+  let matrix_b = if case_item.operation == "mul" {
+    @mutable.Matrix::from_array(case_item.cols, case_item.rhs_cols, data_b)
+  } else {
+    @mutable.Matrix::new(0, 0, 0.0)
+  }
+  let vector_b = if case_item.operation == "mul_vec" {
+    @mutable.Vector::from_array(data_b)
+  } else {
+    @mutable.Vector::from_array([])
+  }
   { case_item, matrix_a, matrix_b, vector_b }
 }
 
 ///|
-fn[T : AddMonoid + Field + Num] require_numeric_traits(_ : T) -> Unit {
-
+fn[T : AddMonoid + Field + Num] require_numeric_traits(value : T) -> T {
+  ((value + T::zero()) / T::one()).abs()
 }
 
 ///|
@@ -237,7 +237,7 @@ struct CaseFixtureFile {
 } derive(FromJson)
 
 ///|
-struct LoadedCaseFixture {
+priv struct LoadedCaseFixture {
   data_a : Array[Double]
   data_b : Array[Double]
 }
@@ -249,23 +249,31 @@ fn default_case_path(case_id : String) -> String {
 
 ///|
 fn load_case_fixture(case_item : Case, case_path : String) -> LoadedCaseFixture {
-  let content =
-    try @fs.read_file_to_string(case_path) catch {
-      _ => abort("failed to read benchmark fixture: " + case_path)
-    }
-  let json =
-    try @json.parse(content) catch {
-      _ => abort("invalid benchmark json: " + case_path)
-    }
-  let fixture : CaseFixtureFile =
-    try @json.from_json(json) catch {
-      _ => abort("failed to decode benchmark json: " + case_path)
-    }
+  let content = @fs.read_file_to_string(case_path) catch {
+    _ => abort("failed to read benchmark fixture: " + case_path)
+  }
+  let json = @json.parse(content) catch {
+    _ => abort("invalid benchmark json: " + case_path)
+  }
+  let fixture : CaseFixtureFile = @json.from_json(json) catch {
+    _ => abort("failed to decode benchmark json: " + case_path)
+  }
   guard fixture.dataset_version == dataset_version else {
     abort("dataset version mismatch for " + case_path)
   }
   guard fixture.case_id == case_item.id else {
     abort("case id mismatch for " + case_path)
+  }
+  guard fixture.operation == case_item.operation &&
+    fixture.family == case_item.family &&
+    fixture.workload_tier == case_item.workload_tier &&
+    fixture.structure == case_item.structure &&
+    fixture.timing_scope == case_item.timing_scope &&
+    fixture.input_layout == case_item.input_layout &&
+    fixture.mutation_policy == case_item.mutation_policy &&
+    fixture.size_tier == case_item.size_tier &&
+    fixture.cost_model == case_item.cost_model else {
+    abort("case metadata mismatch for " + case_path)
   }
   guard fixture.shape.rows == case_item.rows &&
     fixture.shape.cols == case_item.cols &&

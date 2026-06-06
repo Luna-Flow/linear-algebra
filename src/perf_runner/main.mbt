@@ -5,27 +5,25 @@ fn main {
   let sample_count = find_samples_arg(args)
   let warmup_count = find_warmup_arg(args)
   let case_path = find_case_path_arg(args)
-  guard repeat > 0 else {
-    abort("repeat must be positive")
-  }
-  guard sample_count >= 0 else {
-    abort("samples must be non-negative")
-  }
-  guard warmup_count >= 0 else {
-    abort("warmup must be non-negative")
-  }
+  guard repeat > 0 else { abort("repeat must be positive") }
+  guard sample_count >= 0 else { abort("samples must be non-negative") }
+  guard warmup_count >= 0 else { abort("warmup must be non-negative") }
   match find_case_arg(args) {
     Some(case_id) =>
       match @support.find_case(case_id) {
         Some(case_item) => {
-          let prepared = @support.prepare_case_from_fixture(case_item, case_path)
+          let prepared = @support.prepare_case_from_fixture(
+            case_item, case_path,
+          )
           let scratch = case_item.mutation_policy == "scratch_per_sample"
           if sample_count == 0 {
             let checksum = run_repeat(prepared, repeat, scratch)
             println(@support.case_diagnostic_payload(case_item, checksum))
           } else {
             run_warmup(prepared, repeat, warmup_count, scratch)
-            let samples = collect_samples(prepared, repeat, sample_count, scratch)
+            let samples = collect_samples(
+              prepared, repeat, sample_count, scratch,
+            )
             println(benchmark_payload(case_item, samples, repeat))
           }
         }
@@ -105,7 +103,11 @@ fn parse_int_arg(flag : String, value : String) -> Int {
 }
 
 ///|
-fn run_repeat(case_item : @support.PreparedCase, repeat : Int, scratch : Bool) -> UInt64 {
+fn run_repeat(
+  case_item : @support.PreparedCase,
+  repeat : Int,
+  scratch : Bool,
+) -> UInt64 {
   let scratch_cases = prepare_repeat_cases(case_item, repeat, scratch)
   run_prepared_cases(scratch_cases)
 }
@@ -150,7 +152,7 @@ fn prepare_repeat_cases(
   let out = []
   for _ in 0..<repeat {
     if scratch {
-      out.push(@support.prepare_case(case_item.case_item))
+      out.push(@support.clone_prepared_case(case_item))
     } else {
       out.push(case_item)
     }
@@ -159,18 +161,21 @@ fn prepare_repeat_cases(
 }
 
 ///|
-fn run_prepared_cases(
-  cases : Array[@support.PreparedCase],
-) -> UInt64 {
-  let mut checksum = 0UL
+fn run_prepared_cases(cases : Array[@support.PreparedCase]) -> UInt64 {
+  let mut checksum = 1469598103934665603UL
   for case_item in cases {
-    checksum = @support.run_prepared_case_inplace(case_item, false)
+    let value = @support.run_prepared_case_inplace(case_item, false)
+    checksum = (checksum ^ value) * 1099511628211UL
   }
   checksum
 }
 
 ///|
-fn benchmark_payload(case_item : @support.Case, samples : Array[Int], repeat : Int) -> String {
+fn benchmark_payload(
+  case_item : @support.Case,
+  samples : Array[Int],
+  repeat : Int,
+) -> String {
   "{\"kind\":\"benchmark\",\"dataset_version\":\"" +
   @support.dataset_version +
   "\",\"case_id\":\"" +

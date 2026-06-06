@@ -13,6 +13,8 @@ pub fn case_names() -> Array[String]
 
 pub let cases : Array[Case]
 
+pub fn clone_prepared_case(PreparedCase) -> PreparedCase
+
 pub let dataset_version : String
 
 pub fn find_case(String) -> Case?
@@ -56,8 +58,6 @@ type CaseFixtureInputs derive(@json.FromJson)
 
 type CaseFixtureShape derive(@json.FromJson)
 
-type LoadedCaseFixture
-
 pub struct PreparedCase {
   case_item : Case
   matrix_a : @mutable.Matrix[Double]
@@ -68,4 +68,3 @@ pub struct PreparedCase {
 // Type aliases
 
 // Traits
-

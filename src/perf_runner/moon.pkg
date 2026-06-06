@@ -5,6 +5,11 @@ import {
   "Luna-Flow/linear-algebra/perf_support" @support,
 }
 
+import {
+  "Luna-Flow/linear-algebra/perf_support" @support,
+  "moonbitlang/x/fs" @fs,
+} for "wbtest"
+
 options(
   "is-main": true,
 )
