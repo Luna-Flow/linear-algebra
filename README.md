@@ -2,10 +2,10 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.11 - Performance, Benchmarks & API Alignment
+## v0.2.12 - Correctness, Diagnostics & Documentation Alignment
 
-This documentation tracks the upcoming **v0.2.11** release content and reflects
-the repository state after all changes landed since `0.2.10`.
+This documentation tracks the published **v0.2.12** release content and reflects
+the repository state after all changes landed since `0.2.11`.
 
 ### Package Positioning
 
@@ -13,21 +13,14 @@ the repository state after all changes landed since `0.2.10`.
 - **`mutable`**: Execution-oriented `Matrix` and `Vector` types with in-place updates, `Transpose` views, `RowView` / `ColView`, and backend-specific implementations for `js`, `wasm`, `wasm-gc`, and `native`.
 - **Shared Core, Different Execution Model**: Constructors and core algebraic operators remain aligned across packages, but mutation and access semantics are intentionally different.
 
-### What Defines v0.2.11
+### What Defines v0.2.12
 
-- **Matrix Views**: `mutable` now exposes `RowView` and `ColView` for repeated structured row/column work without materializing copies.
-- **Unified Flattened Storage**: `mutable.Matrix` now uses a shared flat `Array[T]` storage model across backends, instead of documenting backend-specific layout differences.
-- **Cross-Package Consistency Checks**: Added dedicated consistency tests to keep shared `immut` / `mutable` algebraic behavior aligned.
-- **Numerical Fixes**: Hardened mutable LU-based routines, including pivot-permutation handling and broader numerical corner-case behavior.
-- **Immutable Core Alignment**: `immut.Vector` continues to build on the optimized core immutable vector implementation, which makes the flattened storage direction practical across the library.
-- **Dedicated Wasm GC Backend**: `mutable` now includes a dedicated `wasm-gc` backend rather than treating it as a thin variation of earlier backend code paths.
-- **Numeric Trait Cleanup**: Mutable numerical APIs now align more directly with `Field` / `Num` / `Tolerance` style constraints, while immutable determinant constraints were simplified.
-- **Symmetric Eigen Performance**: The symmetric real eigenpath has been accelerated as part of the current release line.
-- **Kernel-Level Mutable Optimizations**: Follow-up backend kernel work reduced overhead in repeated matrix operations after the original storage unification pass.
-- **Dependency Upgrade**: The current repository depends on `Luna-Flow/luna-generic` `0.3.0` and `moonbitlang/quickcheck` `0.14.0`.
-- **Modern Moon Package Metadata**: The repository now carries `moon.mod` as the canonical package manifest format for the current toolchain generation.
-- **Release Workflow Confirmation**: The publish workflow now reads the release version directly from `moon.mod`, keeping release metadata aligned with the canonical manifest.
-- **Benchmark Harness & Dashboard**: The repository now ships a fixture-driven benchmark harness, runtime fixture loading, richer reporting, a local web dashboard, and an optional Rust baseline for local or ad hoc comparison runs.
+- **Strict Bounds Across Public Accessors**: Public matrix, view, and transpose accessors now consistently reject out-of-bounds indices, including `0xN` and `Nx0` edge cases, instead of relying on backend storage accidents.
+- **Immutable Access Semantics Hardened**: `immut.Matrix` indexed access and copy-on-update setters now enforce true 2D bounds rather than allowing flat-storage aliasing.
+- **Cross-Package Semantic Alignment**: Shared `immut` / `mutable` operations now align more closely on explicit edge behavior, including same-index swap no-op semantics.
+- **Expanded Benchmark Diagnostics**: The benchmark stack now includes richer replay/testing support, a single-case whitebox runner, and better metadata/diagnostic handling across the local reporting flow.
+- **Documentation Refresh**: The main README and matrix API references were rewritten to match the current exported surface and remove stale or duplicated descriptions.
+- **Repository Correctness Audit**: The repository now includes a tracked correctness checklist that records validated behavior, confirmed fixes, and remaining structural follow-up risks.
 
 ### API Guidance & Performance
 
@@ -45,6 +38,7 @@ the repository state after all changes landed since `0.2.10`.
 - **Shared Data Model, Backend-Tuned Kernels**: `mutable` still ships backend-tuned execution paths for Native, Wasm, JS, and Wasm GC targets, but the core matrix storage model is now unified.
 - **Benchmark Infrastructure**: `bench/`, `src/perf_support`, and `src/perf_runner` now form a full steady-state benchmarking subsystem for backend comparison and diagnostic replay.
 - **Correctness First**: Coverage now includes immutable laws, cross-package consistency checks, determinant/rank/inverse alignment, and regression tests for numerical behavior.
+- **Auditable Public Contracts**: Bounds behavior, swap semantics, benchmark fixtures, and documentation are now tracked more explicitly as part of the repository’s correctness story.
 
 ### Benchmark Packages
 
@@ -86,14 +80,21 @@ Localized README files:
 
 | Version | Date | Status | Notes |
 | --- | --- | --- | --- |
-| `0.2.11` | 2026-05-27 | upcoming release baseline | Performance-tuned mutable kernels, dedicated wasm-gc backend, benchmark/reporting expansion, and API/doc alignment |
+| `0.2.12` | 2026-06-06 | published on mooncakes | Strict bounds unification, semantic correctness fixes, benchmark diagnostics expansion, and documentation/audit refresh |
+| `0.2.11` | 2026-05-27 | previous release baseline | Performance-tuned mutable kernels, dedicated wasm-gc backend, benchmark/reporting expansion, and API/doc alignment |
 | `0.2.10` | 2026-05-27 | previous release baseline | Unified flattened mutable storage, matrix views, consistency coverage, benchmark coverage, and release-process alignment |
 | `0.2.9` | 2026-02-03 | published on mooncakes | Published from the earlier `3328195` release state |
 | `0.2.8` | 2026-02-03 | historical baseline | Algorithms and stability milestone used as the comparison baseline for later work |
 
 ## Current Repository Highlights
 
-- **Current Release Narrative (0.2.11)**:
+- **Current Release Narrative (0.2.12)**:
+  - Public matrix, view, and transpose accessors now enforce explicit bounds contracts across the library, including zero-row and zero-column edge shapes.
+  - `immut.Matrix` and `mutable.Matrix` are more tightly aligned on shared correctness semantics, while keeping their intended value-vs-mutation execution split.
+  - The benchmark stack now includes stronger diagnostic replay/test coverage and cleaner metadata handling around local benchmark workflows.
+  - The repository now carries a tracked correctness checklist, and the README plus matrix API docs were refreshed to match the actual exported surface.
+
+- **Previous Release Narrative (0.2.11)**:
   - `mutable.Matrix` now combines the shared flat storage model from `0.2.10` with follow-up backend kernel optimizations and a dedicated `wasm-gc` implementation.
   - Public numerical signatures are aligned around `Field` / `Num` / `Tolerance`, and immutable determinant documentation matches the simplified post-`0.2.10` constraint set.
   - The benchmark stack now includes runtime-loaded fixtures, expanded case metadata, richer summary reporting, a local dashboard, optional Rust comparison runs, and diagnostic replay via `perf_runner`.

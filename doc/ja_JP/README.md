@@ -2,9 +2,9 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-MIT-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.11 - パフォーマンス、Benchmark、API 整合
+## v0.2.12 - Correctness、Diagnostics、Documentation Alignment
 
-このドキュメントは、`0.2.10` 以降に入った変更を反映した、次期 **v0.2.11** の内容を説明します。
+このドキュメントは、`0.2.11` 以降に入った変更を反映した、公開済み **v0.2.12** の内容を説明します。
 
 ### パッケージの位置づけ
 
@@ -12,21 +12,14 @@
 - **`mutable`**: 実行指向の `Matrix` と `Vector` 型。原地更新、`Transpose` ビュー、`RowView` / `ColView` を備え、`js`、`wasm`、`wasm-gc`、`native` 向けの最適化実装を保持します。
 - **共有コア、異なる実行モデル**: コンストラクタと中核的な代数演算は両パッケージ間で揃えつつ、更新・アクセスのセマンティクスは意図的に分けています。
 
-### v0.2.11 を特徴づけるもの
+### v0.2.12 を特徴づけるもの
 
-- **行列ビュー**: `mutable` は `RowView` と `ColView` を公開し、コピーを実体化せずに構造化された行・列操作を繰り返せます。
-- **統一されたフラットストレージ**: `mutable.Matrix` はバックエンドをまたいで共有のフラット `Array[T]` ストレージモデルを採用し、主ストレージの説明をバックエンドごとに分けなくなりました。
-- **パッケージ間整合性チェック**: `immut` / `mutable` 間で共有される代数的振る舞いを揃えるための専用テストを追加しました。
-- **数値修正**: 可変行列の LU ベースの処理を強化し、pivot permutation の扱いとより広い数値境界ケースを改善しました。
-- **不変コアの整合**: `immut.Vector` は最適化された core immutable vector 実装の上に構築され続けており、ライブラリ全体でより統一されたフラットデータ経路を実現しやすくしています。
-- **専用 Wasm GC バックエンド**: `mutable` は、従来バックエンドの薄い派生ではない専用の `wasm-gc` バックエンド実装を持つようになりました。
-- **数値 trait 境界の整理**: 可変数値 API は `Field` / `Num` / `Tolerance` を中心とした境界へより直接的に整えられ、不変 determinant の制約も簡素化されました。
-- **対称固有値経路の高速化**: 実対称行列向けの eigen 経路は現行リリースラインで高速化されています。
-- **mutable カーネルの継続最適化**: `0.2.10` の統一ストレージ以降も、各バックエンドの繰り返し行列処理の実行オーバーヘッドをさらに削減しました。
-- **依存関係更新**: 現在のリポジトリは `Luna-Flow/luna-generic` `0.3.0` と `moonbitlang/quickcheck` `0.14.0` に依存しています。
-- **現行 Moon パッケージメタデータ**: このリポジトリは、現在のツールチェインにおける正規のパッケージマニフェストとして `moon.mod` を持っています。
-- **リリース確認フロー**: publish workflow は `moon.mod` に書かれたバージョンを直接読み取り、正規 manifest と release メタデータを一致させます。
-- **Benchmark ハーネスとダッシュボード**: fixture 駆動の benchmark harness、ランタイム fixture 読み込み、より豊富なレポート、ローカル web dashboard、そしてローカルまたは臨時比較向けの任意の Rust baseline を備えています。
+- **公開アクセサの厳密境界チェック**: 公開された行列・ビュー・転置ビューのアクセサは、`0xN` や `Nx0` を含めて範囲外インデックスを一貫して拒否するようになりました。
+- **不変アクセスセマンティクスの強化**: `immut.Matrix` のインデックスアクセスと copy-on-update setter は、フラットストレージの別要素へ紛れ込むことなく、真の 2 次元境界を検証するようになりました。
+- **パッケージ間セマンティクス整合の強化**: `immut` / `mutable` 間で共有される操作は、same-index swap の no-op を含め、境界動作に関する意味論がより明示的に揃えられました。
+- **Benchmark 診断拡張**: benchmark スタックは、より豊富な replay/testing support、単一 case 向け whitebox runner、ローカルレポート経路での metadata/diagnostic handling の改善を含むようになりました。
+- **ドキュメント刷新**: README 本文と matrix API リファレンスは、現在の export surface に合わせて書き直され、古い説明や重複記述が整理されました。
+- **正しさ監査台帳の追加**: リポジトリには、検証済み挙動・修正済み問題・今後の構造的 follow-up を記録する correctness checklist が追加されました。
 
 ### API 指針と性能
 
@@ -44,6 +37,7 @@
 - **共有データモデル + バックエンド最適化カーネル**: `mutable` は Native、Wasm、JS、Wasm GC 向けの最適化実行経路を維持しつつ、コア行列ストレージモデルは統一されています。
 - **Benchmark 基盤**: `bench/`、`src/perf_support`、`src/perf_runner` が、バックエンド比較と診断再現のための完全な steady-state benchmark サブシステムを構成しています。
 - **正しさ優先**: 不変法則、パッケージ間整合性、determinant/rank/inverse の整合、数値挙動の回帰テストを含むカバレッジを備えています。
+- **監査可能な公開契約**: 境界挙動、swap セマンティクス、benchmark fixture、ドキュメントの整合性が、以前より明示的に追跡されるようになりました。
 
 ### Benchmark 関連パッケージ
 
@@ -85,14 +79,21 @@ let row0 = m.row_view(0).to_array()
 
 | バージョン | 日付 | 状態 | 説明 |
 | --- | --- | --- | --- |
-| `0.2.11` | 2026-05-27 | 次期リリース基準 | mutable カーネル性能改善、専用 wasm-gc バックエンド、benchmark/レポート拡張、API/文書整合 |
+| `0.2.12` | 2026-06-06 | mooncakes 公開済み | 厳密境界契約の統一、意味論上の正しさ修正、benchmark 診断拡張、文書/監査の刷新 |
+| `0.2.11` | 2026-05-27 | 前回リリース基準 | mutable カーネル性能改善、専用 wasm-gc バックエンド、benchmark/レポート拡張、API/文書整合 |
 | `0.2.10` | 2026-05-27 | 前回リリース基準 | 統一フラット mutable ストレージ、行列ビュー、整合性カバレッジ、benchmark 拡張、リリース手順整合 |
 | `0.2.9` | 2026-02-03 | mooncakes 公開済み | 以前の `3328195` リリース状態から公開 |
 | `0.2.8` | 2026-02-03 | 歴史的基準 | 後続作業のアルゴリズム・安定性比較の基準 |
 
 ## 現在のリポジトリのハイライト
 
-- **現在のリリース叙述（0.2.11）**:
+- **現在のリリース叙述（0.2.12）**:
+  - 公開された matrix、view、transpose accessor は、ゼロ行・ゼロ列 shape を含めて明示的な bounds contract を強制するようになりました。
+  - `immut.Matrix` と `mutable.Matrix` は、値 vs. mutation という実行モデルの違いを保ちつつ、共有される correctness semantics の整合がさらに強化されました。
+  - benchmark スタックは、ローカル benchmark workflow における diagnostic replay/test coverage と metadata handling をより強く備えるようになりました。
+  - リポジトリには tracked correctness checklist が追加され、README と matrix API docs も実際の exported surface に揃えて更新されました。
+
+- **前回リリース叙述（0.2.11）**:
   - `mutable.Matrix` は `0.2.10` の共有フラットストレージを土台に、バックエンドカーネル最適化と専用 `wasm-gc` 実装を重ねた形で整理されています。
   - 公開数値 API は `Field` / `Num` / `Tolerance` に揃えられ、不変 determinant のドキュメントも簡素化後の制約へ更新されています。
   - benchmark スタックは、ランタイム fixture 読み込み、拡張 case メタデータ、詳細な summary 出力、ローカル dashboard、任意の Rust 比較、`perf_runner` による診断再現を含みます。
