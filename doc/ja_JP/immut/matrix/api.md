@@ -1,248 +1,79 @@
-# @immut.Matrix
-
-このページは現在のリポジトリ実装を基準にしており、`0.2.11` の API 基準として記述されています。
-
----
-
-## @immut.Matrix[T]
-
-```moonbit
-struct Matrix[T] {
-  row : Int
-  col : Int
-  data : Vector[T]
-} derive(Eq)
-```
-
-- **説明**
-  不変な行列を表します。データは行優先順序で不変なベクトル `Vector[T]` に格納されます。
-
-### セマンティクス
-
-- `@immut.Matrix` は値セマンティクスです。`set`、`swap_rows`、`swap_cols` などの操作は元の値を変更せず、新しい行列を返します。
-- `m[row][col]` は `Indexed[T]` に基づく読み取り専用の便宜的なアクセサです。
-- このパッケージは共有される代数的振る舞いの基準実装であり、`inplace` 更新 API や可変な転置ビューは提供しません。
-- `0.2.11` でも、このパッケージが `@mutable` と共有される API セマンティクスの参照点のままです。
-
-- **フィールド**
-  - `row` - 行列の行数。
-  - `col` - 行列の列数。
-  - `data` - 行列の要素を格納する不変なベクトル。
-
-- **関数とメソッド**
-
-  ---
-
-  - **`fn[T] Matrix::make(row : Int, col : Int, f : (Int, Int) -> T) -> Matrix[T]`**
-    - **説明**
-        新しい行列を作成し、与えられた関数 `f(row_index, col_index)` を使用してデータを初期化します。
-    - **パラメータ**
-      - `row`: `Int` - 行数。
-      - `col`: `Int` - 列数。
-      - `f`: `(Int, Int) -> T` - 初期化関数。
-    - **戻り値**
-      `Matrix[T]` - 新しく作成された行列。
-
-  ---
-
-  - **`fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T]`**
-    - **説明**
-        新しい行列を作成し、すべての要素を指定した値 `elem` で初期化します。
-    - **パラメータ**
-      - `row`: `Int` - 行数。
-      - `col`: `Int` - 列数。
-      - `elem`: `T` - 初期値。
-    - **戻り値**
-      `Matrix[T]` - 新しく作成された行列。
-
-  ---
-
-  - **`fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T]`**
-    - **説明**
-        2 次元配列から不変な行列を作成します。
-    - **パラメータ**
-      - `arr`: `Array[Array[T]]` - 入力となる 2 次元配列。
-    - **戻り値**
-      `Matrix[T]` - 生成された行列。
-
-  ---
-
-  - **`fn[T] row(self : Matrix[T]) -> Int`**
-    - **説明**
-        行列の行数を取得します。
-
-  ---
-
-  - **`fn[T] col(self : Matrix[T]) -> Int`**
-    - **説明**
-        行列の列数を取得します。
-
-  ---
-
-  - **`fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Indexed[T]`**
-    - **説明**
-        行列の指定した行のアクセサを取得します。`m[row][col]` 構文をサポートします。
-
-  ---
-
-  - **`fn[T] set(self : Matrix[T], i : Int, j : Int, elem : T) -> Matrix[T]`**
-    - **説明**
-        (i, j) 位置の要素を `elem` に置き換えた新しい行列を作成します。元の行列は変更されません。
-
-  ---
-
-  - **`fn[T, U] map(self : Matrix[T], f : (T) -> U) -> Matrix[U]`**
-    - **説明**
-        行列の各要素に関数 `f` を適用します。
-
-  ---
-
-  - **`fn[T, U] mapi(self : Matrix[T], f : (Int, Int, T) -> U) -> Matrix[U]`**
-    - **説明**
-        行列の各要素に行・列インデックス付きの関数 `f` を適用します。
-
-  ---
-
-  - **`fn[T : Add] add(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **説明**
-        行列の加算。`+` 演算子をサポートします。
-
-  ---
-
-  - **`fn[T : Mul + Add] mul(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **説明**
-        行列の乗算。`*` 演算子をサポートします。
-
-  ---
-
-  - **`fn[T : Neg] neg(self : Matrix[T]) -> Matrix[T]`**
-    - **説明**
-        行列の各要素の符号を反転します。`-m` 構文をサポートします。
-
-  ---
-
-  - **`fn[T : Mul] scale(self : Matrix[T], cst : T) -> Matrix[T]`**
-    - **説明**
-        行列の各要素をスカラー倍します。
-
-  ---
-
-  - **`fn[T : One + Zero] Matrix::identity(size : Int) -> Matrix[T]`**
-    - **説明**
-        指定されたサイズの単位行列を作成します。
-
-  ---
-
-  - **`fn[T : Conjugate] adjoint(self : Matrix[T]) -> Matrix[T]`**
-    - **説明**
-        行列の随伴（複素共役転置）を計算します。
-
-  ---
-
-  - **`fn[T] transpose(self : Matrix[T]) -> Matrix[T]`**
-    - **説明**
-        行列の転置を計算します。
-
-  ---
-
-  - **`fn[T : Add + Zero] trace(self : Matrix[T]) -> T`**
-    - **説明**
-        正方行列のトレースを計算します。非正方行列では実行を中断します。
-
-  ---
-
-  - **`fn[T : Compare + Num + Div] determinant(self : Matrix[T]) -> T`**
-    - **説明**
-        正方行列の行列式を計算します（小規模行列は特化公式、大規模行列は fraction-free 消去を使用）。
-
-  ---
-
-  - **`fn[T : Semiring] pow(self : Matrix[T], power : Int) -> Matrix[T]`**
-    - **説明**
-        正方行列の非負整数乗を計算します。非正方行列または負の指数では実行を中断します。
-
-  ---
-
-  - **`fn[T] horizontal_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **説明**
-        行数が等しい 2 つの行列を水平方向に結合します。
-
-  ---
-
-  - **`fn[T] vertical_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **説明**
-        列数が等しい 2 つの行列を垂直方向に結合します。
-
-  ---
-
-  - **`fn[T] swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T]`**
-    - **説明**
-        行列の 2 つの行を入れ替え、新しい行列を返します。
-
-  ---
-
-  - **`fn[T] swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Matrix[T]`**
-    - **説明**
-        行列の 2 つの列を入れ替え、新しい行列を返します。
-
----
-
-## @immut.MatrixFn[T]
-
-```moonbit
-struct MatrixFn[T] {
-  data : (Int, Int) -> T
-  grid : (Int, Int)
-}
-```
-
-- **説明**
-  遅延評価を使用する行列の実装です。要素は関数によって動的に生成されるため、メモリ消費を抑えることができます。
-
-- **フィールド**
-  - `data` - (row, col) 位置の要素を計算する関数。
-  - `grid` - 行列の次元（行数、列数）。
-
-- **関数とメソッド**
-
-  ---
-
-  - **`fn[T] MatrixFn::make(row : Int, col : Int, f : (Int, Int) -> T) -> MatrixFn[T]`**
-    - **説明**
-        生成関数 `f` に基づいて関数行列を作成します。
-
-  ---
-
-  - **`fn[T : Default] MatrixFn::new(row : Int, col : Int) -> MatrixFn[T]`**
-    - **説明**
-        すべての要素がデフォルト値である関数行列を作成します。
-
-  ---
-
-  - **`fn[T] op_get(self : MatrixFn[T], i : Int) -> Indexed[T]`**
-    - **説明**
-        指定した行のアクセサを取得します。
-
-  ---
-
-  - **`fn[T, U] map(self : MatrixFn[T], f : (T) -> U) -> MatrixFn[U]`**
-    - **説明**
-        写像関数 `f` を通じて行列を変換します。
-
-  ---
-
-  - **`fn[T] map_row(self : MatrixFn[T], row : Int, f : (T) -> T) -> MatrixFn[T]`**
-    - **説明**
-        特定の行に対してのみ変換を適用します。
-
-  ---
-
-  - **`fn[T] map_col(self : MatrixFn[T], col : Int, f : (T) -> T) -> MatrixFn[T]`**
-    - **説明**
-        特定の列に対してのみ変換を適用します。
-
-  ---
-
-  - **`fn[T] transpose(self : MatrixFn[T]) -> MatrixFn[T]`**
-    - **説明**
-        行列の転置ビュー（データの移動なし）を返します。
+# `@immut.Matrix`
+
+このページは、現在の `0.2.11` リポジトリ実装の振る舞いを説明します。
+
+## 概要
+
+- `@immut.Matrix` は値セマンティクスです。
+- `set`、`swap_rows`、`swap_cols` などの操作は新しい行列を返します。
+- 行列は行優先で保持され、基盤には immutable vector 実装を使います。
+- 公開インデックスアクセスは厳密な境界チェックを行います。`m[row][col]` と `set(row, col, value)` は、`0xN` や `Nx0` を含めて範囲外なら panic します。
+- `swap_rows(i, i)` と `swap_cols(i, i)` は no-op で、元の値をそのまま返します。
+
+## 基本 API
+
+- `Matrix::make(row, col, f)`
+  生成関数から行列を作ります。負の次元は panic します。
+- `Matrix::new(row, col, elem)`
+  `elem` で埋めた行列を作ります。負の次元は panic します。
+- `Matrix::from_2d_array(arr)`
+  長方形の 2 次元配列から行列を作ります。ragged input は panic します。
+- `Matrix::from_array(row, col, data)`
+  行優先の平坦 immutable vector から行列を作ります。負の次元や要素数不一致は panic します。
+- `row()` / `col()`
+  保存されている shape を返します。
+- `m[row][col]`
+  読み取り専用の便宜アクセスです。行・列の両方を明示的に検証します。
+- `set(row, col, elem)`
+  指定要素だけ差し替えた新しい行列を返します。境界は明示的に検証されます。
+- `map`, `mapi`
+  元の行列を変更せずに変換します。
+- `transpose()`
+  実体化された転置行列を返します。
+- `horizontal_combine`, `vertical_combine`
+  shape が整合する行列を連結します。
+- `iter`, `iter_row`, `iter_col`, `to_array`, `to_2d_array`
+  行優先の反復・変換 API です。行・列 iterator は無効な index で panic します。
+
+## 代数演算
+
+- `+`, `-`, `*`
+  加算、減算、行列積です。shape 不一致は panic します。
+- `scale(cst)`, `add_constant(cst)`, 単項 `-`
+  要素ごとのスカラー変換です。
+- `identity(size)`
+  単位行列を作ります。負の `size` は panic します。
+- `trace()`
+  対角成分の総和です。正方行列が必要です。
+- `determinant()`
+  正方行列の determinant を返します。現在の実装では小サイズ特殊化と、大きめ入力向けの elimination を使います。
+- `pow(power)`
+  正方行列を非負整数冪へ上げます。非正方や負指数は panic します。
+- `null()`, `is_square()`
+  零行列判定と shape 補助です。
+- `adjoint()`
+  `Conjugate` を持つ要素型に対する共役転置です。
+- `swap_rows(r1, r2)`, `swap_cols(c1, c2)`
+  指定した行・列を入れ替えた新しい行列を返します。範囲外は panic、同一 index は no-op です。
+
+## `MatrixFn`
+
+- `MatrixFn` は `Matrix` の遅延・関数型コンパニオンです。
+- 非負次元のルールを共有します。
+- `MatrixFn::from_2d_array([])` は `0x0` を返します。
+- `MatrixFn::from_2d_array([[], ...])` は zero-column shape を保ちます。
+- ragged input は早い段階で拒否されます。
+- 行アクセス時に row を即時検証し、要素アクセス時には関数バックエンド経由で col も検証されます。
+
+主なメソッド:
+
+- `MatrixFn::make`, `new`, `from_2d_array`
+- `map`, `fold`, `zip_with`
+- `transpose`, `horizontal_combine`, `vertical_combine`
+- `swap_rows`, `swap_cols`
+- `identity`, `pow`, `determinant`, `adjoint`
+
+## 正しさに関する補足
+
+- 共有される代数的振る舞いについては、リポジトリ内の consistency tests で `@immut.Matrix` が意味論上の基準点として扱われます。
+- mutable パッケージは view や in-place 更新など、実行寄りの追加 API を意図的に公開しており、それらを `immut` に逆投影しないでください。

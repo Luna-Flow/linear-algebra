@@ -147,7 +147,7 @@ Developers are encouraged to use MoonBit LSP’s AI-generated code comments to i
 
 - Before publishing to mooncakes, make sure `moon.mod` has already been bumped to the intended unreleased version.
 - Update `README.md` if the current package summary or release notes no longer match the repository state.
-- Run `moon check` and the repository test workflow locally before publishing.
+- Run `moon check` and `./run_test.sh` locally before publishing.
 - The GitHub Actions publish workflow reads the release version directly from `moon.mod`.
 - If mooncakes reports a duplicate version, do not retry the same version. Bump the version first.
 

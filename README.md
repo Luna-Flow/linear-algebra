@@ -34,6 +34,8 @@ the repository state after all changes landed since `0.2.10`.
 - **Core Algebraic API**: Shared operations such as `make`, `transpose`, `+`, `-`, `*`, `trace`, and matrix/vector conversions are intended to stay semantically aligned across `immut` and `mutable`.
 - **Random Access**: In `mutable`, for high-performance random access, prefer `.get(i, j)` and `.set(i, j, val)` directly.
 - **Structured Views**: For repeated row or column work in `mutable`, prefer `row_view()` / `col_view()` instead of relying on `matrix[row]` convenience syntax.
+- **Strict Bounds**: Public matrix, view, and transpose accessors consistently reject out-of-bounds indices, including `0xN` and `Nx0` edge cases.
+- **MatrixFn Alignment**: `immut.MatrixFn` now shares the same non-negative dimension and empty-matrix semantics as the concrete matrix implementations.
 - **Public Surface**: Internal decomposition helpers remain implementation details. Package users should rely on the documented public matrix methods instead.
 
 ### Key Features
@@ -126,7 +128,7 @@ moon test --enable-coverage
 ./run_test.sh
 ```
 
-`run_test.sh` exercises the `mutable` package on `wasm-gc`, `js`, `native`, and `wasm`.
+`run_test.sh` runs the repository test suite: `immut`, `consistency`, `perf_support`, and `perf_runner`, plus `mutable` on `wasm-gc`, `js`, `native`, and `wasm`.
 
 ## Release Checklist
 
@@ -134,7 +136,7 @@ Before triggering the publish workflow:
 
 1. Bump `moon.mod` to the intended next release version before publishing.
 2. Update `README.md` so the release notes and version history match the package contents.
-3. Run `moon check` and `./run_test.sh`.
+3. Run `moon check` and `./run_test.sh`; both are required before publishing.
 4. Trigger `publish-package`; it will publish the version currently declared in `moon.mod`.
 
 If the workflow reports a duplicate version, the package manager already contains that version and a new version bump is required.

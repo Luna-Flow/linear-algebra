@@ -25,8 +25,10 @@ rather than a dedicated scheduled GitHub Actions workflow.
 - `bench/generate_fixtures.py` regenerates the JSON fixtures plus compact
   metadata registries for MoonBit and Rust.
 
-Only `manifest.json` is intended to stay reviewable in git. The per-case JSON
-files and generated MoonBit files are codegen outputs and are ignored.
+`manifest.json`, the per-case JSON fixtures, and the generated MoonBit/Rust
+registries are all tracked in git in the current repository. Treat them as
+derived artifacts that should be regenerated together, reviewed for coherence,
+and committed when the benchmark dataset changes.
 
 ## Why The Design Changed
 
@@ -79,6 +81,10 @@ Use `just bench-clean` only when you explicitly want a cold rebuild.
 
 `bench/results/summary.json` is the canonical benchmark exchange format. The
 markdown summary and local web dashboard are derived from the same schema.
+
+When `--include-rust` is omitted, the runner may reuse previously recorded Rust
+rows from `bench/results/summary.json`. Reused Rust rows are normalized against
+the current metadata and throughput rules before being merged into a new report.
 
 All reported rows are steady-state benchmark measurements. Cold-start timing is
 not collected, stored, or rendered.

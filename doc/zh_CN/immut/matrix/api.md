@@ -1,248 +1,79 @@
-# @immut.Matrix
-
-本页描述当前仓库实现，并作为 `0.2.11` 的 API 基线。
-
----
-
-## @immut.Matrix[T]
-
-```moonbit
-struct Matrix[T] {
-  row : Int
-  col : Int
-  data : Vector[T]
-} derive(Eq)
-```
-
-- **描述**
-  表示一个不可变的矩阵，数据按行优先顺序存储在不可变向量 `Vector[T]` 中。
-
-### 语义说明
-
-- `@immut.Matrix` 采用值语义。`set`、`swap_rows`、`swap_cols` 这类操作都会返回新矩阵，而不是修改原值。
-- `m[row][col]` 是基于 `Indexed[T]` 的只读便捷访问方式。
-- 这个包是共享代数语义的基线，不提供 `inplace` 更新 API，也不提供可变的转置视图能力。
-- 在 `0.2.11` 中，这个包仍然是与 `@mutable` 共享 API 语义时的参考基准。
-
-- **字段**
-  - `row` - 矩阵的行数。
-  - `col` - 矩阵的列数。
-  - `data` - 存储矩阵元素的不可变向量。
-
-- **函数与方法**
-
-  ---
-
-  - **`fn[T] Matrix::make(row : Int, col : Int, f : (Int, Int) -> T) -> Matrix[T]`**
-    - **描述**
-        创建一个新矩阵，并使用给定的函数 `f(row_index, col_index)` 初始化数据。
-    - **参数**
-      - `row`: `Int` - 行数。
-      - `col`: `Int` - 列数。
-      - `f`: `(Int, Int) -> T` - 初始化函数。
-    - **返回值**
-      `Matrix[T]` - 新创建的矩阵。
-
-  ---
-
-  - **`fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T]`**
-    - **描述**
-        创建一个新矩阵，所有元素都初始化为指定的值 `elem`。
-    - **参数**
-      - `row`: `Int` - 行数。
-      - `col`: `Int` - 列数。
-      - `elem`: `T` - 初始值。
-    - **返回值**
-      `Matrix[T]` - 新创建的矩阵。
-
-  ---
-
-  - **`fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T]`**
-    - **描述**
-        从一个二维可变数组创建一个不可变矩阵。
-    - **参数**
-      - `arr`: `Array[Array[T]]` - 输入的二维数组。
-    - **返回值**
-      `Matrix[T]` - 生成的矩阵。
-
-  ---
-
-  - **`fn[T] row(self : Matrix[T]) -> Int`**
-    - **描述**
-        获取矩阵的行数。
-
-  ---
-
-  - **`fn[T] col(self : Matrix[T]) -> Int`**
-    - **描述**
-        获取矩阵的列数。
-
-  ---
-
-  - **`fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Indexed[T]`**
-    - **描述**
-        获取矩阵指定行的访问器。支持 `m[row][col]` 语法。
-
-  ---
-
-  - **`fn[T] set(self : Matrix[T], i : Int, j : Int, elem : T) -> Matrix[T]`**
-    - **描述**
-        创建一个新矩阵，其中 (i, j) 位置的元素替换为 `elem`。原矩阵不变。
-
-  ---
-
-  - **`fn[T, U] map(self : Matrix[T], f : (T) -> U) -> Matrix[U]`**
-    - **描述**
-        对矩阵的每个元素应用函数 `f`。
-
-  ---
-
-  - **`fn[T, U] mapi(self : Matrix[T], f : (Int, Int, T) -> U) -> Matrix[U]`**
-    - **描述**
-        对矩阵的每个元素应用带行列索引的函数 `f`。
-
-  ---
-
-  - **`fn[T : Add] add(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **描述**
-        矩阵加法。支持 `+` 运算符。
-
-  ---
-
-  - **`fn[T : Mul + Add] mul(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **描述**
-        矩阵乘法。支持 `*` 运算符。
-
-  ---
-
-  - **`fn[T : Neg] neg(self : Matrix[T]) -> Matrix[T]`**
-    - **描述**
-        矩阵按元素取负。支持 `-m` 语法。
-
-  ---
-
-  - **`fn[T : Mul] scale(self : Matrix[T], cst : T) -> Matrix[T]`**
-    - **描述**
-        矩阵按元素缩放。
-
-  ---
-
-  - **`fn[T : One + Zero] Matrix::identity(size : Int) -> Matrix[T]`**
-    - **描述**
-        创建指定大小的单位矩阵。
-
-  ---
-
-  - **`fn[T : Conjugate] adjoint(self : Matrix[T]) -> Matrix[T]`**
-    - **描述**
-        计算矩阵的伴随（共轭转置）。
-
-  ---
-
-  - **`fn[T] transpose(self : Matrix[T]) -> Matrix[T]`**
-    - **描述**
-        计算矩阵的转置。
-
-  ---
-
-  - **`fn[T : Add + Zero] trace(self : Matrix[T]) -> T`**
-    - **描述**
-        计算方阵的迹。对于非方阵会直接终止程序。
-
-  ---
-
-  - **`fn[T : Compare + Num + Div] determinant(self : Matrix[T]) -> T`**
-    - **描述**
-        计算方阵的行列式（小规模矩阵使用特化公式，大规模矩阵使用 fraction-free 消元）。
-
-  ---
-
-  - **`fn[T : Semiring] pow(self : Matrix[T], power : Int) -> Matrix[T]`**
-    - **描述**
-        计算方阵的非负整数次幂。对于非方阵或负指数会直接终止程序。
-
-  ---
-
-  - **`fn[T] horizontal_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **描述**
-        水平合并两个具有相同行数的矩阵。
-
-  ---
-
-  - **`fn[T] vertical_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **描述**
-        垂直合并两个具有相同列数的矩阵。
-
-  ---
-
-  - **`fn[T] swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T]`**
-    - **描述**
-        交换矩阵的两行并返回新矩阵。
-
-  ---
-
-  - **`fn[T] swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Matrix[T]`**
-    - **描述**
-        交换矩阵的两列并返回新矩阵。
-
----
-
-## @immut.MatrixFn[T]
-
-```moonbit
-struct MatrixFn[T] {
-  data : (Int, Int) -> T
-  grid : (Int, Int)
-}
-```
-
-- **描述**
-  使用惰性计算的矩阵实现。结果由函数动态生成，不占用大量内存。
-
-- **字段**
-  - `data` - 用于计算 (row, col) 位置元素的函数。
-  - `grid` - 矩阵的维度（行，列）。
-
-- **函数与方法**
-
-  ---
-
-  - **`fn[T] MatrixFn::make(row : Int, col : Int, f : (Int, Int) -> T) -> MatrixFn[T]`**
-    - **描述**
-        根据生成函数 `f` 创建函数矩阵。
-
-  ---
-
-  - **`fn[T : Default] MatrixFn::new(row : Int, col : Int) -> MatrixFn[T]`**
-    - **描述**
-        创建一个元素均为默认值的函数矩阵。
-
-  ---
-
-  - **`fn[T] op_get(self : MatrixFn[T], i : Int) -> Indexed[T]`**
-    - **描述**
-        获取指定行的访问器。
-
-  ---
-
-  - **`fn[T, U] map(self : MatrixFn[T], f : (T) -> U) -> MatrixFn[U]`**
-    - **描述**
-        通过映射函数 `f` 转换矩阵。
-
-  ---
-
-  - **`fn[T] map_row(self : MatrixFn[T], row : Int, f : (T) -> T) -> MatrixFn[T]`**
-    - **描述**
-        仅对特定行应用变换。
-
-  ---
-
-  - **`fn[T] map_col(self : MatrixFn[T], col : Int, f : (T) -> T) -> MatrixFn[T]`**
-    - **描述**
-        仅对特定列应用变换。
-
-  ---
-
-  - **`fn[T] transpose(self : MatrixFn[T]) -> MatrixFn[T]`**
-    - **描述**
-        返回矩阵的转置视图（不移动数据）。
+# `@immut.Matrix`
+
+本页描述当前 `0.2.11` 仓库实现的实际行为。
+
+## 概览
+
+- `@immut.Matrix` 采用值语义。
+- `set`、`swap_rows`、`swap_cols` 等操作都会返回新矩阵。
+- 行列式数据按行优先顺序存储，底层使用 immutable vector 实现。
+- 公开索引访问采用严格边界检查。`m[row][col]` 和 `set(row, col, value)` 在越界时都会 panic，包括 `0xN` 和 `Nx0` 边界形状。
+- `swap_rows(i, i)` 与 `swap_cols(i, i)` 是 no-op，直接返回原值。
+
+## 核心 API
+
+- `Matrix::make(row, col, f)`
+  用生成函数创建矩阵。负维度会 panic。
+- `Matrix::new(row, col, elem)`
+  创建所有元素都为 `elem` 的矩阵。负维度会 panic。
+- `Matrix::from_2d_array(arr)`
+  从矩形二维数组构造矩阵。ragged input 会 panic。
+- `Matrix::from_array(row, col, data)`
+  从按行优先排列的平坦 immutable vector 构造矩阵。负维度或元素数量不匹配会 panic。
+- `row()` / `col()`
+  返回保存的形状。
+- `m[row][col]`
+  只读便捷索引语法。会显式检查行和列边界。
+- `set(row, col, elem)`
+  返回只替换一个元素的新矩阵。边界会显式检查。
+- `map`, `mapi`
+  返回转换后的新矩阵，不修改原值。
+- `transpose()`
+  返回实化后的转置矩阵。
+- `horizontal_combine`, `vertical_combine`
+  拼接形状兼容的矩阵。
+- `iter`, `iter_row`, `iter_col`, `to_array`, `to_2d_array`
+  提供行优先迭代与物化转换。行/列迭代器在非法索引下会 panic。
+
+## 代数操作
+
+- `+`, `-`, `*`
+  加法、减法和矩阵乘法。形状不匹配会 panic。
+- `scale(cst)`, `add_constant(cst)`, 单目 `-`
+  逐元素的标量变换。
+- `identity(size)`
+  创建单位矩阵。负 `size` 会 panic。
+- `trace()`
+  返回对角线元素之和，要求方阵。
+- `determinant()`
+  返回方阵的 determinant。当前实现对小尺寸使用特化，对更大输入使用消元路径。
+- `pow(power)`
+  将方阵提升到非负整数次幂。非方阵或负指数会 panic。
+- `null()`, `is_square()`
+  零矩阵与形状判断辅助。
+- `adjoint()`
+  对实现了 `Conjugate` 的元素类型返回共轭转置。
+- `swap_rows(r1, r2)`, `swap_cols(c1, c2)`
+  返回交换指定行或列后的新矩阵。越界会 panic；相同索引是 no-op。
+
+## `MatrixFn`
+
+- `MatrixFn` 是 `Matrix` 的惰性函数式版本。
+- 它与 `Matrix` 共享非负维度规则。
+- `MatrixFn::from_2d_array([])` 返回 `0x0`。
+- `MatrixFn::from_2d_array([[], ...])` 保留零列形状。
+- ragged input 会被及早拒绝。
+- 行访问会立即校验 row，元素访问则通过函数式后端契约校验 col。
+
+主要方法：
+
+- `MatrixFn::make`, `new`, `from_2d_array`
+- `map`, `fold`, `zip_with`
+- `transpose`, `horizontal_combine`, `vertical_combine`
+- `swap_rows`, `swap_cols`
+- `identity`, `pow`, `determinant`, `adjoint`
+
+## 正确性说明
+
+- 对共享代数行为来说，仓库中的 consistency tests 仍然把 `@immut.Matrix` 作为语义参考点。
+- mutable 包会额外暴露视图和原地更新等执行导向 API，不应把这些能力反向投射到 `immut` 上。

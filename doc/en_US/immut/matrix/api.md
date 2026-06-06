@@ -1,196 +1,79 @@
-# @immut.Matrix
+# `@immut.Matrix`
 
-This page tracks the current repository implementation and is written as the `0.2.11` API baseline.
+This page documents the current `0.2.11` repository behavior.
 
----
+## Overview
 
-## @immut.Matrix[T]
+- `@immut.Matrix` uses value semantics.
+- Operations such as `set`, `swap_rows`, and `swap_cols` return a new matrix.
+- Matrix storage is row-major and backed by the immutable vector implementation.
+- Public indexed access is strict about bounds. `m[row][col]` and `set(row, col, value)` panic on out-of-range indices, including `0xN` and `Nx0` edge shapes.
+- `swap_rows(i, i)` and `swap_cols(i, i)` are no-op operations that return the original value unchanged.
 
-```moonbit
-struct Matrix[T] {
-  row : Int
-  col : Int
-  data : Vector[T]
-} derive(Eq)
-```
+## Core Matrix API
 
-- **Description**
-  Represents an immutable matrix, with data stored in row-major order in an immutable vector `Vector[T]`.
+- `Matrix::make(row, col, f)`
+  Creates a matrix from a generator function. Negative dimensions panic.
+- `Matrix::new(row, col, elem)`
+  Creates a matrix filled with `elem`. Negative dimensions panic.
+- `Matrix::from_2d_array(arr)`
+  Creates a matrix from a rectangular 2D array. Ragged input panics.
+- `Matrix::from_array(row, col, data)`
+  Builds a matrix from a flat immutable vector in row-major order. Negative dimensions or wrong element count panic.
+- `row()` / `col()`
+  Return the stored shape.
+- `m[row][col]`
+  Read-only convenience indexing. Row and column bounds are checked explicitly.
+- `set(row, col, elem)`
+  Returns a new matrix with one replaced element. Bounds are checked explicitly.
+- `map`, `mapi`
+  Return transformed matrices without mutating the original.
+- `transpose()`
+  Returns the materialized transpose.
+- `horizontal_combine`, `vertical_combine`
+  Concatenate matrices with compatible shapes.
+- `iter`, `iter_row`, `iter_col`, `to_array`, `to_2d_array`
+  Expose row-major iteration and materialized conversions. Row/column iterators panic on invalid indices.
 
-### Semantic Notes
+## Algebraic Operations
 
-- `@immut.Matrix` uses value semantics. Operations such as `set`, `swap_rows`, and `swap_cols` return a new matrix instead of mutating the original value.
-- The `m[row][col]` syntax is a read-only convenience accessor built on `Indexed[T]`.
-- This package is the baseline for shared algebraic behavior. It intentionally does not provide `inplace` update APIs or transpose-view mutation facilities.
-- In `0.2.11`, this package remains the semantic reference point for APIs shared with `@mutable`.
+- `+`, `-`, `*`
+  Addition, subtraction, and matrix multiplication. Shape mismatch panics.
+- `scale(cst)`, `add_constant(cst)`, unary `-`
+  Element-wise scalar transforms.
+- `identity(size)`
+  Creates an identity matrix. Negative `size` panics.
+- `trace()`
+  Sum of diagonal entries. Requires a square matrix.
+- `determinant()`
+  Determinant of a square matrix. Uses the current repository implementation with small-size specializations and elimination for larger inputs.
+- `pow(power)`
+  Raises a square matrix to a non-negative integer power. Non-square matrices and negative exponents panic.
+- `null()`, `is_square()`
+  Shape and zero-matrix helpers.
+- `adjoint()`
+  Conjugate transpose for element types implementing `Conjugate`.
+- `swap_rows(r1, r2)`, `swap_cols(c1, c2)`
+  Return a new matrix with the chosen rows or columns swapped. Out-of-range indices panic; same-index swaps are no-op.
 
-- **Fields**
-  - `row` - The number of rows.
-  - `col` - The number of columns.
-  - `data` - The immutable vector containing the matrix elements.
+## `MatrixFn`
 
-- **Functions and Methods**
+- `MatrixFn` is the lazy functional companion to `Matrix`.
+- It follows the same non-negative-dimension rule.
+- `MatrixFn::from_2d_array([])` yields a `0x0` matrix.
+- `MatrixFn::from_2d_array([[], ...])` preserves zero-column shapes.
+- Ragged input is rejected eagerly.
+- Row access validates the row immediately, and element access validates the column through the functional backing contract.
 
-  ---
+Important methods:
 
-  - **`fn[T] Matrix::make(row : Int, col : Int, f : (Int, Int) -> T) -> Matrix[T]`**
-    - **Description**
-        Creates a new matrix with dimensions `row` × `col` using function `f(row_index, col_index)` to initialize elements.
+- `MatrixFn::make`, `new`, `from_2d_array`
+- `map`, `fold`, `zip_with`
+- `transpose`, `horizontal_combine`, `vertical_combine`
+- `swap_rows`, `swap_cols`
+- `identity`, `pow`, `determinant`, `adjoint`
 
-  ---
+## Notes On Correctness
 
-  - **`fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T]`**
-    - **Description**
-        Creates a new matrix with all elements initialized to `elem`.
-
-  ---
-
-  - **`fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T]`**
-    - **Description**
-        Creates an immutable matrix from a 2D mutable array.
-
-  ---
-
-  - **`fn[T] row(self : Matrix[T]) -> Int`**
-    - **Description**
-        Returns the number of rows in the matrix.
-
-  ---
-
-  - **`fn[T] col(self : Matrix[T]) -> Int`**
-    - **Description**
-        Returns the number of columns in the matrix.
-
-  ---
-
-  - **`fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Indexed[T]`**
-    - **Description**
-        Returns a row accessor for the specified row. Supports `m[row][col]` syntax.
-
-  ---
-
-  - **`fn[T] set(self : Matrix[T], i : Int, j : Int, elem : T) -> Matrix[T]`**
-    - **Description**
-        Returns a new matrix with the element at position (i, j) replaced by `elem`.
-
-  ---
-
-  - **`fn[T, U] map(self : Matrix[T], f : (T) -> U) -> Matrix[U]`**
-    - **Description**
-        Applies function `f` to each element of the matrix.
-
-  ---
-
-  - **`fn[T : Add] add(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **Description**
-        Matrix addition. Supports `+` operator.
-
-  ---
-
-  - **`fn[T : Mul + Add] mul(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **Description**
-        Matrix multiplication. Supports `*` operator.
-
-  ---
-
-  - **`fn[T : Neg] neg(self : Matrix[T]) -> Matrix[T]`**
-    - **Description**
-        Element-wise negation. Supports `-m` syntax.
-
-  ---
-
-  - **`fn[T : Mul] scale(self : Matrix[T], cst : T) -> Matrix[T]`**
-    - **Description**
-        Scales the matrix by multiplying each element by a constant value.
-
-  ---
-
-  - **`fn[T : One + Zero] Matrix::identity(size : Int) -> Matrix[T]`**
-    - **Description**
-        Creates an identity matrix of the specified size.
-
-  ---
-
-  - **`fn[T : Conjugate] adjoint(self : Matrix[T]) -> Matrix[T]`**
-    - **Description**
-        Computes the adjoint (conjugate transpose) of the matrix.
-
-  ---
-
-  - **`fn[T] transpose(self : Matrix[T]) -> Matrix[T]`**
-    - **Description**
-        Computes the transpose of the matrix.
-
-  ---
-
-  - **`fn[T : Add + Zero] trace(self : Matrix[T]) -> T`**
-    - **Description**
-        Computes the trace (sum of diagonal elements) of a square matrix. Panics for non-square matrices.
-
-  ---
-
-  - **`fn[T : Compare + Num + Div] determinant(self : Matrix[T]) -> T`**
-    - **Description**
-        Computes the determinant of a square matrix using small-size specializations and a fraction-free elimination path for larger matrices.
-
-  ---
-
-  - **`fn[T : Semiring] pow(self : Matrix[T], power : Int) -> Matrix[T]`**
-    - **Description**
-        Raises a square matrix to a non-negative integer power. Panics for non-square matrices or negative exponents.
-
-  ---
-
-  - **`fn[T] horizontal_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **Description**
-        Concatenates two matrices horizontally.
-
-  ---
-
-  - **`fn[T] vertical_combine(self : Matrix[T], other : Matrix[T]) -> Matrix[T]`**
-    - **Description**
-        Concatenates two matrices vertically.
-
----
-
-## @immut.MatrixFn[T]
-
-```moonbit
-struct MatrixFn[T] {
-  data : (Int, Int) -> T
-  grid : (Int, Int)
-}
-```
-
-- **Description**
-  A lazy functional implementation of a matrix. Elements are computed on-demand by a function.
-
-- **Fields**
-  - `data` - The function to compute the element at (row, col).
-  - `grid` - The dimensions (row, col) of the matrix.
-
-- **Functions and Methods**
-
-  ---
-
-  - **`fn[T] MatrixFn::make(row : Int, col : Int, f : (Int, Int) -> T) -> MatrixFn[T]`**
-    - **Description**
-        Creates a functional matrix using generator function `f`.
-
-  ---
-
-  - **`fn[T : Default] MatrixFn::new(row : Int, col : Int) -> MatrixFn[T]`**
-    - **Description**
-        Creates a functional matrix with all elements set to their default value.
-
-  ---
-
-  - **`fn[T] op_get(self : MatrixFn[T], i : Int) -> Indexed[T]`**
-    - **Description**
-        Returns a row accessor for the specified row.
-
-  ---
-
-  - **`fn[T, U] map(self : MatrixFn[T], f : (T) -> U) -> MatrixFn[U]`**
-    - **Description**
-        Transforms the matrix by applying function `f` to elements as they are accessed.
+- For shared algebraic behavior, `@immut.Matrix` remains the semantic reference point used by the repository’s consistency tests.
+- The mutable package intentionally exposes extra execution-oriented APIs such as views and in-place updates; those should not be projected back onto `immut`.
