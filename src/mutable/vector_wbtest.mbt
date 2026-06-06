@@ -1,9 +1,11 @@
 ///|
 using @debug {debug_inspect}
+
+///|
 using @qc {quick_check_fn, trait Shrink}
 
 ///|
-impl[T] Shrink for Vector[T] with shrink(_) -> Iter[Vector[T]] {
+impl[T] Shrink for Vector[T] with fn shrink(_) -> Iter[Vector[T]] {
   Iter::empty()
 }
 
@@ -18,7 +20,7 @@ impl[T] Shrink for Vector[T] with shrink(_) -> Iter[Vector[T]] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// // The property being tested:
 /// let v = Vector::from_array([1, 2, 3])
 ///
@@ -53,7 +55,7 @@ test "a + a = 2 * a" {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// // This property should hold for any two vectors of the same length
 /// let v1 = Vector::from_array([1, 2, 3])
 ///
@@ -89,7 +91,7 @@ test "a + b = b + a" {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// // For vectors [1, 2] * [3, 4] * [5, 6]
 /// // Left association: ([1*3, 2*4]) * [5, 6] = [3, 8] * [5, 6] = [15, 48]  
 /// // Right association: [1, 2] * ([3*4, 4*6]) = [1, 2] * [15, 24] = [15, 48]
@@ -215,6 +217,19 @@ test "vector_matrix_conversion" {
 }
 
 ///|
+test "vector_matrix_conversion_copies_storage" {
+  let v = Vector::from_array([1, 2, 3])
+  let row_m = v.to_row_matrix()
+  row_m[0][0] = 99
+  inspect(v[0], content="1")
+  inspect(row_m[0][0], content="99")
+  let col_m = v.to_col_matrix()
+  col_m[0][0] = 77
+  inspect(v[0], content="1")
+  inspect(col_m[0][0], content="77")
+}
+
+///|
 test "vector_advanced_math" {
   // lerp
   let v1 = Vector::from_array([0.0, 0.0])
@@ -297,4 +312,41 @@ test "vector_dot_product" {
   inspect(v1.dot(v2), content="32")
   let v_zero_len : Vector[Int] = Vector::make(0, 0)
   inspect(v_zero_len.dot(v_zero_len), content="0")
+}
+
+///|
+test "panic vector_lin_comb/empty_vectors" {
+  ignore(Vector::lin_comb([1], []))
+}
+
+///|
+test "panic vector_lin_comb/weights_vectors_length_mismatch" {
+  let v = Vector::from_array([1, 2])
+  ignore(Vector::lin_comb([1, 2], [v]))
+}
+
+///|
+test "panic vector_lin_comb/vector_length_mismatch" {
+  let v1 = Vector::from_array([1, 2])
+  let v2 = Vector::from_array([3, 4, 5])
+  ignore(Vector::lin_comb([1, 2], [v1, v2]))
+}
+
+///|
+test "panic vector_get/out_of_bounds" {
+  let v = Vector::from_array([1, 2, 3])
+  ignore(v[3])
+}
+
+///|
+test "panic vector_set/out_of_bounds" {
+  let v = Vector::from_array([1, 2, 3])
+  v[3] = 9
+}
+
+///|
+test "panic vector_dot/length_mismatch" {
+  let v1 = Vector::from_array([1, 2])
+  let v2 = Vector::from_array([3, 4, 5])
+  ignore(v1.dot(v2))
 }

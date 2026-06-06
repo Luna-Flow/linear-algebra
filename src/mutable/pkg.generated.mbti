@@ -89,7 +89,7 @@ pub fn[T] Matrix::op_get(Self[T], Int) -> Lens[T]
 pub fn[T : @luna-generic.Semiring] Matrix::pow(Self[T], Int) -> Self[T]
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::power_method(Self[T], Int) -> (T, Vector[T])?
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::rank(Self[T]) -> Int
-pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num] Matrix::reduce_row_elimination(Self[T]) -> Self[T]
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::reduce_row_elimination(Self[T]) -> Self[T]
 pub fn[T] Matrix::row(Self[T]) -> Int
 pub fn[T] Matrix::row_to_array(Self[T], Int) -> Array[T]
 pub fn[T] Matrix::row_to_vector(Self[T], Int) -> Vector[T]
@@ -117,7 +117,6 @@ pub impl[T : Add + Neg] Sub for Matrix[T]
 pub struct RowView[T] {
   data : Matrix[T]
   row : Int
-  offset : Int
 }
 pub fn[T] RowView::each(Self[T], (T) -> Unit) -> Unit
 pub fn[T] RowView::eachi(Self[T], (Int, T) -> Unit) -> Unit
@@ -221,4 +220,3 @@ pub trait Tolerance {
 }
 pub impl Tolerance for Float
 pub impl Tolerance for Double
-

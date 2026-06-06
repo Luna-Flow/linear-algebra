@@ -213,6 +213,30 @@ test "transpose_structure" {
 }
 
 ///|
+test "panic transpose_swap_rows/out_of_bounds" {
+  let t = Matrix::from_2d_array([[1, 2], [3, 4]]).to_transpose()
+  t.swap_rows(2, 0)
+}
+
+///|
+test "panic transpose_swap_cols/out_of_bounds" {
+  let t = Matrix::from_2d_array([[1, 2], [3, 4]]).to_transpose()
+  t.swap_cols(0, 2)
+}
+
+///|
+test "panic zero_col_transpose_swap_rows/out_of_bounds" {
+  let t = Matrix::new(2, 0, 0).to_transpose()
+  t.swap_rows(0, 0)
+}
+
+///|
+test "panic zero_row_transpose_swap_cols/out_of_bounds" {
+  let t = Matrix::new(0, 2, 0).to_transpose()
+  t.swap_cols(0, 0)
+}
+
+///|
 test "transpose_conversion" {
   let base = Matrix::from_2d_array([[0, 1, 2], [3, 4, 5]])
   let t = base.to_transpose()
@@ -298,4 +322,58 @@ test "transpose_view_reactivity" {
   m[0][1] = 20
   // t is transpose, so t[1][0] should be m[0][1]
   inspect(t.get(1, 0), content="20")
+}
+
+///|
+test "panic transpose_op_get/out_of_bounds" {
+  let t = Matrix::from_2d_array([[1, 2], [3, 4]]).to_transpose()
+  ignore(t[2][0])
+}
+
+///|
+test "panic transpose_row_to_array/out_of_bounds" {
+  let t = Matrix::new(2, 0, 0).to_transpose()
+  ignore(t.row_to_array(0))
+}
+
+///|
+test "panic transpose_col_to_array/out_of_bounds" {
+  let t = Matrix::new(0, 2, 0).to_transpose()
+  ignore(t.col_to_array(0))
+}
+
+///|
+test "panic transpose_each_row/out_of_bounds" {
+  let t = Matrix::from_2d_array([[1, 2], [3, 4]]).to_transpose()
+  t.each_row(2, fn(_) {  })
+}
+
+///|
+test "panic transpose_eachi_row/out_of_bounds" {
+  let t = Matrix::from_2d_array([[1, 2], [3, 4]]).to_transpose()
+  t.eachi_row(2, fn(_, _) {  })
+}
+
+///|
+test "panic transpose_each_col/out_of_bounds" {
+  let t = Matrix::from_2d_array([[1, 2], [3, 4]]).to_transpose()
+  t.each_col(2, fn(_) {  })
+}
+
+///|
+test "panic transpose_eachi_col/out_of_bounds" {
+  let t = Matrix::from_2d_array([[1, 2], [3, 4]]).to_transpose()
+  t.eachi_col(2, fn(_, _) {  })
+}
+
+///|
+test "panic transpose_map_row_inplace/out_of_bounds" {
+  let t = Matrix::from_2d_array([[1, 2], [3, 4]]).to_transpose()
+  t.map_row_inplace(2, fn(x) { x })
+}
+
+///|
+test "panic transpose_map_col_inplace/out_of_bounds" {
+  let t = Matrix::from_2d_array([[1, 2], [3, 4]]).to_transpose()
+  t.map_col_inplace(2, fn(x) { x })
 }

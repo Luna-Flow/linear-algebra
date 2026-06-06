@@ -1,11 +1,11 @@
 import {
-  "moonbitlang/core/debug" @debug,
+  "moonbitlang/core/debug",
   "Luna-Flow/luna-generic" @lg,
   "moonbitlang/core/quickcheck" @qc_core,
   "moonbitlang/core/immut/vector" @core_vector,
   "Luna-Flow/linear-algebra/internal" @internal,
 }
 
-import "wbtest" {
+import {
   "moonbitlang/quickcheck" @qc,
-}
+} for "wbtest"

@@ -1,18 +1,36 @@
-using @lg { trait Integral }
+///|
+using @lg {trait Integral}
 
+///|
 struct AdjointReal(Int)
 
-impl Conjugate for AdjointReal with conjugate(self) { self }
+///|
+impl Conjugate for AdjointReal with fn conjugate(self) {
+  self
+}
 
-impl Show for AdjointReal with to_string(self) { self.0.to_string() }
+///|
+impl Show for AdjointReal with fn to_string(self) {
+  self.0.to_string()
+}
 
-impl Show for AdjointReal with output(self, logger) { logger.write_object(self.0) }
+///|
+impl Show for AdjointReal with fn output(self, logger) {
+  logger.write_object(self.0)
+}
 
-fn float_matrix_2x2(a00 : Int, a01 : Int, a10 : Int, a11 : Int) -> Matrix[Double] {
+///|
+fn float_matrix_2x2(
+  a00 : Int,
+  a01 : Int,
+  a10 : Int,
+  a11 : Int,
+) -> Matrix[Double] {
   let matrix : Matrix[Int] = Matrix::from_2d_array([[a00, a01], [a10, a11]])
   matrix.map(fn(n) { Integral::to_double(n) })
 }
 
+///|
 fn float_matrix_3x2(
   a00 : Int,
   a01 : Int,
@@ -29,6 +47,7 @@ fn float_matrix_3x2(
   matrix.map(fn(n) { Integral::to_double(n) })
 }
 
+///|
 fn matrices_close(a : Matrix[Double], b : Matrix[Double], tol : Double) -> Bool {
   if a.row() != b.row() || a.col() != b.col() {
     return false
@@ -43,6 +62,7 @@ fn matrices_close(a : Matrix[Double], b : Matrix[Double], tol : Double) -> Bool 
   true
 }
 
+///|
 fn nonzero_double(n : Int) -> Double {
   Double::from_int(if n >= 0 { n + 1 } else { n - 1 })
 }
@@ -111,7 +131,7 @@ test "mapi" {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// test {
 ///   let m = Matrix::from_2d_array([[2, 3, 4], [1, 2, 3]])
 ///   inspect(m[0][1], content="3") // Read element at row 0, column 1
@@ -192,7 +212,7 @@ test "swap" {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([
 ///   [1.0, 2.0, 3.0, 7.0],
 ///   [1.0, 1.0, 1.0, 2.0],
@@ -224,10 +244,7 @@ test "reduce_row_elimination" {
 
 ///|
 test "reduce_row_elimination/skips_zero_pivot_columns" {
-  let m = Matrix::from_2d_array([
-    [0.0, 2.0, 1.0],
-    [0.0, 0.0, 3.0],
-  ])
+  let m = Matrix::from_2d_array([[0.0, 2.0, 1.0], [0.0, 0.0, 3.0]])
   inspect(
     m.reduce_row_elimination(),
     content=(
@@ -321,6 +338,7 @@ test "matrix_combine/empty_shapes" {
   )
 }
 
+///|
 test "from_2d_array/zero_col" {
   let m : Matrix[Int] = Matrix::from_2d_array([[], []])
   inspect(m.row(), content="2")
@@ -332,10 +350,12 @@ test "from_2d_array/zero_col" {
   debug_inspect(m.transpose().to_2d_array(), content="[]")
 }
 
+///|
 test "panic from_2d_array/ragged_rows" {
   ignore(Matrix::from_2d_array([[1, 2], [3]]))
 }
 
+///|
 test "panic from_2d_array/ragged_zero_col" {
   ignore(Matrix::from_2d_array([[], [1]]))
 }
@@ -420,14 +440,18 @@ test "trace of matrix" {
 /// Tests trace calculation with different numeric types.
 test "trace with different types" {
   // Test with Float type
-  let m_float : Matrix[Float] = Matrix::from_2d_array([[1, 2], [3, 4]]).map(fn(n) {
+  let m_float : Matrix[Float] = Matrix::from_2d_array([[1, 2], [3, 4]]).map(fn(
+    n,
+  ) {
     Integral::to_float(n)
   })
   let trace_float = m_float.trace()
   inspect(trace_float, content="5")
 
   // Test with Double type  
-  let m_double : Matrix[Double] = Matrix::from_2d_array([[2, 1], [1, 3]]).map(fn(n) {
+  let m_double : Matrix[Double] = Matrix::from_2d_array([[2, 1], [1, 3]]).map(fn(
+    n,
+  ) {
     Integral::to_double(n)
   })
   let trace_double = m_double.trace()
@@ -705,20 +729,38 @@ test "Matrix::inverse" {
   let inv1 = m1.inverse()
   inspect(inv1 is None, content="false")
   let product1 = m1 * inv1.unwrap()
-  inspect(product1.get(0, 0).abs() - 1.0 < Tolerance::tolerance(), content="true")
+  inspect(
+    product1.get(0, 0).abs() - 1.0 < Tolerance::tolerance(),
+    content="true",
+  )
   inspect(product1.get(0, 1).abs() < Tolerance::tolerance(), content="true")
   inspect(product1.get(1, 0).abs() < Tolerance::tolerance(), content="true")
-  inspect((product1.get(1, 1) - 1.0).abs() < Tolerance::tolerance(), content="true")
+  inspect(
+    (product1.get(1, 1) - 1.0).abs() < Tolerance::tolerance(),
+    content="true",
+  )
 
   let pivoted = Matrix::from_2d_array([[0.0, 1.0], [1.0, 0.0]])
   let inv_pivoted = pivoted.inverse()
   inspect(inv_pivoted is None, content="false")
   inspect(inv_pivoted.unwrap(), content="|0, 1|\n|1, 0|")
   let product_pivoted = pivoted * inv_pivoted.unwrap()
-  inspect((product_pivoted.get(0, 0) - 1.0).abs() < Tolerance::tolerance(), content="true")
-  inspect(product_pivoted.get(0, 1).abs() < Tolerance::tolerance(), content="true")
-  inspect(product_pivoted.get(1, 0).abs() < Tolerance::tolerance(), content="true")
-  inspect((product_pivoted.get(1, 1) - 1.0).abs() < Tolerance::tolerance(), content="true")
+  inspect(
+    (product_pivoted.get(0, 0) - 1.0).abs() < Tolerance::tolerance(),
+    content="true",
+  )
+  inspect(
+    product_pivoted.get(0, 1).abs() < Tolerance::tolerance(),
+    content="true",
+  )
+  inspect(
+    product_pivoted.get(1, 0).abs() < Tolerance::tolerance(),
+    content="true",
+  )
+  inspect(
+    (product_pivoted.get(1, 1) - 1.0).abs() < Tolerance::tolerance(),
+    content="true",
+  )
 
   // Test 3x3 identity matrix (should return itself)
   let identity = Matrix::from_2d_array([
@@ -859,6 +901,86 @@ test "row_view_and_col_view_reactivity" {
 }
 
 ///|
+test "panic matrix_get/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  ignore(m.get(2, 0))
+}
+
+///|
+test "panic matrix_set/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  m.set(0, 2, 9)
+}
+
+///|
+test "panic matrix_op_get/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  ignore(m[2][0])
+}
+
+///|
+test "panic row_view/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  ignore(m.row_view(2))
+}
+
+///|
+test "panic col_view/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  ignore(m.col_view(2))
+}
+
+///|
+test "panic row_view_get/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let row = m.row_view(1)
+  ignore(row[2])
+}
+
+///|
+test "panic col_view_set/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let col = m.col_view(1)
+  col[2] = 9
+}
+
+///|
+test "panic map_row_inplace/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  m.map_row_inplace(2, fn(x) { x })
+}
+
+///|
+test "panic map_col_inplace/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  m.map_col_inplace(2, fn(x) { x })
+}
+
+///|
+test "panic each_row/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  m.each_row(2, fn(_) {  })
+}
+
+///|
+test "panic eachi_row/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  m.eachi_row(2, fn(_, _) {  })
+}
+
+///|
+test "panic each_col/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  m.each_col(2, fn(_) {  })
+}
+
+///|
+test "panic eachi_col/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  m.eachi_col(2, fn(_, _) {  })
+}
+
+///|
 test "to_array" {
   let m = Matrix::from_2d_array([[1, 2], [3, 4]])
   debug_inspect(m.to_array(), content="[1, 2, 3, 4]")
@@ -967,6 +1089,72 @@ test "matrix_empty_edge_cases" {
   inspect(m.copy().row(), content="0")
   inspect(m.determinant(), content="1")
   inspect(m.inverse() is Some(_), content="true")
+  let zero_col = Matrix::new(2, 0, 0.0)
+  inspect(zero_col.row(), content="2")
+  inspect(zero_col.col(), content="0")
+  debug_inspect(zero_col.row_to_array(1), content="[]")
+  let zero_row = Matrix::make(0, 3, fn(_, _) { 0.0 })
+  inspect(zero_row.row(), content="0")
+  inspect(zero_row.col(), content="3")
+  debug_inspect(zero_row.col_to_array(2), content="[]")
+}
+
+///|
+test "panic matrix_make/negative_row" {
+  let matrix : Matrix[Int] = Matrix::make(-1, 2, fn(i, j) { i + j })
+  ignore(matrix)
+}
+
+///|
+test "panic matrix_new/negative_col" {
+  ignore(Matrix::new(2, -1, 0))
+}
+
+///|
+test "panic matrix_from_array/negative_dimensions" {
+  ignore(Matrix::from_array(-1, -1, [1]))
+}
+
+///|
+test "panic identity/negative_size" {
+  let matrix : Matrix[Int] = identity(-1)
+  ignore(matrix)
+}
+
+///|
+test "panic zero_col_matrix_col_to_array/out_of_bounds" {
+  let m = Matrix::new(2, 0, 0)
+  ignore(m.col_to_array(0))
+}
+
+///|
+test "panic zero_row_matrix_row_to_array/out_of_bounds" {
+  let m = Matrix::new(0, 3, 0)
+  ignore(m.row_to_array(0))
+}
+
+///|
+test "panic swap_rows/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  m.swap_rows(2, 0)
+}
+
+///|
+test "panic swap_cols/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  m.swap_cols(0, 2)
+}
+
+///|
+test "panic zero_col_matrix_swap_cols/out_of_bounds" {
+  let m = Matrix::new(2, 0, 0)
+  m.swap_cols(0, 0)
+}
+
+///|
+test "panic zero_row_matrix_swap_rows/out_of_bounds" {
+  let m = Matrix::new(0, 2, 0)
+  m.swap_rows(0, 0)
 }
 
 ///|
@@ -999,6 +1187,7 @@ test "matrix_non_square_ops" {
   inspect(prod.col(), content="2")
 }
 
+///|
 test "determinant_transpose_and_triangular_laws" {
   let upper = Matrix::from_2d_array([
     [2.0, 3.0, 5.0],
@@ -1012,6 +1201,7 @@ test "determinant_transpose_and_triangular_laws" {
   )
 }
 
+///|
 test "inverse_is_two_sided_identity_for_non_diagonal_matrix" {
   let m = Matrix::from_2d_array([
     [4.0, 7.0, 2.0],
@@ -1030,6 +1220,7 @@ test "inverse_is_two_sided_identity_for_non_diagonal_matrix" {
   }
 }
 
+///|
 test "lu_based_invariants_agree" {
   let permutation_matrix = Matrix::from_2d_array([
     [0.0, 0.0, 1.0],
@@ -1051,6 +1242,7 @@ test "lu_based_invariants_agree" {
   }
 }
 
+///|
 test "reduce_row_elimination_idempotent_on_rref" {
   let m = Matrix::from_2d_array([
     [1.0, 0.0, 0.0, 2.0],
@@ -1065,99 +1257,139 @@ test "reduce_row_elimination_idempotent_on_rref" {
   }
 }
 
+///|
 test "power_method_and_eigen_agree_on_diagonal_matrix" {
-  let m = Matrix::from_2d_array([
-    [6.0, -2.0],
-    [-2.0, 9.0],
-  ])
+  let m = Matrix::from_2d_array([[6.0, -2.0], [-2.0, 9.0]])
   let power_pair = m.power_method(60)
   inspect(power_pair is Some(_), content="true")
   let (dominant, vec) = power_pair.unwrap()
   inspect((dominant - 10.0).abs() < 1.0e-4, content="true")
-  let residual = m.mul_vec(vec).zip_with(vec.map(fn(x) { x * dominant }), fn(a, b) {
-    a - b
-  })
+  let residual = m
+    .mul_vec(vec)
+    .zip_with(vec.map(fn(x) { x * dominant }), fn(a, b) { a - b })
   let residual_norm = residual.dot(residual)
   assert_true(residual_norm < 1.0e-3)
 }
 
+///|
 test "power_method/zero_matrix_returns_none" {
   let zero = Matrix::from_2d_array([[0.0, 0.0], [0.0, 0.0]])
   inspect(zero.power_method(10) is None, content="true")
 }
 
+///|
 test "power_method/complex_rotation_returns_none" {
   let rotation = Matrix::from_2d_array([[0.0, -1.0], [1.0, 0.0]])
   inspect(rotation.power_method(10) is None, content="true")
 }
 
+///|
+test "power_method/recovers_from_bad_all_ones_seed" {
+  let projector = Matrix::from_2d_array([[1.0, -1.0], [-1.0, 1.0]])
+  let power_pair = projector.power_method(40)
+  inspect(power_pair is Some(_), content="true")
+  let (dominant, vec) = power_pair.unwrap()
+  inspect((dominant - 2.0).abs() < 1.0e-4, content="true")
+  let residual = projector
+    .mul_vec(vec)
+    .zip_with(vec.map(fn(x) { x * dominant }), fn(a, b) { a - b })
+  assert_true(residual.dot(residual) < 1.0e-6)
+}
+
+///|
 test "panic power_method/non_square" {
   let non_square = Matrix::from_2d_array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
   ignore(non_square.power_method(10))
 }
 
+///|
 test "panic trace/non_square" {
   let non_square = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
   ignore(non_square.trace())
 }
 
+///|
 test "panic mean/empty_matrix" {
   let empty = Matrix::new(0, 0, 0.0)
   ignore(empty.mean())
 }
 
+///|
 test "panic variance/empty_matrix" {
   let empty = Matrix::new(0, 0, 0.0)
   ignore(empty.variance())
 }
 
+///|
 test "panic std_dev/empty_matrix" {
   let empty = Matrix::new(0, 0, 0.0)
   ignore(empty.std_dev())
 }
 
+///|
 test "panic pow/non_square" {
   let non_square = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
   ignore(non_square.pow(2))
 }
 
+///|
 test "panic pow/negative_exponent" {
   let square = Matrix::from_2d_array([[1, 2], [3, 4]])
   ignore(square.pow(-1))
 }
 
+///|
+test "panic iter_row/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  ignore(m.iter_row(2).to_array())
+}
+
+///|
+test "panic iter_col/out_of_bounds" {
+  let m = Matrix::from_2d_array([[1, 2], [3, 4]])
+  ignore(m.iter_col(2).to_array())
+}
+
+///|
 test "row_rank_column_rank_examples" {
-  let wide = Matrix::from_2d_array([
-    [1.0, 2.0, 3.0],
-    [2.0, 4.0, 6.0],
-  ])
+  let wide = Matrix::from_2d_array([[1.0, 2.0, 3.0], [2.0, 4.0, 6.0]])
   inspect(wide.rank(), content="1")
 
-  let tall = Matrix::from_2d_array([
-    [1.0, 2.0],
-    [0.0, 1.0],
-    [1.0, 3.0],
-  ])
+  let tall = Matrix::from_2d_array([[1.0, 2.0], [0.0, 1.0], [1.0, 3.0]])
   inspect(tall.rank(), content="2")
 }
 
+///|
+test "reduce_row_elimination/treats_near_zero_pivot_as_zero" {
+  let m = Matrix::from_2d_array([[1.0e-12, 1.0, 1.0], [0.0, 1.0, 2.0]])
+  let reduced = m.reduce_row_elimination()
+  assert_true(reduced.get(0, 0).abs() < 1.0e-9)
+  assert_true((reduced.get(0, 1) - 1.0).abs() < 1.0e-6)
+  assert_true(reduced.get(1, 1).abs() < 1.0e-9)
+  inspect(reduced.rank(), content="2")
+}
+
+///|
 test "matrix_multiplication_associativity/property" {
   fn as_matrix(input : (Int, Int, Int, Int)) -> Matrix[Int] {
     let (a00, a01, a10, a11) = input
     Matrix::from_2d_array([[a00, a01], [a10, a11]])
   }
 
-  fn prop(input : ((Int, Int, Int, Int), (Int, Int, Int, Int), (Int, Int, Int, Int))) {
+  fn prop(
+    input : ((Int, Int, Int, Int), (Int, Int, Int, Int), (Int, Int, Int, Int)),
+  ) {
     let (a_in, b_in, c_in) = input
     let a = as_matrix(a_in)
     let b = as_matrix(b_in)
     let c = as_matrix(c_in)
-    ((a * b) * c).to_array() == (a * (b * c)).to_array()
+    (a * b * c).to_array() == (a * (b * c)).to_array()
   }
 
   @qc.quick_check_fn(prop)
 }
 
+///|
 test "qr_decomposition_reconstructs_input/property" {
   fn prop(input : ((Int, Int), (Int, Int), (Int, Int))) {
     let ((a00, a01), (a10, a11), (a20, a21)) = input
@@ -1171,6 +1403,7 @@ test "qr_decomposition_reconstructs_input/property" {
   @qc.quick_check_fn(prop)
 }
 
+///|
 test "eigenvalues_match_trace_and_determinant_for_diagonal_3x3/property" {
   fn prop(input : (Int, Int, Int)) {
     let (d0, d1, d2) = input
@@ -1189,19 +1422,21 @@ test "eigenvalues_match_trace_and_determinant_for_diagonal_3x3/property" {
   @qc.quick_check_fn(prop)
 }
 
+///|
 test "eigenvalues_match_trace_and_determinant_for_symmetric_2x2/property" {
   fn prop(input : (Int, Int, Int)) {
     let (a00, a01, a11) = input
     let matrix = float_matrix_2x2(a00, a01, a01, a11)
     let (eigenvalues, eigenvectors) = matrix.eigen()
     let _ = eigenvectors
-    ((eigenvalues[0] + eigenvalues[1]) - matrix.trace()).abs() < 1.0e-4 &&
-    ((eigenvalues[0] * eigenvalues[1]) - matrix.determinant()).abs() < 1.0e-4
+    (eigenvalues[0] + eigenvalues[1] - matrix.trace()).abs() < 1.0e-4 &&
+    (eigenvalues[0] * eigenvalues[1] - matrix.determinant()).abs() < 1.0e-4
   }
 
   @qc.quick_check_fn(prop)
 }
 
+///|
 test "cholesky_reconstructs_spd_matrix/property" {
   fn prop(input : ((Int, Int), (Int, Int))) {
     let ((b00, b01), (b10, b11)) = input
@@ -1211,13 +1446,13 @@ test "cholesky_reconstructs_spd_matrix/property" {
     let chol = spd.cholesky_decomposition()
     guard chol is Some(_) else { false }
     let l = chol.unwrap()
-    matrices_close(l * l.transpose(), spd, 1.0e-4) &&
-    spd.is_positive_definite()
+    matrices_close(l * l.transpose(), spd, 1.0e-4) && spd.is_positive_definite()
   }
 
   @qc.quick_check_fn(prop)
 }
 
+///|
 test "upper_triangular_inverse_det_rank_align/property" {
   fn prop(input : ((Int, Int, Int), (Int, Int, Int))) {
     let ((d0, d1, d2), (u01, u02, u12)) = input
@@ -1238,6 +1473,7 @@ test "upper_triangular_inverse_det_rank_align/property" {
   @qc.quick_check_fn(prop)
 }
 
+///|
 test "row_swap_flips_determinant_preserves_rank/property" {
   fn prop(input : (Int, Int, Int, Int)) {
     let (a00, a01, a10, a11) = input

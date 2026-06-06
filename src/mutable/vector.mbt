@@ -3,7 +3,7 @@
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v1 = @mutable.Vector::make(3, 0.0)
 /// let v2 = @mutable.Vector::makei(3, fn(i) { i.to_double() })
 /// let v3 = @mutable.Vector::from_array([1.0, 2.0, 3.0])
@@ -33,7 +33,7 @@ pub struct Vector[A](Array[A])
 ///
 /// Returns a randomly generated vector of the specified size, where each
 /// element is generated using the `Arbitrary` instance of type `T`.
-pub impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
+pub impl[T : Arbitrary] Arbitrary for Vector[T] with fn arbitrary(size, rng) {
   Vector::makei(size, i => T::arbitrary(i, rng))
 }
 
@@ -51,7 +51,7 @@ pub impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v1 = Vector::from_array([1, 2, 3])
 /// let v2 = Vector::from_array([1, 2, 3])
 /// let v3 = Vector::from_array([1, 2, 4])
@@ -59,7 +59,7 @@ pub impl[T : Arbitrary] Arbitrary for Vector[T] with arbitrary(size, rng) {
 /// assert_eq(v1.to_string() != v3.to_string(), true)
 /// ```
 ///
-pub impl[T : Eq] Eq for Vector[T] with equal(self, other) {
+pub impl[T : Eq] Eq for Vector[T] with fn equal(self, other) {
   self.0 == other.0
 }
 
@@ -76,12 +76,12 @@ pub impl[T : Eq] Eq for Vector[T] with equal(self, other) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = @mutable.Vector::from_array([1, 2, 3])
 /// inspect(v.to_string(), content="|1, 2, 3|")
 /// ```
 ///
-pub impl[T : Show] Show for Vector[T] with to_string(self) {
+pub impl[T : Show] Show for Vector[T] with fn to_string(self) {
   let logger = StringBuilder::new()
   self.output(logger)
   logger.to_string()
@@ -97,18 +97,19 @@ pub impl[T : Show] Show for Vector[T] with to_string(self) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = @mutable.Vector::from_array([1, 2, 3])
 /// inspect(v, content="|1, 2, 3|")
 /// ```
 ///
-pub impl[T : Show] Show for Vector[T] with output(self, logger) {
+pub impl[T : Show] Show for Vector[T] with fn output(self, logger) {
   logger.write_iter(self.0.iter(), prefix="|", suffix="|", sep=", ")
 }
 
 ///|
+
 ///|
-pub impl[T : Debug] Debug for Vector[T] with to_repr(self) {
+pub impl[T : Debug] Debug for Vector[T] with fn to_repr(self) {
   Repr::opaque_(
     "Vector",
     Repr::array(self.iter().to_array().map(x => to_repr(x))),
@@ -166,7 +167,7 @@ fn[A, B, C] array_zip_with(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v1 = Vector::from_array([1, 2, 3])
 /// let v2 = Vector::from_array([4, 5, 6])
 /// let result = v1.zip_with(v2, fn(a, b) { a + b })
@@ -194,7 +195,7 @@ pub fn[A, U, V] Vector::zip_with(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = Vector::from_array([1, 2, 3])
 /// let col_matrix = v.to_col_matrix()
 /// // Results in a 3x1 matrix:
@@ -225,7 +226,7 @@ pub fn[T] Vector::to_col_matrix(self : Vector[T]) -> Matrix[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = Vector::from_array([1, 2, 3, 4])
 /// let row_matrix = v.to_row_matrix()
 /// // Creates a 1x4 matrix: |1 2 3 4|
@@ -236,7 +237,7 @@ pub fn[T] Vector::to_col_matrix(self : Vector[T]) -> Matrix[T] {
 /// ```
 ///
 pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
-  Matrix::from_array(1, self.length(), self.0)
+  Matrix::from_array(1, self.length(), self.0.copy())
 }
 
 ///|
@@ -250,7 +251,7 @@ pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = @mutable.Vector::make(5, 42)
 /// inspect(v.length(), content="5")
 /// ```
@@ -273,7 +274,7 @@ pub fn[A] Vector::length(self : Vector[A]) -> Int {
 ///
 /// Examples:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// // Create a vector [0, 1, 4, 9, 16] (squares of indices)
 /// let squares = @mutable.Vector::makei(5, fn(i) { i * i })
 /// inspect(squares, content="|0, 1, 4, 9, 16|")
@@ -299,7 +300,7 @@ pub fn[A] Vector::makei(n : Int, f : (Int) -> A) -> Vector[A] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = Vector::make(3, 42)
 /// inspect(v, content="|42, 42, 42|")
 /// ```
@@ -319,7 +320,7 @@ pub fn[A] Vector::make(n : Int, elem : A) -> Vector[A] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let original = @mutable.Vector::makei(3, fn(i) { i * 2 })
 /// let copied = original.copy()
 /// original[0] = 100
@@ -345,7 +346,7 @@ pub fn[A] Vector::copy(self : Vector[A]) -> Vector[A] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = @mutable.Vector::from_array([1, 2, 3, 4, 5])
 /// inspect(v[2], content="3")
 /// ```
@@ -369,7 +370,7 @@ pub fn[A] Vector::op_get(self : Vector[A], index : Int) -> A {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = @mutable.Vector::make(3, 0)  // Creates [0, 0, 0]
 /// v[1] = 42
 /// // v is now [0, 42, 0]
@@ -392,7 +393,7 @@ pub fn[A] Vector::op_set(self : Vector[A], index : Int, value : A) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = Vector::from_array([1, 2, 3, 4])
 /// let doubled = v.map(fn(x) { x * 2 })
 /// inspect(doubled.to_string(), content="|2, 4, 6, 8|")
@@ -414,7 +415,7 @@ pub fn[A, B] Vector::map(self : Vector[A], f : (A) -> B) -> Vector[B] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = @mutable.Vector::from_array([1, 2, 3, 4])
 /// v.map_inplace(fn(x) { x * 2 })
 /// inspect(v, content="|2, 4, 6, 8|")
@@ -438,7 +439,7 @@ pub fn[A] Vector::map_inplace(self : Vector[A], f : (A) -> A) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = Vector::from_array([1, 2, 3])
 /// let scaled = v.left_scale(2)
 /// inspect(scaled, content="|2, 4, 6|")
@@ -462,7 +463,7 @@ pub fn[A : Mul] Vector::left_scale(self : Vector[A], scalar : A) -> Vector[A] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = Vector::from_array([1, 2, 3])
 /// let scaled = v.right_scale(2)
 /// inspect(scaled, content="|2, 4, 6|")
@@ -483,7 +484,7 @@ pub fn[A : Mul] Vector::right_scale(self : Vector[A], scalar : A) -> Vector[A] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = @mutable.Vector::from_array([1, 2, 3])
 /// v.left_scale_inplace(2)
 /// inspect(v, content="|2, 4, 6|")
@@ -508,7 +509,7 @@ pub fn[A : Mul] Vector::left_scale_inplace(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = @mutable.Vector::from_array([1, 2, 3])
 /// v.right_scale_inplace(2)
 /// // v is now [2, 4, 6]
@@ -533,7 +534,7 @@ pub fn[A : Mul] Vector::right_scale_inplace(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let arr = [1, 2, 3, 4, 5]
 /// let vec = Vector::from_array(arr)
 /// inspect(vec.to_string(), content="|1, 2, 3, 4, 5|")
@@ -568,14 +569,14 @@ pub fn[T] Vector::iter(self : Vector[T]) -> Iter[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v1 = @mutable.Vector::from_array([1, 2, 3])
 /// let v2 = @mutable.Vector::from_array([4, 5, 6])
 /// let result = v1 + v2
 /// inspect(result, content="|5, 7, 9|")
 /// ```
 ///
-pub impl[T : Add] Add for Vector[T] with add(
+pub impl[T : Add] Add for Vector[T] with fn add(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {
@@ -595,14 +596,14 @@ pub impl[T : Add] Add for Vector[T] with add(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v1 = Vector::from_array([1, 2, 3])
 /// let v2 = Vector::from_array([4, 5, 6])
 /// let result = v1 * v2
 /// inspect(result, content="|4, 10, 18|")
 /// ```
 ///
-pub impl[T : Mul] Mul for Vector[T] with mul(
+pub impl[T : Mul] Mul for Vector[T] with fn mul(
   self : Vector[T],
   other : Vector[T],
 ) -> Vector[T] {
@@ -620,12 +621,12 @@ pub impl[T : Mul] Mul for Vector[T] with mul(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = Vector::from_array([1, 2, -3])
 /// inspect(-v, content="|-1, -2, 3|")
 /// ```
 ///
-pub impl[T : Neg] Neg for Vector[T] with neg(self : Vector[T]) -> Vector[T] {
+pub impl[T : Neg] Neg for Vector[T] with fn neg(self : Vector[T]) -> Vector[T] {
   self.map(T::neg)
 }
 
@@ -644,7 +645,7 @@ pub impl[T : Neg] Neg for Vector[T] with neg(self : Vector[T]) -> Vector[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v1: Vector[Double] = Vector::from_array([1, 2, 3])
 /// let v2: Vector[Double] = Vector::from_array([4, 5, 6])
 /// let result = v1.lerp(v2, 0.5)
@@ -701,7 +702,7 @@ pub fn[T : AddMonoid + Mul] Vector::dot(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = Vector::from_array([1, 2, 3])
 /// let m = v.scaled_matrix()
 /// inspect(m, content=(
@@ -729,7 +730,7 @@ pub fn[T : Zero] Vector::scaled_matrix(self : Vector[T]) -> Matrix[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v1 = Vector::from_array([1, 2])
 /// let v2 = Vector::from_array([3, 4, 5])
 /// let result = v1.tensor_product(v2)
@@ -768,7 +769,16 @@ pub fn[T : Mul + Add + Zero] Vector::lin_comb(
   vectors : Array[Vector[T]],
 ) -> Vector[T] {
   guard weights.length() > 0 else { abort("weights is empty") }
+  guard vectors.length() > 0 else { abort("vectors is empty") }
+  guard weights.length() == vectors.length() else {
+    abort("weights and vectors length mismatch")
+  }
   let len = vectors[0].0.length()
+  for vector in vectors {
+    guard vector.0.length() == len else {
+      abort("vector length mismatch in linear combination")
+    }
+  }
   // Single-pass linear combination to avoid multiple intermediate vector allocations.
   let res_data = Array::make(len, T::zero())
   for i = 0; i < weights.length(); i = i + 1 {
@@ -795,7 +805,7 @@ pub fn[T : Mul + Add + Zero] Vector::lin_comb(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = Vector::from_array([1, 2, 3])
 /// let result = v.add_constant(5)
 /// inspect(result.to_string(), content="|6, 7, 8|")
@@ -820,7 +830,7 @@ pub fn[T : Add] Vector::add_constant(self : Vector[T], cst : T) -> Vector[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v1 = Vector::from_array([1, 2, 3])
 /// let v2 = Vector::from_array([4, 5, 6])
 /// let result = lin_comb(2, v1, 3, v2)

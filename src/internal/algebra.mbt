@@ -1,30 +1,24 @@
 ///|
 pub(open) trait HasShape {
-  shape(Self) -> (Int, Int)
+  fn shape(Self) -> (Int, Int)
 }
 
 ///|
 pub fn[M : HasShape] ensure_square(matrix : M) -> Unit {
   let (row, col) = HasShape::shape(matrix)
-  guard row == col else {
-    abort("Matrix must be square")
-  }
+  guard row == col else { abort("Matrix must be square") }
 }
 
 ///|
 pub fn[M : HasShape] ensure_row_in_bounds(matrix : M, row : Int) -> Unit {
   let (rows, _) = HasShape::shape(matrix)
-  guard row >= 0 && row < rows else {
-    abort("Row index out of bounds")
-  }
+  guard row >= 0 && row < rows else { abort("Row index out of bounds") }
 }
 
 ///|
 pub fn[M : HasShape] ensure_col_in_bounds(matrix : M, col : Int) -> Unit {
   let (_, cols) = HasShape::shape(matrix)
-  guard col >= 0 && col < cols else {
-    abort("Column index out of bounds")
-  }
+  guard col >= 0 && col < cols else { abort("Column index out of bounds") }
 }
 
 ///|

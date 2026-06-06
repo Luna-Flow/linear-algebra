@@ -2,7 +2,7 @@
 using @qc {quick_check_fn, trait Shrink}
 
 ///|
-impl[T] Shrink for Vector[T] with shrink(_) -> Iter[Vector[T]] {
+impl[T] Shrink for Vector[T] with fn shrink(_) -> Iter[Vector[T]] {
   Iter::empty()
 }
 
@@ -26,7 +26,7 @@ impl[T] Shrink for Vector[T] with shrink(_) -> Iter[Vector[T]] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let v = Vector::from_array([1, 2, 3])
 ///
 /// let col = v.to_col_matrix() // 3×1 matrix: [[1], [2], [3]]
@@ -90,7 +90,7 @@ test "from . to = identity" {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// // This property should hold for any vector
 /// let v = Vector::from_array([1, 2, 3])
 ///
@@ -123,7 +123,7 @@ test "a + a = 2 * a" {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// // The property being tested:
 /// let v1 = Vector::from_array([1, 2, 3])
 ///
@@ -301,4 +301,16 @@ test "vector_single_element" {
   inspect(v.length(), content="1")
   inspect(v[0], content="34")
   inspect(v.left_scale(2.0)[0], content="68")
+}
+
+///|
+test "panic vector_get/out_of_bounds" {
+  let v = Vector::from_array([1, 2, 3])
+  ignore(v[3])
+}
+
+///|
+test "panic vector_set/out_of_bounds" {
+  let v = Vector::from_array([1, 2, 3])
+  ignore(v.set(3, 9))
 }

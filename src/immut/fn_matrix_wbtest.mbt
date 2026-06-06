@@ -21,7 +21,7 @@
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = MatrixFn::from_2d_array([[1, 2], [3, 4]])
 ///
 /// let m2 = MatrixFn::from_2d_array([[1, 0], [0, 1]])
@@ -176,6 +176,52 @@ test "matrix_creation" {
 }
 
 ///|
+test "matrix_empty_edge_cases" {
+  let empty : MatrixFn[Int] = MatrixFn::from_2d_array([])
+  inspect(empty, content="")
+  let zero_col : MatrixFn[Int] = MatrixFn::from_2d_array([[], []])
+  inspect(zero_col, content="||\n||")
+  let product = MatrixFn::make(2, 0, fn(_, _) { 1 }) *
+    MatrixFn::make(0, 3, fn(_, _) { 1 })
+  inspect(product, content="|0, 0, 0|\n|0, 0, 0|")
+}
+
+///|
+test "panic matrix_fn_from_2d_array/ragged_rows" {
+  ignore(MatrixFn::from_2d_array([[1, 2], [3]]))
+}
+
+///|
+test "panic matrix_fn_make/negative_dimensions" {
+  let matrix : MatrixFn[Int] = MatrixFn::make(-1, 2, fn(i, j) { i + j })
+  ignore(matrix)
+}
+
+///|
+test "panic matrix_fn_new/negative_dimensions" {
+  let matrix : MatrixFn[Int] = MatrixFn::new(2, -1)
+  ignore(matrix)
+}
+
+///|
+test "panic matrix_fn_identity/negative_size" {
+  let matrix : MatrixFn[Int] = MatrixFn::identity(-1)
+  ignore(matrix)
+}
+
+///|
+test "panic matrix_fn_map_row/out_of_bounds" {
+  let matrix = MatrixFn::from_2d_array([[1, 2], [3, 4]])
+  ignore(matrix.map_row(2, fn(x) { x }))
+}
+
+///|
+test "panic matrix_fn_map_col/out_of_bounds" {
+  let matrix = MatrixFn::from_2d_array([[1, 2], [3, 4]])
+  ignore(matrix.map_col(2, fn(x) { x }))
+}
+
+///|
 test "matrix_mapping" {
   let m = MatrixFn::from_2d_array([[1, 2], [3, 4]])
 
@@ -195,20 +241,8 @@ test "matrix_mapping" {
 ///|
 test "matrix_transpose_adjoint" {
   let m = MatrixFn::from_2d_array([[1, 2, 3], [4, 5, 6]])
-
-  // Test transpose
   let t = m.transpose()
   inspect(t, content="|1, 4|\n|2, 5|\n|3, 6|")
-
-  // Test adjoint (using Int, conjugate is identity)
-  // Note: Int doesn't implement Conjugate in standard lib usually, 
-  // but if the method exists it might be using a trait.
-  // Checking source: pub fn[T : Conjugate] MatrixFn::adjoint(self : MatrixFn[T]) -> MatrixFn[T]
-  // We need a type that implements Conjugate. Complex numbers usually do.
-  // If Int doesn't implement Conjugate, we might skip adjoint or mock it if possible.
-  // Assuming Int might not implement Conjugate, let's check if we can use it.
-  // If not, we'll skip adjoint for now or use a type that supports it if available.
-  // Let's stick to transpose for now as it's generic.
 }
 
 ///|

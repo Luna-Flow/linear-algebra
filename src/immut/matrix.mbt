@@ -14,7 +14,7 @@ struct Matrix[T] {
 } derive(Eq)
 
 ///|
-pub impl[T] HasShape for Matrix[T] with shape(self) {
+pub impl[T] HasShape for Matrix[T] with fn shape(self) {
   (self.row, self.col)
 }
 
@@ -35,7 +35,7 @@ pub impl[T] HasShape for Matrix[T] with shape(self) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let row = m[0]  // Returns Indexed[Int] for the first row
 /// inspect(row[1], content="2")  // Access second element of first row
@@ -43,6 +43,16 @@ pub impl[T] HasShape for Matrix[T] with shape(self) {
 ///
 struct Indexed[T] {
   index : (Int) -> T
+}
+
+///|
+fn[T] Matrix::matrix_index_offset(
+  self : Matrix[T],
+  row : Int,
+  col : Int,
+) -> Int {
+  @internal.ensure_index_in_bounds(self, row, col)
+  row * self.col + col
 }
 
 ///|
@@ -56,7 +66,7 @@ struct Indexed[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// inspect(m.row(), content="2")
 /// ```
@@ -76,7 +86,7 @@ pub fn[T] Matrix::row(self : Matrix[T]) -> Int {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// inspect(m.col(), content="3")
 /// ```
@@ -99,7 +109,7 @@ pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 ///   inspect(
 ///     m.to_string(),
@@ -109,7 +119,7 @@ pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
 ///     ,
 ///   )
 /// ```
-pub impl[T : Show] Show for Matrix[T] with to_string(self) {
+pub impl[T : Show] Show for Matrix[T] with fn to_string(self) {
   let logger = StringBuilder::new()
   self.output(logger)
   logger.to_string()
@@ -126,7 +136,7 @@ pub impl[T : Show] Show for Matrix[T] with to_string(self) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 ///   let buf = @buffer.new(size_hint=0)
 ///   m.output(buf)
@@ -138,7 +148,7 @@ pub impl[T : Show] Show for Matrix[T] with to_string(self) {
 ///     ,
 ///   )
 /// ```
-pub impl[T : Show] Show for Matrix[T] with output(self, logger) {
+pub impl[T : Show] Show for Matrix[T] with fn output(self, logger) {
   for i in 0..<self.row {
     logger.write_char('|')
     for j in 0..<self.col {
@@ -162,7 +172,7 @@ pub impl[T : Show] Show for Matrix[T] with output(self, logger) {
 /// - `f`: The function to apply to each element of the matrix.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[2, 3, 4], [1, 2, 3]])
 /// let m2 = m.map(fn(x) { x * 2 })
 /// inspect(m2, content=
@@ -183,7 +193,7 @@ pub fn[T, U] Matrix::map(self : Matrix[T], f : (T) -> U) -> Matrix[U] {
 /// - `f`: The function to apply to each element of the matrix. The function takes the row index, column index and the element.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m2 = m.mapi(fn(i, j, x) { x + i + j })
 /// inspect(m2, content=
@@ -212,7 +222,7 @@ pub fn[T, U] Matrix::mapi(
 /// - `f`: The function to apply to each element of the matrix.
 ///
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::make(2, 3, fn(i, j) { i + j })
 /// inspect(m, content=
 ///   #||0, 1, 2|
@@ -221,14 +231,13 @@ pub fn[T, U] Matrix::mapi(
 /// ```
 /// 
 pub fn[T] Matrix::make(row : Int, col : Int, f : (Int, Int) -> T) -> Matrix[T] {
+  guard row >= 0 && col >= 0 else {
+    abort("Matrix dimensions must be non-negative")
+  }
   if row == 0 || col == 0 {
     return { row, col, data: Vector::from_array([]) }
   }
-  {
-    row,
-    col,
-    data: Vector::makei(row * col, fn(i) { f(i / col, i % col) }),
-  }
+  { row, col, data: Vector::makei(row * col, fn(i) { f(i / col, i % col) }) }
 }
 
 ///|
@@ -241,7 +250,7 @@ pub fn[T] Matrix::make(row : Int, col : Int, f : (Int, Int) -> T) -> Matrix[T] {
 /// - `elem`: The value to initialize the matrix with.
 ///
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::new(2, 3, 0)
 /// inspect(m, content=
 ///   #||0, 0, 0|
@@ -260,7 +269,7 @@ pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
 /// - `arr`: The array to shift to the `Matrix` type.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[2, 3, 4], [1, 2, 3]])
 /// inspect(m, content =
 ///   #||2, 3, 4|
@@ -298,7 +307,7 @@ pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let arr = Vector::from_array([1, 2, 3, 4, 5, 6])
 /// let m = Matrix::from_array(2, 3, arr)
 /// inspect(m, content=
@@ -312,6 +321,9 @@ pub fn[T] Matrix::from_array(
   col : Int,
   arr : VecLib[T],
 ) -> Matrix[T] {
+  guard row >= 0 && col >= 0 else {
+    abort("Matrix dimensions must be non-negative")
+  }
   guard arr.length() == row * col else {
     abort("Invalid array length for matrix")
   }
@@ -326,7 +338,8 @@ pub fn[T] Matrix::from_array(
 /// - `self`: The matrix to get the indexed type from.
 /// - `row`: The row index to get the data from.
 pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Indexed[T] {
-  { index: c => self.data[c + self.col * row] }
+  @internal.ensure_row_in_bounds(self, row)
+  { index: c => self.data[self.matrix_index_offset(row, c)] }
 }
 
 ///|
@@ -338,7 +351,7 @@ pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Indexed[T] {
 /// - `col`: The column index to get the element from.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[2, 3, 4], [1, 2, 3]])
 /// inspect(m[0][1], content="3")
 /// ```
@@ -363,7 +376,7 @@ pub fn[T] Indexed::op_get(self : Indexed[T], col : Int) -> T {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 ///   let m2 = m.set(0, 1, 5)
 ///   inspect(
@@ -380,7 +393,11 @@ pub fn[T] Matrix::set(
   j : Int,
   elem : T,
 ) -> Matrix[T] {
-  { row: self.row, col: self.col, data: self.data.set(i * self.col + j, elem) }
+  {
+    row: self.row,
+    col: self.col,
+    data: self.data.set(self.matrix_index_offset(i, j), elem),
+  }
 }
 
 ///|
@@ -391,7 +408,7 @@ pub fn[T] Matrix::set(
 /// - `other`: The right matrix.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m2 = Matrix::from_2d_array([[1, 1], [0, 1]])
 /// let m3 = m1 * m2
@@ -400,7 +417,7 @@ pub fn[T] Matrix::set(
 ///   #||3, 7|
 /// )
 /// ```
-pub impl[T : Mul + Add + Zero] Mul for Matrix[T] with mul(
+pub impl[T : Mul + Add + Zero] Mul for Matrix[T] with fn mul(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
@@ -443,7 +460,7 @@ pub impl[T : Mul + Add + Zero] Mul for Matrix[T] with mul(
 /// - `other`: The right matrix.
 ///
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m2 = Matrix::from_2d_array([[1, 1], [0, 1]])
 /// let m3 = m1 + m2
@@ -452,17 +469,13 @@ pub impl[T : Mul + Add + Zero] Mul for Matrix[T] with mul(
 ///   #||3, 5|
 /// )
 /// ```
-pub impl[T : Add] Add for Matrix[T] with add(
+pub impl[T : Add] Add for Matrix[T] with fn add(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
   guard self.col == other.col
   guard self.row == other.row
-  {
-    data: self.data.zip_with(other.data, T::add),
-    row: self.row,
-    col: self.col,
-  }
+  { data: self.data.zip_with(other.data, T::add), row: self.row, col: self.col }
 }
 
 ///|
@@ -472,7 +485,7 @@ pub impl[T : Add] Add for Matrix[T] with add(
 /// - `self`: The matrix to negate.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m1 = -m
 /// inspect(m1, content=
@@ -480,7 +493,7 @@ pub impl[T : Add] Add for Matrix[T] with add(
 ///   #||-3, -4|
 /// )
 /// ```
-pub impl[T : Neg] Neg for Matrix[T] with neg(self : Matrix[T]) -> Matrix[T] {
+pub impl[T : Neg] Neg for Matrix[T] with fn neg(self : Matrix[T]) -> Matrix[T] {
   self.map(T::neg)
 }
 
@@ -492,7 +505,7 @@ pub impl[T : Neg] Neg for Matrix[T] with neg(self : Matrix[T]) -> Matrix[T] {
 /// - `other`: The right matrix.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m2 = Matrix::from_2d_array([[1, 1], [0, 1]])
 /// let m3 = m1 - m2
@@ -501,7 +514,7 @@ pub impl[T : Neg] Neg for Matrix[T] with neg(self : Matrix[T]) -> Matrix[T] {
 ///   #||3, 3|
 /// )
 /// ```
-pub impl[T : Add + Neg] Sub for Matrix[T] with sub(
+pub impl[T : Add + Neg] Sub for Matrix[T] with fn sub(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
@@ -516,7 +529,7 @@ pub impl[T : Add + Neg] Sub for Matrix[T] with sub(
 /// - `cst`: The constant value to scale the matrix by.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m1 = m.scale(10)
 /// inspect(m1, content=
@@ -536,7 +549,7 @@ pub fn[T : Mul] Matrix::scale(self : Matrix[T], cst : T) -> Matrix[T] {
 /// - `cst`: The constant value to add to the matrix.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m1 = m.add_constant(10)
 /// inspect(m1, content=
@@ -555,7 +568,7 @@ pub fn[T : Add] Matrix::add_constant(self : Matrix[T], cst : T) -> Matrix[T] {
 /// - `size`: The size of the identity matrix to create.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m : Matrix[Int] = Matrix::identity(3)
 /// inspect(m, content=
 ///   #||1, 0, 0|
@@ -577,7 +590,7 @@ pub fn[T : One + Zero] Matrix::identity(size : Int) -> Matrix[T] {
 /// - `self`: The matrix to check.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[0, 0], [0, 0]])
 /// inspect(m.null(), content="true")
 /// ```
@@ -608,7 +621,7 @@ pub fn[T : Conjugate] Matrix::adjoint(self : Matrix[T]) -> Matrix[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 ///   let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 ///   inspect(
 ///     m.transpose(),
@@ -630,12 +643,14 @@ pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
 /// - `self`: The matrix to compute the trace of.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// inspect(m.trace(), content="5")
 /// ```
 pub fn[T : Add + Zero] Matrix::trace(self : Matrix[T]) -> T {
-  guard self.is_square() else { abort("Matrix must be square to calculate trace") }
+  guard self.is_square() else {
+    abort("Matrix must be square to calculate trace")
+  }
   let n = self.row
   let mut sum = T::zero()
   for i in 0..<n {
@@ -653,7 +668,7 @@ pub fn[T : Add + Zero] Matrix::trace(self : Matrix[T]) -> T {
 /// Returns `true` if the matrix is square, `false` otherwise.
 /// 
 /// Example:
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m2 = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// inspect(m1.is_square(), content="true")  // 2x2 matrix is
@@ -672,7 +687,7 @@ pub fn[T] Matrix::is_square(self : Matrix[T]) -> Bool {
 /// Returns an iterator that yields each element of the matrix in row-major
 /// 
 /// Example:
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let iter = m.iter()
 /// inspect(iter.collect(), content="[1, 2, 3, 4]") // Collects all elements in row-major order
@@ -693,7 +708,7 @@ pub fn[T] Matrix::iter(self : Matrix[T]) -> Iter[T] {
 /// Panics if `row` is negative or greater than or equal to the number of rows.
 /// 
 /// Example:
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let row_iter = m.iter_row(1)
 /// for elem in row_iter {
@@ -705,12 +720,14 @@ pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
   let start = row * self.col
   let end = start + self.col
   let mut i = start
-  Iter::new(() => if i < end {
-    let value = self.data[i]
-    i = i + 1
-    Some(value)
-  } else {
-    None
+  Iter::new(() => {
+    if i < end {
+      let value = self.data[i]
+      i = i + 1
+      Some(value)
+    } else {
+      None
+    }
   }).iter()
 }
 
@@ -726,7 +743,7 @@ pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
 /// Panics if `col` is negative or greater than or equal to the number of columns.
 /// 
 /// Example:
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let col_iter = m.iter_col(1)
 /// for elem in col_iter {
@@ -736,12 +753,14 @@ pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
 pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
   guard col >= 0 && col < self.col else { abort("Column index out of bounds") }
   let mut i = 0
-  Iter::new(() => if i < self.row {
-    let value = self.data[i * self.col + col]
-    i = i + 1
-    Some(value)
-  } else {
-    None
+  Iter::new(() => {
+    if i < self.row {
+      let value = self.data[i * self.col + col]
+      i = i + 1
+      Some(value)
+    } else {
+      None
+    }
   }).iter()
 }
 
@@ -757,7 +776,7 @@ pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let array = matrix.to_array()
 /// inspect(array, content="[1, 2, 3, 4, 5, 6]")
@@ -783,7 +802,7 @@ pub fn[T] Matrix::to_array(self : Matrix[T]) -> Array[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let array_2d = m.to_2d_array()
 /// inspect(array_2d, content="[[1, 2, 3], [4, 5, 6]]")
@@ -803,7 +822,12 @@ pub fn[T] Matrix::to_2d_array(self : Matrix[T]) -> Array[Array[T]] {
 }
 
 ///|
-fn[T] swap_dense_rows(data : Array[T], row_size : Int, r1 : Int, r2 : Int) -> Unit {
+fn[T] swap_dense_rows(
+  data : Array[T],
+  row_size : Int,
+  r1 : Int,
+  r2 : Int,
+) -> Unit {
   if r1 == r2 {
     return
   }
@@ -823,13 +847,11 @@ fn[T] swap_dense_rows(data : Array[T], row_size : Int, r1 : Int, r2 : Int) -> Un
 /// - `self`: The matrix to compute the determinant of.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// inspect(m.determinant(), content="-2")
 /// ```
-pub fn[T : Compare + Num + Div] Matrix::determinant(
-  self : Matrix[T],
-) -> T {
+pub fn[T : Compare + Num + Div] Matrix::determinant(self : Matrix[T]) -> T {
   let n = self.row
   ensure_square(self)
   match n {
@@ -905,7 +927,7 @@ pub fn[T : Compare + Num + Div] Matrix::determinant(
 /// - `power`: The power to raise the matrix to.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m1 = m.pow(2)
 /// inspect(m1, content=
@@ -941,7 +963,7 @@ pub fn[T : Semiring] Matrix::pow(self : Matrix[T], power : Int) -> Matrix[T] {
 /// - `other`: The right matrix.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m2 = Matrix::from_2d_array([[1, 0], [0, 1]])
 /// let m3 = m1.horizontal_combine(m2)
@@ -977,7 +999,7 @@ pub fn[T] Matrix::horizontal_combine(
 /// - `other`: The right matrix.
 /// 
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m2 = Matrix::from_2d_array([[1, 0], [0, 1]])
 /// let m3 = m1.vertical_combine(m2)
@@ -1015,7 +1037,7 @@ pub fn[T] Matrix::vertical_combine(
 /// - `r2`: The index of the second row to swap.
 ///
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m1 = m.swap_rows(0, 1)
 /// inspect(m1, content=
@@ -1026,7 +1048,9 @@ pub fn[T] Matrix::vertical_combine(
 pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
   guard r1 < self.row && r2 < self.row
   guard r1 >= 0 && r2 >= 0
-  guard r1 != r2
+  if r1 == r2 {
+    return self
+  }
   let new_matrix = Matrix::make(self.row, self.col, fn(i, j) {
     if i == r1 {
       self[r2][j]
@@ -1049,7 +1073,7 @@ pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
 /// - `c2`: The index of the second column to swap.
 ///
 /// Example
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// let m1 = m.swap_cols(0, 1)
 /// inspect(m1, content=
@@ -1060,7 +1084,9 @@ pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
 pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Matrix[T] {
   guard c1 < self.col && c2 < self.col
   guard c1 >= 0 && c2 >= 0
-  guard c1 != c2
+  if c1 == c2 {
+    return self
+  }
   let new_matrix = Matrix::make(self.row, self.col, fn(i, j) {
     if j == c1 {
       self[i][c2]

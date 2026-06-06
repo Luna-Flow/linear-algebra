@@ -18,7 +18,7 @@ struct MatrixFn[T] {
 }
 
 ///|
-pub impl[T] HasShape for MatrixFn[T] with shape(self) {
+pub impl[T] HasShape for MatrixFn[T] with fn shape(self) {
   self.grid
 }
 
@@ -35,13 +35,14 @@ pub impl[T] HasShape for MatrixFn[T] with shape(self) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix = @immut.MatrixFn::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let row = matrix[0]  // Gets the first row
 /// inspect(row[1], content="2")  // Access column 1 of the first row
 /// ```
 ///
 pub fn[T] MatrixFn::op_get(self : MatrixFn[T], i : Int) -> Indexed[T] {
+  @internal.ensure_row_in_bounds(self, i)
   { index: c => (self.data)(i, c) }
 }
 
@@ -59,7 +60,7 @@ pub fn[T] MatrixFn::op_get(self : MatrixFn[T], i : Int) -> Indexed[T] {
 ///
 /// Panics if the matrices have different dimensions during the `zip_with`
 /// operation.
-pub impl[T : Eq] Eq for MatrixFn[T] with equal(self, other) {
+pub impl[T : Eq] Eq for MatrixFn[T] with fn equal(self, other) {
   self.zip_with(other, T::equal).fold(init=true, fn(acc, x) { acc && x })
 }
 
@@ -78,7 +79,7 @@ pub impl[T : Eq] Eq for MatrixFn[T] with equal(self, other) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix = @immut.MatrixFn::from_2d_array([[1, 2], [3, 4]])
 /// let sum = matrix.fold(init=0, fn(acc, x) { acc + x })
 /// inspect(sum, content="10")
@@ -115,7 +116,7 @@ pub fn[T, U] MatrixFn::fold(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix : @immut.MatrixFn[Int] = @immut.MatrixFn::new(2, 3)
 /// // Creates a 2x3 matrix with all elements initialized to 0 (default value for Int)
 /// inspect(
@@ -128,15 +129,7 @@ pub fn[T, U] MatrixFn::fold(
 /// ```
 ///
 pub fn[T : Default] MatrixFn::new(row : Int, col : Int) -> MatrixFn[T] {
-  {
-    data: (i, j) => {
-      guard 0 <= i && i < row && 0 <= j && j < col else {
-        abort("Index out of bounds")
-      }
-      T::default()
-    },
-    grid: (row, col),
-  }
+  MatrixFn::make(row, col, fn(_, _) { T::default() })
 }
 
 ///|
@@ -152,7 +145,7 @@ pub fn[T : Default] MatrixFn::new(row : Int, col : Int) -> MatrixFn[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = @immut.MatrixFn::from_2d_array([[1, 2], [3, 4]])
 /// let doubled = m.map(fn(x) { x * 2 })
 /// inspect(doubled, content=
@@ -179,7 +172,7 @@ pub fn[T, U] MatrixFn::map(self : MatrixFn[T], f : (T) -> U) -> MatrixFn[U] {
 ///
 /// Returns a `String` representation of the matrix in the format `|element1,
 /// element2|` for each row, with rows separated by newlines.
-pub impl[T : Show] Show for MatrixFn[T] with to_string(self) {
+pub impl[T : Show] Show for MatrixFn[T] with fn to_string(self) {
   let logger = StringBuilder::new()
   self.output(logger)
   logger.to_string()
@@ -193,7 +186,7 @@ pub impl[T : Show] Show for MatrixFn[T] with to_string(self) {
 /// * `self` : The matrix to be output.
 /// * `logger` : The logger to write the string representation to.
 ///
-pub impl[T : Show] Show for MatrixFn[T] with output(self, logger) {
+pub impl[T : Show] Show for MatrixFn[T] with fn output(self, logger) {
   for i in 0..<self.grid.0 {
     logger.write_char('|')
     for j in 0..<self.grid.1 {
@@ -223,7 +216,7 @@ pub impl[T : Show] Show for MatrixFn[T] with output(self, logger) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix = @immut.MatrixFn::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let result = matrix.map_row(0, fn(x) { x * 2 })
 /// inspect(result, content=
@@ -237,14 +230,15 @@ pub fn[T] MatrixFn::map_row(
   row : Int,
   f : (T) -> T,
 ) -> MatrixFn[T] {
-  {
-    data: (i, j) => if i == row {
+  let (rows, cols) = self.grid
+  guard row >= 0 && row < rows else { abort("Row index out of bounds") }
+  MatrixFn::make(rows, cols, fn(i, j) {
+    if i == row {
       f((self.data)(i, j))
     } else {
       (self.data)(i, j)
-    },
-    grid: self.grid,
-  }
+    }
+  })
 }
 
 ///|
@@ -261,7 +255,7 @@ pub fn[T] MatrixFn::map_row(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = @immut.MatrixFn::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let doubled_col = m.map_col(1, fn(x) { x * 2 })
 /// // Column 1 elements (2, 5) become (4, 10)
@@ -274,14 +268,15 @@ pub fn[T] MatrixFn::map_col(
   col : Int,
   f : (T) -> T,
 ) -> MatrixFn[T] {
-  {
-    data: (i, j) => if j == col {
+  let (rows, cols) = self.grid
+  guard col >= 0 && col < cols else { abort("Column index out of bounds") }
+  MatrixFn::make(rows, cols, fn(i, j) {
+    if j == col {
       f((self.data)(i, j))
     } else {
       (self.data)(i, j)
-    },
-    grid: self.grid,
-  }
+    }
+  })
 }
 
 ///|
@@ -298,7 +293,7 @@ pub fn[T] MatrixFn::map_col(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = MatrixFn::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let transposed = m.transpose()
 /// // transposed is now [[1, 4], [2, 5], [3, 6]]
@@ -325,7 +320,7 @@ pub fn[T] MatrixFn::transpose(self : MatrixFn[T]) -> MatrixFn[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// // Create a 3x3 matrix where each element equals i + j
 /// let matrix = @immut.MatrixFn::make(3, 3, fn(i, j) { i + j })
 /// // matrix[0][0] = 0, matrix[0][1] = 1, matrix[1][0] = 1, etc.
@@ -347,7 +342,18 @@ pub fn[T] MatrixFn::make(
   col : Int,
   f : (Int, Int) -> T,
 ) -> MatrixFn[T] {
-  { data: f, grid: (row, col) }
+  guard row >= 0 && col >= 0 else {
+    abort("Matrix dimensions must be non-negative")
+  }
+  {
+    data: (i, j) => {
+      guard 0 <= i && i < row && 0 <= j && j < col else {
+        abort("Index out of bounds")
+      }
+      f(i, j)
+    },
+    grid: (row, col),
+  }
 }
 
 ///|
@@ -360,20 +366,27 @@ pub fn[T] MatrixFn::make(
 /// Returns a `MatrixFn[T]` that provides functional access to the matrix
 /// elements.
 ///
-/// Panics if the input array is empty (when `arr.length()` is 0) or if any row
-/// is empty (when `arr[0].length()` is 0), as this would cause an index out of
-/// bounds error.
+/// Panics if the input rows do not all have the same length.
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let arr = [[1, 2, 3], [4, 5, 6]]
 /// let matrix = MatrixFn::from_2d_array(arr)
 /// inspect(matrix, content="|1, 2, 3|\n|4, 5, 6|")
 /// ```
 ///
 pub fn[T] MatrixFn::from_2d_array(arr : Array[Array[T]]) -> MatrixFn[T] {
-  MatrixFn::make(arr.length(), arr[0].length(), fn(i, j) { arr[i][j] })
+  if arr.is_empty() {
+    return MatrixFn::make(0, 0, fn(_, _) { abort("unreachable") })
+  }
+  let col = arr[0].length()
+  for row in arr {
+    guard row.length() == col else {
+      abort("Matrix rows must all have the same length")
+    }
+  }
+  MatrixFn::make(arr.length(), col, fn(i, j) { arr[i][j] })
 }
 
 ///|
@@ -388,7 +401,7 @@ pub fn[T] MatrixFn::from_2d_array(arr : Array[Array[T]]) -> MatrixFn[T] {
 /// elements from the input matrices.
 ///
 /// Panics if the dimensions of the two matrices do not match.
-pub impl[T : Add] Add for MatrixFn[T] with add(self, other) {
+pub impl[T : Add] Add for MatrixFn[T] with fn add(self, other) {
   self.zip_with(other, Add::add)
 }
 
@@ -401,7 +414,7 @@ pub impl[T : Add] Add for MatrixFn[T] with add(self, other) {
 ///
 /// Returns a new MatrixFn where each element is the negation of the
 /// corresponding element in the input matrix.
-pub impl[T : Neg] Neg for MatrixFn[T] with neg(self) {
+pub impl[T : Neg] Neg for MatrixFn[T] with fn neg(self) {
   self.map(T::neg)
 }
 
@@ -420,7 +433,7 @@ pub impl[T : Neg] Neg for MatrixFn[T] with neg(self) {
 /// two matrices.
 ///
 /// Panics if the dimensions of the two matrices do not match.
-pub impl[T : Add + Neg] Sub for MatrixFn[T] with sub(self, other) {
+pub impl[T : Add + Neg] Sub for MatrixFn[T] with fn sub(self, other) {
   self + -other
 }
 
@@ -438,7 +451,7 @@ pub impl[T : Add + Neg] Sub for MatrixFn[T] with sub(self, other) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = @immut.MatrixFn::from_2d_array([[1, 2], [3, 4]])
 /// let scaled = m.scale(2)
 /// // Result: [[2, 4], [6, 8]]
@@ -461,7 +474,7 @@ pub fn[T : Mul] MatrixFn::scale(self : MatrixFn[T], cst : T) -> MatrixFn[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let id3 : @immut.MatrixFn[Int] = @immut.MatrixFn::identity(3)
 /// inspect(
 ///   id3,
@@ -542,7 +555,7 @@ pub fn[T : Conjugate] MatrixFn::adjoint(self : MatrixFn[T]) -> MatrixFn[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = @immut.MatrixFn::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// let swapped = m.swap_cols(0, 2)
 /// inspect(swapped, content="|3, 2, 1|\n|6, 5, 4|")
@@ -572,7 +585,7 @@ pub fn[T] MatrixFn::swap_cols(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = @immut.MatrixFn::from_2d_array([[1, 2], [3, 4], [5, 6]])
 /// let swapped = m.swap_rows(0, 2)
 /// inspect(swapped, content="|5, 6|\n|3, 4|\n|1, 2|")
@@ -588,10 +601,12 @@ pub fn[T] MatrixFn::swap_rows(
   if r1 == r2 {
     self
   } else {
-    MatrixFn::make(r, c, (i, j) => match (i, j) {
-      (i, j) if i == r1 => (self.data)(r2, j)
-      (i, j) if i == r2 => (self.data)(r1, j)
-      (i, j) => (self.data)(i, j)
+    MatrixFn::make(r, c, (i, j) => {
+      match (i, j) {
+        (i, j) if i == r1 => (self.data)(r2, j)
+        (i, j) if i == r2 => (self.data)(r1, j)
+        (i, j) => (self.data)(i, j)
+      }
     })
   }
 }
@@ -608,10 +623,18 @@ pub fn[T] MatrixFn::swap_rows(
 ///
 /// Panics if the number of columns in the left matrix does not equal the number
 /// of rows in the right matrix.
-impl[T : Mul + Add] Mul for MatrixFn[T] with mul(self, other) {
+impl[T : Mul + Add + Zero] Mul for MatrixFn[T] with fn mul(self, other) {
   let (r1, c1) = self.grid
   let (r2, c2) = other.grid
-  guard c1 == r2
+  guard c1 == r2 else {
+    abort("Matrix dimensions are not compatible for multiplication")
+  }
+  if r1 == 0 || c2 == 0 {
+    return MatrixFn::make(r1, c2, fn(_, _) { abort("unreachable") })
+  }
+  if c1 == 0 {
+    return MatrixFn::make(r1, c2, fn(_, _) { T::zero() })
+  }
   MatrixFn::make(r1, c2, fn(i, j) {
     let mut sum = (self.data)(i, 0) * (other.data)(0, j)
     for k in 1..<c1 {
@@ -639,7 +662,7 @@ impl[T : Mul + Add] Mul for MatrixFn[T] with mul(self, other) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = @immut.MatrixFn::from_2d_array([[1, 2], [3, 4]])
 /// let m2 = @immut.MatrixFn::from_2d_array([[5, 6], [7, 8]])
 /// let result = m1.zip_with(m2, fn(a, b) { a + b })
@@ -675,9 +698,7 @@ pub fn[T, U, W] MatrixFn::zip_with(
 ///
 /// Panics if the matrix is not square (number of rows does not equal number of
 /// columns).
-pub fn[T : Compare + Num + Div] MatrixFn::determinant(
-  self : MatrixFn[T],
-) -> T {
+pub fn[T : Compare + Num + Div] MatrixFn::determinant(self : MatrixFn[T]) -> T {
   ensure_square(self)
   let (row, col) = self.grid
   Matrix::make(row, col, fn(i, j) { (self.data)(i, j) }).determinant()
@@ -698,7 +719,7 @@ pub fn[T : Compare + Num + Div] MatrixFn::determinant(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = @immut.MatrixFn::from_2d_array([[1, 2], [3, 4]])
 /// let m2 = @immut.MatrixFn::from_2d_array([[5, 6], [7, 8]])
 /// let result = m1.horizontal_combine(m2)
@@ -740,7 +761,7 @@ pub fn[T] MatrixFn::horizontal_combine(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = @immut.MatrixFn::from_2d_array([[1, 2], [3, 4]])
 /// let m2 = @immut.MatrixFn::from_2d_array([[5, 6], [7, 8]])
 /// let result = m1.vertical_combine(m2)

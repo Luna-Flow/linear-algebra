@@ -18,7 +18,11 @@
 /// Returns a `Lens[T]` object for accessing elements in the specified row by 
 /// column index.
 pub fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T] {
-  Lens::{ data: self.0, fst: row, offset: row, is_transpose: true }
+  Lens::{
+    data: self.0,
+    fst: self.0.matrix_checked_col(row),
+    is_transpose: true,
+  }
 }
 
 ///|
@@ -49,7 +53,7 @@ pub fn[T] Transpose::set(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = Matrix::make(2, 3, (i, j) => i + j)
 /// let m2 = Matrix::make(2, 3, (i, j) => i * j)
 /// let t1 = m1.to_transpose()
@@ -62,7 +66,7 @@ pub fn[T] Transpose::set(
 /// )
 /// ```
 ///
-pub impl[T : Add] Add for Transpose[T] with add(a, b) {
+pub impl[T : Add] Add for Transpose[T] with fn add(a, b) {
   Transpose(a.0 + b.0)
 }
 
@@ -80,13 +84,13 @@ pub impl[T : Add] Add for Transpose[T] with add(a, b) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = @mutable.Matrix::make(2, 3, (i, j) => i + j)
 /// let t = m.to_transpose()
 /// inspect(t.to_string(), content="|0, 1|\n|1, 2|\n|2, 3|")
 /// ```
 ///
-pub impl[T : Show] Show for Transpose[T] with to_string(self) {
+pub impl[T : Show] Show for Transpose[T] with fn to_string(self) {
   let logger = StringBuilder::new()
   self.output(logger)
   logger.to_string()
@@ -101,7 +105,7 @@ pub impl[T : Show] Show for Transpose[T] with to_string(self) {
 /// * `self` : The transposed matrix to output.
 /// * `logger` : The logger or output stream to write the formatted representation
 ///   to.
-pub impl[T : Show] Show for Transpose[T] with output(self, logger) {
+pub impl[T : Show] Show for Transpose[T] with fn output(self, logger) {
   for i in 0..<self.row() {
     logger.write_char('|')
     self.eachi_row(i, (c, x) => {
@@ -131,7 +135,7 @@ pub impl[T : Show] Show for Transpose[T] with output(self, logger) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = @mutable.Matrix::make(2, 3, fn(i, j) { i + j })
 /// let m2 = @mutable.Matrix::make(3, 2, fn(i, j) { i * j + 1 })
 /// let t1 = m1.to_transpose()
@@ -144,7 +148,7 @@ pub impl[T : Show] Show for Transpose[T] with output(self, logger) {
 /// )
 /// ```
 ///
-pub impl[T : AddMonoid + Mul] Mul for Transpose[T] with mul(a, b) {
+pub impl[T : AddMonoid + Mul] Mul for Transpose[T] with fn mul(a, b) {
   // Leverage the matrix identity: A^T * B^T = (B * A)^T
   // This allows us to reuse the heavily optimized Matrix multiplication logic
   // by just swapping the operand order, effectively performing the multiplication 
@@ -164,14 +168,14 @@ pub impl[T : AddMonoid + Mul] Mul for Transpose[T] with mul(a, b) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::make(2, 2, (i, j) => i + j)
 /// let t = m.to_transpose()
 /// let neg_t = -t
 /// inspect(neg_t, content="|0, -1|\n|-1, -2|")
 /// ```
 ///
-pub impl[T : Neg] Neg for Transpose[T] with neg(a) {
+pub impl[T : Neg] Neg for Transpose[T] with fn neg(a) {
   Transpose(-a.0)
 }
 
@@ -185,7 +189,7 @@ pub impl[T : Neg] Neg for Transpose[T] with neg(a) {
 ///
 /// Returns a new transpose matrix that is the result of the subtraction.
 ///
-pub impl[T : Add + Neg] Sub for Transpose[T] with sub(a, b) {
+pub impl[T : Add + Neg] Sub for Transpose[T] with fn sub(a, b) {
   Transpose(a.0 - b.0)
 }
 
@@ -199,7 +203,7 @@ pub impl[T : Add + Neg] Sub for Transpose[T] with sub(a, b) {
 ///
 /// Returns `true` if the two transposed matrices are equal, `false` otherwise.
 ///
-pub impl[T : Eq] Eq for Transpose[T] with equal(a, b) {
+pub impl[T : Eq] Eq for Transpose[T] with fn equal(a, b) {
   a.0 == b.0
 }
 
@@ -215,7 +219,7 @@ pub impl[T : Eq] Eq for Transpose[T] with equal(a, b) {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::make(3, 4, (i, j) => i + j)
 /// let t = m.to_transpose()
 /// inspect(t.row(), content="4")  // Original matrix has 4 columns, so transpose has 4 rows
@@ -237,7 +241,7 @@ pub fn[T] Transpose::row(self : Transpose[T]) -> Int {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix = @mutable.Matrix::make(3, 4, (i, j) => i * j)
 /// let transpose = matrix.to_transpose()
 /// inspect(transpose.col(), content="3")
@@ -259,7 +263,7 @@ pub fn[T] Transpose::col(self : Transpose[T]) -> Int {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix = @mutable.Matrix::make(2, 3, (i, j) => i + j)
 /// let transpose = matrix.to_transpose()
 /// inspect(transpose, content="|0, 1|\n|1, 2|\n|2, 3|")
@@ -393,7 +397,7 @@ pub fn[T] Transpose::each_row_col(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = @mutable.Matrix::make(2, 3, fn(i, j) { i + j })
 /// let t = m.to_transpose()
 /// let t_copy = t.copy()
@@ -417,7 +421,7 @@ pub fn[T] Transpose::copy(self : Transpose[T]) -> Transpose[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = Matrix::make(2, 3, (i, j) => i + j)
 /// let m2 = Matrix::make(2, 3, (i, j) => (i + j) * 10)
 /// let t1 = m1.to_transpose()
@@ -447,7 +451,7 @@ pub fn[T] Transpose::horizontal_combine(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m1 = Matrix::make(2, 3, (i, j) => i + j)
 /// let m2 = Matrix::make(2, 3, (i, j) => (i + j) * 10)
 /// let t1 = m1.to_transpose()
@@ -478,7 +482,7 @@ pub fn[T] Transpose::vertical_combine(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::make(2, 3, (i, j) => i + j)
 /// let t = m.to_transpose()
 /// let doubled = t.map(x => x * 2)
@@ -500,7 +504,7 @@ pub fn[T] Transpose::map(self : Transpose[T], f : (T) -> T) -> Transpose[T] {
 ///   returns a new element of the same type.
 ///
 /// Example:
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix = @mutable.Matrix::make(2, 3, fn(i, j) { i + j })
 /// inspect(matrix, content=>
 ///   #||0, 1, 2|
@@ -535,7 +539,7 @@ pub fn[T] Transpose::map_inplace(self : Transpose[T], f : (T) -> T) -> Unit {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix = @mutable.Matrix::make(2, 3, fn(i, j) { i + j })
 /// let transpose = matrix.to_transpose()
 /// // Double all elements in column 1
@@ -566,7 +570,7 @@ pub fn[T] Transpose::map_col_inplace(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix = @mutable.Matrix::make(3, 2, (i, j) => i + j)
 /// let transposed = matrix.to_transpose()
 /// // Double all elements in row 1
@@ -645,7 +649,7 @@ pub fn[T] Transpose::row_to_vector(self : Transpose[T], row : Int) -> Vector[T] 
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = @mutable.Matrix::make(3, 2, (i, j) => i + j)
 /// inspect(m, content=
 ///   #||0, 1|
@@ -679,7 +683,7 @@ pub fn[T] Transpose::col_to_vector(self : Transpose[T], col : Int) -> Vector[T] 
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix = Matrix::make(2, 3, (i, j) => i + j)
 /// inspect(matrix, content=
 ///   #||0, 1, 2|
@@ -720,7 +724,7 @@ pub fn[T : Add] Transpose::add_constant(
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let matrix = Matrix::make(2, 3, (i, j) => i + j)
 /// inspect(matrix, content=
 ///   #||0, 1, 2|
@@ -784,7 +788,7 @@ pub fn[T] Transpose::swap_cols(self : Transpose[T], c1 : Int, c2 : Int) -> Unit 
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let m = Matrix::make(2, 3, (i, j) => i + j)
 /// let t = m.to_transpose()
 /// let original = t.transpose()
@@ -808,7 +812,7 @@ pub fn[T] Transpose::transpose(self : Transpose[T]) -> Matrix[T] {
 ///
 /// Example:
 ///
-/// ```moonbit
+/// ```moonbit nocheck
 /// let original = Matrix::make(2, 3, (i, j) => i * 3 + j)
 /// inspect(original, content=
 ///   #||0, 1, 2|

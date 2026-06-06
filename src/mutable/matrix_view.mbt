@@ -2,7 +2,6 @@
 pub struct RowView[T] {
   data : Matrix[T]
   row : Int
-  offset : Int
 }
 
 ///|

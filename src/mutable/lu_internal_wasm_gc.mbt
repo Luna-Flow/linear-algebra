@@ -1,3 +1,4 @@
+///|
 priv struct LuDecomposition[T] {
   lu : Matrix[T]
   permutation : Array[Int]
@@ -5,6 +6,7 @@ priv struct LuDecomposition[T] {
   singular : Bool
 }
 
+///|
 fn[T : Compare + Field + Num + Tolerance] Matrix::lu_decompose_internal(
   self : Matrix[T],
 ) -> LuDecomposition[T] {
@@ -45,6 +47,7 @@ fn[T : Compare + Field + Num + Tolerance] Matrix::lu_decompose_internal(
   { lu, permutation, swap_count, singular }
 }
 
+///|
 fn[T : Num] LuDecomposition::determinant_internal(
   self : LuDecomposition[T],
 ) -> T {
@@ -53,17 +56,14 @@ fn[T : Num] LuDecomposition::determinant_internal(
   }
   let n = self.lu.row
   let lu_data = self.lu.data
-  let mut det = if (self.swap_count & 1) == 0 {
-    T::one()
-  } else {
-    -T::one()
-  }
+  let mut det = if (self.swap_count & 1) == 0 { T::one() } else { -T::one() }
   for i in 0..<n {
     det *= lu_data[i * n + i]
   }
   det
 }
 
+///|
 fn[T : Compare + Field + Num + Tolerance] LuDecomposition::solve_identity_internal(
   self : LuDecomposition[T],
 ) -> Matrix[T]? {
@@ -78,11 +78,7 @@ fn[T : Compare + Field + Num + Tolerance] LuDecomposition::solve_identity_intern
   let x_data = x.data
   for rhs_col in 0..<n {
     for i in 0..<n {
-      let mut acc = if permutation[i] == rhs_col {
-        T::one()
-      } else {
-        T::zero()
-      }
+      let mut acc = if permutation[i] == rhs_col { T::one() } else { T::zero() }
       let row_offset = i * n
       for k in 0..<i {
         acc = acc - lu_data[row_offset + k] * work[k]

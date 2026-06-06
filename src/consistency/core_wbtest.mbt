@@ -3,10 +3,12 @@
 ///
 /// These tests intentionally compare only operations that should remain
 /// semantically aligned between `immut` and `mutable`.
-
 using @debug {debug_inspect, to_string}
+
+///|
 using @qc {quick_check_fn}
 
+///|
 test "matrix core operations stay aligned" {
   let imm = @immut.Matrix::from_2d_array([[1, 2], [3, 4]])
   let mutable_matrix = @mutable.Matrix::from_2d_array([[1, 2], [3, 4]])
@@ -29,6 +31,7 @@ test "matrix core operations stay aligned" {
   inspect(mutable_matrix.null(), content=imm.null().to_string())
 }
 
+///|
 test "matrix constructors and conversions stay aligned" {
   let imm_make = @immut.Matrix::make(2, 3, fn(i, j) { i * 10 + j })
   let mutable_make = @mutable.Matrix::make(2, 3, fn(i, j) { i * 10 + j })
@@ -56,10 +59,16 @@ test "matrix constructors and conversions stay aligned" {
   let mutable_empty : @mutable.Matrix[Int] = @mutable.Matrix::from_2d_array([])
   inspect(mutable_empty.row(), content=imm_empty.row().to_string())
   inspect(mutable_empty.col(), content=imm_empty.col().to_string())
-  debug_inspect(mutable_empty.to_array(), content=to_string(imm_empty.to_array()))
+  debug_inspect(
+    mutable_empty.to_array(),
+    content=to_string(imm_empty.to_array()),
+  )
 
   let imm_zero_col : @immut.Matrix[Int] = @immut.Matrix::from_2d_array([[], []])
-  let mutable_zero_col : @mutable.Matrix[Int] = @mutable.Matrix::from_2d_array([[], []])
+  let mutable_zero_col : @mutable.Matrix[Int] = @mutable.Matrix::from_2d_array([
+    [],
+    [],
+  ])
   inspect(mutable_zero_col.row(), content=imm_zero_col.row().to_string())
   inspect(mutable_zero_col.col(), content=imm_zero_col.col().to_string())
   debug_inspect(
@@ -72,6 +81,7 @@ test "matrix constructors and conversions stay aligned" {
   )
 }
 
+///|
 test "matrix and vector conversions stay aligned" {
   let imm_vec = @immut.Vector::from_array([2, 4, 6])
   let mutable_vec = @mutable.Vector::from_array([2, 4, 6])
@@ -90,6 +100,7 @@ test "matrix and vector conversions stay aligned" {
   )
 }
 
+///|
 test "semantic differences stay explicit" {
   let imm = @immut.Matrix::from_2d_array([[1, 2], [3, 4]])
   let imm2 = imm.set(0, 1, 9)
@@ -101,6 +112,20 @@ test "semantic differences stay explicit" {
   debug_inspect(mutable_matrix.to_array(), content="[1, 9, 3, 4]")
 }
 
+///|
+test "shared same_index_swap stays aligned" {
+  let imm = @immut.Matrix::from_2d_array([[1, 2], [3, 4]])
+  let mutable_matrix = @mutable.Matrix::from_2d_array([[1, 2], [3, 4]])
+
+  debug_inspect(imm.swap_rows(1, 1).to_array(), content="[1, 2, 3, 4]")
+  {
+    let copy = mutable_matrix.copy()
+    copy.swap_rows(1, 1)
+    debug_inspect(copy.to_array(), content="[1, 2, 3, 4]")
+  }
+}
+
+///|
 test "identity and transpose laws stay aligned" {
   let imm_a = @immut.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
   let imm_b = @immut.Matrix::from_2d_array([[7, 8], [9, 10], [11, 12]])
@@ -112,12 +137,18 @@ test "identity and transpose laws stay aligned" {
   let mutable_i2 : @mutable.Matrix[Int] = @mutable.identity(2)
   let mutable_i3 : @mutable.Matrix[Int] = @mutable.identity(3)
 
-  debug_inspect((imm_a * imm_i3).to_array(), content=to_string(imm_a.to_array()))
+  debug_inspect(
+    (imm_a * imm_i3).to_array(),
+    content=to_string(imm_a.to_array()),
+  )
   debug_inspect(
     (mutable_a * mutable_i3).to_array(),
     content=to_string(mutable_a.to_array()),
   )
-  debug_inspect((imm_i2 * imm_a).to_array(), content=to_string(imm_a.to_array()))
+  debug_inspect(
+    (imm_i2 * imm_a).to_array(),
+    content=to_string(imm_a.to_array()),
+  )
   debug_inspect(
     (mutable_i2 * mutable_a).to_array(),
     content=to_string(mutable_a.to_array()),
@@ -129,7 +160,9 @@ test "identity and transpose laws stay aligned" {
   )
   debug_inspect(
     (mutable_a * mutable_b).transpose().to_array(),
-    content=to_string((mutable_b.transpose() * mutable_a.transpose()).to_array()),
+    content=to_string(
+      (mutable_b.transpose() * mutable_a.transpose()).to_array(),
+    ),
   )
   debug_inspect(
     imm_a.transpose().transpose().to_array(),
@@ -141,6 +174,7 @@ test "identity and transpose laws stay aligned" {
   )
 }
 
+///|
 test "trace and multiplication associativity stay aligned" {
   let imm_a = @immut.Matrix::from_2d_array([[1, 2], [3, 4]])
   let imm_b = @immut.Matrix::from_2d_array([[0, 1], [1, 0]])
@@ -150,20 +184,18 @@ test "trace and multiplication associativity stay aligned" {
   let mutable_c = @mutable.Matrix::from_2d_array([[2, 1], [1, 2]])
 
   debug_inspect(
-    ((imm_a * imm_b) * imm_c).to_array(),
+    (imm_a * imm_b * imm_c).to_array(),
     content=to_string((imm_a * (imm_b * imm_c)).to_array()),
   )
   debug_inspect(
-    ((mutable_a * mutable_b) * mutable_c).to_array(),
+    (mutable_a * mutable_b * mutable_c).to_array(),
     content=to_string((mutable_a * (mutable_b * mutable_c)).to_array()),
   )
   inspect(imm_a.trace(), content=imm_a.transpose().trace().to_string())
-  inspect(
-    mutable_a.trace(),
-    content=mutable_a.transpose().trace().to_string(),
-  )
+  inspect(mutable_a.trace(), content=mutable_a.transpose().trace().to_string())
 }
 
+///|
 test "vector tensor and matrix conversion laws stay aligned" {
   let imm_v = @immut.Vector::from_array([1, 2])
   let imm_w = @immut.Vector::from_array([3, 4, 5])
@@ -180,18 +212,12 @@ test "vector tensor and matrix conversion laws stay aligned" {
     mutable_v.tensor_product(mutable_w).to_array(),
     content="[3, 4, 5, 6, 8, 10]",
   )
-  inspect(
-    imm_v.tensor_product(imm_w).row(),
-    content=imm_v.length().to_string(),
-  )
+  inspect(imm_v.tensor_product(imm_w).row(), content=imm_v.length().to_string())
   inspect(
     mutable_v.tensor_product(mutable_w).row(),
     content=mutable_v.length().to_string(),
   )
-  inspect(
-    imm_v.tensor_product(imm_w).col(),
-    content=imm_w.length().to_string(),
-  )
+  inspect(imm_v.tensor_product(imm_w).col(), content=imm_w.length().to_string())
   inspect(
     mutable_v.tensor_product(mutable_w).col(),
     content=mutable_w.length().to_string(),
@@ -206,8 +232,11 @@ test "vector tensor and matrix conversion laws stay aligned" {
   )
 }
 
+///|
 test "cross-package matrix semiring laws on small integers" {
-  fn prop(input : ((Int, Int, Int, Int), (Int, Int, Int, Int), (Int, Int, Int, Int))) {
+  fn prop(
+    input : ((Int, Int, Int, Int), (Int, Int, Int, Int), (Int, Int, Int, Int)),
+  ) {
     let ((a00, a01, a10, a11), (b00, b01, b10, b11), (c00, c01, c10, c11)) = input
     let imm_a = @immut.Matrix::from_2d_array([[a00, a01], [a10, a11]])
     let imm_b = @immut.Matrix::from_2d_array([[b00, b01], [b10, b11]])
@@ -216,20 +245,26 @@ test "cross-package matrix semiring laws on small integers" {
     let mut_b = @mutable.Matrix::from_2d_array([[b00, b01], [b10, b11]])
     let mut_c = @mutable.Matrix::from_2d_array([[c00, c01], [c10, c11]])
 
-    ((imm_a + imm_b) + imm_c).to_array() == (imm_a + (imm_b + imm_c)).to_array() &&
-    ((mut_a + mut_b) + mut_c).to_array() == (mut_a + (mut_b + mut_c)).to_array() &&
-    (imm_a * (imm_b + imm_c)).to_array() == ((imm_a * imm_b) + (imm_a * imm_c)).to_array() &&
-    (mut_a * (mut_b + mut_c)).to_array() == ((mut_a * mut_b) + (mut_a * mut_c)).to_array() &&
+    (imm_a + imm_b + imm_c).to_array() == (imm_a + (imm_b + imm_c)).to_array() &&
+    (mut_a + mut_b + mut_c).to_array() == (mut_a + (mut_b + mut_c)).to_array() &&
+    (imm_a * (imm_b + imm_c)).to_array() ==
+    (imm_a * imm_b + imm_a * imm_c).to_array() &&
+    (mut_a * (mut_b + mut_c)).to_array() ==
+    (mut_a * mut_b + mut_a * mut_c).to_array() &&
     (imm_a * imm_b).to_array() == (mut_a * mut_b).to_array()
   }
 
   quick_check_fn(prop)
 }
 
+///|
 test "zero-column multiplication stays aligned" {
   let imm_left : @immut.Matrix[Int] = @immut.Matrix::from_2d_array([[], []])
   let imm_right : @immut.Matrix[Int] = @immut.Matrix::from_2d_array([])
-  let mutable_left : @mutable.Matrix[Int] = @mutable.Matrix::from_2d_array([[], []])
+  let mutable_left : @mutable.Matrix[Int] = @mutable.Matrix::from_2d_array([
+    [],
+    [],
+  ])
   let mutable_right : @mutable.Matrix[Int] = @mutable.Matrix::from_2d_array([])
 
   debug_inspect(
@@ -238,6 +273,7 @@ test "zero-column multiplication stays aligned" {
   )
 }
 
+///|
 test "immut and fn_matrix stay aligned on core laws" {
   let dense_a = @immut.Matrix::from_2d_array([[1, 2], [3, 4]])
   let dense_b = @immut.Matrix::from_2d_array([[0, 1], [1, 0]])
@@ -251,6 +287,7 @@ test "immut and fn_matrix stay aligned on core laws" {
   inspect(fn_a.pow(3).to_string(), content=dense_a.pow(3).to_string())
 }
 
+///|
 test "all matrix implementations stay aligned under random small inputs" {
   fn prop(input : ((Int, Int, Int, Int), (Int, Int, Int, Int))) {
     let ((a00, a01, a10, a11), (b00, b01, b10, b11)) = input
