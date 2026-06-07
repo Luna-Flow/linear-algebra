@@ -12,7 +12,7 @@ readme = "README.md"
 
 repository = "https://github.com/Luna-Flow/linear-algebra"
 
-license = "MIT"
+license = "Apache-2.0"
 
 keywords = [ "linear-algebra", "math" ]
 
