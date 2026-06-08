@@ -16,7 +16,7 @@ license = "Apache-2.0"
 
 keywords = [ "linear-algebra", "math" ]
 
-description = "A linear algebra library, a part of LunaFlow."
+description = "Mutable and immutable matrix and vector libraries for MoonBit, with core linear algebra operations and decompositions."
 
 options(
   source: "src",
