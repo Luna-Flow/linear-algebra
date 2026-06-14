@@ -11,6 +11,9 @@ using @lg {
 }
 
 ///|
+pub using @arithmetic {trait Sqrt}
+
+///|
 using @qc_core {trait Arbitrary}
 
 ///|

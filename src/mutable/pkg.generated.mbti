@@ -2,6 +2,7 @@
 package "Luna-Flow/linear-algebra/mutable"
 
 import {
+  "Luna-Flow/arithmetic",
   "Luna-Flow/linear-algebra/internal",
   "Luna-Flow/luna-generic",
   "moonbitlang/core/debug",
@@ -41,7 +42,7 @@ pub fn[T] Lens::op_set(Self[T], Int, T) -> Unit
 type Matrix[T] derive(Eq)
 pub fn[T : Add] Matrix::add_constant(Self[T], T) -> Self[T]
 pub fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]
-pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Sqrt + Tolerance] Matrix::cholesky_decomposition(Self[T]) -> Self[T]?
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + @arithmetic.Sqrt + Tolerance] Matrix::cholesky_decomposition(Self[T]) -> Self[T]?
 pub fn[T] Matrix::col(Self[T]) -> Int
 pub fn[T] Matrix::col_to_array(Self[T], Int) -> Array[T]
 pub fn[T] Matrix::col_to_vector(Self[T], Int) -> Vector[T]
@@ -55,15 +56,15 @@ pub fn[T] Matrix::each_row_col(Self[T], (Int, Int, T) -> Unit) -> Unit
 pub fn[T] Matrix::eachi(Self[T], (Int, T) -> Unit) -> Unit
 pub fn[T] Matrix::eachi_col(Self[T], Int, (Int, T) -> Unit) -> Unit
 pub fn[T] Matrix::eachi_row(Self[T], Int, (Int, T) -> Unit) -> Unit
-pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Sqrt + Tolerance] Matrix::eigen(Self[T]) -> (Vector[T], Self[T])
-pub fn[T : @luna-generic.AddMonoid + Mul + Sqrt] Matrix::frobenius_norm(Self[T]) -> T
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + @arithmetic.Sqrt + Tolerance] Matrix::eigen(Self[T]) -> (Vector[T], Self[T])
+pub fn[T : @luna-generic.AddMonoid + Mul + @arithmetic.Sqrt] Matrix::frobenius_norm(Self[T]) -> T
 pub fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
 pub fn[T] Matrix::from_array(Int, Int, Array[T]) -> Self[T]
 pub fn[T] Matrix::get(Self[T], Int, Int) -> T
 pub fn[T] Matrix::horizontal_combine(Self[T], Self[T]) -> Self[T]
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::inverse(Self[T]) -> Self[T]?
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::is_invertible(Self[T]) -> Bool
-pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Sqrt + Tolerance] Matrix::is_positive_definite(Self[T]) -> Bool
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + @arithmetic.Sqrt + Tolerance] Matrix::is_positive_definite(Self[T]) -> Bool
 pub fn[T] Matrix::is_square(Self[T]) -> Bool
 pub fn[T : Compare + @luna-generic.Num + Tolerance] Matrix::is_symmetric(Self[T]) -> Bool
 pub fn[T] Matrix::iter(Self[T]) -> Iter[T]
@@ -96,7 +97,7 @@ pub fn[T] Matrix::row_to_vector(Self[T], Int) -> Vector[T]
 pub fn[T] Matrix::row_view(Self[T], Int) -> RowView[T]
 pub fn[T : Mul] Matrix::scale(Self[T], T) -> Self[T]
 pub fn[T] Matrix::set(Self[T], Int, Int, T) -> Unit
-pub fn[T : @luna-generic.Field + Sqrt] Matrix::std_dev(Self[T]) -> T
+pub fn[T : @luna-generic.Field + @arithmetic.Sqrt] Matrix::std_dev(Self[T]) -> T
 pub fn[T] Matrix::swap_cols(Self[T], Int, Int) -> Unit
 pub fn[T] Matrix::swap_rows(Self[T], Int, Int) -> Unit
 pub fn[T] Matrix::to_2d_array(Self[T]) -> Array[Array[T]]
@@ -207,16 +208,12 @@ pub impl[T : @debug.Debug] @debug.Debug for Vector[T]
 pub impl[T : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[T]
 
 // Type aliases
+pub using @arithmetic {trait Sqrt}
 
 // Traits
-pub trait Sqrt {
-  fn sqrt(Self) -> Self
-}
-pub impl Sqrt for Float
-pub impl Sqrt for Double
-
 pub trait Tolerance {
   fn tolerance() -> Self
 }
 pub impl Tolerance for Float
 pub impl Tolerance for Double
+

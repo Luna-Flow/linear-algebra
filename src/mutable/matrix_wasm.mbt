@@ -1778,7 +1778,7 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] householder_tridiagonalize(
           h = h + q_data[idx] * q_data[idx]
         }
         let f = q_data[i * n + l]
-        let g_abs = h.sqrt()
+        let g_abs = Sqrt::sqrt(h)
         let g = if f >= T::zero() { -g_abs } else { g_abs }
         off_diagonal[i] = scale * g
         h = h - f * g
@@ -1875,7 +1875,7 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] symmetric_tridiagonal_eigen(
       }
       iter += 1
       let mut g = (d[l + 1] - d[l]) / (two * e[l])
-      let mut r = (g * g + T::one()).sqrt()
+      let mut r = Sqrt::sqrt(g * g + T::one())
       if g < T::zero() {
         r = -r
       }
@@ -1888,13 +1888,13 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] symmetric_tridiagonal_eigen(
         let b = c * e[i]
         if f.abs() >= g.abs() {
           c = g / f
-          r = (c * c + T::one()).sqrt()
+          r = Sqrt::sqrt(c * c + T::one())
           e[i + 1] = f * r
           s = T::one() / r
           c = c * s
         } else {
           s = f / g
-          r = (s * s + T::one()).sqrt()
+          r = Sqrt::sqrt(s * s + T::one())
           e[i + 1] = g * r
           c = T::one() / r
           s = s * c
@@ -1946,7 +1946,7 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] qr_decomposition(
       let value = r_data[i * n + k]
       norm_sq += value * value
     }
-    let norm = norm_sq.sqrt()
+    let norm = Sqrt::sqrt(norm_sq)
     if norm <= tol {
       continue
     }
@@ -1960,7 +1960,7 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] qr_decomposition(
     for i in 0..<v.length() {
       vnorm_sq += v[i] * v[i]
     }
-    let vnorm = vnorm_sq.sqrt()
+    let vnorm = Sqrt::sqrt(vnorm_sq)
     if vnorm <= tol {
       continue
     }
@@ -2180,7 +2180,7 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::eigen_2x2(
   let s = if disc_prime.abs() <= T::tolerance() {
     T::zero()
   } else {
-    disc_prime.sqrt()
+    Sqrt::sqrt(disc_prime)
   }
   let l1 = mid + s
   let l2 = mid - s
@@ -2224,21 +2224,6 @@ pub impl Tolerance for Double with fn tolerance() -> Double {
 ///|
 pub impl Tolerance for Float with fn tolerance() -> Float {
   0.00000000001
-}
-
-///|
-pub trait Sqrt {
-  fn sqrt(Self) -> Self
-}
-
-///|
-pub impl Sqrt for Double with fn sqrt(a) -> Double {
-  Double::sqrt(a)
-}
-
-///|
-pub impl Sqrt for Float with fn sqrt(a) -> Float {
-  Float::sqrt(a)
 }
 
 ///|
@@ -2425,7 +2410,7 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::cholesky_decomposit
       if diag <= tol {
         return None
       }
-      out_data[idx] = diag.sqrt()
+      out_data[idx] = Sqrt::sqrt(diag)
     }
     return Some(out)
   }
@@ -2446,7 +2431,7 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::cholesky_decomposit
         if val <= tol {
           return None
         }
-        l_data[i_offset + i] = val.sqrt()
+        l_data[i_offset + i] = Sqrt::sqrt(val)
       } else {
         l_data[i_offset + j] = (self_data[i_offset + j] - sum) /
           l_data[j_offset + j]
@@ -2538,7 +2523,7 @@ pub fn[T : Field + Sqrt] Matrix::std_dev(self : Matrix[T]) -> T {
   guard self.row * self.col > 0 else {
     abort("Matrix::std_dev requires at least one element")
   }
-  self.variance().sqrt()
+  Sqrt::sqrt(self.variance())
 }
 
 ///|
@@ -2768,7 +2753,7 @@ pub fn[T : AddMonoid + Mul + Sqrt] Matrix::frobenius_norm(
   self : Matrix[T],
 ) -> T {
   let sum_sq = self.data.iter().fold(init=T::zero(), fn(acc, x) { acc + x * x })
-  sum_sq.sqrt()
+  Sqrt::sqrt(sum_sq)
 }
 
 ///|

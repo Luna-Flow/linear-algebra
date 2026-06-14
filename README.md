@@ -2,10 +2,11 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.12 - Correctness, Diagnostics & Documentation Alignment
+## v0.3.0 - Shared Numeric Capability Alignment
 
-This documentation tracks the published **v0.2.12** release content and reflects
-the repository state after all changes landed since `0.2.11`.
+This documentation tracks the **v0.3.0** repository state. This release aligns
+linear algebra with the shared Luna Flow algebraic and arithmetic capability
+packages.
 
 ### Package Positioning
 
@@ -13,14 +14,13 @@ the repository state after all changes landed since `0.2.11`.
 - **`mutable`**: Execution-oriented `Matrix` and `Vector` types with in-place updates, `Transpose` views, `RowView` / `ColView`, and backend-specific implementations for `js`, `wasm`, `wasm-gc`, and `native`.
 - **Shared Core, Different Execution Model**: Constructors and core algebraic operators remain aligned across packages, but mutation and access semantics are intentionally different.
 
-### What Defines v0.2.12
+### What Defines v0.3.0
 
-- **Strict Bounds Across Public Accessors**: Public matrix, view, and transpose accessors now consistently reject out-of-bounds indices, including `0xN` and `Nx0` edge cases, instead of relying on backend storage accidents.
-- **Immutable Access Semantics Hardened**: `immut.Matrix` indexed access and copy-on-update setters now enforce true 2D bounds rather than allowing flat-storage aliasing.
-- **Cross-Package Semantic Alignment**: Shared `immut` / `mutable` operations now align more closely on explicit edge behavior, including same-index swap no-op semantics.
-- **Expanded Benchmark Diagnostics**: The benchmark stack now includes richer replay/testing support, a single-case whitebox runner, and better metadata/diagnostic handling across the local reporting flow.
-- **Documentation Refresh**: The main README and matrix API references were rewritten to match the current exported surface and remove stale or duplicated descriptions.
-- **Repository Correctness Audit**: The repository now includes a tracked correctness checklist that records validated behavior, confirmed fixes, and remaining structural follow-up risks.
+- **Shared Square-Root Capability**: Numerical matrix APIs now use `Luna-Flow/arithmetic.Sqrt` instead of a package-local trait. `mutable` re-exports the shared trait for source-level discoverability.
+- **Target-Side Integral Embedding**: Generic integer conversions use `IntegralHomomorphism::from_integral`, matching the current `Luna-Flow/luna-generic` algebraic model.
+- **Ecosystem-Oriented Constraints**: Custom scalar types can implement the shared Luna Flow traits once and use them across compatible ecosystem packages.
+- **Backend Consistency**: Native, JS, Wasm, and Wasm GC matrix implementations use the same arithmetic capability identity and explicit trait invocation.
+- **Compatibility Boundary**: `Tolerance` remains a `mutable` package trait in this release; it has not yet moved to `arithmetic`.
 
 ### API Guidance & Performance
 
@@ -80,6 +80,7 @@ Localized README files:
 
 | Version | Date | Status | Notes |
 | --- | --- | --- | --- |
+| `0.3.0` | 2026-06-14 | current repository release | Adopted shared `arithmetic.Sqrt`, current `luna-generic` homomorphisms, and ecosystem-wide numeric capability identities |
 | `0.2.12` | 2026-06-06 | published on mooncakes | Strict bounds unification, semantic correctness fixes, benchmark diagnostics expansion, and documentation/audit refresh |
 | `0.2.11` | 2026-05-27 | previous release baseline | Performance-tuned mutable kernels, dedicated wasm-gc backend, benchmark/reporting expansion, and API/doc alignment |
 | `0.2.10` | 2026-05-27 | previous release baseline | Unified flattened mutable storage, matrix views, consistency coverage, benchmark coverage, and release-process alignment |
@@ -88,13 +89,18 @@ Localized README files:
 
 ## Current Repository Highlights
 
-- **Current Release Narrative (0.2.12)**:
-  - Public matrix, view, and transpose accessors now enforce explicit bounds contracts across the library, including zero-row and zero-column edge shapes.
-  - `immut.Matrix` and `mutable.Matrix` are more tightly aligned on shared correctness semantics, while keeping their intended value-vs-mutation execution split.
-  - The benchmark stack now includes stronger diagnostic replay/test coverage and cleaner metadata handling around local benchmark workflows.
-  - The repository now carries a tracked correctness checklist, and the README plus matrix API docs were refreshed to match the actual exported surface.
+- **Current Release Narrative (0.3.0)**:
+  - Square-root-dependent matrix algorithms now require the shared `arithmetic.Sqrt` capability.
+  - `mutable.Sqrt` is a public re-export of `arithmetic.Sqrt`; the old package-local trait and scalar implementations were removed.
+  - Integral test fixtures and conversion helpers now use target-side `IntegralHomomorphism::from_integral`.
+  - Custom numeric types should implement capabilities in `luna-generic` and `arithmetic` rather than package-specific linear-algebra traits.
 
-- **Previous Release Narrative (0.2.11)**:
+- **Previous Release Narrative (0.2.12)**:
+  - Public matrix, view, and transpose accessors enforce explicit bounds contracts, including zero-row and zero-column edge shapes.
+  - `immut.Matrix` and `mutable.Matrix` are aligned on shared correctness semantics while preserving their value-vs-mutation execution split.
+  - Benchmark diagnostics and the tracked correctness audit reflect the exported `0.2.12` surface.
+
+- **Earlier Release Narrative (0.2.11)**:
   - `mutable.Matrix` now combines the shared flat storage model from `0.2.10` with follow-up backend kernel optimizations and a dedicated `wasm-gc` implementation.
   - Public numerical signatures are aligned around `Field` / `Num` / `Tolerance`, and immutable determinant documentation matches the simplified post-`0.2.10` constraint set.
   - The benchmark stack now includes runtime-loaded fixtures, expanded case metadata, richer summary reporting, a local dashboard, optional Rust comparison runs, and diagnostic replay via `perf_runner`.

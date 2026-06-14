@@ -2,9 +2,9 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.12 - Correctness、Diagnostics 与 Documentation Alignment
+## v0.3.0 - 共享数值能力对齐
 
-本文档描述已发布 **v0.2.12** 的内容，覆盖 `0.2.11` 之后落地的实现与文档更新。
+本文档描述当前 **v0.3.0** 仓库状态。本版本将线性代数与 Luna Flow 共享的代数和算术能力包对齐。
 
 ### 包定位
 
@@ -12,14 +12,13 @@
 - **`mutable`**：执行导向的 `Matrix` 与 `Vector` 类型，支持原地更新、`Transpose` 视图、`RowView` / `ColView`，并保留 `js`、`wasm`、`wasm-gc`、`native` 的后端优化实现。
 - **共享核心，不同执行模型**：构造器和核心代数操作在两个包之间保持对齐，但修改语义与访问语义是有意区分的。
 
-### v0.2.12 的核心变化
+### v0.3.0 的核心变化
 
-- **公开访问器的严格边界检查**：公开的矩阵、视图与转置视图访问器现在都会一致地拒绝越界索引，包括 `0xN` 和 `Nx0` 等边界形状。
-- **不可变访问语义强化**：`immut.Matrix` 的索引访问与 copy-on-update setter 现在会验证真实的二维边界，而不再允许误落到扁平存储中的其他元素。
-- **跨包语义对齐强化**：`immut` / `mutable` 共享操作在边界行为上更加明确地对齐，包括 same-index swap 的 no-op 语义。
-- **Benchmark 诊断扩展**：benchmark 栈现在包含更丰富的 replay/testing support、单 case whitebox runner，以及本地报告链路中更好的 metadata/diagnostic handling。
-- **文档刷新**：README 和 matrix API 参考文档已按当前真实导出接口重写，清除了陈旧或重复描述。
-- **正确性审计台账**：仓库现在包含一个可跟踪的 correctness checklist，用于记录已验证行为、已修复问题与后续结构性风险。
+- **共享平方根能力**：数值矩阵 API 现在使用 `Luna-Flow/arithmetic.Sqrt`，不再维护包内独立 trait；`mutable` 会公开重导出该共享 trait。
+- **目标侧整数嵌入**：泛型整数转换使用 `IntegralHomomorphism::from_integral`，与新版 `Luna-Flow/luna-generic` 模型一致。
+- **面向生态的约束**：自定义标量类型可以一次实现 Luna Flow 共享 traits，并用于所有兼容的生态包。
+- **多后端一致性**：Native、JS、Wasm 与 Wasm GC 使用相同的 arithmetic capability identity 和显式 trait 调用。
+- **兼容边界**：`Tolerance` 在本版本仍属于 `mutable`，尚未迁移到 `arithmetic`。
 
 ### API 指导与性能建议
 
@@ -79,6 +78,7 @@ let row0 = m.row_view(0).to_array()
 
 | 版本 | 日期 | 状态 | 说明 |
 | --- | --- | --- | --- |
+| `0.3.0` | 2026-06-14 | 当前仓库版本 | 接入共享 `arithmetic.Sqrt`、新版 `luna-generic` 同态和统一数值能力身份 |
 | `0.2.12` | 2026-06-06 | 已发布到 mooncakes | 严格边界契约统一、语义正确性修正、benchmark 诊断扩展，以及文档/审计刷新 |
 | `0.2.11` | 2026-05-27 | 上一发布基线 | mutable 内核性能优化、独立 wasm-gc 后端、benchmark/报告扩展与 API/文档对齐 |
 | `0.2.10` | 2026-05-27 | 上一发布基线 | 统一扁平化 mutable 存储、矩阵视图、一致性覆盖、benchmark 扩展与发布流程对齐 |
@@ -87,13 +87,18 @@ let row0 = m.row_view(0).to_array()
 
 ## 当前仓库亮点
 
-- **当前版本主叙事（0.2.12）**：
-  - 公开的 matrix、view 与 transpose accessor 现在都会在全库范围内强制执行显式 bounds contract，包括零行和零列边界形状。
-  - `immut.Matrix` 与 `mutable.Matrix` 在共享 correctness semantics 上进一步对齐，同时仍保留值语义与 mutation 语义的执行模型差异。
-  - benchmark 栈现在在本地 benchmark workflow 中具备更强的 diagnostic replay/test coverage 与 metadata handling。
-  - 仓库现在包含可跟踪的 correctness checklist，README 与 matrix API docs 也已经按真实 exported surface 更新。
+- **当前版本主叙事（0.3.0）**：
+  - 依赖平方根的矩阵算法现在要求共享的 `arithmetic.Sqrt` capability。
+  - `mutable.Sqrt` 是 `arithmetic.Sqrt` 的公开重导出；旧的包内 trait 与标量实现已删除。
+  - 整数测试数据和转换辅助函数现在使用目标侧 `IntegralHomomorphism::from_integral`。
+  - 自定义数值类型应实现 `luna-generic` 与 `arithmetic` 中的共享能力，而不是 linear-algebra 专属 traits。
 
-- **上一版本主叙事（0.2.11）**：
+- **上一版本主叙事（0.2.12）**：
+  - 公开 matrix、view 与 transpose accessor 强制执行显式 bounds contract，包括零行和零列形状。
+  - `immut.Matrix` 与 `mutable.Matrix` 在共享正确性语义上保持对齐，同时保留值语义与 mutation 模型的差异。
+  - Benchmark 诊断与 correctness audit 对应 `0.2.12` 导出接口。
+
+- **更早版本主叙事（0.2.11）**：
   - `mutable.Matrix` 在 `0.2.10` 统一扁平存储的基础上，继续获得了多后端核心路径优化和独立 `wasm-gc` 实现。
   - 公共数值 API 已围绕 `Field` / `Num` / `Tolerance` 对齐，不可变 determinant 的文档也已同步到简化后的约束集合。
   - benchmark 体系现在包含运行时 fixture 加载、扩展 case 元数据、更丰富 summary 输出、本地 dashboard、可选 Rust 对照，以及通过 `perf_runner` 进行诊断复现的路径。

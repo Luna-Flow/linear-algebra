@@ -1,6 +1,6 @@
 # Documentation Standard
 
-This repository's documentation should describe the **current implementation on the branch**. As of `2026-05-26`, the active documentation baseline is **`0.2.11`**.
+This repository's documentation describes the **current implementation on the branch**. As of `2026-06-14`, the active documentation baseline is **`0.3.0`**.
 
 ## Document Types and Organization
 

@@ -1,5 +1,5 @@
 ///|
-using @lg {trait Integral}
+using @lg {trait IntegralHomomorphism}
 
 ///|
 struct AdjointReal(Int)
@@ -27,7 +27,7 @@ fn float_matrix_2x2(
   a11 : Int,
 ) -> Matrix[Double] {
   let matrix : Matrix[Int] = Matrix::from_2d_array([[a00, a01], [a10, a11]])
-  matrix.map(fn(n) { Integral::to_double(n) })
+  matrix.map(fn(n) { IntegralHomomorphism::from_integral(n) })
 }
 
 ///|
@@ -44,7 +44,7 @@ fn float_matrix_3x2(
     [a10, a11],
     [a20, a21],
   ])
-  matrix.map(fn(n) { Integral::to_double(n) })
+  matrix.map(fn(n) { IntegralHomomorphism::from_integral(n) })
 }
 
 ///|
@@ -384,19 +384,19 @@ test "rank of matrix" {
 ///|
 test "rank of matrix 2" {
   let m1 : Matrix[Float] = Matrix::from_2d_array([[1, 2], [3, 4]]).map(fn(n) {
-    Integral::to_float(n)
+    IntegralHomomorphism::from_integral(n)
   })
   let m2 : Matrix[Double] = Matrix::from_2d_array([[1, 2], [2, 4]]).map(fn(n) {
-    Integral::to_double(n)
+    IntegralHomomorphism::from_integral(n)
   })
   let m3 : Matrix[Float] = Matrix::from_2d_array([[0, 0], [0, 0]]).map(fn(n) {
-    Integral::to_float(n)
+    IntegralHomomorphism::from_integral(n)
   })
   let m4 : Matrix[Double] = Matrix::from_2d_array([
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9],
-  ]).map(fn(n) { Integral::to_double(n) })
+  ]).map(fn(n) { IntegralHomomorphism::from_integral(n) })
   let r1 = m1.rank()
   let r2 = m2.rank()
   let r3 = m3.rank()
@@ -443,7 +443,7 @@ test "trace with different types" {
   let m_float : Matrix[Float] = Matrix::from_2d_array([[1, 2], [3, 4]]).map(fn(
     n,
   ) {
-    Integral::to_float(n)
+    IntegralHomomorphism::from_integral(n)
   })
   let trace_float = m_float.trace()
   inspect(trace_float, content="5")
@@ -452,7 +452,7 @@ test "trace with different types" {
   let m_double : Matrix[Double] = Matrix::from_2d_array([[2, 1], [1, 3]]).map(fn(
     n,
   ) {
-    Integral::to_double(n)
+    IntegralHomomorphism::from_integral(n)
   })
   let trace_double = m_double.trace()
   inspect(trace_double, content="5")

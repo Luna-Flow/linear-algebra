@@ -1,4 +1,5 @@
 import {
+  "Luna-Flow/arithmetic",
   "Luna-Flow/linear-algebra/mutable",
   "Luna-Flow/luna-generic" @lg,
   "moonbitlang/core/json",

@@ -1,6 +1,11 @@
 # Luna-Flow/linear-algebra
 
-This documentation tracks the current repository baseline for **v0.2.12**.
+This documentation tracks the current repository baseline for **v0.3.0**.
+
+The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt`
+capability, while integral embeddings follow
+`Luna-Flow/luna-generic.IntegralHomomorphism`. `Tolerance` remains local to the
+`mutable` package in this release.
 
 ## Repository Positioning
 

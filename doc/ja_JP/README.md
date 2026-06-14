@@ -2,9 +2,9 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.2.12 - Correctness、Diagnostics、Documentation Alignment
+## v0.3.0 - 共有数値 capability の整合
 
-このドキュメントは、`0.2.11` 以降に入った変更を反映した、公開済み **v0.2.12** の内容を説明します。
+このドキュメントは現在の **v0.3.0** リポジトリ状態を説明します。本リリースでは linear algebra を Luna Flow 共通の代数・算術 capability パッケージへ整合させます。
 
 ### パッケージの位置づけ
 
@@ -12,14 +12,13 @@
 - **`mutable`**: 実行指向の `Matrix` と `Vector` 型。原地更新、`Transpose` ビュー、`RowView` / `ColView` を備え、`js`、`wasm`、`wasm-gc`、`native` 向けの最適化実装を保持します。
 - **共有コア、異なる実行モデル**: コンストラクタと中核的な代数演算は両パッケージ間で揃えつつ、更新・アクセスのセマンティクスは意図的に分けています。
 
-### v0.2.12 を特徴づけるもの
+### v0.3.0 を特徴づけるもの
 
-- **公開アクセサの厳密境界チェック**: 公開された行列・ビュー・転置ビューのアクセサは、`0xN` や `Nx0` を含めて範囲外インデックスを一貫して拒否するようになりました。
-- **不変アクセスセマンティクスの強化**: `immut.Matrix` のインデックスアクセスと copy-on-update setter は、フラットストレージの別要素へ紛れ込むことなく、真の 2 次元境界を検証するようになりました。
-- **パッケージ間セマンティクス整合の強化**: `immut` / `mutable` 間で共有される操作は、same-index swap の no-op を含め、境界動作に関する意味論がより明示的に揃えられました。
-- **Benchmark 診断拡張**: benchmark スタックは、より豊富な replay/testing support、単一 case 向け whitebox runner、ローカルレポート経路での metadata/diagnostic handling の改善を含むようになりました。
-- **ドキュメント刷新**: README 本文と matrix API リファレンスは、現在の export surface に合わせて書き直され、古い説明や重複記述が整理されました。
-- **正しさ監査台帳の追加**: リポジトリには、検証済み挙動・修正済み問題・今後の構造的 follow-up を記録する correctness checklist が追加されました。
+- **共有平方根 capability**: 数値行列 API はパッケージ固有 trait ではなく `Luna-Flow/arithmetic.Sqrt` を使用し、`mutable` は共有 trait を公開 re-export します。
+- **対象側の整数埋め込み**: 汎用整数変換は `IntegralHomomorphism::from_integral` を使用し、現在の `Luna-Flow/luna-generic` モデルに従います。
+- **エコシステム指向の制約**: カスタム scalar 型は Luna Flow 共通 traits を一度実装すれば、互換性のある各パッケージで利用できます。
+- **バックエンド整合**: Native、JS、Wasm、Wasm GC は同一の arithmetic capability identity と明示的 trait 呼び出しを使用します。
+- **互換性境界**: `Tolerance` は本リリースでも `mutable` に属し、まだ `arithmetic` へ移行していません。
 
 ### API 指針と性能
 
@@ -79,6 +78,7 @@ let row0 = m.row_view(0).to_array()
 
 | バージョン | 日付 | 状態 | 説明 |
 | --- | --- | --- | --- |
+| `0.3.0` | 2026-06-14 | 現在のリポジトリ版 | 共有 `arithmetic.Sqrt`、現行 `luna-generic` homomorphism、統一数値 capability identity を採用 |
 | `0.2.12` | 2026-06-06 | mooncakes 公開済み | 厳密境界契約の統一、意味論上の正しさ修正、benchmark 診断拡張、文書/監査の刷新 |
 | `0.2.11` | 2026-05-27 | 前回リリース基準 | mutable カーネル性能改善、専用 wasm-gc バックエンド、benchmark/レポート拡張、API/文書整合 |
 | `0.2.10` | 2026-05-27 | 前回リリース基準 | 統一フラット mutable ストレージ、行列ビュー、整合性カバレッジ、benchmark 拡張、リリース手順整合 |
@@ -87,13 +87,18 @@ let row0 = m.row_view(0).to_array()
 
 ## 現在のリポジトリのハイライト
 
-- **現在のリリース叙述（0.2.12）**:
-  - 公開された matrix、view、transpose accessor は、ゼロ行・ゼロ列 shape を含めて明示的な bounds contract を強制するようになりました。
-  - `immut.Matrix` と `mutable.Matrix` は、値 vs. mutation という実行モデルの違いを保ちつつ、共有される correctness semantics の整合がさらに強化されました。
-  - benchmark スタックは、ローカル benchmark workflow における diagnostic replay/test coverage と metadata handling をより強く備えるようになりました。
-  - リポジトリには tracked correctness checklist が追加され、README と matrix API docs も実際の exported surface に揃えて更新されました。
+- **現在のリリース叙述（0.3.0）**:
+  - 平方根を必要とする行列アルゴリズムは共有 `arithmetic.Sqrt` capability を要求します。
+  - `mutable.Sqrt` は `arithmetic.Sqrt` の公開 re-export であり、旧パッケージ固有 trait と scalar 実装は削除されました。
+  - 整数 fixture と変換 helper は対象側 `IntegralHomomorphism::from_integral` を使用します。
+  - カスタム数値型は linear-algebra 固有 trait ではなく `luna-generic` と `arithmetic` の共有 capability を実装します。
 
-- **前回リリース叙述（0.2.11）**:
+- **前回リリース叙述（0.2.12）**:
+  - 公開 matrix、view、transpose accessor はゼロ行・ゼロ列 shape を含む明示的 bounds contract を強制します。
+  - `immut.Matrix` と `mutable.Matrix` は値と mutation の違いを保ちながら共有 correctness semantics を揃えています。
+  - Benchmark 診断と correctness audit は `0.2.12` の export surface に対応します。
+
+- **以前のリリース叙述（0.2.11）**:
   - `mutable.Matrix` は `0.2.10` の共有フラットストレージを土台に、バックエンドカーネル最適化と専用 `wasm-gc` 実装を重ねた形で整理されています。
   - 公開数値 API は `Field` / `Num` / `Tolerance` に揃えられ、不変 determinant のドキュメントも簡素化後の制約へ更新されています。
   - benchmark スタックは、ランタイム fixture 読み込み、拡張 case メタデータ、詳細な summary 出力、ローカル dashboard、任意の Rust 比較、`perf_runner` による診断再現を含みます。

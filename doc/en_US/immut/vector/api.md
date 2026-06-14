@@ -1,6 +1,6 @@
 # @immut.Vector
 
-This page tracks the current repository implementation and is written as the `0.2.11` API baseline.
+This page tracks the current repository implementation and is written as the `0.3.0` API baseline.
 
 ---
 

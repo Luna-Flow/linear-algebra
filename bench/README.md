@@ -1,7 +1,7 @@
 # Benchmarking
 
 This benchmark documentation reflects the current repository state and is
-written for the upcoming `0.2.11` release line.
+maintained for the current `0.3.0` repository line.
 
 This repository ships a steady-state benchmark harness for comparing the
 `mutable` package on the MoonBit native backend and, optionally, against a Rust
