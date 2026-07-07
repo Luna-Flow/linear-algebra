@@ -1,7 +1,7 @@
 # Benchmarking
 
 This benchmark documentation reflects the current repository state and is
-maintained for the current `0.3.0` repository line.
+maintained for the current `0.4.1` repository line.
 
 This repository ships a steady-state benchmark harness for comparing the
 `mutable` package on the MoonBit native backend and, optionally, against a Rust
@@ -20,15 +20,16 @@ rather than a dedicated scheduled GitHub Actions workflow.
 ## Fixtures
 
 - `bench/datasets/manifest.json` lists the dataset version and case metadata.
-- `bench/datasets/cases/*.json` stores per-case literal inputs and is
-  regenerated on demand.
+- `bench/datasets/cases/*.json` stores per-case literal inputs. These files are
+  generated on demand and are not tracked in git.
 - `bench/generate_fixtures.py` regenerates the JSON fixtures plus compact
   metadata registries for MoonBit and Rust.
 
-`manifest.json`, the per-case JSON fixtures, and the generated MoonBit/Rust
-registries are all tracked in git in the current repository. Treat them as
-derived artifacts that should be regenerated together, reviewed for coherence,
-and committed when the benchmark dataset changes.
+`manifest.json` and the generated MoonBit/Rust registries are tracked in git in
+the current repository. Treat them as derived artifacts that should be
+regenerated together, reviewed for coherence, and committed when the benchmark
+dataset changes. The per-case JSON fixtures are local runtime artifacts and can
+be regenerated whenever a benchmark command needs them.
 
 ## Why The Design Changed
 

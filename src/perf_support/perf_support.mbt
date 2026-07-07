@@ -113,7 +113,7 @@ pub fn run_prepared_case_inplace(
     prepared.vector_b
   }
   match case_item.operation {
-    "mul" => checksum_matrix(matrix_a * matrix_b)
+    "mul" => checksum_matrix(matrix_a.unchecked_matmul(matrix_b))
     "mul_vec" => checksum_vector(matrix_a.unchecked_mul_vec(vector_b))
     "determinant" => checksum_double(matrix_a.unchecked_determinant())
     "inverse" =>

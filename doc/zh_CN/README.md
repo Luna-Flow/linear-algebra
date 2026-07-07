@@ -2,9 +2,23 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
+## v0.4.1 - 基准测试与内核维护
+
+本文档描述当前 **v0.4.1** 仓库状态。本维护版本保留 `0.4.0` 的带检查矩阵
+API，并重点改进基准测试准确性、发布自动化和可变矩阵内核性能。
+
+### 维护变更
+
+- `mutable.Matrix::unchecked_matmul` 现在作为公开 API 提供给已保证形状兼容的调用点与基准测试热路径。
+- 带检查的 `mutable.Matrix` 乘法仍会先验证维度，再委托给 unchecked 内核，避免重复维护热点循环。
+- 可变矩阵乘法、LU 尾部更新和 Cholesky 点积循环在 Native、JS、Wasm 与 Wasm GC 后端上进行了针对性展开。
+- 基准测试中的矩阵乘法用例现在直接测量 unchecked 热路径，避免结果主要反映重复形状检查成本。
+- `bench/datasets/cases/*.json` 被明确记录为按需生成的本地工件，而不是需要跟踪的仓库文件。
+- 发布 workflow 现在直接读取 `moon.mod` 中的包版本，不再要求手动输入发布版本号。
+
 ## v0.4.0 - 带检查的矩阵 API 与分层能力
 
-本文档描述当前 **v0.4.0** 仓库状态。本版本把可能失败的矩阵操作改为返回
+`0.4.0` 版本把可能失败的矩阵操作改为返回
 `Result[..., LinearAlgebraError]`，并加入面向泛型算法的分层能力包。
 
 ### 破坏性变更
@@ -118,7 +132,8 @@ let row0 = m.row_view(0).to_array()
 
 | 版本 | 日期 | 状态 | 说明 |
 | --- | --- | --- | --- |
-| `0.4.0` | 2026-07-07 | 当前仓库版本 | 引入带检查的矩阵 API、结构化线性代数错误、分层能力包和默认后端包装类型 |
+| `0.4.1` | 2026-07-07 | 当前仓库版本 | 改进基准测试测量方式，新增公开 unchecked 可变矩阵乘法，优化可变矩阵热点循环，并简化发布流程 |
+| `0.4.0` | 2026-07-07 | 上一发布基线 | 引入带检查的矩阵 API、结构化线性代数错误、分层能力包和默认后端包装类型 |
 | `0.3.0` | 2026-06-14 | 已发布到 mooncakes | 接入共享 `arithmetic.Sqrt`、新版 `luna-generic` 同态和统一数值能力身份 |
 | `0.2.12` | 2026-06-06 | 已发布到 mooncakes | 严格边界契约统一、语义正确性修正、基准测试诊断扩展，以及文档/审计刷新 |
 | `0.2.11` | 2026-05-27 | 上一发布基线 | 可变矩阵内核性能优化、独立 wasm-gc 后端、基准测试/报告扩展与 API/文档对齐 |
@@ -128,7 +143,13 @@ let row0 = m.row_view(0).to_array()
 
 ## 当前仓库亮点
 
-- **当前版本主叙事（0.4.0）**：
+- **当前版本主叙事（0.4.1）**：
+  - 可变矩阵乘法公开 `unchecked_matmul`，供已验证形状的调用点和基准测试热路径使用。
+  - 矩阵乘法、LU 尾部更新和 Cholesky 累加路径都进行了跨后端一致的循环展开。
+  - 基准测试文档明确了逐用例 JSON 是按需生成的本地工件。
+  - 发布流程直接使用 `moon.mod` 中的版本号。
+
+- **上一版本主叙事（0.4.0）**：
   - 可能因运行时条件失败的矩阵操作现在返回 `Result[..., LinearAlgebraError]`。
   - 旧矩阵行为保留在显式的 `unchecked_*` 方法中。
   - `linear-algebra/error` 记录带检查 API 共用的错误类型。

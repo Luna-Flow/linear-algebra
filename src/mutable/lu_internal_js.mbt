@@ -41,9 +41,22 @@ fn[T : Compare + Field + Num + Tolerance] Matrix::lu_decompose_internal(
       let row_offset = i * n
       let factor = data[row_offset + j] / pivot
       data[row_offset + j] = factor
-      for k = j + 1; k < n; k = k + 1 {
+      let mut k = j + 1
+      while k + 3 < n {
         data[row_offset + k] = data[row_offset + k] -
           factor * data[pivot_row_offset + k]
+        data[row_offset + k + 1] = data[row_offset + k + 1] -
+          factor * data[pivot_row_offset + k + 1]
+        data[row_offset + k + 2] = data[row_offset + k + 2] -
+          factor * data[pivot_row_offset + k + 2]
+        data[row_offset + k + 3] = data[row_offset + k + 3] -
+          factor * data[pivot_row_offset + k + 3]
+        k += 4
+      }
+      while k < n {
+        data[row_offset + k] = data[row_offset + k] -
+          factor * data[pivot_row_offset + k]
+        k += 1
       }
     }
   }

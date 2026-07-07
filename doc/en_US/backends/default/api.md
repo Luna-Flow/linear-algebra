@@ -1,7 +1,7 @@
 # `linear-algebra/backends/default`
 
 This page documents the public API exported by
-`Luna-Flow/linear-algebra/backends/default` in the current `0.4.0` repository
+`Luna-Flow/linear-algebra/backends/default` in the current `0.4.1` repository
 state.
 
 ## Purpose

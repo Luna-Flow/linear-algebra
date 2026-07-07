@@ -1,6 +1,6 @@
 # `linear-algebra/error`
 
-このページは現在の `0.4.0` リポジトリにおける
+このページは現在の `0.4.1` リポジトリにおける
 `Luna-Flow/linear-algebra/error` の公開 API を説明します。
 
 ## 役割

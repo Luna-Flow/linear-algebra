@@ -110,6 +110,7 @@ pub fn[T] Matrix::transpose(Self[T]) -> Self[T]
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::unchecked_determinant(Self[T]) -> T
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::unchecked_inverse(Self[T]) -> Self[T]?
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::unchecked_is_invertible(Self[T]) -> Bool
+pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::unchecked_matmul(Self[T], Self[T]) -> Self[T]
 pub fn[T : @luna-generic.Semiring] Matrix::unchecked_matrix_power(Self[T], Int) -> Self[T]
 pub fn[T : Compare] Matrix::unchecked_max_element(Self[T]) -> T
 pub fn[T : @luna-generic.Field] Matrix::unchecked_mean(Self[T]) -> T

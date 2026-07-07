@@ -1,7 +1,7 @@
 # `linear-algebra/arithmetic`
 
 This page documents the public API exported by
-`Luna-Flow/linear-algebra/arithmetic` in the current `0.4.0` repository state.
+`Luna-Flow/linear-algebra/arithmetic` in the current `0.4.1` repository state.
 
 ## Purpose
 

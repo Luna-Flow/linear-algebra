@@ -1,6 +1,6 @@
 # `@mutable.Matrix`
 
-This page documents the current `0.4.0` repository behavior. Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance` remains defined by `mutable`.
+This page documents the current `0.4.1` repository behavior. Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance` remains defined by `mutable`.
 
 ## Overview
 

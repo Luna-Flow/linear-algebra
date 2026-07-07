@@ -1,6 +1,6 @@
 # `linear-algebra/arithmetic`
 
-本文档描述当前 `0.4.0` 仓库中 `Luna-Flow/linear-algebra/arithmetic` 的公开 API。
+本文档描述当前 `0.4.1` 仓库中 `Luna-Flow/linear-algebra/arithmetic` 的公开 API。
 
 ## 职责
 

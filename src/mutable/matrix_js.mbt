@@ -755,27 +755,63 @@ pub impl[T : AddMonoid + Mul] Mul for Matrix[T] with fn mul(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
+  guard self.col == other.row
+  self.unchecked_matmul(other)
+}
+
+///|
+/// Multiplies two matrices without checking shape compatibility.
+///
+/// Callers must ensure `self.col() == other.row()` before calling this method.
+pub fn[T : AddMonoid + Mul] Matrix::unchecked_matmul(
+  self : Matrix[T],
+  other : Matrix[T],
+) -> Matrix[T] {
   let row = self.row
   let col = other.col
   let inner = self.col
-  guard inner == other.row
   let data = Array::make(row * col, T::zero())
   let self_data = self.data
   let other_data = other.data
+  matmul_unrolled_into(row, col, inner, self_data, other_data, data)
+  { row, col, data }
+}
+
+///|
+fn[T : AddMonoid + Mul] matmul_unrolled_into(
+  row : Int,
+  col : Int,
+  inner : Int,
+  self_data : Array[T],
+  other_data : Array[T],
+  data : Array[T],
+) -> Unit {
   let mut result_row_offset = 0
   for i = 0; i < row; i = i + 1 {
     let self_row_offset = i * inner
     for k = 0; k < inner; k = k + 1 {
       let lhs = self_data[self_row_offset + k]
       let other_row_offset = k * col
-      for j = 0; j < col; j = j + 1 {
+      let mut j = 0
+      while j + 3 < col {
         let out_idx = result_row_offset + j
         data[out_idx] = data[out_idx] + lhs * other_data[other_row_offset + j]
+        data[out_idx + 1] = data[out_idx + 1] +
+          lhs * other_data[other_row_offset + j + 1]
+        data[out_idx + 2] = data[out_idx + 2] +
+          lhs * other_data[other_row_offset + j + 2]
+        data[out_idx + 3] = data[out_idx + 3] +
+          lhs * other_data[other_row_offset + j + 3]
+        j += 4
+      }
+      while j < col {
+        let out_idx = result_row_offset + j
+        data[out_idx] = data[out_idx] + lhs * other_data[other_row_offset + j]
+        j += 1
       }
     }
     result_row_offset += col
   }
-  { row, col, data }
 }
 
 ///|
@@ -2213,21 +2249,12 @@ fn[T : AddMonoid + Mul] Matrix::mul_array_into(
     abort("Output buffer length mismatch for matrix-vector multiplication")
   }
   let data = self.data
+  let mut idx = 0
   for i = 0; i < m; i = i + 1 {
-    let row_offset = i * n
     let mut sum = T::zero()
-    let mut j = 0
-    while j + 3 < n {
-      sum = sum +
-        data[row_offset + j] * v_data[j] +
-        data[row_offset + j + 1] * v_data[j + 1] +
-        data[row_offset + j + 2] * v_data[j + 2] +
-        data[row_offset + j + 3] * v_data[j + 3]
-      j += 4
-    }
-    while j < n {
-      sum = sum + data[row_offset + j] * v_data[j]
-      j += 1
+    for j = 0; j < n; j = j + 1 {
+      sum = sum + data[idx] * v_data[j]
+      idx += 1
     }
     out[i] = sum
   }
@@ -2593,8 +2620,18 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::cholesky_decomposit
     for j = 0; j <= i; j = j + 1 {
       let j_offset = j * n
       let mut sum = T::zero()
-      for k = 0; k < j; k = k + 1 {
+      let mut k = 0
+      while k + 3 < j {
+        sum = sum +
+          l_data[i_offset + k] * l_data[j_offset + k] +
+          l_data[i_offset + k + 1] * l_data[j_offset + k + 1] +
+          l_data[i_offset + k + 2] * l_data[j_offset + k + 2] +
+          l_data[i_offset + k + 3] * l_data[j_offset + k + 3]
+        k += 4
+      }
+      while k < j {
         sum = sum + l_data[i_offset + k] * l_data[j_offset + k]
+        k += 1
       }
       if i == j {
         let val = self_data[i_offset + i] - sum

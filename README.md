@@ -2,11 +2,32 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
+## v0.4.1 - Benchmark and Kernel Maintenance
+
+This documentation tracks the **v0.4.1** repository state. This maintenance
+release keeps the checked matrix API surface from `0.4.0` and focuses on
+benchmark accuracy, release automation, and mutable matrix kernel performance.
+
+### Maintenance Changes
+
+- `mutable.Matrix::unchecked_matmul` is now public for callers and benchmark
+  paths that already guarantee compatible shapes.
+- Checked `mutable.Matrix` multiplication still validates dimensions first,
+  then delegates to the unchecked kernel to avoid duplicating hot-loop logic.
+- Mutable matrix multiplication, LU trailing updates, and Cholesky dot-product
+  loops have targeted unrolling across Native, JS, Wasm, and Wasm GC backends.
+- Benchmark multiplication cases now measure the unchecked hot path directly,
+  so benchmark comparisons are not dominated by repeated shape validation.
+- `bench/datasets/cases/*.json` fixtures are documented as on-demand local
+  artifacts rather than tracked repository files.
+- The publish workflow now reads the package version directly from `moon.mod`
+  and no longer requires a manually typed release version.
+
 ## v0.4.0 - Checked Matrix APIs and Layered Capabilities
 
-This documentation tracks the **v0.4.0** repository state. This release makes
-matrix failure modes explicit with checked `Result` APIs and adds the first
-layered capability packages for backend-independent linear algebra code.
+The `0.4.0` release made matrix failure modes explicit with checked `Result`
+APIs and added the first layered capability packages for backend-independent
+linear algebra code.
 
 ### Breaking Changes
 
@@ -130,7 +151,8 @@ Localized README files:
 
 | Version | Date | Status | Notes |
 | --- | --- | --- | --- |
-| `0.4.0` | 2026-07-07 | current repository release | Introduced checked matrix APIs, structured linear-algebra errors, layered capability packages, and default backend wrappers |
+| `0.4.1` | 2026-07-07 | current repository release | Refined benchmark measurement, added public unchecked mutable matmul, optimized mutable hot loops, and simplified publishing |
+| `0.4.0` | 2026-07-07 | previous release baseline | Introduced checked matrix APIs, structured linear-algebra errors, layered capability packages, and default backend wrappers |
 | `0.3.0` | 2026-06-14 | published on mooncakes | Adopted shared `arithmetic.Sqrt`, current `luna-generic` homomorphisms, and ecosystem-wide numeric capability identities |
 | `0.2.12` | 2026-06-06 | published on mooncakes | Strict bounds unification, semantic correctness fixes, benchmark diagnostics expansion, and documentation/audit refresh |
 | `0.2.11` | 2026-05-27 | previous release baseline | Performance-tuned mutable kernels, dedicated wasm-gc backend, benchmark/reporting expansion, and API/doc alignment |
@@ -140,7 +162,16 @@ Localized README files:
 
 ## Current Repository Highlights
 
-- **Current Release Narrative (0.4.0)**:
+- **Current Release Narrative (0.4.1)**:
+  - Mutable matrix multiplication exposes `unchecked_matmul` for validated call
+    sites and benchmark hot paths.
+  - Matrix multiplication, LU trailing updates, and Cholesky accumulation have
+    backend-aligned loop unrolling.
+  - Benchmark fixture documentation now makes per-case JSON generation an
+    on-demand local artifact.
+  - Publishing uses the version in `moon.mod` directly.
+
+- **Previous Release Narrative (0.4.0)**:
   - Matrix operations with runtime failure modes now return `Result[..., LinearAlgebraError]`.
   - Legacy matrix behavior is available through explicit `unchecked_*` methods.
   - `linear-algebra/error` documents the shared error vocabulary for checked APIs.

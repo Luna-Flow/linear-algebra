@@ -1,6 +1,6 @@
 # `linear-algebra/algebra`
 
-このページは現在の `0.4.0` リポジトリにおける
+このページは現在の `0.4.1` リポジトリにおける
 `Luna-Flow/linear-algebra/algebra` の公開 API を説明します。
 
 ## 役割

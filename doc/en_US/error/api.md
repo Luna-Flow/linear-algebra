@@ -1,7 +1,7 @@
 # `linear-algebra/error`
 
 This page documents the public API exported by `Luna-Flow/linear-algebra/error`
-in the current `0.4.0` repository state.
+in the current `0.4.1` repository state.
 
 ## Purpose
 

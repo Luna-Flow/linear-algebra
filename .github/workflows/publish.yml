@@ -1,13 +1,8 @@
 name: publish-package
-run-name: publish ${{ inputs.release_version }} to mooncakes
+run-name: publish moon.mod version to mooncakes
 
 on:
   workflow_dispatch:
-    inputs:
-      release_version:
-        description: "Version to publish. Must exactly match moon.mod."
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -35,16 +30,14 @@ jobs:
           moon version --all
           moonrun --version
 
-      - name: verify release version
+      - name: verify package version
         run: |
           test -f moon.mod
           test ! -f moon.mod.json
           test -f README.md
           pkg_version="$(sed -n 's/^version = "\(.*\)"$/\1/p' moon.mod)"
           echo "moon.mod version: $pkg_version"
-          echo "workflow input version: ${{ inputs.release_version }}"
           test -n "$pkg_version"
-          test "$pkg_version" = "${{ inputs.release_version }}"
 
       - name: update registry
         run: moon update

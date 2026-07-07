@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-This documentation tracks the current repository baseline for **v0.4.0**.
+This documentation tracks the current repository baseline for **v0.4.1**.
 
 The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt`
 capability, while integral embeddings follow
@@ -8,6 +8,11 @@ capability, while integral embeddings follow
 `mutable` package in this release. Matrix operations with runtime failure modes
 now use checked `Result[..., LinearAlgebraError]` APIs; the old aborting or
 `Option`-returning behavior is exposed through explicit `unchecked_*` methods.
+
+The `0.4.1` maintenance baseline adds public
+`mutable.Matrix::unchecked_matmul` for prevalidated hot paths, tunes mutable
+matrix multiplication, LU, and Cholesky kernels, documents benchmark fixtures as
+on-demand artifacts, and publishes directly from the `moon.mod` version.
 
 ## Layered Architecture
 

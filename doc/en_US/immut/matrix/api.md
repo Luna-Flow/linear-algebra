@@ -1,6 +1,6 @@
 # `@immut.Matrix`
 
-This page documents the current `0.4.0` repository behavior.
+This page documents the current `0.4.1` repository behavior.
 
 ## Overview
 
