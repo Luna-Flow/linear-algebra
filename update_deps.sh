@@ -1,7 +1,9 @@
-rm -rf .mooncakes.io
+#!/usr/bin/env bash
+set -euo pipefail
+
 moon update
-moon remove Luna-Flow/luna-generic
-moon remove moonbitlang/quickcheck
-moon add Luna-Flow/luna-generic
-moon add moonbitlang/quickcheck
-moon install
+moon add --upgrade moonbitlang/x
+moon add --upgrade Luna-Flow/arithmetic
+moon add --upgrade Luna-Flow/luna-generic
+moon add --upgrade moonbitlang/quickcheck
+moon build
