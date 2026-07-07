@@ -7,9 +7,12 @@ moon_test() {
 
 moon_test -p immut "$@"
 moon_test -p consistency "$@"
-moon_test -p perf_support "$@"
-moon_test -p perf_runner "$@"
 moon_test -p mutable --target wasm-gc "$@"
 moon_test -p mutable --target js "$@"
 moon_test -p mutable --target native "$@"
 moon_test -p mutable --target wasm "$@"
+
+if [ "${LINEAR_ALGEBRA_TEST_BENCH:-0}" = "1" ]; then
+  moon_test -p perf_support "$@"
+  moon_test -p perf_runner "$@"
+fi
