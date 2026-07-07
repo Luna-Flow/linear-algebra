@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  moonbit:
+    name: moonbit
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: install moonbit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+
+      - name: version
+        run: |
+          moon version --all
+          moonrun --version
+
+      - name: update registry
+        run: moon update
+
+      - name: build
+        run: moon build --target all
+
+      - name: check
+        run: moon check --target all
+
+      - name: test
+        run: bash ./run_test.sh
+
+      - name: public interface
+        run: moon info

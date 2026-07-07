@@ -2,8 +2,15 @@
 set -euo pipefail
 
 moon update
-moon add --upgrade moonbitlang/x
-moon add --upgrade Luna-Flow/arithmetic
-moon add --upgrade Luna-Flow/luna-generic
-moon add --upgrade moonbitlang/quickcheck
+awk '
+  $1 == "import" && $2 == "{" { in_import = 1; next }
+  in_import && $1 == "}" { in_import = 0; next }
+  in_import {
+    gsub(/[",]/, "", $1)
+    sub(/@.*/, "", $1)
+    if ($1 != "") print $1
+  }
+' moon.mod | while IFS= read -r dep; do
+  moon add --upgrade --no-update "$dep"
+done
 moon build

@@ -1,43 +1,69 @@
 name: publish-package
-run-name: publish to mooncakes
+run-name: publish ${{ inputs.release_version }} to mooncakes
+
 on:
   workflow_dispatch:
+    inputs:
+      release_version:
+        description: "Version to publish. Must exactly match moon.mod."
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-package
+  cancel-in-progress: false
+
 jobs:
   publish:
+    name: publish
     runs-on: ubuntu-latest
+    environment: mooncakes
     steps:
-      - uses: actions/checkout@v4
-      - name: install
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: install moonbit
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> $GITHUB_PATH
-      - name: moon version
+
+      - name: version
         run: |
           moon version --all
           moonrun --version
-      - name: read release version
-        id: release
+
+      - name: verify release version
         run: |
           test -f moon.mod
           test ! -f moon.mod.json
           test -f README.md
-          PKG_VERSION=$(sed -n 's/^version = "\(.*\)"$/\1/p' moon.mod)
-          echo "moon.mod version: $PKG_VERSION"
-          test -n "$PKG_VERSION"
-          echo "version=$PKG_VERSION" >> "$GITHUB_OUTPUT"
-      - name: moon update
-        run: |
-          moon update
-      - name: check project
-        run: moon check --target all
-      - name: repository tests
-        run: |
-          bash ./run_test.sh
+          pkg_version="$(sed -n 's/^version = "\(.*\)"$/\1/p' moon.mod)"
+          echo "moon.mod version: $pkg_version"
+          echo "workflow input version: ${{ inputs.release_version }}"
+          test -n "$pkg_version"
+          test "$pkg_version" = "${{ inputs.release_version }}"
+
+      - name: update registry
+        run: moon update
+
+      - name: build
+        run: moon build --target all
+
+      - name: check
+        run: moon check --target all --frozen
+
+      - name: test
+        run: bash ./run_test.sh --frozen
+
       - name: publish
-        run: |
-          trap 'rm -f ~/.moon/credentials.json' EXIT
-          echo "publishing version ${{ steps.release.outputs.version }}"
-          printf '%s' "$SECRET" > ~/.moon/credentials.json
-          moon publish
         env:
           SECRET: ${{ secrets.LUNA_MOONCAKE }}
+        run: |
+          test -n "$SECRET"
+          mkdir -p "$HOME/.moon"
+          trap 'rm -f "$HOME/.moon/credentials.json"' EXIT
+          printf '%s' "$SECRET" > "$HOME/.moon/credentials.json"
+          moon publish --frozen
