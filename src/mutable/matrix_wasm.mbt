@@ -1080,12 +1080,34 @@ pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Unit {
 ///
 /// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
-/// let m_squared = m.pow(2)
+/// let m_squared = m.pow(2).unwrap()
 /// // Equivalent to m * m
 /// inspect(m_squared, content="|7, 10|\n|15, 22|")
 /// ```
 ///
-pub fn[T : Semiring] Matrix::pow(self : Matrix[T], power : Int) -> Matrix[T] {
+pub fn[T : Semiring] Matrix::pow(
+  self : Matrix[T],
+  power : Int,
+) -> Result[Matrix[T], LinearAlgebraError] {
+  match ensure_square_checked(self) {
+    Ok(_) => ()
+    Err(err) => return Err(err)
+  }
+  guard power >= 0 else {
+    return Err(
+      LinearAlgebraError::negative_exponent(
+        "Matrix::pow requires a non-negative exponent",
+      ),
+    )
+  }
+  Ok(self.unchecked_pow(power))
+}
+
+///|
+pub fn[T : Semiring] Matrix::unchecked_pow(
+  self : Matrix[T],
+  power : Int,
+) -> Matrix[T] {
   guard self.is_square() else {
     abort("Matrix must be square to calculate powers")
   }
@@ -1578,10 +1600,20 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::rank(
 /// 
 /// ```moonbit nocheck
 /// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-/// let trace = m.trace()
+/// let trace = m.trace().unwrap()
 /// inspect(trace, content="15")  // 1 + 5 + 9 = 15
 /// ```
-pub fn[T : AddMonoid] Matrix::trace(self : Matrix[T]) -> T {
+pub fn[T : AddMonoid] Matrix::trace(
+  self : Matrix[T],
+) -> Result[T, LinearAlgebraError] {
+  match ensure_square_checked(self) {
+    Ok(_) => Ok(self.unchecked_trace())
+    Err(err) => Err(err)
+  }
+}
+
+///|
+pub fn[T : AddMonoid] Matrix::unchecked_trace(self : Matrix[T]) -> T {
   guard self.is_square() else {
     abort("Matrix must be square to calculate trace")
   }
@@ -2090,6 +2122,23 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
 pub fn[T : AddMonoid + Mul] Matrix::mul_vec(
   self : Matrix[T],
   vector : Vector[T],
+) -> Result[Vector[T], LinearAlgebraError] {
+  let n = self.col
+  let v_data = vector.0
+  guard n == v_data.length() else {
+    return Err(
+      LinearAlgebraError::dimension_mismatch(
+        "Matrix and vector dimensions are not compatible for multiplication",
+      ),
+    )
+  }
+  Ok(self.unchecked_mul_vec(vector))
+}
+
+///|
+pub fn[T : AddMonoid + Mul] Matrix::unchecked_mul_vec(
+  self : Matrix[T],
+  vector : Vector[T],
 ) -> Vector[T] {
   let m = self.row
   let n = self.col
@@ -2245,9 +2294,19 @@ pub impl Tolerance for Float with fn tolerance() -> Float {
 /// Example:
 /// ```moonbit nocheck
 /// let m = @mutable.Matrix::from_2d_array([[4.0, 3.0], [6.0, 3.0]])
-/// inspect(m.determinant(), content="-6")
+/// inspect(m.determinant().unwrap(), content="-6")
 /// ```
 pub fn[T : Compare + Field + Num + Tolerance] Matrix::determinant(
+  self : Matrix[T],
+) -> Result[T, LinearAlgebraError] {
+  match ensure_square_checked(self) {
+    Ok(_) => Ok(self.unchecked_determinant())
+    Err(err) => Err(err)
+  }
+}
+
+///|
+pub fn[T : Compare + Field + Num + Tolerance] Matrix::unchecked_determinant(
   self : Matrix[T],
 ) -> T {
   guard self.is_square() else {
@@ -2311,6 +2370,25 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::determinant(
 /// 
 ///
 pub fn[T : Compare + Field + Num + Tolerance] Matrix::inverse(
+  self : Matrix[T],
+) -> Result[Matrix[T], LinearAlgebraError] {
+  match ensure_square_checked(self) {
+    Ok(_) => ()
+    Err(err) => return Err(err)
+  }
+  match self.unchecked_inverse() {
+    Some(inverse) => Ok(inverse)
+    None =>
+      Err(
+        LinearAlgebraError::singular_matrix(
+          "Matrix is singular and cannot be inverted",
+        ),
+      )
+  }
+}
+
+///|
+pub fn[T : Compare + Field + Num + Tolerance] Matrix::unchecked_inverse(
   self : Matrix[T],
 ) -> Matrix[T]? {
   guard self.is_square() else {
@@ -2377,6 +2455,16 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::inverse(
 /// ```
 ///
 pub fn[T : Compare + Field + Num + Tolerance] Matrix::is_invertible(
+  self : Matrix[T],
+) -> Result[Bool, LinearAlgebraError] {
+  match ensure_square_checked(self) {
+    Ok(_) => Ok(self.unchecked_is_invertible())
+    Err(err) => Err(err)
+  }
+}
+
+///|
+pub fn[T : Compare + Field + Num + Tolerance] Matrix::unchecked_is_invertible(
   self : Matrix[T],
 ) -> Bool {
   guard self.is_square() else {
@@ -2457,7 +2545,21 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::cholesky_decomposit
 /// inspect(m.mean(), content="2.5")
 /// ```
 ///
-pub fn[T : Field] Matrix::mean(self : Matrix[T]) -> T {
+pub fn[T : Field] Matrix::mean(
+  self : Matrix[T],
+) -> Result[T, LinearAlgebraError] {
+  guard self.row * self.col > 0 else {
+    return Err(
+      LinearAlgebraError::empty_matrix(
+        "Matrix::mean requires at least one element",
+      ),
+    )
+  }
+  Ok(self.unchecked_mean())
+}
+
+///|
+pub fn[T : Field] Matrix::unchecked_mean(self : Matrix[T]) -> T {
   guard self.row * self.col > 0 else {
     abort("Matrix::mean requires at least one element")
   }
@@ -2486,11 +2588,25 @@ pub fn[T : Field] Matrix::mean(self : Matrix[T]) -> T {
 /// inspect(m.variance(), content="1.25")
 /// ```
 ///
-pub fn[T : Field] Matrix::variance(self : Matrix[T]) -> T {
+pub fn[T : Field] Matrix::variance(
+  self : Matrix[T],
+) -> Result[T, LinearAlgebraError] {
+  guard self.row * self.col > 0 else {
+    return Err(
+      LinearAlgebraError::empty_matrix(
+        "Matrix::variance requires at least one element",
+      ),
+    )
+  }
+  Ok(self.unchecked_variance())
+}
+
+///|
+pub fn[T : Field] Matrix::unchecked_variance(self : Matrix[T]) -> T {
   guard self.row * self.col > 0 else {
     abort("Matrix::variance requires at least one element")
   }
-  let m = self.mean()
+  let m = self.unchecked_mean()
   let (sum_sq_diff, count) = self.data
     .iter()
     .fold(init=(T::zero(), T::zero()), fn(acc, x) {
@@ -2519,11 +2635,25 @@ pub fn[T : Field] Matrix::variance(self : Matrix[T]) -> T {
 /// let std = m.std_dev()
 /// ```
 ///
-pub fn[T : Field + Sqrt] Matrix::std_dev(self : Matrix[T]) -> T {
+pub fn[T : Field + Sqrt] Matrix::std_dev(
+  self : Matrix[T],
+) -> Result[T, LinearAlgebraError] {
+  guard self.row * self.col > 0 else {
+    return Err(
+      LinearAlgebraError::empty_matrix(
+        "Matrix::std_dev requires at least one element",
+      ),
+    )
+  }
+  Ok(self.unchecked_std_dev())
+}
+
+///|
+pub fn[T : Field + Sqrt] Matrix::unchecked_std_dev(self : Matrix[T]) -> T {
   guard self.row * self.col > 0 else {
     abort("Matrix::std_dev requires at least one element")
   }
-  Sqrt::sqrt(self.variance())
+  Sqrt::sqrt(self.unchecked_variance())
 }
 
 ///|
@@ -2727,8 +2857,16 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::is_positive_definit
 pub fn[T : Semiring] Matrix::matrix_power(
   self : Matrix[T],
   n : Int,
-) -> Matrix[T] {
+) -> Result[Matrix[T], LinearAlgebraError] {
   self.pow(n)
+}
+
+///|
+pub fn[T : Semiring] Matrix::unchecked_matrix_power(
+  self : Matrix[T],
+  n : Int,
+) -> Matrix[T] {
+  self.unchecked_pow(n)
 }
 
 ///|
@@ -2772,7 +2910,17 @@ pub fn[T : AddMonoid + Mul + Sqrt] Matrix::frobenius_norm(
 /// inspect(m.max_element(), content="8")
 /// ```
 ///
-pub fn[T : Compare] Matrix::max_element(self : Matrix[T]) -> T {
+pub fn[T : Compare] Matrix::max_element(
+  self : Matrix[T],
+) -> Result[T, LinearAlgebraError] {
+  if self.data.length() == 0 {
+    return Err(LinearAlgebraError::empty_matrix("Empty matrix"))
+  }
+  Ok(self.unchecked_max_element())
+}
+
+///|
+pub fn[T : Compare] Matrix::unchecked_max_element(self : Matrix[T]) -> T {
   if self.data.length() == 0 {
     abort("Empty matrix")
   }
@@ -2801,7 +2949,17 @@ pub fn[T : Compare] Matrix::max_element(self : Matrix[T]) -> T {
 /// inspect(m.min_element(), content="1")
 /// ```
 ///
-pub fn[T : Compare] Matrix::min_element(self : Matrix[T]) -> T {
+pub fn[T : Compare] Matrix::min_element(
+  self : Matrix[T],
+) -> Result[T, LinearAlgebraError] {
+  if self.data.length() == 0 {
+    return Err(LinearAlgebraError::empty_matrix("Empty matrix"))
+  }
+  Ok(self.unchecked_min_element())
+}
+
+///|
+pub fn[T : Compare] Matrix::unchecked_min_element(self : Matrix[T]) -> T {
   if self.data.length() == 0 {
     abort("Empty matrix")
   }

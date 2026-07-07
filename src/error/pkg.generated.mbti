@@ -1,0 +1,60 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/linear-algebra/error"
+
+import {
+  "Luna-Flow/arithmetic",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct LinearAlgebraError {
+  kind : LinearAlgebraErrorKind
+  message : String
+} derive(Eq)
+pub fn LinearAlgebraError::arithmetic_failure(@arithmetic.ArithmeticError) -> Self
+pub fn LinearAlgebraError::dimension_mismatch(String) -> Self
+pub fn LinearAlgebraError::empty_matrix(String) -> Self
+pub fn LinearAlgebraError::index_out_of_bounds(String) -> Self
+pub fn LinearAlgebraError::invalid_length(String) -> Self
+pub fn LinearAlgebraError::is_arithmetic_failure(Self) -> Bool
+pub fn LinearAlgebraError::is_dimension_mismatch(Self) -> Bool
+pub fn LinearAlgebraError::is_empty_matrix(Self) -> Bool
+pub fn LinearAlgebraError::is_index_out_of_bounds(Self) -> Bool
+pub fn LinearAlgebraError::is_invalid_length(Self) -> Bool
+pub fn LinearAlgebraError::is_negative_dimension(Self) -> Bool
+pub fn LinearAlgebraError::is_negative_exponent(Self) -> Bool
+pub fn LinearAlgebraError::is_non_convergence(Self) -> Bool
+pub fn LinearAlgebraError::is_non_square_matrix(Self) -> Bool
+pub fn LinearAlgebraError::is_ragged_rows(Self) -> Bool
+pub fn LinearAlgebraError::is_singular_matrix(Self) -> Bool
+pub fn LinearAlgebraError::is_unsupported_backend(Self) -> Bool
+pub fn LinearAlgebraError::negative_dimension(String) -> Self
+pub fn LinearAlgebraError::negative_exponent(String) -> Self
+pub fn LinearAlgebraError::non_convergence(String) -> Self
+pub fn LinearAlgebraError::non_square_matrix(String) -> Self
+pub fn LinearAlgebraError::ragged_rows(String) -> Self
+pub fn LinearAlgebraError::singular_matrix(String) -> Self
+pub fn LinearAlgebraError::unsupported_backend(String) -> Self
+
+pub enum LinearAlgebraErrorKind {
+  DimensionMismatch
+  IndexOutOfBounds
+  NegativeDimension
+  InvalidLength
+  RaggedRows
+  NonSquareMatrix
+  NegativeExponent
+  EmptyMatrix
+  SingularMatrix
+  NonConvergence
+  UnsupportedBackend
+  ArithmeticFailure(@arithmetic.ArithmeticError)
+} derive(Eq)
+
+// Type aliases
+
+// Traits
+

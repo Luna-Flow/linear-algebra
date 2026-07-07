@@ -26,7 +26,10 @@ test "matrix core operations stay aligned" {
     mutable_matrix.transpose().to_array(),
     content=to_string(imm.transpose().to_array()),
   )
-  inspect(mutable_matrix.trace(), content=imm.trace().to_string())
+  inspect(
+    mutable_matrix.trace().unwrap(),
+    content=imm.trace().unwrap().to_string(),
+  )
   inspect(mutable_matrix.is_square(), content=imm.is_square().to_string())
   inspect(mutable_matrix.null(), content=imm.null().to_string())
 }
@@ -118,11 +121,9 @@ test "shared same_index_swap stays aligned" {
   let mutable_matrix = @mutable.Matrix::from_2d_array([[1, 2], [3, 4]])
 
   debug_inspect(imm.swap_rows(1, 1).to_array(), content="[1, 2, 3, 4]")
-  {
-    let copy = mutable_matrix.copy()
-    copy.swap_rows(1, 1)
-    debug_inspect(copy.to_array(), content="[1, 2, 3, 4]")
-  }
+  let copy = mutable_matrix.copy()
+  copy.swap_rows(1, 1)
+  debug_inspect(copy.to_array(), content="[1, 2, 3, 4]")
 }
 
 ///|
@@ -191,8 +192,14 @@ test "trace and multiplication associativity stay aligned" {
     (mutable_a * mutable_b * mutable_c).to_array(),
     content=to_string((mutable_a * (mutable_b * mutable_c)).to_array()),
   )
-  inspect(imm_a.trace(), content=imm_a.transpose().trace().to_string())
-  inspect(mutable_a.trace(), content=mutable_a.transpose().trace().to_string())
+  inspect(
+    imm_a.trace().unwrap(),
+    content=imm_a.transpose().trace().unwrap().to_string(),
+  )
+  inspect(
+    mutable_a.trace().unwrap(),
+    content=mutable_a.transpose().trace().unwrap().to_string(),
+  )
 }
 
 ///|
@@ -283,8 +290,11 @@ test "immut and fn_matrix stay aligned on core laws" {
   inspect(fn_a.to_string(), content=dense_a.to_string())
   inspect((fn_a + fn_b).to_string(), content=(dense_a + dense_b).to_string())
   inspect(fn_a.transpose().to_string(), content=dense_a.transpose().to_string())
-  inspect(fn_a.determinant(), content=dense_a.determinant().to_string())
-  inspect(fn_a.pow(3).to_string(), content=dense_a.pow(3).to_string())
+  inspect(
+    fn_a.determinant(),
+    content=dense_a.determinant().unwrap().to_string(),
+  )
+  inspect(fn_a.pow(3).to_string(), content=dense_a.pow(3).unwrap().to_string())
 }
 
 ///|
@@ -303,9 +313,9 @@ test "all matrix implementations stay aligned under random small inputs" {
     (dense_a * dense_b).to_array() == (mut_a * mut_b).to_array() &&
     dense_a.transpose().to_array() == mut_a.transpose().to_array() &&
     dense_a.transpose().to_string() == fn_a.transpose().to_string() &&
-    dense_a.pow(2).to_array() == mut_a.pow(2).to_array() &&
-    dense_a.pow(2).to_string() == fn_a.pow(2).to_string() &&
-    dense_a.determinant() == fn_a.determinant()
+    dense_a.pow(2).unwrap().to_array() == mut_a.pow(2).unwrap().to_array() &&
+    dense_a.pow(2).unwrap().to_string() == fn_a.pow(2).to_string() &&
+    dense_a.determinant().unwrap() == fn_a.determinant()
   }
 
   quick_check_fn(prop)

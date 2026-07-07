@@ -1,0 +1,6 @@
+import {
+  "Luna-Flow/luna-generic" @generic,
+  "Luna-Flow/linear-algebra/algebra",
+  "Luna-Flow/linear-algebra/immut",
+  "Luna-Flow/linear-algebra/mutable",
+}

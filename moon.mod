@@ -1,12 +1,12 @@
 name = "Luna-Flow/linear-algebra"
 
-version = "0.3.0"
+version = "0.4.0"
 
 import {
+  "Luna-Flow/arithmetic@0.2.2",
   "Luna-Flow/luna-generic@0.3.3",
   "moonbitlang/quickcheck@0.14.0",
-  "moonbitlang/x@0.4.43",
-  "Luna-Flow/arithmetic@0.2.1",
+  "moonbitlang/x@0.4.46",
 }
 
 readme = "README.md"
@@ -19,6 +19,4 @@ keywords = [ "linear-algebra", "math" ]
 
 description = "Mutable and immutable matrix and vector libraries for MoonBit, with core linear algebra operations and decompositions."
 
-options(
-  source: "src",
-)
+source = "src"

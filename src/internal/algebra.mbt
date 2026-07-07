@@ -4,21 +4,89 @@ pub(open) trait HasShape {
 }
 
 ///|
-pub fn[M : HasShape] ensure_square(matrix : M) -> Unit {
+pub fn[M : HasShape] ensure_square_checked(
+  matrix : M,
+) -> Result[Unit, @la_error.LinearAlgebraError] {
   let (row, col) = HasShape::shape(matrix)
-  guard row == col else { abort("Matrix must be square") }
+  guard row == col else {
+    return Err(
+      @la_error.LinearAlgebraError::non_square_matrix("Matrix must be square"),
+    )
+  }
+  Ok(())
+}
+
+///|
+pub fn[M : HasShape] ensure_square(matrix : M) -> Unit {
+  match ensure_square_checked(matrix) {
+    Ok(_) => ()
+    Err(_) => abort("Matrix must be square")
+  }
+}
+
+///|
+pub fn[M : HasShape] ensure_row_in_bounds_checked(
+  matrix : M,
+  row : Int,
+) -> Result[Unit, @la_error.LinearAlgebraError] {
+  let (rows, _) = HasShape::shape(matrix)
+  guard row >= 0 && row < rows else {
+    return Err(
+      @la_error.LinearAlgebraError::index_out_of_bounds(
+        "Row index out of bounds",
+      ),
+    )
+  }
+  Ok(())
 }
 
 ///|
 pub fn[M : HasShape] ensure_row_in_bounds(matrix : M, row : Int) -> Unit {
-  let (rows, _) = HasShape::shape(matrix)
-  guard row >= 0 && row < rows else { abort("Row index out of bounds") }
+  match ensure_row_in_bounds_checked(matrix, row) {
+    Ok(_) => ()
+    Err(_) => abort("Row index out of bounds")
+  }
+}
+
+///|
+pub fn[M : HasShape] ensure_col_in_bounds_checked(
+  matrix : M,
+  col : Int,
+) -> Result[Unit, @la_error.LinearAlgebraError] {
+  let (_, cols) = HasShape::shape(matrix)
+  guard col >= 0 && col < cols else {
+    return Err(
+      @la_error.LinearAlgebraError::index_out_of_bounds(
+        "Column index out of bounds",
+      ),
+    )
+  }
+  Ok(())
 }
 
 ///|
 pub fn[M : HasShape] ensure_col_in_bounds(matrix : M, col : Int) -> Unit {
-  let (_, cols) = HasShape::shape(matrix)
-  guard col >= 0 && col < cols else { abort("Column index out of bounds") }
+  match ensure_col_in_bounds_checked(matrix, col) {
+    Ok(_) => ()
+    Err(_) => abort("Column index out of bounds")
+  }
+}
+
+///|
+pub fn[M : HasShape] ensure_index_in_bounds_checked(
+  matrix : M,
+  row : Int,
+  col : Int,
+) -> Result[Unit, @la_error.LinearAlgebraError] {
+  match ensure_row_in_bounds_checked(matrix, row) {
+    Ok(_) => ()
+    Err(err) => return Err(err)
+  }
+  match ensure_col_in_bounds_checked(matrix, col) {
+    Ok(_) => ()
+    Err(err) => return Err(err)
+  }
+  Ok(())
 }
 
 ///|
@@ -32,17 +100,49 @@ pub fn[M : HasShape] ensure_index_in_bounds(
 }
 
 ///|
-pub fn[A : HasShape, B : HasShape] ensure_same_shape(a : A, b : B) -> Unit {
+pub fn[A : HasShape, B : HasShape] ensure_same_shape_checked(
+  a : A,
+  b : B,
+) -> Result[Unit, @la_error.LinearAlgebraError] {
   guard HasShape::shape(a) == HasShape::shape(b) else {
-    abort("Matrix dimensions do not match")
+    return Err(
+      @la_error.LinearAlgebraError::dimension_mismatch(
+        "Matrix dimensions do not match",
+      ),
+    )
+  }
+  Ok(())
+}
+
+///|
+pub fn[A : HasShape, B : HasShape] ensure_same_shape(a : A, b : B) -> Unit {
+  match ensure_same_shape_checked(a, b) {
+    Ok(_) => ()
+    Err(_) => abort("Matrix dimensions do not match")
   }
 }
 
 ///|
-pub fn[A : HasShape, B : HasShape] ensure_mul_compatible(a : A, b : B) -> Unit {
+pub fn[A : HasShape, B : HasShape] ensure_mul_compatible_checked(
+  a : A,
+  b : B,
+) -> Result[Unit, @la_error.LinearAlgebraError] {
   let (_, a_cols) = HasShape::shape(a)
   let (b_rows, _) = HasShape::shape(b)
   guard a_cols == b_rows else {
-    abort("Matrix dimensions are not compatible for multiplication")
+    return Err(
+      @la_error.LinearAlgebraError::dimension_mismatch(
+        "Matrix dimensions are not compatible for multiplication",
+      ),
+    )
+  }
+  Ok(())
+}
+
+///|
+pub fn[A : HasShape, B : HasShape] ensure_mul_compatible(a : A, b : B) -> Unit {
+  match ensure_mul_compatible_checked(a, b) {
+    Ok(_) => ()
+    Err(_) => abort("Matrix dimensions are not compatible for multiplication")
   }
 }

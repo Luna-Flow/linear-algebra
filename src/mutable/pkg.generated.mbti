@@ -3,6 +3,7 @@ package "Luna-Flow/linear-algebra/mutable"
 
 import {
   "Luna-Flow/arithmetic",
+  "Luna-Flow/linear-algebra/error",
   "Luna-Flow/linear-algebra/internal",
   "Luna-Flow/luna-generic",
   "moonbitlang/core/debug",
@@ -48,7 +49,7 @@ pub fn[T] Matrix::col_to_array(Self[T], Int) -> Array[T]
 pub fn[T] Matrix::col_to_vector(Self[T], Int) -> Vector[T]
 pub fn[T] Matrix::col_view(Self[T], Int) -> ColView[T]
 pub fn[T] Matrix::copy(Self[T]) -> Self[T]
-pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::determinant(Self[T]) -> T
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::determinant(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T] Matrix::each(Self[T], (T) -> Unit) -> Unit
 pub fn[T] Matrix::each_col(Self[T], Int, (T) -> Unit) -> Unit
 pub fn[T] Matrix::each_row(Self[T], Int, (T) -> Unit) -> Unit
@@ -62,8 +63,8 @@ pub fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
 pub fn[T] Matrix::from_array(Int, Int, Array[T]) -> Self[T]
 pub fn[T] Matrix::get(Self[T], Int, Int) -> T
 pub fn[T] Matrix::horizontal_combine(Self[T], Self[T]) -> Self[T]
-pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::inverse(Self[T]) -> Self[T]?
-pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::is_invertible(Self[T]) -> Bool
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::inverse(Self[T]) -> Result[Self[T], @error.LinearAlgebraError]
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::is_invertible(Self[T]) -> Result[Bool, @error.LinearAlgebraError]
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + @arithmetic.Sqrt + Tolerance] Matrix::is_positive_definite(Self[T]) -> Bool
 pub fn[T] Matrix::is_square(Self[T]) -> Bool
 pub fn[T : Compare + @luna-generic.Num + Tolerance] Matrix::is_symmetric(Self[T]) -> Bool
@@ -79,15 +80,15 @@ pub fn[T] Matrix::map_inplace(Self[T], (T) -> T) -> Unit
 #alias(map_row_in_place, deprecated)
 pub fn[T] Matrix::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
 pub fn[T, U] Matrix::mapi(Self[T], (Int, Int, T) -> U) -> Self[U]
-pub fn[T : @luna-generic.Semiring] Matrix::matrix_power(Self[T], Int) -> Self[T]
-pub fn[T : Compare] Matrix::max_element(Self[T]) -> T
-pub fn[T : @luna-generic.Field] Matrix::mean(Self[T]) -> T
-pub fn[T : Compare] Matrix::min_element(Self[T]) -> T
-pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::mul_vec(Self[T], Vector[T]) -> Vector[T]
+pub fn[T : @luna-generic.Semiring] Matrix::matrix_power(Self[T], Int) -> Result[Self[T], @error.LinearAlgebraError]
+pub fn[T : Compare] Matrix::max_element(Self[T]) -> Result[T, @error.LinearAlgebraError]
+pub fn[T : @luna-generic.Field] Matrix::mean(Self[T]) -> Result[T, @error.LinearAlgebraError]
+pub fn[T : Compare] Matrix::min_element(Self[T]) -> Result[T, @error.LinearAlgebraError]
+pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::mul_vec(Self[T], Vector[T]) -> Result[Vector[T], @error.LinearAlgebraError]
 pub fn[T] Matrix::new(Int, Int, T) -> Self[T]
 pub fn[T : Compare + @luna-generic.Zero] Matrix::null(Self[T]) -> Bool
 pub fn[T] Matrix::op_get(Self[T], Int) -> Lens[T]
-pub fn[T : @luna-generic.Semiring] Matrix::pow(Self[T], Int) -> Self[T]
+pub fn[T : @luna-generic.Semiring] Matrix::pow(Self[T], Int) -> Result[Self[T], @error.LinearAlgebraError]
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::power_method(Self[T], Int) -> (T, Vector[T])?
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::rank(Self[T]) -> Int
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::reduce_row_elimination(Self[T]) -> Self[T]
@@ -97,16 +98,28 @@ pub fn[T] Matrix::row_to_vector(Self[T], Int) -> Vector[T]
 pub fn[T] Matrix::row_view(Self[T], Int) -> RowView[T]
 pub fn[T : Mul] Matrix::scale(Self[T], T) -> Self[T]
 pub fn[T] Matrix::set(Self[T], Int, Int, T) -> Unit
-pub fn[T : @luna-generic.Field + @arithmetic.Sqrt] Matrix::std_dev(Self[T]) -> T
+pub fn[T : @luna-generic.Field + @arithmetic.Sqrt] Matrix::std_dev(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T] Matrix::swap_cols(Self[T], Int, Int) -> Unit
 pub fn[T] Matrix::swap_rows(Self[T], Int, Int) -> Unit
 pub fn[T] Matrix::to_2d_array(Self[T]) -> Array[Array[T]]
 pub fn[T] Matrix::to_array(Self[T]) -> Array[T]
 pub fn[T] Matrix::to_transpose(Self[T]) -> Transpose[T]
 pub fn[T] Matrix::to_vector(Self[T]) -> Vector[T]
-pub fn[T : @luna-generic.AddMonoid] Matrix::trace(Self[T]) -> T
+pub fn[T : @luna-generic.AddMonoid] Matrix::trace(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T] Matrix::transpose(Self[T]) -> Self[T]
-pub fn[T : @luna-generic.Field] Matrix::variance(Self[T]) -> T
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::unchecked_determinant(Self[T]) -> T
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::unchecked_inverse(Self[T]) -> Self[T]?
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::unchecked_is_invertible(Self[T]) -> Bool
+pub fn[T : @luna-generic.Semiring] Matrix::unchecked_matrix_power(Self[T], Int) -> Self[T]
+pub fn[T : Compare] Matrix::unchecked_max_element(Self[T]) -> T
+pub fn[T : @luna-generic.Field] Matrix::unchecked_mean(Self[T]) -> T
+pub fn[T : Compare] Matrix::unchecked_min_element(Self[T]) -> T
+pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::unchecked_mul_vec(Self[T], Vector[T]) -> Vector[T]
+pub fn[T : @luna-generic.Semiring] Matrix::unchecked_pow(Self[T], Int) -> Self[T]
+pub fn[T : @luna-generic.Field + @arithmetic.Sqrt] Matrix::unchecked_std_dev(Self[T]) -> T
+pub fn[T : @luna-generic.AddMonoid] Matrix::unchecked_trace(Self[T]) -> T
+pub fn[T : @luna-generic.Field] Matrix::unchecked_variance(Self[T]) -> T
+pub fn[T : @luna-generic.Field] Matrix::variance(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T] Matrix::vertical_combine(Self[T], Self[T]) -> Self[T]
 pub impl[T] @internal.HasShape for Matrix[T]
 pub impl[T : Add] Add for Matrix[T]

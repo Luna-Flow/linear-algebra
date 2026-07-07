@@ -7,7 +7,7 @@ import {
 
 import {
   "Luna-Flow/linear-algebra/perf_support" @support,
-  "moonbitlang/x/fs" @fs,
+  "moonbitlang/x/fs",
 } for "wbtest"
 
 options(

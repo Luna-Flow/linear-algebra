@@ -20,4 +20,7 @@ using @qc_core {trait Arbitrary}
 using @debug {trait Debug, type Repr}
 
 ///|
-using @internal {trait HasShape}
+using @la_error {type LinearAlgebraError}
+
+///|
+using @internal {trait HasShape, ensure_square_checked}

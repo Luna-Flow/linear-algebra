@@ -1,12 +1,8 @@
 ///|
-/// Define a new type called Matrix, which is a 2D array of 
-/// elements of type T and have derived the Eq trait.
-/// 
-/// Parameters:
-/// - `row`: The number of rows in the matrix.
-/// - `col`: The number of columns in the matrix.
-/// - `data`: The data of the matrix, which is stored as an immutable vector.
-/// 
+/// Immutable row-major matrix storage.
+///
+/// `row` and `col` store the shape. `data` stores elements in row-major order
+/// using the package's immutable vector backing type.
 struct Matrix[T] {
   row : Int
   col : Int
@@ -165,12 +161,8 @@ pub impl[T : Show] Show for Matrix[T] with fn output(self, logger) {
 }
 
 ///|
-/// Apply `map` method to the `Matrix` type.
-/// 
-/// Parameters
-/// - `self`: The matrix to apply the map method.
-/// - `f`: The function to apply to each element of the matrix.
-/// 
+/// Returns a matrix obtained by applying `f` to every element.
+///
 /// Example
 /// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[2, 3, 4], [1, 2, 3]])
@@ -186,12 +178,10 @@ pub fn[T, U] Matrix::map(self : Matrix[T], f : (T) -> U) -> Matrix[U] {
 }
 
 ///|
-/// Apply `mapi` method to the `Matrix` type.
-/// 
-/// Parameters
-/// - `self`: The matrix to apply the map method.
-/// - `f`: The function to apply to each element of the matrix. The function takes the row index, column index and the element.
-/// 
+/// Returns a matrix obtained by applying `f` to each indexed element.
+///
+/// The callback receives the row index, column index, and element value.
+///
 /// Example
 /// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
@@ -214,12 +204,9 @@ pub fn[T, U] Matrix::mapi(
 }
 
 ///|
-/// Create a new `Matrix` type.
-/// 
-/// Parameters
-/// - `row`: The number of rows in the matrix.
-/// - `col`: The number of columns in the matrix.
-/// - `f`: The function to apply to each element of the matrix.
+/// Builds a matrix from a shape and an element generator.
+///
+/// The generator receives `(row, col)` indices. Negative dimensions abort.
 ///
 /// Example
 /// ```moonbit nocheck
@@ -241,13 +228,9 @@ pub fn[T] Matrix::make(row : Int, col : Int, f : (Int, Int) -> T) -> Matrix[T] {
 }
 
 ///|
-/// Create a new `Matrix` type with all elements initialized 
-/// to a given value.
-/// 
-/// Parameters
-/// - `row`: The number of rows in the matrix.
-/// - `col`: The number of columns in the matrix.
-/// - `elem`: The value to initialize the matrix with.
+/// Builds a matrix whose elements are all initialized to `elem`.
+///
+/// Negative dimensions abort.
 ///
 /// Example
 /// ```moonbit nocheck
@@ -263,11 +246,10 @@ pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
 }
 
 ///|
-/// Shift the `Array[Array[T]]` type to the `Matrix` type.
-/// 
-/// Parameters
-/// - `arr`: The array to shift to the `Matrix` type.
-/// 
+/// Builds a matrix from rectangular nested arrays.
+///
+/// Empty input produces a `0x0` matrix. Ragged rows abort.
+///
 /// Example
 /// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[2, 3, 4], [1, 2, 3]])
@@ -418,6 +400,25 @@ pub fn[T] Matrix::set(
 /// )
 /// ```
 pub impl[T : Mul + Add + Zero] Mul for Matrix[T] with fn mul(
+  self : Matrix[T],
+  other : Matrix[T],
+) -> Matrix[T] {
+  self.unchecked_matmul(other)
+}
+
+///|
+pub fn[T : Mul + Add + Zero] Matrix::matmul(
+  self : Matrix[T],
+  other : Matrix[T],
+) -> Result[Matrix[T], LinearAlgebraError] {
+  match ensure_mul_compatible_checked(self, other) {
+    Ok(_) => Ok(self.unchecked_matmul(other))
+    Err(err) => Err(err)
+  }
+}
+
+///|
+pub fn[T : Mul + Add + Zero] Matrix::unchecked_matmul(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
@@ -645,12 +646,20 @@ pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
 /// Example
 /// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
-/// inspect(m.trace(), content="5")
+/// inspect(m.trace().unwrap(), content="5")
 /// ```
-pub fn[T : Add + Zero] Matrix::trace(self : Matrix[T]) -> T {
-  guard self.is_square() else {
-    abort("Matrix must be square to calculate trace")
+pub fn[T : Add + Zero] Matrix::trace(
+  self : Matrix[T],
+) -> Result[T, LinearAlgebraError] {
+  match ensure_square_checked(self) {
+    Ok(_) => Ok(self.unchecked_trace())
+    Err(err) => Err(err)
   }
+}
+
+///|
+pub fn[T : Add + Zero] Matrix::unchecked_trace(self : Matrix[T]) -> T {
+  ensure_square(self)
   let n = self.row
   let mut sum = T::zero()
   for i in 0..<n {
@@ -849,9 +858,21 @@ fn[T] swap_dense_rows(
 /// Example
 /// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
-/// inspect(m.determinant(), content="-2")
+/// inspect(m.determinant().unwrap(), content="-2")
 /// ```
-pub fn[T : Compare + Num + Div] Matrix::determinant(self : Matrix[T]) -> T {
+pub fn[T : Compare + Num + Div] Matrix::determinant(
+  self : Matrix[T],
+) -> Result[T, LinearAlgebraError] {
+  match ensure_square_checked(self) {
+    Ok(_) => Ok(self.unchecked_determinant())
+    Err(err) => Err(err)
+  }
+}
+
+///|
+pub fn[T : Compare + Num + Div] Matrix::unchecked_determinant(
+  self : Matrix[T],
+) -> T {
   let n = self.row
   ensure_square(self)
   match n {
@@ -929,16 +950,36 @@ pub fn[T : Compare + Num + Div] Matrix::determinant(self : Matrix[T]) -> T {
 /// Example
 /// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
-/// let m1 = m.pow(2)
+/// let m1 = m.pow(2).unwrap()
 /// inspect(m1, content=
 ///   #||7, 10|
 ///   #||15, 22|
 /// )
 /// ```
-pub fn[T : Semiring] Matrix::pow(self : Matrix[T], power : Int) -> Matrix[T] {
-  guard self.is_square() else {
-    abort("Matrix must be square to calculate powers")
+pub fn[T : Semiring] Matrix::pow(
+  self : Matrix[T],
+  power : Int,
+) -> Result[Matrix[T], LinearAlgebraError] {
+  match ensure_square_checked(self) {
+    Ok(_) => ()
+    Err(err) => return Err(err)
   }
+  guard power >= 0 else {
+    return Err(
+      LinearAlgebraError::negative_exponent(
+        "Matrix::pow requires a non-negative exponent",
+      ),
+    )
+  }
+  Ok(self.unchecked_pow(power))
+}
+
+///|
+pub fn[T : Semiring] Matrix::unchecked_pow(
+  self : Matrix[T],
+  power : Int,
+) -> Matrix[T] {
+  ensure_square(self)
   guard power >= 0 else {
     abort("Matrix::pow requires a non-negative exponent")
   }

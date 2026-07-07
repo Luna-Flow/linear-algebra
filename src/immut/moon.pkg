@@ -3,7 +3,8 @@ import {
   "Luna-Flow/luna-generic" @lg,
   "moonbitlang/core/quickcheck" @qc_core,
   "moonbitlang/core/immut/vector" @core_vector,
-  "Luna-Flow/linear-algebra/internal" @internal,
+  "Luna-Flow/linear-algebra/error" @la_error,
+  "Luna-Flow/linear-algebra/internal",
 }
 
 import {

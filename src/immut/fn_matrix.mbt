@@ -701,7 +701,7 @@ pub fn[T, U, W] MatrixFn::zip_with(
 pub fn[T : Compare + Num + Div] MatrixFn::determinant(self : MatrixFn[T]) -> T {
   ensure_square(self)
   let (row, col) = self.grid
-  Matrix::make(row, col, fn(i, j) { (self.data)(i, j) }).determinant()
+  Matrix::make(row, col, fn(i, j) { (self.data)(i, j) }).unchecked_determinant()
 }
 
 ///|

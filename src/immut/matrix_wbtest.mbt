@@ -226,7 +226,7 @@ test "swap_matrix" {
 /// * Constant addition: `m4.add_constant(10)` adds 10 to all elements
 /// * Determinant calculation: Tests determinant computation for various
 ///   matrices
-/// * Matrix exponentiation: `Matrix::make(3, 3, fn(i, _) -> Int { i }).pow(10)`
+/// * Matrix exponentiation: `Matrix::make(3, 3, fn(i, _) -> Int { i }).pow(10).unwrap()`
 ///   creates a special matrix and raises it to the 10th power
 ///
 /// Expected results are verified using `inspect` statements that compare the
@@ -283,9 +283,9 @@ test {
       #||13, 15|
     ),
   )
-  inspect(m4.determinant(), content="4")
-  inspect(m1.determinant(), content="-2")
-  inspect(m5.determinant(), content="1")
+  inspect(m4.determinant().unwrap(), content="4")
+  inspect(m1.determinant().unwrap(), content="-2")
+  inspect(m5.determinant().unwrap(), content="1")
   let toeplitz = Matrix::from_2d_array([
     [2, -1, 0, 0, 0],
     [-1, 2, -1, 0, 0],
@@ -293,8 +293,8 @@ test {
     [0, 0, -1, 2, -1],
     [0, 0, 0, -1, 2],
   ])
-  inspect(toeplitz.determinant(), content="6")
-  let m = Matrix::make(3, 3, fn(i, _) -> Int { i }).pow(10)
+  inspect(toeplitz.determinant().unwrap(), content="6")
+  let m = Matrix::make(3, 3, fn(i, _) -> Int { i }).pow(10).unwrap()
   inspect(
     m,
     content=(
@@ -308,9 +308,9 @@ test {
 ///|
 test "matrix_trace" {
   let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-  inspect(m.trace(), content="15")
+  inspect(m.trace().unwrap(), content="15")
   let m2 = Matrix::from_2d_array([[1, 2], [3, 4]])
-  inspect(m2.trace(), content="5")
+  inspect(m2.trace().unwrap(), content="5")
 }
 
 ///|
@@ -514,7 +514,7 @@ test "matrix_empty_edge_cases" {
   inspect(m.transpose().row(), content="0")
   inspect(m.transpose().col(), content="0")
   inspect(m.to_array().length(), content="0")
-  inspect(m.determinant(), content="1")
+  inspect(m.determinant().unwrap(), content="1")
   let zero_col = Matrix::new(2, 0, 0.0)
   inspect(zero_col.row(), content="2")
   inspect(zero_col.col(), content="0")
@@ -526,7 +526,7 @@ test "matrix_empty_edge_cases" {
 ///|
 test "matrix_1x1_edge_cases" {
   let m = Matrix::from_2d_array([[2.0]])
-  inspect(m.determinant(), content="2")
+  inspect(m.determinant().unwrap(), content="2")
   inspect(m.transpose()[0][0], content="2")
   inspect(m.is_square(), content="true")
 }
@@ -615,7 +615,7 @@ test "transpose_and_trace_laws/property" {
     let b = small_square_matrix(b00, b01, b10, b11)
     (a + b).transpose() == a.transpose() + b.transpose() &&
     (a * b).transpose() == b.transpose() * a.transpose() &&
-    a.transpose().trace() == a.trace()
+    a.transpose().trace().unwrap() == a.trace().unwrap()
   }
 
   @qc.quick_check_fn(prop)
@@ -633,37 +633,37 @@ test "adjoint matches transpose for real matrices" {
 ///|
 test "determinant_and_pow_laws" {
   let upper = Matrix::from_2d_array([[2, 3, 5], [0, -7, 11], [0, 0, 13]])
-  inspect(upper.determinant(), content="-182")
+  inspect(upper.determinant().unwrap(), content="-182")
 
   let base = Matrix::from_2d_array([[2, 1], [1, 1]])
-  inspect(base.pow(0), content="|1, 0|\n|0, 1|")
-  inspect(base.pow(1), content="|2, 1|\n|1, 1|")
+  inspect(base.pow(0).unwrap(), content="|1, 0|\n|0, 1|")
+  inspect(base.pow(1).unwrap(), content="|2, 1|\n|1, 1|")
 }
 
 ///|
 test "panic trace/non_square" {
   let non_square = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-  ignore(non_square.trace())
+  ignore(non_square.trace().unwrap())
 }
 
 ///|
 test "panic pow/non_square" {
   let non_square = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-  ignore(non_square.pow(2))
+  ignore(non_square.pow(2).unwrap())
 }
 
 ///|
 test "panic pow/negative_exponent" {
   let square = Matrix::from_2d_array([[1, 2], [3, 4]])
-  ignore(square.pow(-1))
+  ignore(square.pow(-1).unwrap())
 }
 
 ///|
 test "determinant_row_swap_sign_change" {
   let base = Matrix::from_2d_array([[1, 2, 3], [0, 4, 5], [1, 0, 6]])
   let swapped = base.swap_rows(0, 1)
-  inspect(swapped.determinant(), content="-22")
-  inspect(base.determinant(), content="22")
+  inspect(swapped.determinant().unwrap(), content="-22")
+  inspect(base.determinant().unwrap(), content="22")
 }
 
 ///|

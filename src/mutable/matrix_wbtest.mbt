@@ -412,27 +412,27 @@ test "rank of matrix 2" {
 test "trace of matrix" {
   // Test 2x2 matrix
   let m1 = Matrix::from_2d_array([[1, 2], [3, 4]])
-  let trace1 = m1.trace()
+  let trace1 = m1.trace().unwrap()
   inspect(trace1, content="5") // 1 + 4 = 5
 
   // Test 3x3 matrix
   let m2 = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-  let trace2 = m2.trace()
+  let trace2 = m2.trace().unwrap()
   inspect(trace2, content="15") // 1 + 5 + 9 = 15
 
   // Test identity matrix
   let id : Matrix[Int] = identity(3)
-  let trace_id = id.trace()
+  let trace_id = id.trace().unwrap()
   inspect(trace_id, content="3") // 1 + 1 + 1 = 3
 
   // Test zero matrix
   let zero = Matrix::new(2, 2, 0)
-  let trace_zero = zero.trace()
+  let trace_zero = zero.trace().unwrap()
   inspect(trace_zero, content="0") // 0 + 0 = 0
 
   // Test with floating point numbers
   let m3 = Matrix::from_2d_array([[1.5, 2.0], [3.0, 4.5]])
-  let trace3 = m3.trace()
+  let trace3 = m3.trace().unwrap()
   inspect(trace3, content="6") // 1.5 + 4.5 = 6.0
 }
 
@@ -445,7 +445,7 @@ test "trace with different types" {
   ) {
     IntegralHomomorphism::from_integral(n)
   })
-  let trace_float = m_float.trace()
+  let trace_float = m_float.trace().unwrap()
   inspect(trace_float, content="5")
 
   // Test with Double type  
@@ -454,7 +454,7 @@ test "trace with different types" {
   ) {
     IntegralHomomorphism::from_integral(n)
   })
-  let trace_double = m_double.trace()
+  let trace_double = m_double.trace().unwrap()
   inspect(trace_double, content="5")
 }
 
@@ -575,7 +575,7 @@ test "eigenvector verification" {
   // Verify for the first eigenvector
   let v1 = eigenvecs.col_to_vector(0)
   let lambda1 = eigenvals[0]
-  let m_v1 = m.mul_vec(v1)
+  let m_v1 = m.mul_vec(v1).unwrap()
   let lambda1_v1 = v1.map(x => x * lambda1)
   inspect(
     vectors_are_close(m_v1, lambda1_v1, Tolerance::tolerance()),
@@ -586,7 +586,7 @@ test "eigenvector verification" {
   // Verify for the second eigenvector
   let v2 = eigenvecs.col_to_vector(1)
   let lambda2 = eigenvals[1]
-  let m_v2 = m.mul_vec(v2)
+  let m_v2 = m.mul_vec(v2).unwrap()
   let lambda2_v2 = v2.map(x => x * lambda2)
   inspect(
     vectors_are_close(m_v2, lambda2_v2, Tolerance::tolerance()),
@@ -622,7 +622,7 @@ test "eigenvector verification/3x3_symmetric" {
 
   for i in 0..<3 {
     let v = eigenvecs.col_to_vector(i)
-    let lhs = m.mul_vec(v)
+    let lhs = m.mul_vec(v).unwrap()
     let rhs = v.map(x => x * eigenvals[i])
     inspect(vectors_are_close(lhs, rhs, 1.0e-6), content="true")
   }
@@ -635,7 +635,7 @@ test "determinant calculation" {
   let m1 = Matrix::from_2d_array([[4.0, 3.0], [6.0, 3.0]])
   // Expected: 4*3 - 3*6 = 12 - 18 = -6
   inspect(
-    (m1.determinant() - -6.0).abs() < Tolerance::tolerance(),
+    (m1.determinant().unwrap() - -6.0).abs() < Tolerance::tolerance(),
     content="true",
   )
 
@@ -647,7 +647,7 @@ test "determinant calculation" {
   ])
   // Expected: 1*(1*0 - 4*6) - 2*(0*0 - 4*5) + 3*(0*6 - 1*5) = -24 + 40 - 15 = 1
   inspect(
-    (m2.determinant() - 1.0).abs() < Tolerance::tolerance(),
+    (m2.determinant().unwrap() - 1.0).abs() < Tolerance::tolerance(),
     content="true",
   )
 
@@ -660,7 +660,7 @@ test "determinant calculation" {
   // Expected: After swapping rows, determinant should be -1
   // Determinant should be the negative of m2's determinant
   inspect(
-    (m3.determinant() - -1.0).abs() < Tolerance::tolerance(),
+    (m3.determinant().unwrap() - -1.0).abs() < Tolerance::tolerance(),
     content="true",
   )
 
@@ -671,12 +671,15 @@ test "determinant calculation" {
     [7.0, 8.0, 9.0],
   ])
   // Expected: Determinant should be 0 since rows are linearly dependent
-  inspect(m4.determinant().abs() < Tolerance::tolerance(), content="true")
+  inspect(
+    m4.determinant().unwrap().abs() < Tolerance::tolerance(),
+    content="true",
+  )
 
   // Test identity matrix
   let id : Matrix[Double] = identity(4)
   inspect(
-    (id.determinant() - 1.0).abs() < Tolerance::tolerance(),
+    (id.determinant().unwrap() - 1.0).abs() < Tolerance::tolerance(),
     content="true",
   )
 }
@@ -685,41 +688,44 @@ test "determinant calculation" {
 test "Matrix::is_invertible" {
   // Test clearly invertible matrices
   let invertible_2x2 = Matrix::from_2d_array([[2.0, 1.0], [1.0, 1.0]])
-  inspect(invertible_2x2.is_invertible(), content="true")
+  inspect(invertible_2x2.is_invertible().unwrap(), content="true")
   let invertible_3x3 = Matrix::from_2d_array([
     [1.0, 0.0, 0.0],
     [0.0, 2.0, 0.0],
     [0.0, 0.0, 3.0],
   ])
-  inspect(invertible_3x3.is_invertible(), content="true")
+  inspect(invertible_3x3.is_invertible().unwrap(), content="true")
 
   // Test clearly non-invertible (singular) matrices
   let singular_2x2 = Matrix::from_2d_array([[1.0, 2.0], [2.0, 4.0]])
-  inspect(singular_2x2.is_invertible(), content="false")
+  inspect(singular_2x2.is_invertible().unwrap(), content="false")
   let zero_matrix = Matrix::from_2d_array([[0.0, 0.0], [0.0, 0.0]])
-  inspect(zero_matrix.is_invertible(), content="false")
+  inspect(zero_matrix.is_invertible().unwrap(), content="false")
 }
 
 ///|
 test "Matrix::is_invertible/edge_cases" {
   // Test 1x1 matrices
   let invertible_1x1 = Matrix::from_2d_array([[5.0]])
-  inspect(invertible_1x1.is_invertible(), content="true")
+  inspect(invertible_1x1.is_invertible().unwrap(), content="true")
   let zero_1x1 = Matrix::from_2d_array([[0.0]])
-  inspect(zero_1x1.is_invertible(), content="false")
+  inspect(zero_1x1.is_invertible().unwrap(), content="false")
 
   // Test matrix with determinant very close to zero (should be non-invertible)
   let nearly_singular = Matrix::from_2d_array([
     [1.0, 1.0],
     [1.0, 1.000000000001],
   ])
-  inspect(nearly_singular.is_invertible(), content="false")
+  inspect(nearly_singular.is_invertible().unwrap(), content="false")
 }
 
 ///|
-test "panic Matrix::is_invertible/non_square" {
+test "Matrix::is_invertible/non_square returns error" {
   let non_square = Matrix::from_2d_array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
-  ignore(non_square.is_invertible())
+  match non_square.is_invertible() {
+    Err(err) => inspect(err.is_non_square_matrix(), content="true")
+    Ok(_) => inspect(false, content="true")
+  }
 }
 
 ///|
@@ -727,7 +733,7 @@ test "Matrix::inverse" {
   // Test 2x2 invertible matrix
   let m1 = Matrix::from_2d_array([[2.0, 1.0], [1.0, 1.0]])
   let inv1 = m1.inverse()
-  inspect(inv1 is None, content="false")
+  inspect(inv1 is Ok(_), content="true")
   let product1 = m1 * inv1.unwrap()
   inspect(
     product1.get(0, 0).abs() - 1.0 < Tolerance::tolerance(),
@@ -742,7 +748,7 @@ test "Matrix::inverse" {
 
   let pivoted = Matrix::from_2d_array([[0.0, 1.0], [1.0, 0.0]])
   let inv_pivoted = pivoted.inverse()
-  inspect(inv_pivoted is None, content="false")
+  inspect(inv_pivoted is Ok(_), content="true")
   inspect(inv_pivoted.unwrap(), content="|0, 1|\n|1, 0|")
   let product_pivoted = pivoted * inv_pivoted.unwrap()
   inspect(
@@ -769,12 +775,15 @@ test "Matrix::inverse" {
     [0.0, 0.0, 1.0],
   ])
   let inv_identity = identity.inverse()
-  inspect(inv_identity is None, content="false")
+  inspect(inv_identity is Ok(_), content="true")
 
   // Test singular (non-invertible) matrix
   let singular = Matrix::from_2d_array([[1.0, 2.0], [2.0, 4.0]])
   let inv_singular = singular.inverse()
-  inspect(inv_singular is None, content="true")
+  match inv_singular {
+    Err(err) => inspect(err.is_singular_matrix(), content="true")
+    Ok(_) => inspect(false, content="true")
+  }
 }
 
 ///|
@@ -782,25 +791,31 @@ test "Matrix::inverse/edge_cases" {
   // Test 0x0 matrix
   let empty_matrix = Matrix::new(0, 0, 0.0)
   let inv_empty = empty_matrix.inverse()
-  inspect(inv_empty is None, content="false")
+  inspect(inv_empty is Ok(_), content="true")
   inspect(inv_empty.unwrap().row(), content="0")
   inspect(inv_empty.unwrap().col(), content="0")
 
   // Test 1x1 invertible matrix
   let one_by_one = Matrix::from_2d_array([[5.0]])
   let inv_one = one_by_one.inverse()
-  inspect(inv_one is None, content="false")
+  inspect(inv_one is Ok(_), content="true")
 
   // Test 1x1 singular matrix (zero)
   let zero_matrix = Matrix::from_2d_array([[0.0]])
   let inv_zero = zero_matrix.inverse()
-  inspect(inv_zero is None, content="true")
+  match inv_zero {
+    Err(err) => inspect(err.is_singular_matrix(), content="true")
+    Ok(_) => inspect(false, content="true")
+  }
 }
 
 ///|
-test "panic Matrix::inverse/non_square" {
+test "Matrix::inverse/non_square returns error" {
   let non_square = Matrix::from_2d_array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
-  ignore(non_square.inverse())
+  match non_square.inverse() {
+    Err(err) => inspect(err.is_non_square_matrix(), content="true")
+    Ok(_) => inspect(false, content="true")
+  }
 }
 
 ///|
@@ -1005,14 +1020,14 @@ test "is_square" {
 test "mean_variance_std_dev" {
   let m = Matrix::from_2d_array([[1.0, 2.0], [3.0, 4.0]])
   // Mean: (1+2+3+4)/4 = 2.5
-  inspect(m.mean(), content="2.5")
+  inspect(m.mean().unwrap(), content="2.5")
 
   // Variance: ((1-2.5)^2 + (2-2.5)^2 + (3-2.5)^2 + (4-2.5)^2) / 4
   // = (2.25 + 0.25 + 0.25 + 2.25) / 4 = 5.0 / 4 = 1.25
-  inspect(m.variance(), content="1.25")
+  inspect(m.variance().unwrap(), content="1.25")
 
   // Std Dev: sqrt(1.25) ≈ 1.1180339887
-  let std = m.std_dev()
+  let std = m.std_dev().unwrap()
   let diff = (std - 1.1180339887).abs()
   assert_true(diff < 1.0e-6)
 }
@@ -1049,13 +1064,13 @@ test "is_positive_definite" {
 ///|
 test "matrix_power" {
   let m = Matrix::from_2d_array([[1, 1], [1, 0]]) // Fibonacci matrix
-  let m2 = m.matrix_power(2)
+  let m2 = m.matrix_power(2).unwrap()
   inspect(m2.to_string(), content="|2, 1|\n|1, 1|")
-  let m3 = m.matrix_power(3)
+  let m3 = m.matrix_power(3).unwrap()
   inspect(m3.to_string(), content="|3, 2|\n|2, 1|")
-  let m5 = m.matrix_power(5)
+  let m5 = m.matrix_power(5).unwrap()
   inspect(m5.to_string(), content="|8, 5|\n|5, 3|")
-  let id = m.matrix_power(0)
+  let id = m.matrix_power(0).unwrap()
   inspect(id.to_string(), content="|1, 0|\n|0, 1|")
 }
 
@@ -1071,11 +1086,11 @@ test "frobenius_norm" {
 ///|
 test "min_max_element" {
   let m = Matrix::from_2d_array([[1, 5, 3], [2, 8, 1]])
-  inspect(m.max_element(), content="8")
-  inspect(m.min_element(), content="1")
+  inspect(m.max_element().unwrap(), content="8")
+  inspect(m.min_element().unwrap(), content="1")
   let m2 = Matrix::from_2d_array([[-5, -2], [-8, -1]])
-  inspect(m2.max_element(), content="-1")
-  inspect(m2.min_element(), content="-8")
+  inspect(m2.max_element().unwrap(), content="-1")
+  inspect(m2.min_element().unwrap(), content="-8")
 }
 
 ///|
@@ -1087,8 +1102,8 @@ test "matrix_empty_edge_cases" {
   inspect(m.transpose().row(), content="0")
   inspect(m.transpose().col(), content="0")
   inspect(m.copy().row(), content="0")
-  inspect(m.determinant(), content="1")
-  inspect(m.inverse() is Some(_), content="true")
+  inspect(m.determinant().unwrap(), content="1")
+  inspect(m.inverse() is Ok(_), content="true")
   let zero_col = Matrix::new(2, 0, 0.0)
   inspect(zero_col.row(), content="2")
   inspect(zero_col.col(), content="0")
@@ -1160,7 +1175,7 @@ test "panic zero_row_matrix_swap_rows/out_of_bounds" {
 ///|
 test "matrix_1x1_edge_cases" {
   let m = Matrix::from_2d_array([[2.0]])
-  inspect(m.determinant(), content="2")
+  inspect(m.determinant().unwrap(), content="2")
   let inv = m.inverse().unwrap()
   inspect(inv[0][0], content="0.5")
   inspect(m.transpose()[0][0], content="2")
@@ -1194,9 +1209,13 @@ test "determinant_transpose_and_triangular_laws" {
     [0.0, -7.0, 11.0],
     [0.0, 0.0, 13.0],
   ])
-  inspect((upper.determinant() - -182.0).abs() < 1.0e-6, content="true")
   inspect(
-    (upper.determinant() - upper.transpose().determinant()).abs() < 1.0e-6,
+    (upper.determinant().unwrap() - -182.0).abs() < 1.0e-6,
+    content="true",
+  )
+  inspect(
+    (upper.determinant().unwrap() - upper.transpose().determinant().unwrap()).abs() <
+    1.0e-6,
     content="true",
   )
 }
@@ -1229,10 +1248,10 @@ test "lu_based_invariants_agree" {
   ])
   inspect(permutation_matrix.rank(), content="3")
   inspect(
-    (permutation_matrix.determinant().abs() - 1.0).abs() < 1.0e-6,
+    (permutation_matrix.determinant().unwrap().abs() - 1.0).abs() < 1.0e-6,
     content="true",
   )
-  inspect(permutation_matrix.inverse() is Some(_), content="true")
+  inspect(permutation_matrix.inverse() is Ok(_), content="true")
   let identity_like = permutation_matrix * permutation_matrix.inverse().unwrap()
   for i in 0..<identity_like.row() {
     for j in 0..<identity_like.col() {
@@ -1266,6 +1285,7 @@ test "power_method_and_eigen_agree_on_diagonal_matrix" {
   inspect((dominant - 10.0).abs() < 1.0e-4, content="true")
   let residual = m
     .mul_vec(vec)
+    .unwrap()
     .zip_with(vec.map(fn(x) { x * dominant }), fn(a, b) { a - b })
   let residual_norm = residual.dot(residual)
   assert_true(residual_norm < 1.0e-3)
@@ -1292,6 +1312,7 @@ test "power_method/recovers_from_bad_all_ones_seed" {
   inspect((dominant - 2.0).abs() < 1.0e-4, content="true")
   let residual = projector
     .mul_vec(vec)
+    .unwrap()
     .zip_with(vec.map(fn(x) { x * dominant }), fn(a, b) { a - b })
   assert_true(residual.dot(residual) < 1.0e-6)
 }
@@ -1303,39 +1324,57 @@ test "panic power_method/non_square" {
 }
 
 ///|
-test "panic trace/non_square" {
+test "trace/non_square returns error" {
   let non_square = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-  ignore(non_square.trace())
+  match non_square.trace() {
+    Err(err) => inspect(err.is_non_square_matrix(), content="true")
+    Ok(_) => inspect(false, content="true")
+  }
 }
 
 ///|
-test "panic mean/empty_matrix" {
+test "mean/empty_matrix returns error" {
   let empty = Matrix::new(0, 0, 0.0)
-  ignore(empty.mean())
+  match empty.mean() {
+    Err(err) => inspect(err.is_empty_matrix(), content="true")
+    Ok(_) => inspect(false, content="true")
+  }
 }
 
 ///|
-test "panic variance/empty_matrix" {
+test "variance/empty_matrix returns error" {
   let empty = Matrix::new(0, 0, 0.0)
-  ignore(empty.variance())
+  match empty.variance() {
+    Err(err) => inspect(err.is_empty_matrix(), content="true")
+    Ok(_) => inspect(false, content="true")
+  }
 }
 
 ///|
-test "panic std_dev/empty_matrix" {
+test "std_dev/empty_matrix returns error" {
   let empty = Matrix::new(0, 0, 0.0)
-  ignore(empty.std_dev())
+  match empty.std_dev() {
+    Err(err) => inspect(err.is_empty_matrix(), content="true")
+    Ok(_) => inspect(false, content="true")
+  }
 }
 
 ///|
-test "panic pow/non_square" {
+test "pow/non_square returns error" {
   let non_square = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-  ignore(non_square.pow(2))
+  match non_square.pow(2) {
+    Err(err) => inspect(err.is_non_square_matrix(), content="true")
+    Ok(_) => inspect(false, content="true")
+  }
 }
 
 ///|
-test "panic pow/negative_exponent" {
+test "pow/negative_exponent returns error" {
   let square = Matrix::from_2d_array([[1, 2], [3, 4]])
-  ignore(square.pow(-1))
+  match square.pow(-1) {
+    Err(err) => inspect(err.is_negative_exponent(), content="true")
+    Ok(_) => inspect(false, content="true")
+  }
 }
 
 ///|
@@ -1415,8 +1454,8 @@ test "eigenvalues_match_trace_and_determinant_for_diagonal_3x3/property" {
     let (eigenvalues, _) = matrix.eigen()
     let sum = eigenvalues[0] + eigenvalues[1] + eigenvalues[2]
     let product = eigenvalues[0] * eigenvalues[1] * eigenvalues[2]
-    (sum - matrix.trace()).abs() < 1.0e-4 &&
-    (product - matrix.determinant()).abs() < 1.0e-4
+    (sum - matrix.trace().unwrap()).abs() < 1.0e-4 &&
+    (product - matrix.determinant().unwrap()).abs() < 1.0e-4
   }
 
   @qc.quick_check_fn(prop)
@@ -1429,8 +1468,9 @@ test "eigenvalues_match_trace_and_determinant_for_symmetric_2x2/property" {
     let matrix = float_matrix_2x2(a00, a01, a01, a11)
     let (eigenvalues, eigenvectors) = matrix.eigen()
     let _ = eigenvectors
-    (eigenvalues[0] + eigenvalues[1] - matrix.trace()).abs() < 1.0e-4 &&
-    (eigenvalues[0] * eigenvalues[1] - matrix.determinant()).abs() < 1.0e-4
+    (eigenvalues[0] + eigenvalues[1] - matrix.trace().unwrap()).abs() < 1.0e-4 &&
+    (eigenvalues[0] * eigenvalues[1] - matrix.determinant().unwrap()).abs() <
+    1.0e-4
   }
 
   @qc.quick_check_fn(prop)
@@ -1462,11 +1502,11 @@ test "upper_triangular_inverse_det_rank_align/property" {
       [0.0, 0.0, nonzero_double(d2)],
     ])
     let inv = matrix.inverse()
-    guard inv is Some(_) else { false }
+    guard inv is Ok(_) else { false }
     let identity_3 : Matrix[Double] = identity(3)
     let expected_det = matrix.get(0, 0) * matrix.get(1, 1) * matrix.get(2, 2)
     matrix.rank() == 3 &&
-    (matrix.determinant() - expected_det).abs() < 1.0e-4 &&
+    (matrix.determinant().unwrap() - expected_det).abs() < 1.0e-4 &&
     matrices_close(matrix * inv.unwrap(), identity_3, 1.0e-4)
   }
 
@@ -1480,7 +1520,8 @@ test "row_swap_flips_determinant_preserves_rank/property" {
     let matrix = float_matrix_2x2(a00, a01, a10, a11)
     let swapped = matrix.copy()
     swapped.swap_rows(0, 1)
-    (swapped.determinant() + matrix.determinant()).abs() < 1.0e-4 &&
+    (swapped.determinant().unwrap() + matrix.determinant().unwrap()).abs() <
+    1.0e-4 &&
     swapped.rank() == matrix.rank()
   }
 

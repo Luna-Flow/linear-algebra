@@ -1,0 +1,83 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/linear-algebra/arithmetic"
+
+import {
+  "Luna-Flow/luna-generic",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+pub using @Luna-Flow/arithmetic {type ArithmeticContext}
+
+pub using @Luna-Flow/arithmetic {type ArithmeticError}
+
+pub using @Luna-Flow/arithmetic {type ArithmeticErrorKind}
+
+pub using @Luna-Flow/arithmetic {type FpClass}
+
+pub using @Luna-Flow/arithmetic {type RoundingMode}
+
+pub using @Luna-Flow/arithmetic {trait Cbrt}
+
+pub using @Luna-Flow/arithmetic {trait CompareChecked}
+
+pub using @luna-generic {trait Conjugate}
+
+pub using @Luna-Flow/arithmetic {trait Constants}
+
+pub using @Luna-Flow/arithmetic {trait DivChecked}
+
+pub using @Luna-Flow/arithmetic {trait Exponential}
+
+pub using @luna-generic {trait Inverse}
+
+pub using @Luna-Flow/arithmetic {trait Logarithmic}
+
+pub using @luna-generic {trait One}
+
+pub using @Luna-Flow/arithmetic {trait Power}
+
+pub using @Luna-Flow/arithmetic {trait Sqrt}
+
+pub using @Luna-Flow/arithmetic {trait SqrtChecked}
+
+pub using @luna-generic {trait Zero}
+
+// Traits
+pub(open) trait Abs {
+  fn abs(Self) -> Self
+}
+pub impl Abs for Int
+pub impl Abs for Float
+pub impl Abs for Double
+
+pub(open) trait ApproxEq {
+  fn approx_eq(Self, Self) -> Bool
+}
+pub impl ApproxEq for Int
+pub impl ApproxEq for Float
+pub impl ApproxEq for Double
+
+pub(open) trait CheckedCompare {
+  fn checked_compare(Self, Self) -> Result[Int, @Luna-Flow/arithmetic.ArithmeticError]
+}
+pub impl CheckedCompare for Float
+pub impl CheckedCompare for Double
+
+pub(open) trait CheckedDiv {
+  fn checked_div(Self, Self, @Luna-Flow/arithmetic.ArithmeticContext) -> Result[Self, @Luna-Flow/arithmetic.ArithmeticError]
+}
+pub impl CheckedDiv for Float
+pub impl CheckedDiv for Double
+
+pub(open) trait CheckedSqrt {
+  fn checked_sqrt(Self, @Luna-Flow/arithmetic.ArithmeticContext) -> Result[Self, @Luna-Flow/arithmetic.ArithmeticError]
+}
+pub impl CheckedSqrt for Float
+pub impl CheckedSqrt for Double
+

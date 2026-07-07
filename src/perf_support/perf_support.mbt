@@ -114,10 +114,10 @@ pub fn run_prepared_case_inplace(
   }
   match case_item.operation {
     "mul" => checksum_matrix(matrix_a * matrix_b)
-    "mul_vec" => checksum_vector(matrix_a.mul_vec(vector_b))
-    "determinant" => checksum_double(matrix_a.determinant())
+    "mul_vec" => checksum_vector(matrix_a.unchecked_mul_vec(vector_b))
+    "determinant" => checksum_double(matrix_a.unchecked_determinant())
     "inverse" =>
-      match matrix_a.inverse() {
+      match matrix_a.unchecked_inverse() {
         Some(value) => checksum_matrix(value)
         None => mix(seed_checksum(), 0xDEAD0001UL)
       }

@@ -131,7 +131,7 @@ test {
   inspect(m4.determinant(), content="4")
   inspect(m1.determinant(), content="-2")
   inspect(m5.determinant(), content="1")
-  let m = Matrix::make(3, 3, fn(i, _) -> Int { i }).pow(10)
+  let m = Matrix::make(3, 3, fn(i, _) -> Int { i }).pow(10).unwrap()
   inspect(
     m,
     content=(

@@ -2,6 +2,7 @@
 package "Luna-Flow/linear-algebra/immut"
 
 import {
+  "Luna-Flow/linear-algebra/error",
   "Luna-Flow/linear-algebra/internal",
   "Luna-Flow/luna-generic",
   "moonbitlang/core/debug",
@@ -13,17 +14,30 @@ import {
 // Values
 pub fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]
 
+pub fn[T : Mul + Add + @luna-generic.Zero] matmul(Matrix[T], Matrix[T]) -> Matrix[T]
+
+pub fn[T : Mul + Add + @luna-generic.Zero] matmul_auto(Matrix[T], Matrix[T]) -> Matrix[T]
+
+pub fn[T : Mul + Add + @luna-generic.Zero] matmul_with(MatMulBackend, Matrix[T], Matrix[T]) -> Matrix[T]
+
 // Errors
 
 // Types and methods
 type Indexed[T]
 pub fn[T] Indexed::op_get(Self[T], Int) -> T
 
+pub(all) enum MatMulBackend {
+  PureBackend
+  AutoBackend
+  CheckedBackend
+  BlasBackend
+}
+
 type Matrix[T] derive(Eq)
 pub fn[T : Add] Matrix::add_constant(Self[T], T) -> Self[T]
 pub fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]
 pub fn[T] Matrix::col(Self[T]) -> Int
-pub fn[T : Compare + @luna-generic.Num + Div] Matrix::determinant(Self[T]) -> T
+pub fn[T : Compare + @luna-generic.Num + Div] Matrix::determinant(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
 pub fn[T] Matrix::from_array(Int, Int, Vector[T]) -> Self[T]
 pub fn[T] Matrix::horizontal_combine(Self[T], Self[T]) -> Self[T]
@@ -35,10 +49,11 @@ pub fn[T] Matrix::iter_row(Self[T], Int) -> Iter[T]
 pub fn[T] Matrix::make(Int, Int, (Int, Int) -> T) -> Self[T]
 pub fn[T, U] Matrix::map(Self[T], (T) -> U) -> Self[U]
 pub fn[T, U] Matrix::mapi(Self[T], (Int, Int, T) -> U) -> Self[U]
+pub fn[T : Mul + Add + @luna-generic.Zero] Matrix::matmul(Self[T], Self[T]) -> Result[Self[T], @error.LinearAlgebraError]
 pub fn[T] Matrix::new(Int, Int, T) -> Self[T]
 pub fn[T : Compare + @luna-generic.Zero] Matrix::null(Self[T]) -> Bool
 pub fn[T] Matrix::op_get(Self[T], Int) -> Indexed[T]
-pub fn[T : @luna-generic.Semiring] Matrix::pow(Self[T], Int) -> Self[T]
+pub fn[T : @luna-generic.Semiring] Matrix::pow(Self[T], Int) -> Result[Self[T], @error.LinearAlgebraError]
 pub fn[T] Matrix::row(Self[T]) -> Int
 pub fn[T : Mul] Matrix::scale(Self[T], T) -> Self[T]
 pub fn[T] Matrix::set(Self[T], Int, Int, T) -> Self[T]
@@ -46,8 +61,12 @@ pub fn[T] Matrix::swap_cols(Self[T], Int, Int) -> Self[T]
 pub fn[T] Matrix::swap_rows(Self[T], Int, Int) -> Self[T]
 pub fn[T] Matrix::to_2d_array(Self[T]) -> Array[Array[T]]
 pub fn[T] Matrix::to_array(Self[T]) -> Array[T]
-pub fn[T : Add + @luna-generic.Zero] Matrix::trace(Self[T]) -> T
+pub fn[T : Add + @luna-generic.Zero] Matrix::trace(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T] Matrix::transpose(Self[T]) -> Self[T]
+pub fn[T : Compare + @luna-generic.Num + Div] Matrix::unchecked_determinant(Self[T]) -> T
+pub fn[T : Mul + Add + @luna-generic.Zero] Matrix::unchecked_matmul(Self[T], Self[T]) -> Self[T]
+pub fn[T : @luna-generic.Semiring] Matrix::unchecked_pow(Self[T], Int) -> Self[T]
+pub fn[T : Add + @luna-generic.Zero] Matrix::unchecked_trace(Self[T]) -> T
 pub fn[T] Matrix::vertical_combine(Self[T], Self[T]) -> Self[T]
 pub impl[T] @internal.HasShape for Matrix[T]
 pub impl[T : Add] Add for Matrix[T]
