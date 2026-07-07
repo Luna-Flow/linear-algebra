@@ -1,6 +1,6 @@
 # `@immut.Matrix`
 
-本页描述当前 `0.3.0` 仓库实现的实际行为。
+本页描述当前 `0.4.0` 仓库实现的实际行为。
 
 ## 概览
 
@@ -39,16 +39,20 @@
 
 - `+`, `-`, `*`
   加法、减法和矩阵乘法。形状不匹配会 panic。
+- `matmul(rhs)`, `trace()`, `determinant()`, `pow(power)`
+  这些带检查的 API 会在形状或指数错误时返回 `Result[..., LinearAlgebraError]`。
+- `unchecked_matmul(rhs)`, `unchecked_trace()`, `unchecked_determinant()`, `unchecked_pow(power)`
+  保留旧的直接 abort 行为，供明确需要 unchecked 操作的调用方使用。
 - `scale(cst)`, `add_constant(cst)`, 单目 `-`
   逐元素的标量变换。
 - `identity(size)`
   创建单位矩阵。负 `size` 会 panic。
 - `trace()`
-  返回对角线元素之和，要求方阵。
+  带检查的对角线求和，要求方阵。
 - `determinant()`
-  返回方阵的 determinant。当前实现对小尺寸使用特化，对更大输入使用消元路径。
+  带检查的方阵行列式。当前实现对小尺寸使用特化，对更大输入使用消元路径。
 - `pow(power)`
-  将方阵提升到非负整数次幂。非方阵或负指数会 panic。
+  带检查的方阵非负整数幂。
 - `null()`, `is_square()`
   零矩阵与形状判断辅助。
 - `adjoint()`

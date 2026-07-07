@@ -1,6 +1,6 @@
 # `@mutable.Matrix`
 
-本页描述当前 `0.3.0` 仓库实现的实际行为。依赖平方根的 API 使用 `Luna-Flow/arithmetic.Sqrt`；`Tolerance` 仍由 `mutable` 定义。
+本页描述当前 `0.4.0` 仓库实现的实际行为。依赖平方根的 API 使用 `Luna-Flow/arithmetic.Sqrt`；`Tolerance` 仍由 `mutable` 定义。
 
 ## 概览
 
@@ -25,7 +25,7 @@
 - `get(row, col)` / `set(row, col, elem)`
   带显式边界检查的快速随机访问。
 - `m[row][col]`
-  基于 `Lens[T]` 的便捷语法。可以读写，但在重复批量操作时应优先使用 `row_view`、`col_view` 或专用 helper。
+  基于 `Lens[T]` 的便捷语法。可以读写，但在重复批量操作时应优先使用 `row_view`、`col_view` 或专用 辅助函数。
 - `copy()`
   深拷贝矩阵。
 - `map`, `mapi`
@@ -65,15 +65,21 @@
 - `identity(size)`
   单位矩阵构造器。负 `size` 会 panic。
 - `pow(power)`
-  方阵的非负整数幂。
+  带检查的方阵非负整数幂。
 - `matrix_power(n)`
-  `pow(n)` 的公开包装接口。
+  `pow(n)` 的带检查公开别名。
 - `trace()`
-  对角线元素之和，要求方阵。
+  带检查的对角线求和。要求方阵，并返回 `Result[..., LinearAlgebraError]`。
 - `determinant()`
-  方阵的 determinant。
+  带检查的方阵行列式。
 - `inverse()`, `is_invertible()`
-  逆矩阵相关辅助。
+  带检查的逆矩阵相关辅助函数。奇异矩阵求逆返回 `Err`。
+- `mul_vec(vector)`
+  带检查的矩阵向量乘法。形状不匹配时返回 `Err`。
+- `mean()`, `variance()`, `std_dev()`, `max_element()`, `min_element()`
+  带检查的聚合辅助函数。空矩阵返回 `Err`。
+- `unchecked_trace()`, `unchecked_determinant()`, `unchecked_inverse()`, `unchecked_is_invertible()`, `unchecked_pow()`, `unchecked_matrix_power()`, `unchecked_mul_vec()`, `unchecked_mean()`, `unchecked_variance()`, `unchecked_std_dev()`, `unchecked_max_element()`, `unchecked_min_element()`
+  保留旧的 abort 或 `Option` 返回行为。
 - `rank()`
   按当前仓库算法计算 rank。
 - `reduce_row_elimination()`
@@ -84,10 +90,10 @@
   当前公开的 eigen 相关 API。
 - `is_square()`, `null()`, `is_symmetric()`, `is_positive_definite()`
   结构与数值判定辅助。
-- `mean()`, `variance()`, `std_dev()`, `frobenius_norm()`, `max_element()`, `min_element()`
-  聚合类数值辅助。
+- `frobenius_norm()`
+  面向支持元素类型的非检查式聚合辅助函数。
 
 ## 正确性说明
 
-- 各后端应暴露相同的公开语义。当前仓库仍保留 `native`、`js`、`wasm`、`wasm-gc` 四套内核文件，但除非特别说明，文档与测试都按 backend-invariant 的公开行为来理解。
+- 各后端应暴露相同的公开语义。当前仓库仍保留 `native`、`js`、`wasm`、`wasm-gc` 四套内核文件，但除非特别说明，文档与测试都按 后端-invariant 的公开行为来理解。
 - 当你编写同时适用于 `immut` 和 `mutable` 的代码时，应依赖它们共享的代数 API，而不是假设修改语义也完全相同。

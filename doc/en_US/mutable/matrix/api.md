@@ -1,6 +1,6 @@
 # `@mutable.Matrix`
 
-This page documents the current `0.3.0` repository behavior. Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance` remains defined by `mutable`.
+This page documents the current `0.4.0` repository behavior. Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance` remains defined by `mutable`.
 
 ## Overview
 
@@ -65,15 +65,21 @@ This page documents the current `0.3.0` repository behavior. Square-root-depende
 - `identity(size)`
   Identity matrix constructor. Negative `size` panics.
 - `pow(power)`
-  Square-matrix exponentiation for non-negative integer powers.
+  Checked square-matrix exponentiation for non-negative integer powers.
 - `matrix_power(n)`
-  Public wrapper around `pow(n)`.
+  Checked public wrapper around `pow(n)`.
 - `trace()`
-  Sum of diagonal entries. Requires a square matrix.
+  Checked sum of diagonal entries. Requires a square matrix and returns `Result[..., LinearAlgebraError]`.
 - `determinant()`
-  Determinant of a square matrix.
+  Checked determinant of a square matrix.
 - `inverse()`, `is_invertible()`
-  Inversion helpers for square matrices.
+  Checked inversion helpers for square matrices. Singular inverse returns `Err`.
+- `mul_vec(vector)`
+  Checked matrix-vector multiplication. Shape mismatch returns `Err`.
+- `mean()`, `variance()`, `std_dev()`, `max_element()`, `min_element()`
+  Checked aggregate helpers. Empty matrices return `Err`.
+- `unchecked_trace()`, `unchecked_determinant()`, `unchecked_inverse()`, `unchecked_is_invertible()`, `unchecked_pow()`, `unchecked_matrix_power()`, `unchecked_mul_vec()`, `unchecked_mean()`, `unchecked_variance()`, `unchecked_std_dev()`, `unchecked_max_element()`, `unchecked_min_element()`
+  Preserve the old aborting or `Option`-returning behavior.
 - `rank()`
   Rank computed through the current repository algorithm.
 - `reduce_row_elimination()`
@@ -84,8 +90,8 @@ This page documents the current `0.3.0` repository behavior. Square-root-depende
   Current eigen-related APIs for supported numeric cases.
 - `is_square()`, `null()`, `is_symmetric()`, `is_positive_definite()`
   Structural and numeric predicates.
-- `mean()`, `variance()`, `std_dev()`, `frobenius_norm()`, `max_element()`, `min_element()`
-  Aggregate numeric helpers.
+- `frobenius_norm()`
+  Non-checked aggregate numeric helper for supported element types.
 
 ## Notes On Correctness
 

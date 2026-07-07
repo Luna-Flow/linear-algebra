@@ -1,6 +1,6 @@
 # `@immut.Matrix`
 
-This page documents the current `0.3.0` repository behavior.
+This page documents the current `0.4.0` repository behavior.
 
 ## Overview
 
@@ -39,16 +39,20 @@ This page documents the current `0.3.0` repository behavior.
 
 - `+`, `-`, `*`
   Addition, subtraction, and matrix multiplication. Shape mismatch panics.
+- `matmul(rhs)`, `trace()`, `determinant()`, `pow(power)`
+  Checked APIs return `Result[..., LinearAlgebraError]` for shape or exponent failures.
+- `unchecked_matmul(rhs)`, `unchecked_trace()`, `unchecked_determinant()`, `unchecked_pow(power)`
+  Preserve the old aborting behavior for callers that explicitly want unchecked operations.
 - `scale(cst)`, `add_constant(cst)`, unary `-`
   Element-wise scalar transforms.
 - `identity(size)`
   Creates an identity matrix. Negative `size` panics.
 - `trace()`
-  Sum of diagonal entries. Requires a square matrix.
+  Checked sum of diagonal entries. Requires a square matrix.
 - `determinant()`
-  Determinant of a square matrix. Uses the current repository implementation with small-size specializations and elimination for larger inputs.
+  Checked determinant of a square matrix. Uses the current repository implementation with small-size specializations and elimination for larger inputs.
 - `pow(power)`
-  Raises a square matrix to a non-negative integer power. Non-square matrices and negative exponents panic.
+  Checked square-matrix exponentiation for non-negative integer powers.
 - `null()`, `is_square()`
   Shape and zero-matrix helpers.
 - `adjoint()`
@@ -75,5 +79,7 @@ Important methods:
 
 ## Notes On Correctness
 
-- For shared algebraic behavior, `@immut.Matrix` remains the semantic reference point used by the repository’s consistency tests.
+- For shared algebraic behavior, prefer the capability traits and the
+  `backends/default` wrapper types. `@immut.Matrix` is one dense implementation
+  used by the default backend, not the semantic center of the ecosystem.
 - The mutable package intentionally exposes extra execution-oriented APIs such as views and in-place updates; those should not be projected back onto `immut`.
