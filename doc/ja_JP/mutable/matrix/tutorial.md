@@ -1,14 +1,12 @@
 # mutable/matrix チュートリアル
 
-このページは、このモジュールの実用的な利用フローを説明する出発点です。 Luna-Flow/linear-algebra の mutable/matrix を対象にします。
-
 ## 推奨フロー
 
-1. まずリポジトリ README と mutable/matrix の API 文書を読む。
-2. `src/mutable` にあるコンストラクタまたは入口から始める。
-3. 境界挙動へ依存する前に、既存のテストや例で意味論を確認する。
+1. `Matrix::from_2d_array`、`Matrix::make`、`Matrix::new`、`Matrix::from_array` で行列を作ります。
+2. 直接の要素アクセスには `get` と `set` を使い、特定の行や列を繰り返し扱う場合は `row_view` / `col_view` を使います。
+3. 入力が実行時に失敗し得る場合は、検査付きの `trace`、`determinant`、`inverse`、`mul_vec`、`pow` を使います。
 
 ## 実践ガイド
 
-- 内部ヘルパーではなく、文書化された入口を優先する。
-- ランタイム・数値・証明状態の前提を下流コードに明示する。
+- 基底行列に接続された転置ビューが必要なら `to_transpose()`、物理的な転置行列が必要なら `transpose()` を使います。
+- 形状、非空、非特異などの前提条件をすでに保証している場合だけ `unchecked_*` を使います。

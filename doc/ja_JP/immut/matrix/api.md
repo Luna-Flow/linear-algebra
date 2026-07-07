@@ -7,19 +7,19 @@
 - `@immut.Matrix` は値セマンティクスです。
 - `set`、`swap_rows`、`swap_cols` などの操作は新しい行列を返します。
 - 行列は行優先で保持され、基盤には immutable vector 実装を使います。
-- 公開インデックスアクセスは厳密な境界チェックを行います。`m[row][col]` と `set(row, col, value)` は、`0xN` や `Nx0` を含めて範囲外なら 停止 します。
+- 公開インデックスアクセスは厳密な境界チェックを行います。`m[row][col]` と `set(row, col, value)` は、`0xN` や `Nx0` を含めて範囲外なら中止します。
 - `swap_rows(i, i)` と `swap_cols(i, i)` は 何もしない操作 で、元の値をそのまま返します。
 
 ## 基本 API
 
 - `Matrix::make(row, col, f)`
-  生成関数から行列を作ります。負の次元は 停止 します。
+  生成関数から行列を作ります。負の次元では中止します。
 - `Matrix::new(row, col, elem)`
-  `elem` で埋めた行列を作ります。負の次元は 停止 します。
+  `elem` で埋めた行列を作ります。負の次元では中止します。
 - `Matrix::from_2d_array(arr)`
-  長方形の 2 次元配列から行列を作ります。ragged input は 停止 します。
+  長方形の 2 次元配列から行列を作ります。行の長さが揃わない入力では中止します。
 - `Matrix::from_array(row, col, data)`
-  行優先の平坦 immutable vector から行列を作ります。負の次元や要素数不一致は 停止 します。
+  行優先の平坦な不変ベクトルから行列を作ります。負の次元や要素数不一致では中止します。
 - `row()` / `col()`
   保存されている 形状 を返します。
 - `m[row][col]`
@@ -33,12 +33,12 @@
 - `horizontal_combine`, `vertical_combine`
   形状 が整合する行列を連結します。
 - `iter`, `iter_row`, `iter_col`, `to_array`, `to_2d_array`
-  行優先の反復・変換 API です。行・列 iterator は無効な index で 停止 します。
+  行優先の反復・変換 API です。行・列イテレータは無効なインデックスで中止します。
 
 ## 代数演算
 
 - `+`, `-`, `*`
-  加算、減算、行列積です。形状 不一致は 停止 します。
+  加算、減算、行列積です。形状が一致しない場合は中止します。
 - `matmul(rhs)`, `trace()`, `determinant()`, `pow(power)`
   検査付き API は 形状 や指数のエラーを `Result[..., LinearAlgebraError]` で返します。
 - `unchecked_matmul(rhs)`, `unchecked_trace()`, `unchecked_determinant()`, `unchecked_pow(power)`
@@ -46,7 +46,7 @@
 - `scale(cst)`, `add_constant(cst)`, 単項 `-`
   要素ごとのスカラー変換です。
 - `identity(size)`
-  単位行列を作ります。負の `size` は 停止 します。
+  単位行列を作ります。負の `size` では中止します。
 - `trace()`
   検査付きの対角成分の総和です。正方行列が必要です。
 - `determinant()`

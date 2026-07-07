@@ -10,4 +10,4 @@
 
 - ベクトル空間、加群、行列、バックエンド能力は定義しません。
 - 浮動小数点型に厳密な代数法則を主張させません。
-- `immut`、`mutable`、`backends/default` を import しません。
+- `immut`、`mutable`、`backends/default` をインポートしません。

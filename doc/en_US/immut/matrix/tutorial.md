@@ -1,14 +1,12 @@
 # immut/matrix Tutorial
 
-Use this page as the starting point for practical workflows around this module. immut/matrix in Luna-Flow/linear-algebra.
-
 ## Suggested Flow
 
-1. Read the repository README and the immut/matrix API reference.
-2. Start from the constructors or entry points under `src/immut`.
-3. Validate behavior with the existing tests or examples before depending on edge-case semantics.
+1. Build matrices with `Matrix::from_2d_array`, `Matrix::make`, `Matrix::new`, or `Matrix::from_array`.
+2. Use `set`, `swap_rows`, `swap_cols`, `map`, and `transpose` as value-producing operations.
+3. Prefer checked `matmul`, `trace`, `determinant`, and `pow` when shape or domain failures can come from runtime data.
 
 ## Practical Guidance
 
-- Prefer the documented entry points over internal helpers.
-- Record runtime, numeric, or proof-state assumptions explicitly in downstream code.
+- Use `unchecked_*` only when surrounding code has already enforced the required preconditions.
+- Use `MatrixFn` when a lazy functional matrix representation is more appropriate than materialized storage.

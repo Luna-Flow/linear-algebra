@@ -1,14 +1,12 @@
 # mutable/vector チュートリアル
 
-このページは、このモジュールの実用的な利用フローを説明する出発点です。 Luna-Flow/linear-algebra の mutable/vector を対象にします。
-
 ## 推奨フロー
 
-1. まずリポジトリ README と mutable/vector の API 文書を読む。
-2. `src/mutable` にあるコンストラクタまたは入口から始める。
-3. 境界挙動へ依存する前に、既存のテストや例で意味論を確認する。
+1. `Vector::from_array`、`Vector::make`、`Vector::makei` でベクトルを作ります。
+2. `v[i]` と `v[i] = x` で要素を直接読み書きします。
+3. 元の値を変更する意図がある場合は `map_inplace`、`left_scale_inplace`、`right_scale_inplace` を使います。
 
 ## 実践ガイド
 
-- 内部ヘルパーではなく、文書化された入口を優先する。
-- ランタイム・数値・証明状態の前提を下流コードに明示する。
+- 元のベクトルを残したい場合は、非 `inplace` のヘルパーを使います。
+- 代数的な変換には `dot`、`tensor_product`、`to_row_matrix`、`to_col_matrix` を使います。

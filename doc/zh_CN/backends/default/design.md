@@ -2,16 +2,16 @@
 
 ## 职责
 
-- 将 `immut` 和 `mutable` 呈现为默认 稠密 后端。
-- 为默认 稠密 matrix/vector 类型实现 capability traits。
-- 提供小型泛型辅助函数来验证 trait dispatch。
+- 将 `immut` 和 `mutable` 呈现为默认稠密后端。
+- 为默认稠密矩阵/向量类型实现能力 trait。
+- 提供小型泛型辅助函数来验证基于 trait 的分发。
 
 ## 非职责
 
 - 不重新定义标量代数或算术律。
-- 不要求未来后端必须是 稠密 或 contiguous。
-- 不把标量值映射放入核心线性代数 trait 表面。
+- 不要求未来后端必须是稠密后端或连续存储。
+- 不把返回标量值的映射放入核心线性代数 trait 层。
 
 ## 扩展模型
 
-未来 sparse、lazy、static-size、GPU 或外部库后端应直接实现相同结构 traits，不需要先转换成 `DenseMatrix` 或 `DenseVector`。
+未来的稀疏、惰性、静态尺寸、GPU 或外部库后端应直接实现相同的结构 trait，不需要先转换成 `DenseMatrix` 或 `DenseVector`。

@@ -1,17 +1,17 @@
-# backends/default Design
+# backends/default 設計
 
 ## 責務
 
-- `immut` と `mutable` を default 密 バックエンド として提示します。
-- default 密 matrix/vector 型に capability trait を実装します。
-- trait-based dispatch を確認する小さな generic 補助メソッド を提供します。
+- `immut` と `mutable` を既定の密行列・密ベクトルバックエンドとして提示します。
+- 既定の密行列・密ベクトル型に能力 trait を実装します。
+- trait による分派を確認する小さな汎用ヘルパーを提供します。
 
 ## 非責務
 
-- scalar algebra や arithmetic law を再定義しません。
-- 将来 バックエンド に 密 や contiguous storage を要求しません。
-- scalar-valued map を core linear algebra trait surface に含めません。
+- スカラー代数や算術法則を再定義しません。
+- 将来のバックエンドに密表現や連続ストレージを要求しません。
+- スカラー値を返す写像を中核の線形代数 trait 層に含めません。
 
 ## 拡張モデル
 
-将来の sparse、lazy、static-size、GPU、外部ライブラリ バックエンド は同じ structural trait を直接実装するべきです。`DenseMatrix` や `DenseVector` への変換を必須にしません。
+将来の疎、遅延、静的サイズ、GPU、外部ライブラリのバックエンドは、同じ構造 trait を直接実装するべきです。`DenseMatrix` や `DenseVector` への変換を必須にしません。

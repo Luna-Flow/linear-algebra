@@ -10,10 +10,11 @@ This page tracks the current repository implementation and is written as the `0.
 pub struct Vector[T](Array[T])
 ```
 
-### Design & Performance Notes
-- **Backend-Specific Optimization**: Just like Matrix operations, Vector utilities are optimized for each target backend (Wasm/JS and Native) to ensure maximum speed while keeping the **API consistent**.
-- **Random Access**: For random access and modification, directly use the indexing syntax `v[i]` and `v[i] = x`. This provides the most efficient individual element interaction.
-- **Bulk Operations**: Use optimized methods like `.map_inplace()` or `.dot()` for aggregate computations instead of manual indexing loops where possible.
+### Design And Performance Notes
+
+- **Array-backed storage**: `Vector[T]` wraps `Array[T]`, so indexed reads and writes operate on the underlying mutable storage.
+- **Random access**: For random access and modification, directly use `v[i]` and `v[i] = x`.
+- **Bulk operations**: Use methods such as `.map_inplace()` or `.dot()` for aggregate work instead of open-coded indexing loops where possible.
 
 - **Description**
   Represents a mutable vector, which is a wrapper around `Array[T]`. Elements can be accessed and modified via indexing.

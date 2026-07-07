@@ -63,7 +63,7 @@
 - `scale(cst)`, `add_constant(cst)`, 単項 `-`
   要素ごとのスカラー変換です。
 - `identity(size)`
-  単位行列を作ります。負の `size` は 停止 します。
+  単位行列を作ります。負の `size` では中止します。
 - `pow(power)`
   正方行列の非負整数冪を検査付きで計算します。
 - `matrix_power(n)`
@@ -81,13 +81,13 @@
 - `unchecked_trace()`, `unchecked_determinant()`, `unchecked_inverse()`, `unchecked_is_invertible()`, `unchecked_pow()`, `unchecked_matrix_power()`, `unchecked_mul_vec()`, `unchecked_mean()`, `unchecked_variance()`, `unchecked_std_dev()`, `unchecked_max_element()`, `unchecked_min_element()`
   従来の abort または `Option` を返す挙動を残します。
 - `rank()`
-  現行実装のアルゴリズムで rank を返します。
+  現行実装のアルゴリズムで行列の階数を返します。
 - `reduce_row_elimination()`
   可変行列の値に対して行基本変形を行います。
 - `cholesky_decomposition()`
   対応する数値入力向けの Cholesky 分解です。
-- `eigen()`, `power_method()`, `eigen_2x2()`
-  現在公開されている固有値関連 API です。
+- `eigen()`, `power_method()`
+  現在公開されている固有値関連 API です。実装内部の 2x2 特化ヘルパーは公開インターフェイスではありません。
 - `is_square()`, `null()`, `is_symmetric()`, `is_positive_definite()`
   構造や数値性を判定する述語です。
 - `frobenius_norm()`

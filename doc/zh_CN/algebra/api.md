@@ -38,7 +38,7 @@ pub(open) trait VectorShape {
 pub(open) trait AdditiveVector: VectorShape + Add + Neg + Sub {}
 ```
 
-表示具有加法线性结构的向量式对象。它不要求 element-wise 乘法、dot product、norm 或全局 zero。
+表示具有加法线性结构的向量式对象。它不要求逐元素乘法、内积、范数或全局零元。
 
 只有算法确实需要 Hadamard 乘法时才使用：
 
@@ -54,7 +54,7 @@ pub(open) trait TransposeMatrix: MatrixShape {
 }
 ```
 
-表示具有可观测 shape 和同类 transpose 的矩阵式对象。它不要求矩阵乘法，因为动态矩形矩阵乘法只在运行时 shape 兼容时才有定义。该 trait 不要求 稠密、contiguous 存储、直接索引或 mutation。
+表示具有可观测形状和同类型转置操作的矩阵式对象。它不要求矩阵乘法，因为动态矩形矩阵乘法只在运行时形状兼容时才有定义。该 trait 不要求稠密表示、连续存储、直接索引或可变操作。
 
 只有算法确实需要对应运算时才使用更强 traits：
 
@@ -65,7 +65,7 @@ pub(open) trait MatMulMatrix: AdditiveMatrix + Mul {}
 
 ## 更强的代数 traits
 
-这些可选 traits 面向能合法提供 `luna-generic` 全局 identity 的承载类型：
+这些可选 trait 面向能合法提供 `luna-generic` 全局单位元的承载类型：
 
 - `AdditiveVectorGroup: AdditiveVector + AddGroup`
 - `VecMulSemiringVector: VecMulVector + Semiring`
@@ -73,7 +73,7 @@ pub(open) trait MatMulMatrix: AdditiveMatrix + Mul {}
 - `SquareMatrixSemiring: MatMulMatrix + Semiring`
 - `SquareMatrixRing: MatMulMatrix + Ring`
 
-动态矩形矩阵和运行时长度向量通常不应该实现这些强结构，除非它们的类型级表示确实固定了需要的 shape 和 identity。
+动态矩形矩阵和运行时长度向量通常不应该实现这些强结构，除非它们的类型级表示确实固定了需要的形状和单位元。
 
 ## `FloatingScalarOps`
 
@@ -85,4 +85,4 @@ pub(open) trait FloatingScalarOps: Field + Num + ApproxEq {}
 
 ## 边界
 
-不要在这里加入标量值乘积、`norm` 或 inner-product trait，除非显式建模其标量映射。核心 `algebra` 包只放最小结构和同类运算。
+不要在这里加入返回标量值的乘积、`norm` 或内积 trait，除非显式建模其标量映射。核心 `algebra` 包只放最小结构和同类型闭合运算。

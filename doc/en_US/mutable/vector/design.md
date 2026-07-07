@@ -1,14 +1,13 @@
 # mutable/vector Design
 
-Use this page to explain the structural responsibilities and implementation constraints of this module. mutable/vector in Luna-Flow/linear-algebra.
-
 ## Responsibilities
 
-- Keep the code and docs aligned around `src/mutable`.
-- Preserve the real execution model instead of smoothing over important internal differences.
-- Note extension points, invariants, and limitations that maintainers must keep stable.
+- Provide an execution-oriented `Vector[T]` backed by `Array[T]`.
+- Support direct indexed reads and writes for workloads that need in-place updates.
+- Keep non-`inplace` algebraic helpers available for value-producing transforms.
 
-## Maintenance Notes
+## Invariants
 
-- Update this page whenever the module boundary, core algorithm, or observable semantics change.
-- If the module is intentionally incomplete, say so here instead of documenting speculative APIs.
+- `*_inplace` methods mutate the existing vector and return `Unit`.
+- `map`, scale helpers, `zip_with`, and matrix conversion helpers return new values.
+- Vector algebra should stay aligned with `@immut.Vector` for the shared operation subset.

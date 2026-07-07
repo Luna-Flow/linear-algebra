@@ -100,4 +100,4 @@ pub(open) trait CheckedCompare {
 
 ## 境界
 
-このパッケージは matrix、vector、backend 型を import しません。依存方向では `algebra` とすべての backend パッケージより下位にあります。
+このパッケージは行列、ベクトル、バックエンド型をインポートしません。依存方向では `algebra` とすべてのバックエンドパッケージより下位にあります。

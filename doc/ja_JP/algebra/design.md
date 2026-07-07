@@ -1,17 +1,17 @@
-# algebra Design
+# algebra 設計
 
 ## 責務
 
 - 線形代数で使う意味論的な数学構造を表します。
-- structure-level trait と operation-only arithmetic trait を分離します。
-- 近似 floating-point 振る舞いを exact な代数法則として扱いません。
-- `AdditiveVector` / `TransposeMatrix` で object 形状 と閉じた演算を直接表します。
-- carrier type が lawful global identity を提供できる場合は、`AddGroup`、`Semiring`、`Ring` など upstream の law-bearing trait を組み合わせてより強い代数構造を表します。
+- 構造レベルの trait と、操作だけを表す算術 trait を分離します。
+- 近似的な浮動小数点の振る舞いを、厳密な代数法則として扱いません。
+- `AdditiveVector` / `TransposeMatrix` で、対象の形状と同じ型に閉じた演算を直接表します。
+- 対象型が大域的な単位元を正しく提供できる場合は、`AddGroup`、`Semiring`、`Ring` など上流の法則付き trait を組み合わせてより強い代数構造を表します。
 
 ## 非責務
 
-- 密 バックエンド 型を import しません。
-- storage、mutation、algorithm execution trait は定義しません。
-- inner product、norm などの scalar-valued functor を中核構造層に置きません。
-- 明示的な scalar action model なしに `Module` や `VectorSpace` を追加しません。
-- パッケージ-local な 形状-dependent zero を upstream `Zero` の代わりに導入しません。
+- 密バックエンド型をインポートしません。
+- 保存形式、可変操作、アルゴリズム実行の trait は定義しません。
+- 内積、ノルムなど、スカラー値を返す写像を中核構造層に置きません。
+- 明示的なスカラー作用モデルなしに `Module` や `VectorSpace` を追加しません。
+- パッケージ固有の形状依存の零元を、上流の `Zero` の代わりに導入しません。

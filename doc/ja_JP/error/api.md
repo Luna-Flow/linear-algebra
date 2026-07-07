@@ -5,7 +5,7 @@
 
 ## 役割
 
-`error` は checked 線形代数 API で使う構造化エラー型を提供します。呼び出し側は abort メッセージを解析せずに、形状エラー、入力領域のエラー、特異行列、未対応バックエンド、下位の算術エラーを区別できます。
+`error` は検査付き線形代数 API で使う構造化エラー型を提供します。呼び出し側は中止メッセージを解析せずに、形状エラー、入力領域のエラー、特異行列、未対応バックエンド、下位の算術エラーを区別できます。
 
 ## `LinearAlgebraErrorKind`
 
@@ -52,7 +52,7 @@ pub struct LinearAlgebraError {
 - `LinearAlgebraError::empty_matrix(message)`
 - `LinearAlgebraError::singular_matrix(message)`
 - `LinearAlgebraError::non_convergence(message)`
-- `LinearAlgebraError::unsupported_バックエンド(message)`
+- `LinearAlgebraError::unsupported_backend(message)`
 - `LinearAlgebraError::arithmetic_failure(error)`
 
 ## 判定メソッド
@@ -67,7 +67,7 @@ pub struct LinearAlgebraError {
 - `is_empty_matrix()`
 - `is_singular_matrix()`
 - `is_non_convergence()`
-- `is_unsupported_バックエンド()`
+- `is_unsupported_backend()`
 - `is_arithmetic_failure()`
 
 これらのメソッドは、エラー値を分解せずに 検査付き API の代表的な失敗を処理するためのものです。
@@ -81,7 +81,7 @@ match matrix.inverse() {
     if err.is_singular_matrix() {
       abort("matrix is singular")
     }
-    abort("matrix 逆行列 failed")
+    abort("matrix inverse failed")
   }
 }
 ```

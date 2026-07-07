@@ -19,9 +19,9 @@ pub struct DenseVector[T] {
 
 公開メソッド:
 
-- `from_backend(@mutable.Vector[T])`
-- `from_array(Array[T])`
-- `make(Int, T)`
+- `from_backend(@mutable.Vector[T]) -> DenseVector[T]`
+- `from_array(Array[T]) -> DenseVector[T]`
+- `make(Int, T) -> DenseVector[T]`
 - `inner(Self[T]) -> @mutable.Vector[T]`
 - `length(Self[T]) -> Int`
 - `op_get(Self[T], Int) -> T`
@@ -45,9 +45,9 @@ pub struct DenseMatrix[T] {
 
 公開メソッド:
 
-- `from_backend(@mutable.Matrix[T])`
-- `from_2d_array(Array[Array[T]])`
-- `new(Int, Int, T)`
+- `from_backend(@mutable.Matrix[T]) -> DenseMatrix[T]`
+- `from_2d_array(Array[Array[T]]) -> DenseMatrix[T]`
+- `new(Int, Int, T) -> DenseMatrix[T]`
 - `inner(Self[T]) -> @mutable.Matrix[T]`
 - `row(Self[T]) -> Int`
 - `col(Self[T]) -> Int`
@@ -71,9 +71,9 @@ pub struct ImmutableDenseVector[T] {
 
 公開メソッド:
 
-- `from_backend(@immut.Vector[T])`
-- `from_array(Array[T])`
-- `make(Int, T)`
+- `from_backend(@immut.Vector[T]) -> ImmutableDenseVector[T]`
+- `from_array(Array[T]) -> ImmutableDenseVector[T]`
+- `make(Int, T) -> ImmutableDenseVector[T]`
 - `inner(Self[T]) -> @immut.Vector[T]`
 - `length(Self[T]) -> Int`
 - `op_get(Self[T], Int) -> T`
@@ -97,9 +97,9 @@ pub struct ImmutableDenseMatrix[T] {
 
 公開メソッド:
 
-- `from_backend(@immut.Matrix[T])`
-- `from_2d_array(Array[Array[T]])`
-- `new(Int, Int, T)`
+- `from_backend(@immut.Matrix[T]) -> ImmutableDenseMatrix[T]`
+- `from_2d_array(Array[Array[T]]) -> ImmutableDenseMatrix[T]`
+- `new(Int, Int, T) -> ImmutableDenseMatrix[T]`
 - `inner(Self[T]) -> @immut.Matrix[T]`
 - `row(Self[T]) -> Int`
 - `col(Self[T]) -> Int`

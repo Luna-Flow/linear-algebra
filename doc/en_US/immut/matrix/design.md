@@ -1,14 +1,13 @@
 # immut/matrix Design
 
-Use this page to explain the structural responsibilities and implementation constraints of this module. immut/matrix in Luna-Flow/linear-algebra.
-
 ## Responsibilities
 
-- Keep the code and docs aligned around `src/immut`.
-- Preserve the real execution model instead of smoothing over important internal differences.
-- Note extension points, invariants, and limitations that maintainers must keep stable.
+- Provide a value-oriented `Matrix[T]` whose transformation methods return new matrices.
+- Keep matrix storage row-major through the immutable vector-backed representation.
+- Keep checked matrix operations explicit: shape, exponent, and domain failures belong in `Result[..., LinearAlgebraError]`.
 
-## Maintenance Notes
+## Invariants
 
-- Update this page whenever the module boundary, core algorithm, or observable semantics change.
-- If the module is intentionally incomplete, say so here instead of documenting speculative APIs.
+- Constructors reject negative dimensions and non-rectangular input.
+- Indexed access and row/column iterators enforce the same bounds rules as the mutable matrix API.
+- Matrix algebra should stay aligned with `mutable` where both packages expose the same operation, while preserving value semantics.

@@ -1,14 +1,12 @@
 # mutable/vector Tutorial
 
-Use this page as the starting point for practical workflows around this module. mutable/vector in Luna-Flow/linear-algebra.
-
 ## Suggested Flow
 
-1. Read the repository README and the mutable/vector API reference.
-2. Start from the constructors or entry points under `src/mutable`.
-3. Validate behavior with the existing tests or examples before depending on edge-case semantics.
+1. Create vectors with `Vector::from_array`, `Vector::make`, or `Vector::makei`.
+2. Use `v[i]` and `v[i] = x` for direct element access.
+3. Use `map_inplace`, `left_scale_inplace`, and `right_scale_inplace` when mutation is intended.
 
 ## Practical Guidance
 
-- Prefer the documented entry points over internal helpers.
-- Record runtime, numeric, or proof-state assumptions explicitly in downstream code.
+- Use non-`inplace` helpers when you need a fresh vector instead of modifying the original.
+- Use `dot`, `tensor_product`, `to_row_matrix`, and `to_col_matrix` for algebraic conversions.

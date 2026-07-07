@@ -1,14 +1,12 @@
 # mutable/vector 教程
 
-本页用于说明这个模块的实际使用路径。 这里聚焦 Luna-Flow/linear-algebra 中的 mutable/vector。
+## 建议流程
 
-## 建议阅读顺序
-
-1. 先看仓库 README 和 mutable/vector 的 API 文档。
-2. 从 `src/mutable` 中的构造入口或主入口开始。
-3. 在依赖边界行为之前，先结合已有测试或示例验证语义。
+1. 使用 `Vector::from_array`、`Vector::make` 或 `Vector::makei` 创建向量。
+2. 使用 `v[i]` 和 `v[i] = x` 直接访问或更新元素。
+3. 确实需要修改原值时，使用 `map_inplace`、`left_scale_inplace` 和 `right_scale_inplace`。
 
 ## 实践建议
 
-- 优先使用已文档化的入口，而不是内部辅助函数。
-- 下游代码里显式记录运行时、数值或证明状态前提。
+- 需要保留原向量时，使用非 `inplace` 辅助函数。
+- 需要代数转换时，使用 `dot`、`tensor_product`、`to_row_matrix` 和 `to_col_matrix`。

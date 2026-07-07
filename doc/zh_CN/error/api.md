@@ -51,7 +51,7 @@ pub struct LinearAlgebraError {
 - `LinearAlgebraError::empty_matrix(message)`
 - `LinearAlgebraError::singular_matrix(message)`
 - `LinearAlgebraError::non_convergence(message)`
-- `LinearAlgebraError::unsupported_后端(message)`
+- `LinearAlgebraError::unsupported_backend(message)`
 - `LinearAlgebraError::arithmetic_failure(error)`
 
 ## 判断方法
@@ -66,7 +66,7 @@ pub struct LinearAlgebraError {
 - `is_empty_matrix()`
 - `is_singular_matrix()`
 - `is_non_convergence()`
-- `is_unsupported_后端()`
+- `is_unsupported_backend()`
 - `is_arithmetic_failure()`
 
 这些方法用于处理常见 checked API 错误，不需要调用者拆开错误值。

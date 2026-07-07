@@ -1,14 +1,12 @@
 # immut/vector 教程
 
-本页用于说明这个模块的实际使用路径。 这里聚焦 Luna-Flow/linear-algebra 中的 immut/vector。
+## 建议流程
 
-## 建议阅读顺序
-
-1. 先看仓库 README 和 immut/vector 的 API 文档。
-2. 从 `src/immut` 中的构造入口或主入口开始。
-3. 在依赖边界行为之前，先结合已有测试或示例验证语义。
+1. 使用 `Vector::from_array`、`Vector::make` 或 `Vector::makei` 创建向量。
+2. 需要新向量时，使用 `set`、`map`、`left_scale` 和 `right_scale`。
+3. 需要代数转换时，使用 `dot`、`tensor_product`、`to_row_matrix` 和 `to_col_matrix`。
 
 ## 实践建议
 
-- 优先使用已文档化的入口，而不是内部辅助函数。
-- 下游代码里显式记录运行时、数值或证明状态前提。
+- 当下游代码需要明确的值语义时，选择 `@immut.Vector`。
+- 当工作负载包含大量原地更新时，选择 `@mutable.Vector`。

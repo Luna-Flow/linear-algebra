@@ -1,14 +1,12 @@
 # mutable/matrix Tutorial
 
-Use this page as the starting point for practical workflows around this module. mutable/matrix in Luna-Flow/linear-algebra.
-
 ## Suggested Flow
 
-1. Read the repository README and the mutable/matrix API reference.
-2. Start from the constructors or entry points under `src/mutable`.
-3. Validate behavior with the existing tests or examples before depending on edge-case semantics.
+1. Build matrices with `Matrix::from_2d_array`, `Matrix::make`, `Matrix::new`, or `Matrix::from_array`.
+2. Use `get` and `set` for direct element access, and `row_view` / `col_view` for repeated row or column work.
+3. Use checked methods such as `trace`, `determinant`, `inverse`, `mul_vec`, and `pow` when inputs may fail at runtime.
 
 ## Practical Guidance
 
-- Prefer the documented entry points over internal helpers.
-- Record runtime, numeric, or proof-state assumptions explicitly in downstream code.
+- Use `to_transpose()` when you need a live transposed view; use `transpose()` when you need a materialized matrix.
+- Use `unchecked_*` only after shape, non-emptiness, and singularity preconditions have already been enforced.

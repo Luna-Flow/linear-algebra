@@ -1,6 +1,6 @@
 # arithmetic Tutorial
 
-汎用線形代数コードが完全な代数構造ではなく計算可能な scalar 操作だけを必要とする場合、`linear-algebra/arithmetic` を使います。
+汎用線形代数コードが完全な代数構造ではなく計算可能なスカラー操作だけを必要とする場合、`linear-algebra/arithmetic` を使います。
 
 ```moonbit
 fn[T : Abs](value : T) -> T {

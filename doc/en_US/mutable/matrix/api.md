@@ -8,18 +8,18 @@ This page documents the current `0.4.0` repository behavior. Square-root-depende
 - `set`, `swap_rows`, `swap_cols`, `map_inplace`, row/column view updates, and transpose updates modify the underlying matrix in place.
 - Public storage is a flat row-major `Array[T]` across backends. Backend-specific files differ in execution tuning, not in the public matrix model.
 - Public access is strict about bounds. `get`, `set`, `m[row][col]`, `row_view`, `col_view`, extraction helpers, iterators, and transpose-view access reject out-of-range indices consistently, including zero-row and zero-column edge shapes.
-- `swap_rows(i, i)` and `swap_cols(i, i)` are no-op operations. Out-of-range row or column indices panic explicitly instead of relying on accidental storage access.
+- `swap_rows(i, i)` and `swap_cols(i, i)` leave the matrix unchanged. Out-of-range row or column indices abort explicitly instead of relying on accidental storage access.
 
 ## Core Matrix API
 
 - `Matrix::make(row, col, f)`
-  Builds a matrix from a generator function. Negative dimensions panic.
+  Builds a matrix from a generator function. Negative dimensions abort.
 - `Matrix::new(row, col, elem)`
-  Builds a matrix filled with `elem`. Negative dimensions panic.
+  Builds a matrix filled with `elem`. Negative dimensions abort.
 - `Matrix::from_2d_array(arr)`
-  Creates a matrix from a rectangular 2D array. Ragged input panics.
+  Creates a matrix from a rectangular 2D array. Ragged input aborts.
 - `Matrix::from_array(row, col, data)`
-  Uses a flat row-major array as matrix storage. Negative dimensions or wrong element count panic.
+  Uses a flat row-major array as matrix storage. Negative dimensions or wrong element count abort.
 - `row()` / `col()`
   Return the stored shape.
 - `get(row, col)` / `set(row, col, elem)`
@@ -63,7 +63,7 @@ This page documents the current `0.4.0` repository behavior. Square-root-depende
 - `scale(cst)`, `add_constant(cst)`, unary `-`
   Element-wise scalar transforms.
 - `identity(size)`
-  Identity matrix constructor. Negative `size` panics.
+  Identity matrix constructor. Negative `size` aborts.
 - `pow(power)`
   Checked square-matrix exponentiation for non-negative integer powers.
 - `matrix_power(n)`
@@ -86,8 +86,10 @@ This page documents the current `0.4.0` repository behavior. Square-root-depende
   In-place-style row reduction on the mutable matrix value.
 - `cholesky_decomposition()`
   Cholesky factorization for supported numeric inputs.
-- `eigen()`, `power_method()`, `eigen_2x2()`
-  Current eigen-related APIs for supported numeric cases.
+- `eigen()`, `power_method()`
+  Public eigen-related APIs for supported numeric cases. The specialized
+  2x2 helper used by the implementation is not part of the public package
+  interface.
 - `is_square()`, `null()`, `is_symmetric()`, `is_positive_definite()`
   Structural and numeric predicates.
 - `frobenius_norm()`

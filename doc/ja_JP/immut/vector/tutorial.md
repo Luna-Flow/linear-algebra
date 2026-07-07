@@ -1,14 +1,12 @@
 # immut/vector チュートリアル
 
-このページは、このモジュールの実用的な利用フローを説明する出発点です。 Luna-Flow/linear-algebra の immut/vector を対象にします。
-
 ## 推奨フロー
 
-1. まずリポジトリ README と immut/vector の API 文書を読む。
-2. `src/immut` にあるコンストラクタまたは入口から始める。
-3. 境界挙動へ依存する前に、既存のテストや例で意味論を確認する。
+1. `Vector::from_array`、`Vector::make`、`Vector::makei` でベクトルを作ります。
+2. 新しいベクトルが必要な場合は `set`、`map`、`left_scale`、`right_scale` を使います。
+3. 代数的な変換には `dot`、`tensor_product`、`to_row_matrix`、`to_col_matrix` を使います。
 
 ## 実践ガイド
 
-- 内部ヘルパーではなく、文書化された入口を優先する。
-- ランタイム・数値・証明状態の前提を下流コードに明示する。
+- 下流コードで明示的な値セマンティクスが必要な場合は `@immut.Vector` を選びます。
+- 繰り返し原地更新するワークロードでは `@mutable.Vector` を選びます。

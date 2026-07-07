@@ -1,14 +1,12 @@
 # mutable/matrix 教程
 
-本页用于说明这个模块的实际使用路径。 这里聚焦 Luna-Flow/linear-algebra 中的 mutable/matrix。
+## 建议流程
 
-## 建议阅读顺序
-
-1. 先看仓库 README 和 mutable/matrix 的 API 文档。
-2. 从 `src/mutable` 中的构造入口或主入口开始。
-3. 在依赖边界行为之前，先结合已有测试或示例验证语义。
+1. 使用 `Matrix::from_2d_array`、`Matrix::make`、`Matrix::new` 或 `Matrix::from_array` 构造矩阵。
+2. 用 `get` 和 `set` 直接访问元素；需要反复处理某行或某列时，使用 `row_view` / `col_view`。
+3. 当输入可能在运行时失败时，使用带检查的 `trace`、`determinant`、`inverse`、`mul_vec` 和 `pow`。
 
 ## 实践建议
 
-- 优先使用已文档化的入口，而不是内部辅助函数。
-- 下游代码里显式记录运行时、数值或证明状态前提。
+- 需要连接到底层矩阵的转置视图时使用 `to_transpose()`；需要物化矩阵时使用 `transpose()`。
+- 只有在已经保证形状、非空和非奇异等前置条件时，才使用 `unchecked_*`。

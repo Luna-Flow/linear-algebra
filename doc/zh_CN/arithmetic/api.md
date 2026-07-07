@@ -95,8 +95,8 @@ pub(open) trait CheckedCompare {
 }
 ```
 
-checked scalar comparison。当前实现给 `Float` 和 `Double`。
+带检查的标量比较。当前实现给 `Float` 和 `Double`。
 
 ## 边界
 
-本包不能导入 matrix、vector 或 后端 类型。依赖方向上，它位于 `algebra` 和所有 后端 包之下。
+本包不能导入矩阵、向量或后端类型。依赖方向上，它位于 `algebra` 和所有后端包之下。

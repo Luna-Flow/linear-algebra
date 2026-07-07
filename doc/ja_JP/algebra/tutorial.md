@@ -8,4 +8,4 @@ fn[T : Semiring](value : T) -> T {
 }
 ```
 
-近似 floating scalar バックエンド が意図される場合は `FloatingScalarOps` を使います。exact field law の主張としては扱わないでください。
+近似的な浮動小数点スカラーを前提にする場合は `FloatingScalarOps` を使います。厳密な体の法則を主張する trait として扱わないでください。

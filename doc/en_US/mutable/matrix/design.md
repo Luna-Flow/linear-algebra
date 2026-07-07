@@ -1,14 +1,13 @@
 # mutable/matrix Design
 
-Use this page to explain the structural responsibilities and implementation constraints of this module. mutable/matrix in Luna-Flow/linear-algebra.
-
 ## Responsibilities
 
-- Keep the code and docs aligned around `src/mutable`.
-- Preserve the real execution model instead of smoothing over important internal differences.
-- Note extension points, invariants, and limitations that maintainers must keep stable.
+- Provide an execution-oriented `Matrix[T]` with row-major `Array[T]` storage across supported backends.
+- Keep live row, column, and transpose views connected to the underlying matrix.
+- Keep checked APIs for runtime failures while preserving explicit `unchecked_*` methods for legacy contracts.
 
-## Maintenance Notes
+## Invariants
 
-- Update this page whenever the module boundary, core algorithm, or observable semantics change.
-- If the module is intentionally incomplete, say so here instead of documenting speculative APIs.
+- Backend-specific files may tune kernels, but they must expose the same public semantics.
+- Bounds checks are explicit for matrix, view, iterator, and transpose access.
+- Shared algebraic operations should stay semantically aligned with `immut` where both packages expose them.

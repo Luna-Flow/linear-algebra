@@ -1,14 +1,12 @@
 # immut/vector Tutorial
 
-Use this page as the starting point for practical workflows around this module. immut/vector in Luna-Flow/linear-algebra.
-
 ## Suggested Flow
 
-1. Read the repository README and the immut/vector API reference.
-2. Start from the constructors or entry points under `src/immut`.
-3. Validate behavior with the existing tests or examples before depending on edge-case semantics.
+1. Create vectors with `Vector::from_array`, `Vector::make`, or `Vector::makei`.
+2. Use `set`, `map`, `left_scale`, and `right_scale` when you want a new vector.
+3. Use `dot`, `tensor_product`, `to_row_matrix`, and `to_col_matrix` for algebraic conversions.
 
 ## Practical Guidance
 
-- Prefer the documented entry points over internal helpers.
-- Record runtime, numeric, or proof-state assumptions explicitly in downstream code.
+- Choose `@immut.Vector` when downstream code benefits from explicit value semantics.
+- Use `@mutable.Vector` instead when repeated in-place updates are part of the workload.

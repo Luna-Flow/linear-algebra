@@ -1,14 +1,12 @@
 # immut/matrix 教程
 
-本页用于说明这个模块的实际使用路径。 这里聚焦 Luna-Flow/linear-algebra 中的 immut/matrix。
+## 建议流程
 
-## 建议阅读顺序
-
-1. 先看仓库 README 和 immut/matrix 的 API 文档。
-2. 从 `src/immut` 中的构造入口或主入口开始。
-3. 在依赖边界行为之前，先结合已有测试或示例验证语义。
+1. 使用 `Matrix::from_2d_array`、`Matrix::make`、`Matrix::new` 或 `Matrix::from_array` 构造矩阵。
+2. 把 `set`、`swap_rows`、`swap_cols`、`map` 和 `transpose` 当作返回新矩阵的操作。
+3. 当形状或输入域可能来自运行时数据时，优先使用带检查的 `matmul`、`trace`、`determinant` 和 `pow`。
 
 ## 实践建议
 
-- 优先使用已文档化的入口，而不是内部辅助函数。
-- 下游代码里显式记录运行时、数值或证明状态前提。
+- 只有在外层逻辑已经保证前置条件时，才使用 `unchecked_*`。
+- 当惰性的函数式矩阵表示比物化存储更合适时，使用 `MatrixFn`。
