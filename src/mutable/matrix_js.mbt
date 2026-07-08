@@ -773,8 +773,112 @@ pub fn[T : AddMonoid + Mul] Matrix::unchecked_matmul(
   let data = Array::make(row * col, T::zero())
   let self_data = self.data
   let other_data = other.data
-  matmul_unrolled_into(row, col, inner, self_data, other_data, data)
+  if should_use_packed_rhs_matmul(row, col, inner) {
+    let packed_rhs = pack_rhs_columns(inner, col, other_data)
+    matmul_packed_rhs_into(row, col, inner, self_data, packed_rhs, data)
+  } else {
+    matmul_unrolled_into(row, col, inner, self_data, other_data, data)
+  }
   { row, col, data }
+}
+
+///|
+fn should_use_packed_rhs_matmul(row : Int, col : Int, inner : Int) -> Bool {
+  row >= 8 && col >= 24 && inner >= 24 && row * col * inner >= 8192
+}
+
+///|
+fn[T] pack_rhs_columns(
+  inner : Int,
+  col : Int,
+  other_data : Array[T],
+) -> Array[T] {
+  let packed = Array::make(inner * col, other_data[0])
+  for k = 0; k < inner; k = k + 1 {
+    let src_row_offset = k * col
+    for j = 0; j < col; j = j + 1 {
+      packed[j * inner + k] = other_data[src_row_offset + j]
+    }
+  }
+  packed
+}
+
+///|
+fn[T : AddMonoid + Mul] matmul_packed_rhs_into(
+  row : Int,
+  col : Int,
+  inner : Int,
+  self_data : Array[T],
+  packed_rhs : Array[T],
+  data : Array[T],
+) -> Unit {
+  let mut result_row_offset = 0
+  for i = 0; i < row; i = i + 1 {
+    let self_row_offset = i * inner
+    let mut j = 0
+    while j + 3 < col {
+      let rhs0 = j * inner
+      let rhs1 = rhs0 + inner
+      let rhs2 = rhs1 + inner
+      let rhs3 = rhs2 + inner
+      let mut sum0 = T::zero()
+      let mut sum1 = T::zero()
+      let mut sum2 = T::zero()
+      let mut sum3 = T::zero()
+      let mut k = 0
+      while k + 3 < inner {
+        let a0 = self_data[self_row_offset + k]
+        let a1 = self_data[self_row_offset + k + 1]
+        let a2 = self_data[self_row_offset + k + 2]
+        let a3 = self_data[self_row_offset + k + 3]
+        sum0 = sum0 +
+          a0 * packed_rhs[rhs0 + k] +
+          a1 * packed_rhs[rhs0 + k + 1] +
+          a2 * packed_rhs[rhs0 + k + 2] +
+          a3 * packed_rhs[rhs0 + k + 3]
+        sum1 = sum1 +
+          a0 * packed_rhs[rhs1 + k] +
+          a1 * packed_rhs[rhs1 + k + 1] +
+          a2 * packed_rhs[rhs1 + k + 2] +
+          a3 * packed_rhs[rhs1 + k + 3]
+        sum2 = sum2 +
+          a0 * packed_rhs[rhs2 + k] +
+          a1 * packed_rhs[rhs2 + k + 1] +
+          a2 * packed_rhs[rhs2 + k + 2] +
+          a3 * packed_rhs[rhs2 + k + 3]
+        sum3 = sum3 +
+          a0 * packed_rhs[rhs3 + k] +
+          a1 * packed_rhs[rhs3 + k + 1] +
+          a2 * packed_rhs[rhs3 + k + 2] +
+          a3 * packed_rhs[rhs3 + k + 3]
+        k += 4
+      }
+      while k < inner {
+        let lhs = self_data[self_row_offset + k]
+        sum0 = sum0 + lhs * packed_rhs[rhs0 + k]
+        sum1 = sum1 + lhs * packed_rhs[rhs1 + k]
+        sum2 = sum2 + lhs * packed_rhs[rhs2 + k]
+        sum3 = sum3 + lhs * packed_rhs[rhs3 + k]
+        k += 1
+      }
+      let out_idx = result_row_offset + j
+      data[out_idx] = sum0
+      data[out_idx + 1] = sum1
+      data[out_idx + 2] = sum2
+      data[out_idx + 3] = sum3
+      j += 4
+    }
+    while j < col {
+      let rhs_offset = j * inner
+      let mut sum = T::zero()
+      for k = 0; k < inner; k = k + 1 {
+        sum = sum + self_data[self_row_offset + k] * packed_rhs[rhs_offset + k]
+      }
+      data[result_row_offset + j] = sum
+      j += 1
+    }
+    result_row_offset += col
+  }
 }
 
 ///|
