@@ -4,7 +4,6 @@ fn main {
   let repeat = find_repeat_arg(args)
   let sample_count = find_samples_arg(args)
   let warmup_count = find_warmup_arg(args)
-  let case_path = find_case_path_arg(args)
   guard repeat > 0 else { abort("repeat must be positive") }
   guard sample_count >= 0 else { abort("samples must be non-negative") }
   guard warmup_count >= 0 else { abort("warmup must be non-negative") }
@@ -12,6 +11,9 @@ fn main {
     Some(case_id) =>
       match @support.find_case(case_id) {
         Some(case_item) => {
+          let case_path = find_case_path_arg(args).unwrap_or(
+            "bench/datasets/cases/" + case_item.id + ".json",
+          )
           let prepared = @support.prepare_case_from_fixture(
             case_item, case_path,
           )
@@ -31,7 +33,7 @@ fn main {
       }
     None =>
       abort(
-        "usage: moon run src/perf_runner <case-id> --case-file <path> [--repeat <n>] [--samples <n>] [--warmup <n>]",
+        "usage: moon run src/perf_runner <case-id> [--case-file <path>] [--repeat <n>] [--samples <n>] [--warmup <n>]",
       )
   }
 }
@@ -59,13 +61,13 @@ fn find_case_arg(args : Array[String]) -> String? {
 }
 
 ///|
-fn find_case_path_arg(args : Array[String]) -> String {
+fn find_case_path_arg(args : Array[String]) -> String? {
   for i = 0; i + 1 < args.length(); i = i + 1 {
     if args[i] == "--case-file" {
-      return args[i + 1]
+      return Some(args[i + 1])
     }
   }
-  abort("missing --case-file")
+  None
 }
 
 ///|

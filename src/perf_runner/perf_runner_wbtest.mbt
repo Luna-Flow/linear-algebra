@@ -42,6 +42,15 @@ test "prepare_repeat_cases/scratch_copies_preserve_custom_fixture" {
 }
 
 ///|
+test "find_case_path_arg/is_optional" {
+  inspect(find_case_path_arg(["mul_baseline_dense_64"]) == None, content="true")
+  let explicit = find_case_path_arg([
+    "mul_baseline_dense_64", "--case-file", "tmp/case.json",
+  ]).unwrap()
+  inspect(explicit, content="tmp/case.json")
+}
+
+///|
 fn custom_fixture_json(case_item : @support.Case) -> String {
   let rows = case_item.rows
   let cols = case_item.cols

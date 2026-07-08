@@ -20,6 +20,9 @@ benchmark accuracy, release automation, and mutable matrix kernel performance.
   so benchmark comparisons are not dominated by repeated shape validation.
 - `bench/datasets/cases/*.json` fixtures are documented as on-demand local
   artifacts rather than tracked repository files.
+- `perf_support` and `perf_runner` now regenerate missing benchmark case
+  fixtures on demand from the tracked dataset metadata, so direct tests and
+  runner invocations work on a clean checkout.
 - The publish workflow now reads the package version directly from `moon.mod`
   and no longer requires a manually typed release version.
 
@@ -218,12 +221,33 @@ Useful local commands:
 
 ```bash
 moon fmt
+moon info
 moon check
+moon test -p perf_support
+moon test -p perf_runner
 moon test --enable-coverage
 ./run_test.sh
 ```
 
 `run_test.sh` runs the repository test suite: `immut`, `consistency`, `perf_support`, and `perf_runner`, plus `mutable` on `wasm-gc`, `js`, `native`, and `wasm`.
+
+Runnable entry points:
+
+```bash
+# This repository is primarily a library, so use an explicit package target.
+moon run src/perf_runner mul_baseline_dense_64
+
+# Optional: materialize benchmark fixtures ahead of time.
+python3 bench/generate_fixtures.py
+
+# Full benchmark flow.
+just bench
+```
+
+`moon run src/perf_runner ...` defaults to `bench/datasets/cases/<case-id>.json`.
+If that fixture file is missing on a clean checkout, `perf_support` will
+recreate it automatically from the tracked dataset registry before executing the
+case.
 
 ## Release Checklist
 

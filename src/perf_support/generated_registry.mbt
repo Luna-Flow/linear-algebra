@@ -4,6 +4,233 @@
 pub let dataset_version : String = "v3"
 
 ///|
+fn fixture_seed_for_case(case_id : String) -> UInt64? {
+  if case_id == "mul_baseline_dense_64" {
+    return Some(0x1001UL)
+  }
+  if case_id == "mul_baseline_dense_128" {
+    return Some(0x1002UL)
+  }
+  if case_id == "mul_baseline_dense_256" {
+    return Some(0x1003UL)
+  }
+  if case_id == "mul_structured_rect_256x64x256" {
+    return Some(0x1011UL)
+  }
+  if case_id == "mul_structured_rect_384x96x384" {
+    return Some(0x1012UL)
+  }
+  if case_id == "mul_pathological_rect_256x128x64" {
+    return Some(0x1013UL)
+  }
+  if case_id == "mul_vec_baseline_dense_256" {
+    return Some(0x2001UL)
+  }
+  if case_id == "mul_vec_baseline_dense_512" {
+    return Some(0x2002UL)
+  }
+  if case_id == "mul_vec_baseline_dense_1024" {
+    return Some(0x2003UL)
+  }
+  if case_id == "mul_vec_structured_dom_512" {
+    return Some(0x2011UL)
+  }
+  if case_id == "mul_vec_pathological_projector_1024x256" {
+    return Some(0x2012UL)
+  }
+  if case_id == "det_baseline_shifted_16" {
+    return Some(0x3001UL)
+  }
+  if case_id == "det_baseline_shifted_32" {
+    return Some(0x3002UL)
+  }
+  if case_id == "det_baseline_shifted_48" {
+    return Some(0x3003UL)
+  }
+  if case_id == "det_structured_upper_tri_16" {
+    return Some(0x3011UL)
+  }
+  if case_id == "det_structured_upper_tri_32" {
+    return Some(0x3012UL)
+  }
+  if case_id == "det_structured_upper_tri_48" {
+    return Some(0x3013UL)
+  }
+  if case_id == "det_pathological_near_singular_16" {
+    return Some(0x3021UL)
+  }
+  if case_id == "det_pathological_near_singular_32" {
+    return Some(0x3022UL)
+  }
+  if case_id == "det_pathological_near_singular_48" {
+    return Some(0x3023UL)
+  }
+  if case_id == "inverse_baseline_shifted_16" {
+    return Some(0x4001UL)
+  }
+  if case_id == "inverse_baseline_shifted_32" {
+    return Some(0x4002UL)
+  }
+  if case_id == "inverse_baseline_shifted_48" {
+    return Some(0x4003UL)
+  }
+  if case_id == "inverse_structured_spd_16" {
+    return Some(0x4011UL)
+  }
+  if case_id == "inverse_structured_spd_32" {
+    return Some(0x4012UL)
+  }
+  if case_id == "inverse_structured_spd_48" {
+    return Some(0x4013UL)
+  }
+  if case_id == "inverse_pathological_small_gap_16" {
+    return Some(0x4021UL)
+  }
+  if case_id == "inverse_pathological_small_gap_32" {
+    return Some(0x4022UL)
+  }
+  if case_id == "inverse_pathological_small_gap_48" {
+    return Some(0x4023UL)
+  }
+  if case_id == "rank_baseline_dense_64x48" {
+    return Some(0x5001UL)
+  }
+  if case_id == "rank_baseline_dense_128x96" {
+    return Some(0x5002UL)
+  }
+  if case_id == "rank_baseline_dense_192x128" {
+    return Some(0x5003UL)
+  }
+  if case_id == "rank_structured_block_64x48" {
+    return Some(0x5011UL)
+  }
+  if case_id == "rank_structured_block_128x96" {
+    return Some(0x5012UL)
+  }
+  if case_id == "rank_structured_block_192x128" {
+    return Some(0x5013UL)
+  }
+  if case_id == "rank_pathological_def_64x48" {
+    return Some(0x5021UL)
+  }
+  if case_id == "rank_pathological_def_128x96" {
+    return Some(0x5022UL)
+  }
+  if case_id == "rank_pathological_def_192x128" {
+    return Some(0x5023UL)
+  }
+  if case_id == "rref_baseline_dense_64x48" {
+    return Some(0x6001UL)
+  }
+  if case_id == "rref_baseline_dense_128x96" {
+    return Some(0x6002UL)
+  }
+  if case_id == "rref_baseline_dense_192x128" {
+    return Some(0x6003UL)
+  }
+  if case_id == "rref_structured_block_64x48" {
+    return Some(0x6011UL)
+  }
+  if case_id == "rref_structured_block_128x96" {
+    return Some(0x6012UL)
+  }
+  if case_id == "rref_structured_block_192x128" {
+    return Some(0x6013UL)
+  }
+  if case_id == "rref_pathological_def_64" {
+    return Some(0x6021UL)
+  }
+  if case_id == "rref_pathological_def_96" {
+    return Some(0x6022UL)
+  }
+  if case_id == "rref_pathological_def_128" {
+    return Some(0x6023UL)
+  }
+  if case_id == "chol_baseline_spd_32" {
+    return Some(0x7001UL)
+  }
+  if case_id == "chol_baseline_spd_64" {
+    return Some(0x7002UL)
+  }
+  if case_id == "chol_baseline_spd_96" {
+    return Some(0x7003UL)
+  }
+  if case_id == "chol_structured_spd_32" {
+    return Some(0x7011UL)
+  }
+  if case_id == "chol_structured_spd_64" {
+    return Some(0x7012UL)
+  }
+  if case_id == "chol_structured_spd_96" {
+    return Some(0x7013UL)
+  }
+  if case_id == "chol_pathological_spd_32" {
+    return Some(0x7021UL)
+  }
+  if case_id == "chol_pathological_spd_64" {
+    return Some(0x7022UL)
+  }
+  if case_id == "chol_pathological_spd_96" {
+    return Some(0x7023UL)
+  }
+  if case_id == "eigen_baseline_sym_32" {
+    return Some(0x8001UL)
+  }
+  if case_id == "eigen_baseline_sym_64" {
+    return Some(0x8002UL)
+  }
+  if case_id == "eigen_baseline_sym_96" {
+    return Some(0x8003UL)
+  }
+  if case_id == "eigen_structured_clustered_32" {
+    return Some(0x8011UL)
+  }
+  if case_id == "eigen_structured_clustered_64" {
+    return Some(0x8012UL)
+  }
+  if case_id == "eigen_structured_clustered_96" {
+    return Some(0x8013UL)
+  }
+  if case_id == "eigen_pathological_small_gap_32" {
+    return Some(0x8021UL)
+  }
+  if case_id == "eigen_pathological_small_gap_64" {
+    return Some(0x8022UL)
+  }
+  if case_id == "eigen_pathological_small_gap_96" {
+    return Some(0x8023UL)
+  }
+  if case_id == "power_baseline_dom_32" {
+    return Some(0x9001UL)
+  }
+  if case_id == "power_baseline_dom_64" {
+    return Some(0x9002UL)
+  }
+  if case_id == "power_baseline_dom_96" {
+    return Some(0x9003UL)
+  }
+  if case_id == "power_structured_gap_32" {
+    return Some(0x9011UL)
+  }
+  if case_id == "power_structured_gap_64" {
+    return Some(0x9012UL)
+  }
+  if case_id == "power_structured_gap_96" {
+    return Some(0x9013UL)
+  }
+  if case_id == "power_pathological_gap_32" {
+    return Some(0x9021UL)
+  }
+  if case_id == "power_pathological_gap_64" {
+    return Some(0x9022UL)
+  }
+  if case_id == "power_pathological_gap_96" {
+    return Some(0x9023UL)
+  }
+  None
+}
+
+///|
 let case_mul_baseline_dense_64 : Case = {
   id: "mul_baseline_dense_64",
   operation: "mul",

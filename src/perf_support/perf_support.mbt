@@ -249,6 +249,9 @@ fn default_case_path(case_id : String) -> String {
 
 ///|
 fn load_case_fixture(case_item : Case, case_path : String) -> LoadedCaseFixture {
+  if !@fs.path_exists(case_path) {
+    return generated_fixture_for_case(case_item, case_path)
+  }
   let content = @fs.read_file_to_string(case_path) catch {
     _ => abort("failed to read benchmark fixture: " + case_path)
   }

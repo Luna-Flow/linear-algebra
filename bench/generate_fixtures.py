@@ -857,7 +857,18 @@ def moon_registry(cases: list[Case]) -> str:
         "///|",
         f'pub let dataset_version : String = "{DATASET_VERSION}"',
         "",
+        "///|",
+        "fn fixture_seed_for_case(case_id : String) -> UInt64? {",
     ]
+    for case in cases:
+        lines.append(f'  if case_id == "{case.id}" {{ return Some(0x{case.generator_meta["seed"]:X}UL) }}')
+    lines.extend(
+        [
+            "  None",
+            "}",
+            "",
+        ]
+    )
     for case in cases:
         lines.extend(
             [

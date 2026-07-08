@@ -25,6 +25,11 @@ rather than a dedicated scheduled GitHub Actions workflow.
 - `bench/generate_fixtures.py` regenerates the JSON fixtures plus compact
   metadata registries for MoonBit and Rust.
 
+`perf_support` and `perf_runner` can also recreate an individual missing fixture
+from the tracked dataset registry when you run a direct MoonBit test or runner
+command on a clean checkout. Bulk benchmark runs still use
+`bench/generate_fixtures.py` as before.
+
 `manifest.json` and the generated MoonBit/Rust registries are tracked in git in
 the current repository. Treat them as derived artifacts that should be
 regenerated together, reviewed for coherence, and committed when the benchmark
@@ -44,6 +49,18 @@ Run a local smoke pass:
 
 ```bash
 just bench-smoke
+```
+
+Run a single diagnostic case directly:
+
+```bash
+moon run src/perf_runner mul_baseline_dense_64
+```
+
+Override the fixture location explicitly:
+
+```bash
+moon run src/perf_runner mul_baseline_dense_64 --case-file bench/datasets/cases/mul_baseline_dense_64.json
 ```
 
 Run the full MoonBit matrix:
