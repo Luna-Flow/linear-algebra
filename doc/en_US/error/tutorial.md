@@ -1,6 +1,6 @@
 # error Tutorial
 
-Use `linear-algebra/error` when calling checked linear-algebra APIs that return
+Use `linear-algebra/error` when you call checked linear-algebra APIs that return
 `Result[..., @error.LinearAlgebraError]`.
 
 ```moonbit
@@ -20,8 +20,8 @@ match matrix.inverse() {
 
 Prefer predicates such as `is_dimension_mismatch`,
 `is_negative_exponent`, and `is_empty_matrix` when the caller can recover from
-specific failures. Use `message` for diagnostics, logs, or final fallback
-errors; do not parse it to decide control flow.
+specific failures. Use `message` for diagnostics, logs, or a final fallback
+error; do not parse it to decide control flow.
 
 Keep `ArithmeticFailure` as a boundary for scalar arithmetic errors propagated
 from lower-level arithmetic packages. Handle it separately only when the caller

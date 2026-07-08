@@ -4,7 +4,7 @@
 
 ## 职责
 
-`error` 提供 checked 线性代数 API 共用的结构化错误类型。调用者可以根据错误种类区分形状错误、非法输入域、奇异矩阵、不支持的后端和底层算术错误，而不需要解析 abort 文本。
+`error` 提供带检查线性代数 API 共用的结构化错误类型。调用者可以根据错误种类区分形状错误、非法输入域、奇异矩阵、不支持的后端和底层算术错误，而不需要解析 abort 文本。
 
 ## `LinearAlgebraErrorKind`
 
@@ -69,7 +69,7 @@ pub struct LinearAlgebraError {
 - `is_unsupported_backend()`
 - `is_arithmetic_failure()`
 
-这些方法用于处理常见 checked API 错误，不需要调用者拆开错误值。
+这些方法用于处理带检查 API 的常见错误，不需要调用者拆开错误值。
 
 ## 使用示例
 

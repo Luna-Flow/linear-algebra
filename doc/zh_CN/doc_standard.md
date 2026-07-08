@@ -14,11 +14,11 @@
 ### 文档组织原则
 
 - 按照包/文件来组织，例如
-  
+
   ```txt
   doc/
     |- en_US
-    |- ja_JP 
+    |- ja_JP
     |- zh_CN
         |- immut
         |   |- matrix

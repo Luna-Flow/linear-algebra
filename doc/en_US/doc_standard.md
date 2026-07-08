@@ -14,11 +14,11 @@ This repository's documentation describes the **current implementation on the br
 ### Documentation Organization Principles
 
 - Organized by package/file, for example:
-  
+
   ```txt
   doc/
     |- en_US
-    |- ja_JP 
+    |- ja_JP
     |- zh_CN
         |- immut
         |   |- matrix

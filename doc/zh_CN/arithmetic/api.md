@@ -16,7 +16,7 @@
 - `FpClass`
 - `RoundingMode`
 
-这些类型保持上游行为，用于 checked operations。
+这些类型保持上游行为，用于带检查的运算。
 
 ## 重导出的操作 traits
 
@@ -75,7 +75,7 @@ pub(open) trait CheckedDiv {
 }
 ```
 
-带 `ArithmeticContext` 的 checked division。当前实现给 `Float` 和 `Double`。
+带 `ArithmeticContext` 的除法检查。当前实现给 `Float` 和 `Double`。
 
 ## `CheckedSqrt`
 
@@ -85,7 +85,7 @@ pub(open) trait CheckedSqrt {
 }
 ```
 
-带 `ArithmeticContext` 的 checked square root。当前实现给 `Float` 和 `Double`。
+带 `ArithmeticContext` 的平方根检查。当前实现给 `Float` 和 `Double`。
 
 ## `CheckedCompare`
 

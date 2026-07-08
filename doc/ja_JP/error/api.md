@@ -70,7 +70,7 @@ pub struct LinearAlgebraError {
 - `is_unsupported_backend()`
 - `is_arithmetic_failure()`
 
-これらのメソッドは、エラー値を分解せずに 検査付き API の代表的な失敗を処理するためのものです。
+これらのメソッドは、エラー値を分解せずに検査付き API の代表的な失敗を処理するためのものです。
 
 ## 使用例
 

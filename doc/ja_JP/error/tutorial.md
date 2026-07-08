@@ -1,6 +1,6 @@
 # error Tutorial
 
-`Result[..., @error.LinearAlgebraError]` を返す checked 線形代数 API を呼ぶときは
+`Result[..., @error.LinearAlgebraError]` を返す検査付き線形代数 API を呼ぶときは
 `linear-algebra/error` を使います。
 
 ```moonbit

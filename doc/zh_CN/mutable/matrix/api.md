@@ -25,7 +25,7 @@
 - `get(row, col)` / `set(row, col, elem)`
   带显式边界检查的快速随机访问。
 - `m[row][col]`
-  基于 `Lens[T]` 的便捷语法。可以读写，但在重复批量操作时应优先使用 `row_view`、`col_view` 或专用 辅助函数。
+  基于 `Lens[T]` 的便捷语法。可以读写，但在重复批量操作时应优先使用 `row_view`、`col_view` 或专用辅助函数。
 - `copy()`
   深拷贝矩阵。
 - `map`, `mapi`
@@ -39,20 +39,20 @@
 - `row_to_array`, `col_to_array`, `row_to_vector`, `col_to_vector`, `to_array`, `to_2d_array`, `to_vector`
   物化辅助函数；需要索引时会做校验。
 - `transpose()`
-  返回实化后的转置矩阵。
+  返回物化后的转置矩阵。
 - `to_transpose()`
-  返回一个 live 转置视图。
+  返回一个与底层矩阵保持连接的转置视图。
 - `horizontal_combine`, `vertical_combine`
   拼接形状兼容的矩阵。
 
 ## 视图与转置
 
 - `row_view(row)` / `col_view(col)`
-  返回与底层矩阵保持连接的 live 视图。
+  返回与底层矩阵保持连接的视图。
 - `RowView` 与 `ColView`
   暴露 `get`、`set`、`iter`、`each`、`eachi`、`map_inplace`、`to_array`、`to_vector`。
 - `Transpose`
-  在 live 转置视图上提供接近矩阵的 API 表面。
+  在转置视图上提供接近矩阵的 API 表面。
 - `Transpose::swap_rows` / `Transpose::swap_cols`
   委托到底层矩阵，并共享同样严格的边界语义。
 
