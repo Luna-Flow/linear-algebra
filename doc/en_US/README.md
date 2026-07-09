@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-This README matches the current repository baseline for **v0.4.4**.
+This README matches the current repository baseline for **v0.4.5**.
 
 The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt`
 capability, while integral embeddings follow
@@ -9,9 +9,10 @@ capability, while integral embeddings follow
 now use checked `Result[..., LinearAlgebraError]` APIs; the old aborting or
 `Option`-returning behavior is exposed through explicit `unchecked_*` methods.
 
-The `0.4.4` baseline keeps the checked `0.4.x` API surface and the packed
-matrix-multiplication work introduced in `0.4.2`, while aligning package and
-repository metadata with the current trait-oriented project positioning.
+The `0.4.5` baseline keeps the checked `0.4.x` API surface and the packed
+matrix-multiplication work introduced in `0.4.2`, while removing the old
+runtime backend-selection story, introducing the explicit native OpenBLAS
+backend, and aligning the release baseline across code, docs, and CI.
 
 For earlier release notes and repository history, see
 [CHANGELOG.md](../../CHANGELOG.md).
@@ -26,8 +27,13 @@ For earlier release notes and repository history, see
 - **`backends/default`**: The reference dense backend layer. It exposes mutable
   dense wrappers `DenseVector` / `DenseMatrix` and immutable dense wrappers
   `ImmutableDenseVector` / `ImmutableDenseMatrix`.
+- **`backends/openblas`**: A native-only OpenBLAS backend. It exposes the owned
+  `BlasMatrix[T]` wrapper for `Float` and `Double`, uses OpenBLAS GEMM for
+  matrix multiplication, and keeps backend choice explicit through the concrete
+  type rather than a runtime selector.
 - **`error`**: Shared error vocabulary for checked linear-algebra APIs,
-  including shape, exponent, empty-matrix, singular-matrix, and backend errors.
+  including shape, exponent, empty-matrix, singular-matrix, non-convergence, and
+  arithmetic failures.
 - **Trait-driven algorithms**: Backend-independent code should depend on the
   smallest capability it needs, such as `MatrixShape`, `AdditiveVector`,
   `VecMulVector`, `TransposeMatrix`, or `MatMulMatrix`.
@@ -50,6 +56,9 @@ implementations wrapped by `backends/default`. `DenseVector` and `DenseMatrix`
 wrap `@mutable.Vector` and `@mutable.Matrix`, while
 `ImmutableDenseVector` and `ImmutableDenseMatrix` wrap `@immut.Vector` and
 `@immut.Matrix`.
+For OpenBLAS-backed native matrix multiplication, choose
+[`backends/openblas`](./backends/openblas/api.md) explicitly. It is a separate
+concrete backend, not a runtime backend option inside `@immut.Matrix`.
 
 ## Reader Guide
 
@@ -63,11 +72,13 @@ wrap `@mutable.Vector` and `@mutable.Matrix`, while
   [arithmetic](./arithmetic/api.md) ->
   [algebra](./algebra/api.md) ->
   [backends/default](./backends/default/api.md) ->
+  [backends/openblas](./backends/openblas/api.md) ->
   [immut / mutable](./immut/matrix/api.md).
   Start from operation capabilities, then structure capabilities, then the
-  default backend wrappers, and finally the concrete implementations. This is
-  the intended entry path if you are building a higher-level application
-  library or solver-oriented package on top of this repository.
+  default backend wrappers, then the optional OpenBLAS native wrapper, and
+  finally the concrete implementations. This is the intended entry path if you
+  are building a higher-level application library or solver-oriented package on
+  top of this repository.
 
 ## Documentation Entry Points
 
@@ -85,6 +96,8 @@ wrap `@mutable.Vector` and `@mutable.Matrix`, while
   [arithmetic API](./arithmetic/api.md),
   [algebra API](./algebra/api.md),
   [backends/default API](./backends/default/api.md),
+  [backends/openblas API](./backends/openblas/api.md),
+  [backends/openblas tutorial](./backends/openblas/tutorial.md),
   [error API](./error/api.md)
 
 ## Used In
@@ -102,7 +115,7 @@ If you want to write backend-independent code with the abstract capability
 layers, add the shared upstream abstraction packages explicitly:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.4
+moon add Luna-Flow/linear-algebra@0.4.5
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -132,6 +145,8 @@ models.
 - `README.md` for the repository narrative and release baseline.
 - `doc_standard.md` for the documentation contract.
 - Module or subsystem folders with `api.md`, `tutorial.md`, and `design.md`.
+- `doc/*` is the hand-written documentation source. The `src/doc_*` packages
+  expose those files through symlinks for MoonBit package documentation.
 
 ## Module Overview
 
@@ -142,4 +157,5 @@ models.
 - **`arithmetic`**: Implemented around `src/arithmetic`.
 - **`algebra`**: Implemented around `src/algebra`.
 - **`backends/default`**: Implemented around `src/backends/default`.
+- **`backends/openblas`**: Implemented around `src/backends/openblas`.
 - **`error`**: Implemented around `src/error`.

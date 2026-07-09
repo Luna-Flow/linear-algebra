@@ -1,0 +1,1 @@
+../../doc/ja_JP/backends/openblas/design.md

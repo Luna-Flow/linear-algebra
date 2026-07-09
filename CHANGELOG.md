@@ -4,19 +4,41 @@ All notable repository-release changes are tracked here. The main
 [`README.md`](./README.md) stays focused on the current baseline and entry
 points; older release history lives in this file.
 
-## 0.4.4 - 2026-07-09
+## 0.4.5 - 2026-07-09
 
 Current repository release.
 
 ### Highlights
 
-- Package metadata is now aligned around the current repository positioning:
-  `moon.mod` keeps the Apache 2.0 SPDX license field and now describes the
-  package as trait-oriented linear algebra foundations for MoonBit.
-- The repository metadata and README license presentation are now aligned with
-  the Apache 2.0 project baseline.
-- The multilingual documentation baseline is now lifted to `0.4.4`, so the
-  current release number stays consistent across README files, API baselines,
+- The old runtime backend-selection surface was removed from `immut`, including
+  the `MatMulBackend`-style selector API and its related tests and generated
+  interfaces.
+- `backends/openblas` is now the explicit native backend surface. It introduces
+  the owned `BlasMatrix[T]` wrapper, the backend-local `BLASInnerType`
+  abstraction for `Float` and `Double`, and OpenBLAS-backed matrix
+  multiplication through GEMM.
+- Stale backend-only public errors were pruned so the shared checked error API
+  matches the live code paths again.
+- The multilingual documentation baseline now matches the code: the three
+  localized README entry pages, API baselines, OpenBLAS docs, and doc exposure
+  symlinks all describe the same explicit-backend model.
+- CI and publish workflows now install Ubuntu OpenBLAS development packages,
+  and the native package configuration searches both Homebrew macOS paths and
+  the default Ubuntu OpenBLAS include/library layout.
+
+## 0.4.4 - 2026-07-09
+
+Previous release baseline.
+
+### Highlights
+
+- Package metadata was aligned around the repository positioning:
+  `moon.mod` kept the Apache 2.0 SPDX license field and described the package
+  as trait-oriented linear algebra foundations for MoonBit.
+- The repository metadata and README license presentation were aligned with the
+  Apache 2.0 project baseline.
+- The multilingual documentation baseline was lifted to `0.4.4`, so the
+  release number stayed consistent across README files, API baselines,
   tutorials, and contributor-facing guidance.
 
 ## 0.4.3 - 2026-07-09

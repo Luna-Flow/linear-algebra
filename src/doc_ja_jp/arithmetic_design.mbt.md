@@ -1,0 +1,1 @@
+../../doc/ja_JP/arithmetic/design.md

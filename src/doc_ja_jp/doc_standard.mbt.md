@@ -1,0 +1,1 @@
+../../doc/ja_JP/doc_standard.md

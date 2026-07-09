@@ -2,7 +2,7 @@
 
 The documentation in this repository describes the **current implementation on
 the branch**. As of `2026-07-09`, the active documentation baseline is
-**`0.4.4`**.
+**`0.4.5`**.
 
 ## Document Types and Organization
 
@@ -47,6 +47,9 @@ release baseline, entry points, package positioning, and reader guidance.
   a code-oriented reason makes that impossible
 - Treat the English documentation as the structural source of truth, then localize
   the same content naturally into Chinese and Japanese
+- Treat `doc/*` as the only hand-written prose source. The `src/doc_*` packages
+  are exposure layers and should contain symlinks back to these files rather
+  than independent Markdown bodies.
 - Keep `README.md` focused on the current baseline and move older release
   summaries into `CHANGELOG.md`
 
@@ -86,6 +89,9 @@ release baseline, entry points, package positioning, and reader guidance.
   paths, or version strings
 - Keep API references specification-oriented, tutorials usage-oriented, and
   design docs responsibility- and tradeoff-oriented
+- Backend wrapper packages should document platform constraints, conversion
+  boundaries, and whether behavior is implemented locally or delegated to an
+  external library kernel
 - Prefer short, direct sentences over rhetorical or release-note-style prose
 - Chinese documentation should read like natural written technical Chinese, not
   word-for-word English translation

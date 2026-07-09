@@ -5,7 +5,7 @@
 抽象線形代数レイヤーを直接使うなら、まず依存一式を追加してください。
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.4
+moon add Luna-Flow/linear-algebra@0.4.5
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

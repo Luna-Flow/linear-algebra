@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-この README は現在のリポジトリ基準である **v0.4.4** に対応しています。
+この README は現在のリポジトリ基準である **v0.4.5** に対応しています。
 
 `mutable` の数値 API は共有の `Luna-Flow/arithmetic.Sqrt` 能力を使い、
 整数埋め込みは `Luna-Flow/luna-generic.IntegralHomomorphism` に従います。
@@ -9,9 +9,10 @@
 `Result[..., LinearAlgebraError]` API を使います。従来の abort する挙動と
 `Option` 戻り値は、明示的な `unchecked_*` メソッドに残しています。
 
-`0.4.4` 基準は、検査付き `0.4.x` API 表面と `0.4.2` で導入した
-パック済み行列乗算経路を維持しつつ、パッケージとリポジトリの metadata を
-現在の trait 指向のプロジェクト位置づけへ揃えたものです。
+`0.4.5` 基準は、検査付き `0.4.x` API 表面と `0.4.2` で導入した
+パック済み行列乗算経路を維持しつつ、古い runtime backend selection の
+考え方を取り除き、明示的な native OpenBLAS バックエンドを導入し、
+コード・文書・CI のリリース基準を同じ意味に揃えたものです。
 
 過去のリリースノートと履歴は [CHANGELOG.md](../../CHANGELOG.md) を参照してください。
 
@@ -25,8 +26,12 @@
 - **`backends/default`**: 参照用の密バックエンド層です。可変の密ラッパー
   `DenseVector` / `DenseMatrix` と、不変の密ラッパー
   `ImmutableDenseVector` / `ImmutableDenseMatrix` を公開します。
+- **`backends/openblas`**: `native` 専用の OpenBLAS バックエンドです。
+  `Float` と `Double` に対応するリポジトリ所有の `BlasMatrix[T]` ラッパーを公開し、
+  行列乗算に OpenBLAS GEMM を使います。バックエンド選択は runtime selector ではなく
+  具体型で表します。
 - **`error`**: 検査付き線形代数 API の共有エラー語彙です。形状、指数、空行列、
-  特異行列、バックエンド関連エラーを扱います。
+  特異行列、非収束、下位の算術エラーを扱います。
 - **trait 駆動アルゴリズム**: バックエンド非依存コードは、
   `MatrixShape`、`AdditiveVector`、`VecMulVector`、`TransposeMatrix`、
   `MatMulMatrix` のような最小限の必要能力に依存するべきです。
@@ -47,6 +52,9 @@
 `backends/default` が包む実装本体です。`DenseVector` と `DenseMatrix` は
 `@mutable.Vector` と `@mutable.Matrix` を包み、`ImmutableDenseVector` と
 `ImmutableDenseMatrix` は `@immut.Vector` と `@immut.Matrix` を包みます。
+OpenBLAS による native 行列乗算が必要な場合は、
+[`backends/openblas`](./backends/openblas/api.md) を明示的に選びます。これは独立した
+具体バックエンドであり、`@immut.Matrix` 内の runtime backend option ではありません。
 
 ## 読者ガイド
 
@@ -59,9 +67,10 @@
   [arithmetic](./arithmetic/api.md) ->
   [algebra](./algebra/api.md) ->
   [backends/default](./backends/default/api.md) ->
+  [backends/openblas](./backends/openblas/api.md) ->
   [immut / mutable](./immut/matrix/api.md)。
-  まず操作能力、次に構造能力、その次に既定バックエンドのラッパー、最後に
-  具体実装へ進みます。より上位のアプリケーションライブラリ、幾何パッケージ、
+  まず操作能力、次に構造能力、その次に既定バックエンドのラッパー、さらに任意の
+  OpenBLAS native ラッパー、最後に具体実装へ進みます。より上位のアプリケーションライブラリ、幾何パッケージ、
   solver 系パッケージをこの上に構築する場合の推奨入口でもあります。
 
 ## ドキュメント入口
@@ -80,6 +89,8 @@
   [arithmetic API](./arithmetic/api.md),
   [algebra API](./algebra/api.md),
   [backends/default API](./backends/default/api.md),
+  [backends/openblas API](./backends/openblas/api.md),
+  [backends/openblas tutorial](./backends/openblas/tutorial.md),
   [error API](./error/api.md)
 
 ## 下流での利用例
@@ -98,7 +109,7 @@
 パッケージを明示的に追加してください。
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.4
+moon add Luna-Flow/linear-algebra@0.4.5
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -126,6 +137,8 @@ import {
 - `README.md` はリポジトリの説明と現行基準をまとめます。
 - `doc_standard.md` は文書契約をまとめます。
 - 各モジュールやサブシステム配下には `api.md`、`tutorial.md`、`design.md` を置きます。
+- `doc/*` が手書き本文の事実源です。`src/doc_*` パッケージは MoonBit パッケージ
+  ドキュメント向けに、それらのファイルを symlink で公開します。
 
 ## モジュール概要
 
@@ -136,4 +149,5 @@ import {
 - **`arithmetic`**: 実装は `src/arithmetic`
 - **`algebra`**: 実装は `src/algebra`
 - **`backends/default`**: 実装は `src/backends/default`
+- **`backends/openblas`**: 実装は `src/backends/openblas`
 - **`error`**: 実装は `src/error`

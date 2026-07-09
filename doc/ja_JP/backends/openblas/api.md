@@ -1,0 +1,110 @@
+# `linear-algebra/backends/openblas`
+
+このページは、現在の `0.4.5` リポジトリにおける
+`Luna-Flow/linear-algebra/backends/openblas` の公開 API 基準をまとめたものです。
+
+## 役割
+
+`backends/openblas` は、OpenBLAS GEMM に行列乗算を委譲しつつ、公開
+`@algebra` 行列 trait を自前のラッパー型に実装する、リポジトリ所有の
+`native` 専用行列バックエンドです。
+
+このパッケージは `@immut.Matrix` とは別物です。`immut` には runtime backend
+selector はありません。バックエンド選択は、利用する具体的な行列型と、
+ビルド対象のプラットフォームで表されます。
+
+## プラットフォーム制約
+
+- 対応ターゲット: `native`
+- 非対応ターゲット: `js`、`wasm`、`wasm-gc`
+- 現在のリポジトリのリンク設定は、macOS の Homebrew 用
+  `/opt/homebrew/opt/openblas/include` と
+  `/opt/homebrew/opt/openblas/lib` に加えて、Ubuntu の標準的な
+  OpenBLAS パッケージ配置である
+  `/usr/include/x86_64-linux-gnu/openblas-pthread`、
+  `/usr/include/openblas`、
+  `/usr/lib/x86_64-linux-gnu/openblas-pthread`、
+  `/usr/lib/x86_64-linux-gnu`
+  も探索します
+
+## `BLASInnerType`
+
+`BLASInnerType` はバックエンド局所の trait で、現在は `Float` と `Double`
+にだけ実装されています。
+
+このバックエンドで必要なスカラー差分を担当します。
+
+- `tolerance()`
+  テストと結果検証で使う許容誤差を返します。
+- `gemm(m, n, k, left, right)`
+  対応する OpenBLAS カーネルへ振り分けます。
+  `Float` は `cblas_sgemm`、`Double` は `cblas_dgemm` を使います。
+
+`BlasMatrix[T]` の公開コンストラクタと変換 API はすべて
+`T : BLASInnerType` を要求します。そのため、「任意の `T` で作れるが一部の `T`
+だけが演算できる」という半開きの型面を公開しません。
+
+## `BlasMatrix[T]`
+
+```moonbit check
+///|
+test "BlasMatrix stores shape and values" {
+  let matrix = @openblas.BlasMatrix::from_2d_array([[1.0F, 2.0F], [3.0F, 4.0F]])
+  inspect(matrix.row(), content="2")
+  inspect(matrix.col(), content="2")
+}
+```
+
+`BlasMatrix[T]` はこのパッケージ所有の具体バックエンド行列型です。内部には次を
+保持します。
+
+- `row : Int`
+- `col : Int`
+- 連続配置の `FixedArray[T]` バッファ
+
+公開される心的モデルは row-major のままです。OpenBLAS 呼び出しに必要なレイアウト
+詳細はバックエンド内部に閉じ込めます。
+
+### コンストラクタと相互変換
+
+- `BlasMatrix::from_immut(inner : @immut.Matrix[T]) -> BlasMatrix[T]`
+- `BlasMatrix::from_default(inner : @default.ImmutableDenseMatrix[T]) -> BlasMatrix[T]`
+- `BlasMatrix::from_2d_array(data : Array[Array[T]]) -> BlasMatrix[T]`
+- `BlasMatrix::new(row : Int, col : Int, value : T) -> BlasMatrix[T]`
+- `to_immut(self) -> @immut.Matrix[T]`
+- `to_default(self) -> @default.ImmutableDenseMatrix[T]`
+- `to_2d_array(self) -> Array[Array[T]]`
+
+### アクセサ
+
+- `row(self) -> Int`
+- `col(self) -> Int`
+- `to_array(self) -> Array[T]`
+
+## Trait 実装
+
+`BlasMatrix[T]` は現在、次を実装しています。
+
+- `@algebra.MatrixShape`
+- `@algebra.TransposeMatrix`
+- `@algebra.AdditiveMatrix`
+- `@algebra.MatMulMatrix`
+- `Add`、`Neg`、`Sub`、`Mul`
+- `Show`
+
+振る舞いは意図的に分担されています。
+
+- `Mul`
+  `BLASInnerType::gemm` を通して OpenBLAS GEMM を使います
+- `shape`、`transpose`、`+`、`-`、単項 `-`
+  このバックエンドパッケージ内の MoonBit 実装です
+
+## 境界
+
+このパッケージが公開するのは、trait 互換のバックエンドラッパーです。次のものでは
+ありません。
+
+- runtime backend selector
+- グローバルな backend enum
+- 外部 OpenBLAS バインディング型へ直接 trait を実装するアダプタ
+- 生の OpenBLAS ハンドル型を公開する API

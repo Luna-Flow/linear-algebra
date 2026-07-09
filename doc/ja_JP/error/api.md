@@ -1,11 +1,11 @@
 # `linear-algebra/error`
 
-このページは、現在の `0.4.4` リポジトリにおける
+このページは、現在の `0.4.5` リポジトリにおける
 `Luna-Flow/linear-algebra/error` の公開 API 基準をまとめたものです。
 
 ## 役割
 
-`error` は検査付き線形代数 API で使う構造化エラー型を提供します。呼び出し側は中止メッセージを解析せずに、形状エラー、入力領域のエラー、特異行列、未対応バックエンド、予約済みだが未実装のバックエンド、下位の算術エラーを区別できます。
+`error` は検査付き線形代数 API で使う構造化エラー型を提供します。呼び出し側は中止メッセージを解析せずに、形状エラー、入力領域のエラー、特異行列、非収束、下位の算術エラーを区別できます。
 
 ## `LinearAlgebraErrorKind`
 
@@ -49,8 +49,6 @@ test "LinearAlgebraError stores kind and message" {
 - `LinearAlgebraError::empty_matrix(message)`
 - `LinearAlgebraError::singular_matrix(message)`
 - `LinearAlgebraError::non_convergence(message)`
-- `LinearAlgebraError::unsupported_backend(message)`
-- `LinearAlgebraError::backend_not_impl(message)`
 - `LinearAlgebraError::arithmetic_failure(error)`
 
 ## 判定メソッド
@@ -65,15 +63,9 @@ test "LinearAlgebraError stores kind and message" {
 - `is_empty_matrix()`
 - `is_singular_matrix()`
 - `is_non_convergence()`
-- `is_unsupported_backend()`
-- `is_backend_not_impl()`
 - `is_arithmetic_failure()`
 
 これらのメソッドは、エラー値を分解せずに検査付き API の代表的な失敗を処理するためのものです。
-
-`unsupported_backend` と `backend_not_impl` は同じではありません。
-前者はサポート契約の外にあるバックエンドを表し、後者は
-`BlasBackend` のように API 上は予約済みでも、現在のリポジトリ状態ではまだ実装に接続されていないことを表します。
 
 ## 使用例
 

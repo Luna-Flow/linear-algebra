@@ -1,7 +1,7 @@
 # `linear-algebra/backends/default`
 
 API baseline for `Luna-Flow/linear-algebra/backends/default` in the current
-`0.4.4` repository state.
+`0.4.5` repository state.
 
 ## Purpose
 

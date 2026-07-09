@@ -1,0 +1,1 @@
+../../doc/zh_CN/mutable/vector/design.md

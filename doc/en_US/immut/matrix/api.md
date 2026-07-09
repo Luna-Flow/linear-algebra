@@ -1,6 +1,6 @@
 # `@immut.Matrix`
 
-API baseline for `@immut.Matrix` in the current `0.4.4` repository state.
+API baseline for `@immut.Matrix` in the current `0.4.5` repository state.
 
 ## Overview
 
@@ -41,13 +41,6 @@ API baseline for `@immut.Matrix` in the current `0.4.4` repository state.
   Addition, subtraction, and matrix multiplication. Shape mismatch aborts.
 - `matmul(rhs)`, `trace()`, `determinant()`, `pow(power)`
   Checked APIs return `Result[..., LinearAlgebraError]` for shape or exponent failures.
-- `checked_matmul_with(backend, lhs, rhs)`
-  Checked backend selection for top-level matrix multiplication. `CheckedBackend`
-  returns shape errors as `Err`, and `BlasBackend` currently returns
-  `Err(BackendNotImpl(...))`.
-- `matmul_with(backend, lhs, rhs)`
-  Keeps the unchecked top-level backend selector. It aborts on incompatible
-  dimensions and on reserved backend slots that are not wired yet.
 - `unchecked_matmul(rhs)`, `unchecked_trace()`, `unchecked_determinant()`, `unchecked_pow(power)`
   Preserve the old aborting behavior for callers that explicitly want unchecked operations.
 - `scale(cst)`, `add_constant(cst)`, unary `-`
@@ -90,10 +83,6 @@ Important methods:
   `backends/default` wrapper types. `@immut.Matrix` is one dense implementation
   used by the default backend, not the semantic center of the ecosystem.
 - The mutable package intentionally exposes extra execution-oriented APIs such as views and in-place updates; those should not be projected back onto `immut`.
-- If backend selection comes from runtime configuration, prefer
-  `checked_matmul_with` over `matmul_with`. `BlasBackend` is currently a
-  forward-looking placeholder for future backend work, not a live acceleration
-  path in `0.4.4`.
 - `backends/default.ImmutableDenseMatrix` is a wrapper around this concrete
   implementation. If you want the trait-oriented default backend entry point,
   see [the `backends/default` API](../../backends/default/api.md).

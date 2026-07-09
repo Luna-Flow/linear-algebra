@@ -2,24 +2,29 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache--2.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.4.4 - Metadata And Release Alignment
+## v0.4.5 - Explicit OpenBLAS Backend And API Cleanup
 
-This README matches the **v0.4.4** repository state. This release keeps the
+This README matches the **v0.4.5** repository state. This release keeps the
 checked `0.4.x` API surface and the packed mutable matrix multiplication work
-introduced in `0.4.2`, while packaging the current metadata cleanup into a new
-patch release.
+introduced in `0.4.2`, while removing the old runtime backend-selection story,
+introducing the explicit native OpenBLAS backend, and aligning the release
+baseline across code, docs, and CI.
 
 For earlier release notes and repository history, see
 [CHANGELOG.md](./CHANGELOG.md).
 
-### Maintenance Changes
+### Release Notes
 
-- `moon.mod` now keeps the Apache 2.0 SPDX license field together with a
-  package description that matches the repository's trait-oriented positioning.
-- The repository metadata and README license presentation are now aligned with
-  the Apache 2.0 project baseline.
-- The current release baseline is now `0.4.4` across the README, localized
-  docs, API baseline pages, install snippets, and contributor-facing guidance.
+- `immut` no longer exposes runtime backend-selection APIs. Backend choice is
+  now expressed by the concrete type you use, not by a runtime ADT.
+- `backends/openblas` is the new explicit native backend. It provides the owned
+  `BlasMatrix[T]` wrapper for `Float` and `Double`, uses OpenBLAS GEMM for
+  matrix multiplication, and participates in the public trait layer.
+- The stale backend-only error surface was removed from the public API, so the
+  checked error package now reflects only live code paths.
+- The README, localized docs, API baseline pages, install snippets, symlinked
+  doc exposure packages, and CI/publish workflows are all aligned to the
+  `0.4.5` release baseline.
 
 ## Layered Architecture
 
@@ -36,6 +41,10 @@ first layered capability packages for backend-independent linear algebra code.
 - **`backends/default`**: The reference dense backend layer. It exposes wrapper
   types `DenseVector` / `DenseMatrix` over `mutable`, and
   `ImmutableDenseVector` / `ImmutableDenseMatrix` over `immut`.
+- **`backends/openblas`**: A native-only OpenBLAS backend. It exposes the owned
+  `BlasMatrix[T]` wrapper for `Float` and `Double`, uses OpenBLAS GEMM for
+  matrix multiplication, and keeps backend choice explicit through the concrete
+  type rather than a runtime selector.
 - **Trait-driven algorithms**: New backend-independent algorithms should depend
   on the smallest capability they need, such as `MatrixShape`,
   `AdditiveVector`, `VecMulVector`, `TransposeMatrix`, or `MatMulMatrix`, not
@@ -63,6 +72,9 @@ The default backend wrappers are built on top of these concrete types:
 `backends/default.ImmutableDenseMatrix` wrap `immut.Vector` and
 `immut.Matrix`. If you want the trait-oriented default backend entry point, see
 [the `backends/default` docs](./doc/en_US/backends/default/api.md).
+For OpenBLAS-backed native matrix multiplication, use
+[`backends/openblas`](./doc/en_US/backends/openblas/api.md) explicitly; it is a
+separate concrete backend, not a runtime backend option inside `@immut.Matrix`.
 
 ### Trait-Oriented Setup
 
@@ -71,7 +83,7 @@ layers, install `linear-algebra` together with the upstream scalar abstraction
 packages it builds on:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.4
+moon add Luna-Flow/linear-algebra@0.4.5
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -108,6 +120,9 @@ abstractions, and `@lf_arith` for shared upstream arithmetic types such as
 - **Ecosystem-Oriented Constraints**: Custom scalar types can implement the shared Luna Flow traits once and use them across compatible ecosystem packages.
 - **Backend Consistency**: Native, JS, Wasm, and Wasm GC matrix implementations use the same arithmetic capability identity and explicit trait invocation.
 - **Compatibility Boundary**: `Tolerance` remains a `mutable` package trait in this release; it has not yet moved to `arithmetic`.
+- **Backend Choice**: `@immut.Matrix` does not expose a runtime backend
+  selector. Choose `backends/default` for the repository dense wrappers or
+  `backends/openblas` for the native-only OpenBLAS matrix wrapper.
 
 ### API Guidance & Performance
 
@@ -169,9 +184,11 @@ test "linear-algebra basic workflow" {
   [`arithmetic`](./doc/en_US/arithmetic/api.md) ->
   [`algebra`](./doc/en_US/algebra/api.md) ->
   [`backends/default`](./doc/en_US/backends/default/api.md) ->
+  [`backends/openblas`](./doc/en_US/backends/openblas/api.md) ->
   [`immut` / `mutable`](./doc/en_US/immut/matrix/api.md). Start from operation
   capabilities, then structure capabilities, then the default backend wrappers,
-  and finally the concrete implementations. This is the intended entry path if
+  then the optional OpenBLAS native wrapper, and finally the concrete
+  implementations. This is the intended entry path if
   you are building a higher-level linear-algebra application library, geometry
   package, or solver-style library on top of this repository.
 
@@ -191,6 +208,8 @@ test "linear-algebra basic workflow" {
   [`arithmetic` API](./doc/en_US/arithmetic/api.md),
   [`algebra` API](./doc/en_US/algebra/api.md),
   [`backends/default` API](./doc/en_US/backends/default/api.md),
+  [`backends/openblas` API](./doc/en_US/backends/openblas/api.md),
+  [`backends/openblas` tutorial](./doc/en_US/backends/openblas/tutorial.md),
   [`error` API](./doc/en_US/error/api.md)
 
 ### Used In
@@ -212,6 +231,9 @@ We provide documentation in multiple languages:
 - 🇨🇳 **简体中文** (`doc/zh_CN`)
 - 🇯🇵 **日本語** (`doc/ja_JP`)
 
+`doc/*` is the hand-written documentation source. The `src/doc_*` packages are
+MoonBit documentation exposure layers made of symlinks back to `doc/*`.
+
 Localized README files:
 
 - 🇺🇸 [README.md](./README.md)
@@ -220,7 +242,7 @@ Localized README files:
 
 ## Changelog
 
-Older release notes, historical version summaries, and pre-`0.4.4` repository
+Older release notes, historical version summaries, and pre-`0.4.5` repository
 highlights now live in [CHANGELOG.md](./CHANGELOG.md). This README keeps the
 current baseline and entry points front and center.
 

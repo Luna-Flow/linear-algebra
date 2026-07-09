@@ -1,6 +1,6 @@
 # `linear-algebra/algebra`
 
-API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.4.4`
+API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.4.5`
 repository state.
 
 ## Purpose
@@ -17,7 +17,7 @@ floating-point field laws.
 scalar abstractions, add them explicitly:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.4
+moon add Luna-Flow/linear-algebra@0.4.5
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

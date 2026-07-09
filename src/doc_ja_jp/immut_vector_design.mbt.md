@@ -1,0 +1,1 @@
+../../doc/ja_JP/immut/vector/design.md
