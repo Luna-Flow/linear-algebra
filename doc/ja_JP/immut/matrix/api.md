@@ -1,10 +1,10 @@
 # `@immut.Matrix`
 
-このページは、現在の `0.4.1` リポジトリ実装の振る舞いを説明します。
+このページは、現在の `0.4.2` リポジトリ状態における `@immut.Matrix` の API 基準をまとめたものです。
 
 ## 概要
 
-- `@immut.Matrix` は値セマンティクスです。
+- `@immut.Matrix` は、このリポジトリの値指向行列型です。
 - `set`、`swap_rows`、`swap_cols` などの操作は新しい行列を返します。
 - 行列は行優先で保持され、基盤には immutable vector 実装を使います。
 - 公開インデックスアクセスは厳密な境界チェックを行います。`m[row][col]` と `set(row, col, value)` は、`0xN` や `Nx0` を含めて範囲外なら中止します。
@@ -41,6 +41,13 @@
   加算、減算、行列積です。形状が一致しない場合は中止します。
 - `matmul(rhs)`, `trace()`, `determinant()`, `pow(power)`
   検査付き API は形状や指数のエラーを `Result[..., LinearAlgebraError]` で返します。
+- `checked_matmul_with(backend, lhs, rhs)`
+  トップレベル行列積の検査付きバックエンド選択入口です。`CheckedBackend` は
+  次元不一致を `Err` で返し、`BlasBackend` は現在
+  `Err(BackendNotImpl(...))` を返します。
+- `matmul_with(backend, lhs, rhs)`
+  既存の unchecked なトップレベルバックエンド選択入口です。次元不一致や、
+  予約済みだが未接続のバックエンドでは abort します。
 - `unchecked_matmul(rhs)`, `unchecked_trace()`, `unchecked_determinant()`, `unchecked_pow(power)`
   unchecked 操作が必要な呼び出し元向けに、従来の abort する挙動を残します。
 - `scale(cst)`, `add_constant(cst)`, 単項 `-`
@@ -77,7 +84,13 @@
 - `swap_rows`, `swap_cols`
 - `identity`, `pow`, `determinant`, `adjoint`
 
-## 正しさに関する補足
+## 使い分け
 
-- 共有される代数的振る舞いについては、リポジトリ内の consistency tests で `@immut.Matrix` が意味論上の基準点として扱われます。
-- mutable パッケージは view や in-place 更新など、実行寄りの追加 API を意図的に公開しており、それらを `immut` に逆投影しないでください。
+- 共有される代数的振る舞いについては、capability trait と `backends/default` のラッパー型を優先してください。`@immut.Matrix` は既定バックエンドで使う密実装の 1 つであり、エコシステム全体の意味論中心ではありません。
+- `mutable` パッケージはビューやインプレース更新など、実行寄りの追加 API を意図的に公開しており、それらを `immut` に逆投影しないでください。
+- バックエンド選択が実行時設定から来る場合は、`matmul_with` ではなく
+  `checked_matmul_with` を優先してください。`BlasBackend` は現在の
+  `0.4.2` リポジトリでは将来拡張のための予約スロットであり、まだ有効な高速化経路ではありません。
+- `backends/default.ImmutableDenseMatrix` は、この concrete 実装を包む
+  ラッパーです。trait 指向の既定バックエンド入口を見たい場合は
+  [backends/default API](../../backends/default/api.md) を参照してください。

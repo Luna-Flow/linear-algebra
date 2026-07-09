@@ -1,10 +1,12 @@
 # `@mutable.Matrix`
 
-This page documents the current `0.4.1` repository behavior. Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance` remains defined by `mutable`.
+API baseline for `@mutable.Matrix` in the current `0.4.2` repository state.
+Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance`
+remains defined by `mutable`.
 
 ## Overview
 
-- `@mutable.Matrix` is mutation-oriented.
+- `@mutable.Matrix` is the repository's execution-oriented matrix type.
 - `set`, `swap_rows`, `swap_cols`, `map_inplace`, row/column view updates, and transpose updates modify the underlying matrix in place.
 - Public storage is a flat row-major `Array[T]` across backends. Backend-specific files differ in execution tuning, not in the public matrix model.
 - Public access is strict about bounds. `get`, `set`, `m[row][col]`, `row_view`, `col_view`, extraction helpers, iterators, and transpose-view access reject out-of-range indices consistently, including zero-row and zero-column edge shapes.
@@ -95,7 +97,10 @@ This page documents the current `0.4.1` repository behavior. Square-root-depende
 - `frobenius_norm()`
   Non-checked aggregate numeric helper for supported element types.
 
-## Notes On Correctness
+## Guidance
 
 - Backends are expected to expose the same public semantics. The repository currently keeps separate kernel files for `native`, `js`, `wasm`, and `wasm-gc`, so tests and documentation should be read as backend-invariant unless a note says otherwise.
 - For code shared across `immut` and `mutable`, rely on the common algebraic surface and not on identical mutation semantics.
+- `backends/default.DenseMatrix` is a wrapper around this concrete
+  implementation. If you want the trait-oriented default backend entry point,
+  see [the `backends/default` API](../../backends/default/api.md).

@@ -1,20 +1,25 @@
 # `linear-algebra/backends/default`
 
-本文档描述当前 `0.4.1` 仓库中 `Luna-Flow/linear-algebra/backends/default` 的公开 API。
+本页记录当前 `0.4.2` 仓库中 `Luna-Flow/linear-algebra/backends/default` 的公开 API 基线。
 
 ## 职责
 
-`backends/default` 提供本包拥有的包装类型，用来承载现有 `mutable` 与 `immut` 的稠密矩阵/向量实现。因为包装类型属于本包，所以本包可以为它们实现外层 `@algebra` trait。
+`backends/default` 提供本包拥有的包装类型，用来承载现有 `mutable` 与 `immut` 的稠密矩阵/向量实现。因为这些包装类型属于本包，所以这里可以为它们实现外层 `@algebra` trait。
 
 ## `DenseVector[T]`
 
-```moonbit
-pub struct DenseVector[T] {
-  inner : @mutable.Vector[T]
+```moonbit check
+///|
+test "DenseVector wraps a mutable vector backend" {
+  let vector : @default.DenseVector[Int] = @default.DenseVector::from_array([
+    1, 2, 3,
+  ])
+  inspect(vector.length(), content="3")
+  inspect(vector[1], content="2")
 }
 ```
 
-默认可变稠密向量包装类型。
+默认可变稠密向量后端的自有包装类型。
 
 公开方法：
 
@@ -34,13 +39,19 @@ pub struct DenseVector[T] {
 
 ## `DenseMatrix[T]`
 
-```moonbit
-pub struct DenseMatrix[T] {
-  inner : @mutable.Matrix[T]
+```moonbit check
+///|
+test "DenseMatrix wraps a mutable matrix backend" {
+  let matrix : @default.DenseMatrix[Int] = @default.DenseMatrix::from_2d_array([
+    [1, 2],
+    [3, 4],
+  ])
+  inspect(matrix.row(), content="2")
+  inspect(matrix.col(), content="2")
 }
 ```
 
-默认可变稠密矩阵包装类型。
+默认可变稠密矩阵后端的自有包装类型。
 
 公开方法：
 
@@ -60,13 +71,19 @@ pub struct DenseMatrix[T] {
 
 ## `ImmutableDenseVector[T]`
 
-```moonbit
-pub struct ImmutableDenseVector[T] {
-  inner : @immut.Vector[T]
+```moonbit check
+///|
+test "ImmutableDenseVector wraps an immutable vector backend" {
+  let vector : @default.ImmutableDenseVector[Int] = @default.ImmutableDenseVector::from_array([
+      1, 2, 3,
+    ],
+  )
+  inspect(vector.length(), content="3")
+  inspect(vector[2], content="3")
 }
 ```
 
-默认不可变稠密向量包装类型。
+默认不可变稠密向量后端的自有包装类型。
 
 公开方法：
 
@@ -86,13 +103,20 @@ pub struct ImmutableDenseVector[T] {
 
 ## `ImmutableDenseMatrix[T]`
 
-```moonbit
-pub struct ImmutableDenseMatrix[T] {
-  inner : @immut.Matrix[T]
+```moonbit check
+///|
+test "ImmutableDenseMatrix wraps an immutable matrix backend" {
+  let matrix : @default.ImmutableDenseMatrix[Int] = @default.ImmutableDenseMatrix::from_2d_array([
+      [1, 2],
+      [3, 4],
+    ],
+  )
+  inspect(matrix.row(), content="2")
+  inspect(matrix.col(), content="2")
 }
 ```
 
-默认不可变稠密矩阵包装类型。
+默认不可变稠密矩阵后端的自有包装类型。
 
 公开方法：
 

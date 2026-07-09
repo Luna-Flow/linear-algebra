@@ -1,6 +1,8 @@
 # Documentation Standard
 
-This repository's documentation describes the **current implementation on the branch**. As of `2026-07-07`, the active documentation baseline is **`0.4.1`**.
+The documentation in this repository describes the **current implementation on
+the branch**. As of `2026-07-09`, the active documentation baseline is
+**`0.4.2`**.
 
 ## Document Types and Organization
 
@@ -33,7 +35,7 @@ This repository's documentation describes the **current implementation on the br
         |- ...
   ```
 
-- Further subdivided by `vector`, `matrix` etc. files under each package
+- Further subdivided into `vector`, `matrix`, and similar files under each package
 - Maintain consistency between documentation and code structure
 - Do not document unreleased APIs unless they already exist in the repository implementation
 

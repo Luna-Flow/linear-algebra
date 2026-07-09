@@ -1,250 +1,60 @@
-# @immut.Vector
+# `@immut.Vector`
 
-このページは現在のリポジトリ実装を基準にしており、`0.4.1` の API 基準として記述されています。
+このページは、現在の `0.4.2` リポジトリ状態における `@immut.Vector` の API 基準をまとめたものです。
 
----
+## 概要
 
-## @immut.Vector[T]
+- `@immut.Vector` は、このリポジトリの値指向ベクトル型です。
+- 公開型はパッケージ別名 `VecLib[T]` としても利用できます。
+- ストレージは、core の不変ベクトル別名 `VecCore[T]` を土台にしています。
+- `set`、`map`、`left_scale`、`right_scale` などの操作は常に新しいベクトルを返します。
+- このパッケージはインプレース更新や公開 `dot()` ヘルパーを持ちません。
 
-```moonbit
-struct Vector[T] {
-  data : VecCore[T]
-} derive(Eq)
-```
+## 基本 API
 
-- **説明**
-  不変なベクトルを表します。内部的には `VecCore[T]` に支えられており、`VecCore[T]` は core の永続ベクトルストレージに対する本パッケージ別名です。この抽象を外部向けに表すライブラリ別名として `VecLib[T]` を用います。
+- `Vector::from_array(arr)`
+  可変 `Array[T]` からベクトルを構築します。
+- `Vector::make(n, elem)` / `Vector::makei(n, f)`
+  定数ベクトルまたは添字から生成するベクトルを作ります。
+- `length()`
+  ベクトル長を返します。
+- `v[i]`
+  1 要素を読み取ります。境界挙動は基底の不変ベクトル契約に従います。
+- `set(i, x)`
+  指定位置だけを差し替えた新しいベクトルを返します。
+- `iter()`
+  要素を順番にたどるイテレータを返します。
 
-### セマンティクス
+## 値を返す変換
 
-- `@immut.Vector` は一貫して値セマンティクスを採用しており、`set`、`map`、`left_scale`、`right_scale` などは新しい値を返します。
-- このパッケージは `@mutable.Vector` と共有される代数サブセットの整合性を保ちますが、原地更新 API は持ちません。
-- 最適化された core の不変ベクトル実装は、単なる内部詳細ではなく、パッケージ間でより統一されたフラットなデータ経路を支える基盤になっています。
+- `map(f)` / `zip_with(other, f)`
+  元の値を変えずに、変換後の新しいベクトルを返します。
+- `add_constant(cst)`
+  全要素に同じスカラーを加えます。
+- `left_scale(scalar)` / `right_scale(scalar)`
+  スカラー倍した新しいベクトルを返します。
+- `lerp(other, alpha)`
+  `(1 - alpha) * self + alpha * other` を計算します。
+- `+`、`*`、単項 `-`
+  要素ごとの加算、アダマール積、符号反転です。
+- `lin_comb(scalar_a, self, scalar_b, other)`
+  2 本のベクトルの線形結合を作るトップレベル補助関数です。
 
-- **フィールド**
-  - `data` - ベクトルの要素を格納する不変な配列。
+共有される要素ごとの演算で長さが一致しない場合は、基底ベクトルの契約に従って中止します。
 
-- **関数とメソッド**
+## 行列変換
 
-  ---
+- `to_col_matrix()` / `to_row_matrix()`
+  ベクトルを `n x 1` または `1 x n` の行列へ物化します。
+- `scaled_matrix()`
+  このベクトルを主対角に持つ対角行列を作ります。
+- `tensor_product(other)`
+  外積を計算して行列を返します。
 
-  - **`fn[T] Vector::from_array(arr : Array[T]) -> Vector[T]`**
-    - **説明**
-        可変な配列から不変なベクトルを作成します。
-    - **パラメータ**
-      - `arr`: `Array[T]` - 入力となる可変な配列。
-    - **戻り値**
-      `Vector[T]` - 配列の要素を含む不変なベクトル。
-    - **例**
-      ```moonbit
-      let v = Vector::from_array([1, 2, 3])
-      ```
+## 使い分け
 
-  ---
-
-  - **`fn[T] Vector::make(n : Int, elem : T) -> Vector[T]`**
-    - **説明**
-        長さ `n` のベクトルを作成し、すべての要素を `elem` で初期化します。
-    - **パラメータ**
-      - `n`: `Int` - ベクトルの長さ。
-      - `elem`: `T` - 初期値。
-    - **戻り値**
-      `Vector[T]` - 新しく作成されたベクトル。
-
-  ---
-
-  - **`fn[T] Vector::makei(n : Int, f : (Int) -> T) -> Vector[T]`**
-    - **説明**
-        長さ `n` のベクトルを作成し、各要素をインデックス関数 `f` で生成します。
-    - **パラメータ**
-      - `n`: `Int` - ベクトルの長さ。
-      - `f`: `(Int) -> T` - インデックスを受け取り要素を返す関数（0 から `n-1`）。
-    - **戻り値**
-      `Vector[T]` - 生成されたベクトル。
-
-  ---
-
-  - **`fn[T] length(self : Vector[T]) -> Int`**
-    - **説明**
-        ベクトルの長さ（要素数）を取得します。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 対象のベクトル。
-    - **戻り値**
-      `Int` - ベクトルの長さ。
-
-  ---
-
-  - **`fn[T] Vector::op_get(self : Vector[T], i : Int) -> T`**
-    - **説明**
-        指定したインデックスの要素を取得します。`v[i]` 構文をサポートします。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 対象のベクトル。
-      - `i`: `Int` - インデックス。
-    - **戻り値**
-      `T` - 指定位置の要素。
-
-  ---
-
-  - **`fn[T] set(self : Vector[T], i : Int, x : T) -> Vector[T]`**
-    - **説明**
-        インデックス `i` の要素を `x` に置き換えた新しいベクトルを作成します。元のベクトルは変更されません。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 元のベクトル。
-      - `i`: `Int` - 置き換える位置のインデックス。
-      - `x`: `T` - 新しい要素。
-    - **戻り値**
-      `Vector[T]` - 更新された新しいベクトル。
-
-  ---
-
-  - **`fn[T, U] map(self : Vector[T], f : (T) -> U) -> Vector[U]`**
-    - **説明**
-        ベクトルの各要素に関数 `f` を適用し、その結果を含む新しいベクトルを返します。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 入力ベクトル。
-      - `f`: `(T) -> U` - 変換関数。
-    - **戻り値**
-      `Vector[U]` - 変換後の新しいベクトル。
-
-  ---
-
-  - **`fn[T : Add] add_constant(self : Vector[T], cst : T) -> Vector[T]`**
-    - **説明**
-        ベクトルの各要素に定数 `cst` を加算し、新しいベクトルを返します。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 入力ベクトル。
-      - `cst`: `T` - 加算する定数。
-    - **戻り値**
-      `Vector[T]` - 結果のベクトル。
-
-  ---
-
-  - **`fn[T, U, V] zip_with(self : Vector[T], other : Vector[U], f : (T, U) -> V) -> Vector[V]`**
-    - **説明**
-        同じ長さの 2 つのベクトルの要素ペアに対し、二項関数 `f` を適用します。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 1 つ目のベクトル。
-      - `other`: `Vector[U]` - 2 つ目のベクトル。
-      - `f`: `(T, U) -> V` - 結合関数。
-    - **戻り値**
-      `Vector[V]` - 結合後の新しいベクトル。
-
-  ---
-
-  - **`fn[T : Add] add(self : Vector[T], other : Vector[T]) -> Vector[T]`**
-    - **説明**
-        ベクトル加算（要素ごとの加算）。`+` 演算子をサポートします。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 1 つ目のベクトル。
-      - `other`: `Vector[T]` - 2 つ目のベクトル。
-    - **戻り値**
-      `Vector[T]` - 加算結果のベクトル。
-
-  ---
-
-  - **`fn[T : Mul] mul(self : Vector[T], other : Vector[T]) -> Vector[T]`**
-    - **説明**
-        ベクトルの要素ごとの積（アダマール積）。`*` 演算子をサポートします。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 1 つ目のベクトル。
-      - `other`: `Vector[T]` - 2 つ目のベクトル。
-    - **戻り値**
-      `Vector[T]` - 積のベクトル。
-
-  ---
-
-  - **`fn[T : Neg] neg(self : Vector[T]) -> Vector[T]`**
-    - **説明**
-        ベクトルの符号を反転します。`-v` 構文をサポートします。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 対象のベクトル。
-    - **戻り値**
-      `Vector[T]` - 各要素の符号を反転した新しいベクトル。
-
-  ---
-
-  - **`fn[T : Mul] left_scale(self : Vector[T], scalar : T) -> Vector[T]`**
-    - **説明**
-        ベクトルに左からスカラーを乗算します。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 元のベクトル。
-      - `scalar`: `T` - スカラー値。
-    - **戻り値**
-      `Vector[T]` - スケーリングされた新しいベクトル。
-
-  ---
-
-  - **`fn[T : Mul] right_scale(self : Vector[T], scalar : T) -> Vector[T]`**
-    - **説明**
-        ベクトルに右からスカラーを乗算します。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 元のベクトル。
-      - `scalar`: `T` - スカラー値。
-    - **戻り値**
-      `Vector[T]` - スケーリングされた新しいベクトル。
-
-  ---
-
-  - **`fn[T : One + Mul + Add + Neg] lerp(self : Vector[T], other : Vector[T], alpha : T) -> Vector[T]`**
-    - **説明**
-        2 つのベクトルの間で線形補間を行います。計算式は `(1 - alpha) * self + alpha * other` です。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 開始ベクトル (alpha = 0)。
-      - `other`: `Vector[T]` - 終了ベクトル (alpha = 1)。
-      - `alpha`: `T` - 補間パラメータ。
-    - **戻り値**
-      `Vector[T]` - 補間結果。
-
-  ---
-
-  - **`fn[T : Add + Mul] lin_comb(scalar_a : T, self : Vector[T], scalar_b : T, other : Vector[T]) -> Vector[T]`**
-    - **説明**
-        2 つのベクトルの線形結合 `scalar_a * self + scalar_b * other` を計算します。
-    - **パラメータ**
-      - `scalar_a`: `T` - 1 つ目のベクトルの重み。
-      - `self`: `Vector[T]` - 1 つ目のベクトル。
-      - `scalar_b`: `T` - 2 つ目のベクトルの重み。
-      - `other`: `Vector[T]` - 2 つ目のベクトル。
-    - **戻り値**
-      `Vector[T]` - 線形結合結果のベクトル。
-
-  ---
-
-  - **`fn[T] to_col_matrix(self : Vector[T]) -> Matrix[T]`**
-    - **説明**
-        ベクトルを列行列 (n × 1) に変換します。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 元のベクトル。
-    - **戻り値**
-      `Matrix[T]` - n 行 1 列の行列。
-
-  ---
-
-  - **`fn[T] to_row_matrix(self : Vector[T]) -> Matrix[T]`**
-    - **説明**
-        ベクトルを形式的な行行列 (1 × n) に変換します。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 元のベクトル。
-    - **戻り値**
-      `Matrix[T]` - 1 行 n 列の行列。
-
-  ---
-
-  - **`fn[T : Zero] scaled_matrix(self : Vector[T]) -> Matrix[T]`**
-    - **説明**
-        ベクトルの要素を主対角成分とする対角行列を作成します。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 対角成分のソース。
-    - **戻り値**
-      `Matrix[T]` - 対角行列。
-
-  ---
-
-  - **`fn[T : Mul] tensor_product(self : Vector[T], other : Vector[T]) -> Matrix[T]`**
-    - **説明**
-        2 つのベクトルのテンソル積（外積）を計算し、行列を生成します。
-    - **パラメータ**
-      - `self`: `Vector[T]` - 左操作ベクトル（結果行列の行数を決定）。
-      - `other`: `Vector[T]` - 右操作ベクトル（結果行列の列数を決定）。
-    - **戻り値**
-      `Matrix[T]` - 外積行列。
+- 明示的な値セマンティクスが重要なら `@immut.Vector` を使います。
+- インプレース更新や公開 `dot()` ヘルパーが必要なら `@mutable.Vector` を使ってください。
+- `backends/default.ImmutableDenseVector` は、この concrete 実装を包む
+  ラッパーです。trait 指向の既定バックエンド入口を見たい場合は
+  [backends/default API](../../backends/default/api.md) を参照してください。

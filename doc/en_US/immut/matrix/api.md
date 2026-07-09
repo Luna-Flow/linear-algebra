@@ -1,10 +1,10 @@
 # `@immut.Matrix`
 
-This page documents the current `0.4.1` repository behavior.
+API baseline for `@immut.Matrix` in the current `0.4.2` repository state.
 
 ## Overview
 
-- `@immut.Matrix` uses value semantics.
+- `@immut.Matrix` is the repository's value-oriented matrix type.
 - Operations such as `set`, `swap_rows`, and `swap_cols` return a new matrix.
 - Matrix storage is row-major and backed by the immutable vector implementation.
 - Public indexed access is strict about bounds. `m[row][col]` and `set(row, col, value)` abort on out-of-range indices, including `0xN` and `Nx0` edge shapes.
@@ -41,6 +41,13 @@ This page documents the current `0.4.1` repository behavior.
   Addition, subtraction, and matrix multiplication. Shape mismatch aborts.
 - `matmul(rhs)`, `trace()`, `determinant()`, `pow(power)`
   Checked APIs return `Result[..., LinearAlgebraError]` for shape or exponent failures.
+- `checked_matmul_with(backend, lhs, rhs)`
+  Checked backend selection for top-level matrix multiplication. `CheckedBackend`
+  returns shape errors as `Err`, and `BlasBackend` currently returns
+  `Err(BackendNotImpl(...))`.
+- `matmul_with(backend, lhs, rhs)`
+  Keeps the unchecked top-level backend selector. It aborts on incompatible
+  dimensions and on reserved backend slots that are not wired yet.
 - `unchecked_matmul(rhs)`, `unchecked_trace()`, `unchecked_determinant()`, `unchecked_pow(power)`
   Preserve the old aborting behavior for callers that explicitly want unchecked operations.
 - `scale(cst)`, `add_constant(cst)`, unary `-`
@@ -77,9 +84,16 @@ Important methods:
 - `swap_rows`, `swap_cols`
 - `identity`, `pow`, `determinant`, `adjoint`
 
-## Notes On Correctness
+## Guidance
 
 - For shared algebraic behavior, prefer the capability traits and the
   `backends/default` wrapper types. `@immut.Matrix` is one dense implementation
   used by the default backend, not the semantic center of the ecosystem.
 - The mutable package intentionally exposes extra execution-oriented APIs such as views and in-place updates; those should not be projected back onto `immut`.
+- If backend selection comes from runtime configuration, prefer
+  `checked_matmul_with` over `matmul_with`. `BlasBackend` is currently a
+  forward-looking placeholder for future backend work, not a live acceleration
+  path in `0.4.2`.
+- `backends/default.ImmutableDenseMatrix` is a wrapper around this concrete
+  implementation. If you want the trait-oriented default backend entry point,
+  see [the `backends/default` API](../../backends/default/api.md).

@@ -1,24 +1,42 @@
 # backends/default Tutorial
 
-Use the default backend wrappers when you want the repository's reference dense
-implementation.
+## Small Case: Accept The Default Dense Backend Without Hard-Wiring The Algorithm
 
-```moonbit
-let matrix : DenseMatrix[Int] = DenseMatrix::from_2d_array([
-  [1, 2],
-  [3, 4],
-])
-let shape = shape_of(matrix)
-```
+```moonbit check
+///|
+fn[M : @algebra.MatrixShape] matrix_shape(matrix : M) -> (Int, Int) {
+  @default.shape_of(matrix)
+}
 
-Use the capability helpers for backend-independent code:
-
-```moonbit
-fn[M : @algebra.MatrixShape](matrix : M) -> (Int, Int) {
-  shape_of(matrix)
+///|
+test "shape_of dispatches through MatrixShape" {
+  let matrix : @default.DenseMatrix[Int] = @default.DenseMatrix::from_2d_array([
+    [1, 2],
+    [3, 4],
+  ])
+  let (rows, cols) = matrix_shape(matrix)
+  inspect(rows, content="2")
+  inspect(cols, content="2")
 }
 ```
 
-If a backend has its own scalar-valued product, norm, solve strategy, or decomposition,
-keep that behavior in the backend or a dedicated algorithm layer unless it can
-be expressed as a same-category structural operation.
+This case demonstrates the intended role of the default backend layer:
+
+1. Construct a concrete dense matrix with `DenseMatrix`.
+2. Pass it into a helper that asks only for `MatrixShape`.
+3. Let `@default.shape_of` bridge the concrete wrapper and the public trait-oriented view.
+
+That gives users a ready-to-use dense backend while still keeping new
+algorithms portable.
+
+## Suggested Flow
+
+1. Start with `DenseMatrix`, `DenseVector`, `ImmutableDenseMatrix`, or `ImmutableDenseVector` when you want the repository's reference backend immediately.
+2. Write new reusable helpers against `algebra` traits such as `MatrixShape`.
+3. Keep the backend wrapper at the boundary where concrete storage is actually chosen.
+
+## Practical Guidance
+
+- Use the default backend wrappers when you want a public dense implementation with straightforward constructors.
+- Keep backend-specific products, norms, solve strategies, or decompositions in the backend or a dedicated algorithm layer unless they can be expressed as same-category structural operations.
+- Treat `backends/default` as a bridge layer, not as the only place where generic linear algebra code should live.

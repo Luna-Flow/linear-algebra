@@ -1,21 +1,26 @@
 # `linear-algebra/backends/default`
 
-このページは現在の `0.4.1` リポジトリにおける
-`Luna-Flow/linear-algebra/backends/default` の公開 API を説明します。
+このページは、現在の `0.4.2` リポジトリにおける
+`Luna-Flow/linear-algebra/backends/default` の公開 API 基準をまとめたものです。
 
 ## 役割
 
-`backends/default` は、既存の `mutable` / `immut` の密行列・密ベクトル実装を包むラッパー型を提供します。ラッパー型はこのパッケージが所有するため、外側の `@algebra` trait を実装できます。
+`backends/default` は、既存の `mutable` / `immut` の密行列・密ベクトル実装を包むラッパー型を提供します。これらのラッパー型はこのパッケージが所有するため、外側の `@algebra` trait を実装できます。
 
 ## `DenseVector[T]`
 
-```moonbit
-pub struct DenseVector[T] {
-  inner : @mutable.Vector[T]
+```moonbit check
+///|
+test "DenseVector wraps a mutable vector backend" {
+  let vector : @default.DenseVector[Int] = @default.DenseVector::from_array([
+    1, 2, 3,
+  ])
+  inspect(vector.length(), content="3")
+  inspect(vector[1], content="2")
 }
 ```
 
-既定の可変密ベクトルラッパーです。
+既定の可変密ベクトルバックエンドを包む自前のラッパーです。
 
 公開メソッド:
 
@@ -35,13 +40,19 @@ pub struct DenseVector[T] {
 
 ## `DenseMatrix[T]`
 
-```moonbit
-pub struct DenseMatrix[T] {
-  inner : @mutable.Matrix[T]
+```moonbit check
+///|
+test "DenseMatrix wraps a mutable matrix backend" {
+  let matrix : @default.DenseMatrix[Int] = @default.DenseMatrix::from_2d_array([
+    [1, 2],
+    [3, 4],
+  ])
+  inspect(matrix.row(), content="2")
+  inspect(matrix.col(), content="2")
 }
 ```
 
-既定の可変密行列ラッパーです。
+既定の可変密行列バックエンドを包む自前のラッパーです。
 
 公開メソッド:
 
@@ -61,13 +72,19 @@ pub struct DenseMatrix[T] {
 
 ## `ImmutableDenseVector[T]`
 
-```moonbit
-pub struct ImmutableDenseVector[T] {
-  inner : @immut.Vector[T]
+```moonbit check
+///|
+test "ImmutableDenseVector wraps an immutable vector backend" {
+  let vector : @default.ImmutableDenseVector[Int] = @default.ImmutableDenseVector::from_array([
+      1, 2, 3,
+    ],
+  )
+  inspect(vector.length(), content="3")
+  inspect(vector[2], content="3")
 }
 ```
 
-既定の不変密ベクトルラッパーです。
+既定の不変密ベクトルバックエンドを包む自前のラッパーです。
 
 公開メソッド:
 
@@ -87,13 +104,20 @@ pub struct ImmutableDenseVector[T] {
 
 ## `ImmutableDenseMatrix[T]`
 
-```moonbit
-pub struct ImmutableDenseMatrix[T] {
-  inner : @immut.Matrix[T]
+```moonbit check
+///|
+test "ImmutableDenseMatrix wraps an immutable matrix backend" {
+  let matrix : @default.ImmutableDenseMatrix[Int] = @default.ImmutableDenseMatrix::from_2d_array([
+      [1, 2],
+      [3, 4],
+    ],
+  )
+  inspect(matrix.row(), content="2")
+  inspect(matrix.col(), content="2")
 }
 ```
 
-既定の不変密行列ラッパーです。
+既定の不変密行列バックエンドを包む自前のラッパーです。
 
 公開メソッド:
 

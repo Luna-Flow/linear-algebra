@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-This documentation tracks the current repository baseline for **v0.4.1**.
+This README matches the current repository baseline for **v0.4.2**.
 
 The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt`
 capability, while integral embeddings follow
@@ -9,19 +9,19 @@ capability, while integral embeddings follow
 now use checked `Result[..., LinearAlgebraError]` APIs; the old aborting or
 `Option`-returning behavior is exposed through explicit `unchecked_*` methods.
 
-The `0.4.1` maintenance baseline adds public
-`mutable.Matrix::unchecked_matmul` for prevalidated hot paths, tunes mutable
-matrix multiplication, LU, and Cholesky kernels, documents benchmark fixtures as
-on-demand artifacts, and publishes directly from the `moon.mod` version.
+The `0.4.2` maintenance baseline keeps the checked `0.4.x` API surface and
+adds a packed right-hand-side matrix-multiplication path for larger dense
+products. It also lets `perf_support` and `perf_runner` regenerate missing
+benchmark fixtures from tracked metadata, so direct local runs still work on a
+clean checkout.
 
 ## Layered Architecture
 
 - **`arithmetic`**: Linear-algebra-facing operation capabilities. It reuses
   scalar operation traits from `Luna-Flow/luna-generic` and
   `Luna-Flow/arithmetic`, and adds operation-only traits where needed.
-- **`algebra`**: Semantic mathematical structure capabilities. It re-exports
-  existing Luna Flow algebraic structures and adds linear-algebra-facing
-  traits such as `MatrixShape`, `AdditiveVector`, `TransposeMatrix`, and `FloatingScalarOps`.
+- **`algebra`**: Semantic mathematical structure capabilities. It defines only
+  the linear-algebra-owned structure traits.
 - **`backends/default`**: The reference dense backend layer. It exposes mutable
   dense wrappers `DenseVector` / `DenseMatrix` and immutable dense wrappers
   `ImmutableDenseVector` / `ImmutableDenseMatrix`.
@@ -39,9 +39,73 @@ The default dense implementation is a backend, not the center of the ecosystem.
 Algorithms should depend on minimal linear algebra traits, not concrete dense
 matrix/vector types.
 
+The concrete `immut` / `mutable` matrix and vector types are the
+implementations wrapped by `backends/default`. `DenseVector` and `DenseMatrix`
+wrap `@mutable.Vector` and `@mutable.Matrix`, while
+`ImmutableDenseVector` and `ImmutableDenseMatrix` wrap `@immut.Vector` and
+`@immut.Matrix`.
+
+## Start Here
+
+Use this split to choose your starting point:
+
+- **Concrete immutable types**:
+  [immut/matrix API](./immut/matrix/api.md),
+  [immut/matrix tutorial](./immut/matrix/tutorial.md),
+  [immut/vector API](./immut/vector/api.md),
+  [immut/vector tutorial](./immut/vector/tutorial.md)
+- **Concrete mutable types**:
+  [mutable/matrix API](./mutable/matrix/api.md),
+  [mutable/matrix tutorial](./mutable/matrix/tutorial.md),
+  [mutable/vector API](./mutable/vector/api.md),
+  [mutable/vector tutorial](./mutable/vector/tutorial.md)
+- **Abstract or backend-independent layers**:
+  [arithmetic API](./arithmetic/api.md),
+  [algebra API](./algebra/api.md),
+  [backends/default API](./backends/default/api.md),
+  [error API](./error/api.md)
+
+## Choosing Between Layers
+
+- Choose **`mutable`** for direct dense matrix/vector work, in-place updates,
+  views, and concrete numerical helpers.
+- Choose **`immut`** for value semantics and concrete dense types that always
+  return fresh values instead of mutating.
+- Choose **`arithmetic`** and **`algebra`** when your algorithm should state
+  only the capabilities it needs.
+- Choose **`backends/default`** when you want the default dense backend exposed
+  through the public algebra traits.
+
+## Trait-Oriented Project Setup
+
+If you want to write backend-independent code with the abstract capability
+layers, add the shared upstream abstraction packages explicitly:
+
+```sh
+moon add Luna-Flow/linear-algebra@0.4.2
+moon add Luna-Flow/luna-generic@0.3.3
+moon add Luna-Flow/arithmetic@0.2.2
+```
+
+Recommended `moon.pkg` imports:
+
+```moonbit
+import {
+  "Luna-Flow/linear-algebra/algebra",
+  "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,
+  "Luna-Flow/luna-generic" @lf_alg,
+  "Luna-Flow/arithmetic" @lf_arith,
+}
+```
+
+Use `@algebra` for linear-algebra structure traits, `@la_arithmetic` for
+linear-algebra-facing operation traits, `@lf_alg` for shared upstream algebraic
+abstractions, and `@lf_arith` for shared upstream arithmetic types.
+
 ## Repository Positioning
 
-Matrix and vector infrastructure with mutable and immutable execution models.
+Matrix and vector infrastructure with both mutable and immutable execution
+models.
 
 ## Documentation Layout
 

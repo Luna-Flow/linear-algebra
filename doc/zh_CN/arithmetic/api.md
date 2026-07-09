@@ -1,10 +1,30 @@
 # `linear-algebra/arithmetic`
 
-本文档描述当前 `0.4.1` 仓库中 `Luna-Flow/linear-algebra/arithmetic` 的公开 API。
+本页记录当前 `0.4.2` 仓库中 `Luna-Flow/linear-algebra/arithmetic` 的公开 API 基线。
 
 ## 职责
 
 `arithmetic` 拥有线性代数包使用的操作级 traits。操作 trait 只表示“该操作可用”，不声明代数律。带代数律的结构属于 `linear-algebra/algebra`。
+
+## 项目配置
+
+如果你要把线性代数操作 trait 和共享上游抽象一起使用，先加上这三条依赖：
+
+```sh
+moon add Luna-Flow/linear-algebra@0.4.2
+moon add Luna-Flow/luna-generic@0.3.3
+moon add Luna-Flow/arithmetic@0.2.2
+```
+
+推荐的 `moon.pkg` 导入写法：
+
+```moonbit nocheck
+import {
+  "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,
+  "Luna-Flow/luna-generic" @lf_alg,
+  "Luna-Flow/arithmetic" @lf_arith,
+}
+```
 
 ## 重导出的类型
 
@@ -41,9 +61,10 @@
 
 ## `Abs`
 
-```moonbit
-pub(open) trait Abs {
-  fn abs(Self) -> Self
+```moonbit check
+///|
+test "Abs captures absolute-value support" {
+  inspect(@la_arithmetic.Abs::abs(-3), content="3")
 }
 ```
 
@@ -55,9 +76,13 @@ pub(open) trait Abs {
 
 ## `ApproxEq`
 
-```moonbit
-pub(open) trait ApproxEq {
-  fn approx_eq(Self, Self) -> Bool
+```moonbit check
+///|
+test "ApproxEq captures approximate comparison support" {
+  inspect(
+    @la_arithmetic.ApproxEq::approx_eq(1.0, 1.0 + 1.0e-13),
+    content="true",
+  )
 }
 ```
 
@@ -69,9 +94,14 @@ pub(open) trait ApproxEq {
 
 ## `CheckedDiv`
 
-```moonbit
-pub(open) trait CheckedDiv {
-  fn checked_div(Self, Self, ArithmeticContext) -> Result[Self, ArithmeticError]
+```moonbit check
+///|
+test "CheckedDiv carries context-aware division" {
+  let ctx : @lf_arith.ArithmeticContext = @lf_arith.ArithmeticContext::new(32)
+  inspect(
+    @la_arithmetic.CheckedDiv::checked_div(6.0, 2.0, ctx).unwrap(),
+    content="3",
+  )
 }
 ```
 
@@ -79,9 +109,14 @@ pub(open) trait CheckedDiv {
 
 ## `CheckedSqrt`
 
-```moonbit
-pub(open) trait CheckedSqrt {
-  fn checked_sqrt(Self, ArithmeticContext) -> Result[Self, ArithmeticError]
+```moonbit check
+///|
+test "CheckedSqrt carries context-aware square root" {
+  let ctx : @lf_arith.ArithmeticContext = @lf_arith.ArithmeticContext::new(32)
+  inspect(
+    @la_arithmetic.CheckedSqrt::checked_sqrt(9.0, ctx).unwrap(),
+    content="3",
+  )
 }
 ```
 
@@ -89,9 +124,13 @@ pub(open) trait CheckedSqrt {
 
 ## `CheckedCompare`
 
-```moonbit
-pub(open) trait CheckedCompare {
-  fn checked_compare(Self, Self) -> Result[Int, ArithmeticError]
+```moonbit check
+///|
+test "CheckedCompare returns an explicit ordering result" {
+  inspect(
+    @la_arithmetic.CheckedCompare::checked_compare(2.0, 3.0).unwrap(),
+    content="-1",
+  )
 }
 ```
 
@@ -99,4 +138,4 @@ pub(open) trait CheckedCompare {
 
 ## 边界
 
-本包不能导入矩阵、向量或后端类型。依赖方向上，它位于 `algebra` 和所有后端包之下。
+本包不能导入矩阵、向量或后端类型。在依赖方向上，它位于 `algebra` 和所有后端包之下。

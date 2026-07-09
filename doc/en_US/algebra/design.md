@@ -6,13 +6,12 @@
 - Keep structure-level traits separate from operation-only arithmetic traits.
 - Avoid treating approximate floating-point behavior as exact algebraic law.
 - Keep shape, additive operations, Hadamard multiplication, matrix
-  multiplication, and stronger algebraic laws as separate capabilities.
+  multiplication, and scalar-valued mappings as separate capabilities.
 - Express object-level linear algebra operations by composing existing operator
   traits such as `Add`, `Mul`, `Neg`, and `Sub` only when a trait actually needs
   those operations.
-- Represent stronger object algebra by composing upstream law-bearing traits
-  such as `AddGroup`, `Semiring`, and `Ring` when the carrier type can provide
-  lawful global identities.
+- Keep shared upstream scalar abstractions outside this package; import them
+  directly in user code when an algorithm really needs them.
 
 ## Non-Responsibilities
 

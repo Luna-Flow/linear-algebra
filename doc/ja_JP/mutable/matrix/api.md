@@ -1,11 +1,11 @@
 # `@mutable.Matrix`
 
-このページは、現在の `0.4.1` リポジトリ実装の実際の振る舞いを説明します。平方根を必要とする API は `Luna-Flow/arithmetic.Sqrt` を使用し、`Tolerance` は引き続き `mutable` が定義します。
+このページは、現在の `0.4.2` リポジトリ状態における `@mutable.Matrix` の API 基準をまとめたものです。平方根を必要とする API は `Luna-Flow/arithmetic.Sqrt` を使用し、`Tolerance` は引き続き `mutable` が定義します。
 
 ## 概要
 
-- `@mutable.Matrix` は更新指向です。
-- `set`、`swap_rows`、`swap_cols`、`map_inplace`、行/列 view の更新、転置 view の更新は、基底行列をその場で変更します。
+- `@mutable.Matrix` は、このリポジトリの実行指向行列型です。
+- `set`、`swap_rows`、`swap_cols`、`map_inplace`、行/列ビューの更新、転置ビューの更新は、基底行列をその場で変更します。
 - 公開ストレージは全バックエンドで行優先のフラット `Array[T]` です。バックエンドごとの違いは主に実行最適化であり、公開データモデルではありません。
 - 公開アクセスは厳密な境界チェックを行います。`get`、`set`、`m[row][col]`、`row_view`、`col_view`、抽出用メソッド、イテレータ、転置ビューのアクセスは、`0xN` や `Nx0` を含めて範囲外を一貫して拒否します。
 - `swap_rows(i, i)` と `swap_cols(i, i)` は何もしない操作です。範囲外インデックスは、偶然の配列アクセスに依存せず明示的に停止します。
@@ -93,7 +93,10 @@
 - `frobenius_norm()`
   対応する要素型向けの、検査付きでない集約メソッドです。
 
-## 正しさに関する補足
+## 使い分け
 
 - 各バックエンドは同じ公開セマンティクスを提供する前提です。現在のリポジトリは `native`、`js`、`wasm`、`wasm-gc` ごとにカーネルファイルを分けていますが、特記がない限りドキュメントとテストはバックエンドに依存しない公開挙動を表します。
 - `immut` と `mutable` の間で共有するコードでは、共通の代数 API に依存し、更新セマンティクスまで同一だと仮定しないでください。
+- `backends/default.DenseMatrix` は、この concrete 実装を包むラッパーです。
+  trait 指向の既定バックエンド入口を見たい場合は
+  [backends/default API](../../backends/default/api.md) を参照してください。

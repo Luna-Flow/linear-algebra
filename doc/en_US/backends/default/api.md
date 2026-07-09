@@ -1,8 +1,7 @@
 # `linear-algebra/backends/default`
 
-This page documents the public API exported by
-`Luna-Flow/linear-algebra/backends/default` in the current `0.4.1` repository
-state.
+API baseline for `Luna-Flow/linear-algebra/backends/default` in the current
+`0.4.2` repository state.
 
 ## Purpose
 
@@ -13,13 +12,18 @@ for them without violating MoonBit's foreign trait / foreign type rule.
 
 ## `DenseVector[T]`
 
-```moonbit
-pub struct DenseVector[T] {
-  inner : @mutable.Vector[T]
+```moonbit check
+///|
+test "DenseVector wraps a mutable vector backend" {
+  let vector : @default.DenseVector[Int] = @default.DenseVector::from_array([
+    1, 2, 3,
+  ])
+  inspect(vector.length(), content="3")
+  inspect(vector[1], content="2")
 }
 ```
 
-Default mutable dense vector wrapper.
+Owned wrapper for the default mutable dense vector backend.
 
 ### Constructors And Accessors
 
@@ -46,13 +50,19 @@ Default mutable dense vector wrapper.
 
 ## `DenseMatrix[T]`
 
-```moonbit
-pub struct DenseMatrix[T] {
-  inner : @mutable.Matrix[T]
+```moonbit check
+///|
+test "DenseMatrix wraps a mutable matrix backend" {
+  let matrix : @default.DenseMatrix[Int] = @default.DenseMatrix::from_2d_array([
+    [1, 2],
+    [3, 4],
+  ])
+  inspect(matrix.row(), content="2")
+  inspect(matrix.col(), content="2")
 }
 ```
 
-Default mutable dense matrix wrapper.
+Owned wrapper for the default mutable dense matrix backend.
 
 ### Constructors And Accessors
 
@@ -79,13 +89,19 @@ Default mutable dense matrix wrapper.
 
 ## `ImmutableDenseVector[T]`
 
-```moonbit
-pub struct ImmutableDenseVector[T] {
-  inner : @immut.Vector[T]
+```moonbit check
+///|
+test "ImmutableDenseVector wraps an immutable vector backend" {
+  let vector : @default.ImmutableDenseVector[Int] = @default.ImmutableDenseVector::from_array([
+      1, 2, 3,
+    ],
+  )
+  inspect(vector.length(), content="3")
+  inspect(vector[2], content="3")
 }
 ```
 
-Default immutable dense vector wrapper.
+Owned wrapper for the default immutable dense vector backend.
 
 ### Constructors And Accessors
 
@@ -106,13 +122,20 @@ Default immutable dense vector wrapper.
 
 ## `ImmutableDenseMatrix[T]`
 
-```moonbit
-pub struct ImmutableDenseMatrix[T] {
-  inner : @immut.Matrix[T]
+```moonbit check
+///|
+test "ImmutableDenseMatrix wraps an immutable matrix backend" {
+  let matrix : @default.ImmutableDenseMatrix[Int] = @default.ImmutableDenseMatrix::from_2d_array([
+      [1, 2],
+      [3, 4],
+    ],
+  )
+  inspect(matrix.row(), content="2")
+  inspect(matrix.col(), content="2")
 }
 ```
 
-Default immutable dense matrix wrapper.
+Owned wrapper for the default immutable dense matrix backend.
 
 ### Constructors And Accessors
 
@@ -143,8 +166,8 @@ Default immutable dense matrix wrapper.
 
 ## Boundary
 
-This package implements outer `algebra` traits for default backend wrapper
+This package implements outer `algebra` traits for the default backend wrapper
 types. It does not define new structure traits. Scalar-valued products, norms,
 solves, and decompositions remain backend methods or future dedicated
-algorithm-layer APIs unless they can be represented as structure or closed
-operations.
+algorithm-layer APIs unless they can be represented as structure traits or
+closed operations.

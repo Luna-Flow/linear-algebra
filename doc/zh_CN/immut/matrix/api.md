@@ -1,10 +1,10 @@
 # `@immut.Matrix`
 
-本页描述当前 `0.4.1` 仓库实现的实际行为。
+本页记录 `@immut.Matrix` 在当前 `0.4.2` 仓库状态下的 API 基线。
 
 ## 概览
 
-- `@immut.Matrix` 采用值语义。
+- `@immut.Matrix` 是仓库里的值语义矩阵类型。
 - `set`、`swap_rows`、`swap_cols` 等操作都会返回新矩阵。
 - 行列式数据按行优先顺序存储，底层使用 immutable vector 实现。
 - 公开索引访问采用严格边界检查。`m[row][col]` 和 `set(row, col, value)` 在越界时都会中止，包括 `0xN` 和 `Nx0` 边界形状。
@@ -41,6 +41,11 @@
   加法、减法和矩阵乘法。形状不匹配会中止。
 - `matmul(rhs)`, `trace()`, `determinant()`, `pow(power)`
   这些带检查的 API 会在形状或指数错误时返回 `Result[..., LinearAlgebraError]`。
+- `checked_matmul_with(backend, lhs, rhs)`
+  这是顶层矩阵乘法的带检查后端选择入口。`CheckedBackend` 会把维度错误作为
+  `Err` 返回，`BlasBackend` 目前则返回 `Err(BackendNotImpl(...))`。
+- `matmul_with(backend, lhs, rhs)`
+  这是保留的 unchecked 顶层后端选择入口。维度不兼容时会 abort；遇到已经预留但尚未接线的后端也会 abort。
 - `unchecked_matmul(rhs)`, `unchecked_trace()`, `unchecked_determinant()`, `unchecked_pow(power)`
   保留旧的直接 abort 行为，供明确需要 unchecked 操作的调用方使用。
 - `scale(cst)`, `add_constant(cst)`, 单目 `-`
@@ -77,7 +82,12 @@
 - `swap_rows`, `swap_cols`
 - `identity`, `pow`, `determinant`, `adjoint`
 
-## 正确性说明
+## 使用建议
 
-- 对共享代数行为来说，仓库中的 consistency tests 仍然把 `@immut.Matrix` 作为语义参考点。
-- mutable 包会额外暴露视图和原地更新等执行导向 API，不应把这些能力反向投射到 `immut` 上。
+- 对共享代数行为来说，优先依赖 capability traits 和 `backends/default` 包装类型。`@immut.Matrix` 只是默认后端使用的一种稠密实现，不是整个生态的语义中心。
+- `mutable` 包会额外暴露视图和原地更新等执行导向 API，不应把这些能力反向投射到 `immut` 上。
+- 如果后端选择来自运行时配置，优先使用 `checked_matmul_with`，不要直接用
+  `matmul_with`。`BlasBackend` 在当前 `0.4.2` 仓库状态里只是为未来后端扩展预留的占位符，还不是可用加速路径。
+- `backends/default.ImmutableDenseMatrix` 包装的就是这个 concrete 实现。
+  如果你要从 trait 导向的默认后端入口进入，请看
+  [backends/default API](../../backends/default/api.md)。

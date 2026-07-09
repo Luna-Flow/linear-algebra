@@ -1,133 +1,63 @@
-# @mutable.Vector
+# `@mutable.Vector`
 
-このページは現在のリポジトリ実装を基準にしており、`0.4.1` の API 基準として記述されています。
+このページは、現在の `0.4.2` リポジトリ状態における `@mutable.Vector` の API 基準をまとめたものです。
 
----
+## 概要
 
-## @mutable.Vector[T]
+- `@mutable.Vector` は、このリポジトリの更新指向ベクトル型です。
+- ストレージは `Array[T]` のラッパーなので、インデックス書き込みは内部バッファを直接更新します。
+- それでも多くの代数ヘルパーは新しいベクトルを返すため、更新と値変換を使い分けられます。
 
-```moonbit
-pub struct Vector[T](Array[T])
-```
+## 基本 API
 
-### 設計と性能に関する注意
+- `Vector::from_array(arr)` / `Vector::make(n, elem)` / `Vector::makei(n, f)`
+  既存データ、反復値、添字関数からベクトルを作ります。
+- `length()`
+  ベクトル長を返します。
+- `v[i]` / `v[i] = x`
+  1 要素を読み書きします。境界挙動は `Array[T]` に従います。
+- `copy()`
+  現在のベクトルを深く複製します。
+- `iter()`
+  現在の要素を順番にたどるイテレータを返します。
 
-- **配列ベースの保存**: `Vector[T]` は `Array[T]` をラップします。インデックスによる読み書きは、基底の可変ストレージに作用します。
-- **ランダムアクセス**: ランダムアクセスと更新には `v[i]` と `v[i] = x` を直接使えます。
-- **一括操作**: 集約や一括変換では、手書きのインデックスループより `.map_inplace()` や `.dot()` などの既存メソッドを優先してください。
+## 新しいベクトルを返すヘルパー
 
-- **説明**
-  可変なベクトルを表します。`Array[T]` をラップしており、インデックスによる要素のアクセスと変更が可能です。
+- `map(f)` / `zip_with(other, f)`
+  `self` を変更せず、変換後のベクトルを返します。
+- `add_constant(cst)`
+  すべての要素へ同じスカラーを加えます。
+- `left_scale(scalar)` / `right_scale(scalar)`
+  スカラー倍した新しいベクトルを返します。
+- `lerp(other, alpha)`
+  `(1 - alpha) * self + alpha * other` を計算します。
+- `+`、`*`、単項 `-`
+  要素ごとの加算、アダマール積、符号反転です。
 
-### セマンティクス
+## インプレースヘルパー
 
-- `@mutable.Vector` は更新指向であり、インデックス代入と `*_inplace` API は既存の値を直接変更します。
-- 一方で、非 `inplace` の代数ヘルパは新しいベクトルを返すため、実行効率重視の更新と値を返す変換を明示的に使い分けられます。
+- `map_inplace(f)`
+  すべての要素を書き換えます。
+- `left_scale_inplace(scalar)` / `right_scale_inplace(scalar)`
+  スカラー倍をインプレースで適用します。
 
-- **関数とメソッド**
+## スカラー・行列ヘルパー
 
-  ---
+- `dot(other)`
+  内積を計算します。長さが一致しない場合は中止します。
+- `lin_comb(weights, vectors)`
+  重み配列と入力ベクトル群から 1 本のベクトルを組み立てるトップレベル補助関数です。空入力、個数不一致、長さ不一致は中止します。
+- `to_col_matrix()` / `to_row_matrix()`
+  ベクトルを行列形式へ変換します。
+- `scaled_matrix()`
+  このベクトルを主対角に持つ対角行列を作ります。
+- `tensor_product(other)`
+  外積を計算して行列を返します。
 
-  - **`fn[T] Vector::make(n : Int, elem : T) -> Vector[T]`**
-    - **説明**
-        長さ `n` のベクトルを作成し、すべての要素を `elem` で初期化します。
-    - **パラメータ**
-      - `n`: `Int` - ベクトルの長さ。
-      - `elem`: `T` - 初期値。
-    - **戻り値**
-      `Vector[T]` - 新しく作成されたベクトル。
+## 使い分け
 
-  ---
-
-  - **`fn[T] Vector::makei(n : Int, f : (Int) -> T) -> Vector[T]`**
-    - **説明**
-        長さ `n` のベクトルを作成し、各要素をインデックス関数 `f` で生成します。
-    - **パラメータ**
-      - `n`: `Int` - ベクトルの長さ。
-      - `f`: `(Int) -> T` - インデックスを受け取り要素を返す関数。
-    - **戻り値**
-      `Vector[T]` - 生成されたベクトル。
-
-  ---
-
-  - **`fn[T] Vector::from_array(arr : Array[T]) -> Vector[T]`**
-    - **説明**
-        既存の配列をベクトルに変換します。
-
-  ---
-
-  - **`fn[T] length(self : Vector[T]) -> Int`**
-    - **説明**
-        ベクトルの長さを取得します。
-
-  ---
-
-  - **`fn[T] Vector::op_get(self : Vector[T], i : Int) -> T`**
-    - **説明**
-        指定したインデックスの要素を取得します。`v[i]` 構文をサポートします。
-
-  ---
-
-  - **`fn[T] Vector::op_set(self : Vector[T], i : Int, x : T) -> Unit`**
-    - **説明**
-        指定したインデックスに値を設定します。`v[i] = x` 構文をサポートします。
-
-  ---
-
-  - **`fn[T] copy(self : Vector[T]) -> Vector[T]`**
-    - **説明**
-        ベクトルの深層コピーを作成します。
-
-  ---
-
-  - **`fn[T, U] map(self : Vector[T], f : (T) -> U) -> Vector[U]`**
-    - **説明**
-        写像による変換を行い、新しいベクトルを返します。
-
-  ---
-
-  - **`fn[T] map_inplace(self : Vector[T], f : (T) -> T) -> Unit`**
-    - **説明**
-        変換関数をその場で適用し、元のベクトルを変更します。
-
-  ---
-
-  - **`fn[T : Mul] left_scale(self : Vector[T], scalar : T) -> Vector[T]`**
-    - **説明**
-        左からのスカラー倍（新しいベクトルを返す）: `scalar * x`。
-
-  ---
-
-  - **`fn[T : Mul] right_scale(self : Vector[T], scalar : T) -> Vector[T]`**
-    - **説明**
-        右からのスカラー倍（新しいベクトルを返す）: `x * scalar`。
-
-  ---
-
-  - **`fn[T : Mul] left_scale_inplace(self : Vector[T], scalar : T) -> Unit`**
-    - **説明**
-        左からのスカラー倍をその場で行います。
-
-  ---
-
-  - **`fn[T : Mul] right_scale_inplace(self : Vector[T], scalar : T) -> Unit`**
-    - **説明**
-        右からのスカラー倍をその場で行います。
-
-  ---
-
-  - **`fn[T : Add + Mul] dot(self : Vector[T], other : Vector[T]) -> T`**
-    - **説明**
-        2 つのベクトルの点積（内積）を計算します。
-
-  ---
-
-  - **`fn[T : Zero] scaled_matrix(self : Vector[T]) -> Matrix[T]`**
-    - **説明**
-        このベクトルを主対角成分とする対角行列を作成します。
-
-  ---
-
-  - **`fn[T : Mul] tensor_product(self : Vector[T], other : Vector[T]) -> Matrix[T]`**
-    - **説明**
-        2 つのベクトルのテンソル積（外積）を計算します。
+- 更新主体のワークロードでは、直接のインデックス操作や `*_inplace` ヘルパーを使います。
+- 以前の値を残したい場合や `@immut.Vector` に近い書き方をしたい場合は、新しいベクトルを返すヘルパーを使ってください。
+- `backends/default.DenseVector` は、この concrete 実装を包むラッパーです。
+  trait 指向の既定バックエンド入口を見たい場合は
+  [backends/default API](../../backends/default/api.md) を参照してください。

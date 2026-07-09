@@ -1,10 +1,10 @@
 # `@mutable.Matrix`
 
-本页描述当前 `0.4.1` 仓库实现的实际行为。依赖平方根的 API 使用 `Luna-Flow/arithmetic.Sqrt`；`Tolerance` 仍由 `mutable` 定义。
+本页记录 `@mutable.Matrix` 在当前 `0.4.2` 仓库状态下的 API 基线。依赖平方根的 API 使用 `Luna-Flow/arithmetic.Sqrt`；`Tolerance` 仍由 `mutable` 定义。
 
 ## 概览
 
-- `@mutable.Matrix` 明确是面向修改的类型。
+- `@mutable.Matrix` 是仓库里的执行导向矩阵类型。
 - `set`、`swap_rows`、`swap_cols`、`map_inplace`、行/列视图更新以及转置视图更新，都会直接修改底层矩阵。
 - 公开存储模型在所有后端上都是按行优先的扁平 `Array[T]`。后端文件之间的差异主要是执行优化，而不是公开矩阵模型。
 - 公开访问采用严格边界检查。`get`、`set`、`m[row][col]`、`row_view`、`col_view`、提取辅助函数、迭代器和转置视图访问，都会一致地拒绝越界索引，包括 `0xN` 和 `Nx0` 边界形状。
@@ -93,7 +93,10 @@
 - `frobenius_norm()`
   面向支持元素类型的非检查式聚合辅助函数。
 
-## 正确性说明
+## 使用建议
 
-- 各后端应暴露相同的公开语义。当前仓库仍保留 `native`、`js`、`wasm`、`wasm-gc` 四套内核文件，但除非特别说明，文档与测试都按 后端-invariant 的公开行为来理解。
+- 各后端应暴露相同的公开语义。当前仓库仍保留 `native`、`js`、`wasm`、`wasm-gc` 四套内核文件，但除非特别说明，文档与测试都按后端无关的公开行为来理解。
 - 当你编写同时适用于 `immut` 和 `mutable` 的代码时，应依赖它们共享的代数 API，而不是假设修改语义也完全相同。
+- `backends/default.DenseMatrix` 包装的就是这个 concrete 实现。
+  如果你要从 trait 导向的默认后端入口进入，请看
+  [backends/default API](../../backends/default/api.md)。
