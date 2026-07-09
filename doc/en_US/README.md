@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-This README matches the current repository baseline for **v0.4.5**.
+This README matches the current repository baseline for **v0.4.6**.
 
 The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt`
 capability, while integral embeddings follow
@@ -9,7 +9,7 @@ capability, while integral embeddings follow
 now use checked `Result[..., LinearAlgebraError]` APIs; the old aborting or
 `Option`-returning behavior is exposed through explicit `unchecked_*` methods.
 
-The `0.4.5` baseline keeps the checked `0.4.x` API surface and the packed
+The `0.4.6` baseline keeps the checked `0.4.x` API surface and the packed
 matrix-multiplication work introduced in `0.4.2`, while removing the old
 runtime backend-selection story, introducing the explicit native OpenBLAS
 backend, and aligning the release baseline across code, docs, and CI.
@@ -28,9 +28,9 @@ For earlier release notes and repository history, see
   dense wrappers `DenseVector` / `DenseMatrix` and immutable dense wrappers
   `ImmutableDenseVector` / `ImmutableDenseMatrix`.
 - **`backends/openblas`**: A native-only OpenBLAS backend. It exposes the owned
-  `BlasMatrix[T]` wrapper for `Float` and `Double`, uses OpenBLAS GEMM for
-  matrix multiplication, and keeps backend choice explicit through the concrete
-  type rather than a runtime selector.
+  `BlasMatrix[T]` and `BlasVector[T]` wrappers for `Float` and `Double`, uses
+  OpenBLAS GEMM for matrix multiplication, and provides backend methods backed
+  by BLAS vector and matrix-vector kernels.
 - **`error`**: Shared error vocabulary for checked linear-algebra APIs,
   including shape, exponent, empty-matrix, singular-matrix, non-convergence, and
   arithmetic failures.
@@ -56,7 +56,7 @@ implementations wrapped by `backends/default`. `DenseVector` and `DenseMatrix`
 wrap `@mutable.Vector` and `@mutable.Matrix`, while
 `ImmutableDenseVector` and `ImmutableDenseMatrix` wrap `@immut.Vector` and
 `@immut.Matrix`.
-For OpenBLAS-backed native matrix multiplication, choose
+For OpenBLAS-backed native matrix multiplication and vector kernels, choose
 [`backends/openblas`](./backends/openblas/api.md) explicitly. It is a separate
 concrete backend, not a runtime backend option inside `@immut.Matrix`.
 
@@ -115,7 +115,7 @@ If you want to write backend-independent code with the abstract capability
 layers, add the shared upstream abstraction packages explicitly:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.5
+moon add Luna-Flow/linear-algebra@0.4.6
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

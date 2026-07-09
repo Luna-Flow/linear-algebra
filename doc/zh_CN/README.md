@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-这份 README 对应当前仓库的 **v0.4.5** 文档基线。
+这份 README 对应当前仓库的 **v0.4.6** 文档基线。
 
 `mutable` 数值 API 现在使用共享的 `Luna-Flow/arithmetic.Sqrt` 能力；
 整数嵌入遵循 `Luna-Flow/luna-generic.IntegralHomomorphism`。在当前版本中，
@@ -8,7 +8,7 @@
 现在都使用带检查的 `Result[..., LinearAlgebraError]` API；旧的 abort 行为
 和 `Option` 返回语义则通过显式的 `unchecked_*` 方法保留。
 
-`0.4.5` 这一基线延续了 `0.4.x` 的带检查 API 表面，也保留了 `0.4.2`
+`0.4.6` 这一基线延续了 `0.4.x` 的带检查 API 表面，也保留了 `0.4.2`
 引入的打包矩阵乘法路径，同时移除了旧的运行时后端选择叙事，引入了显式的
 native OpenBLAS 后端，并把代码、文档和 CI 的发布基线统一到同一个版本语义上。
 
@@ -24,8 +24,9 @@ native OpenBLAS 后端，并把代码、文档和 CI 的发布基线统一到同
   `DenseVector` / `DenseMatrix`，以及不可变稠密包装类型
   `ImmutableDenseVector` / `ImmutableDenseMatrix`。
 - **`backends/openblas`**：仅支持 `native` 的 OpenBLAS 后端。它公开仓库自有的
-  `BlasMatrix[T]` 包装类型，支持 `Float` 与 `Double`，矩阵乘法使用 OpenBLAS
-  GEMM，后端选择通过具体类型表达，而不是通过运行时 selector 表达。
+  `BlasMatrix[T]` 与 `BlasVector[T]` 包装类型，支持 `Float` 与 `Double`，
+  矩阵乘法使用 OpenBLAS GEMM，向量与矩阵-向量交互则使用对应的 BLAS 核心，
+  后端选择通过具体类型表达，而不是通过运行时 selector 表达。
 - **`error`**：带检查线性代数 API 共用的错误词汇层，覆盖形状、指数、空矩阵、
   奇异矩阵、非收敛以及底层算术错误。
 - **trait 驱动算法**：后端无关代码应依赖最小必要能力，例如
@@ -46,7 +47,7 @@ native OpenBLAS 后端，并把代码、文档和 CI 的发布基线统一到同
 底层实现。`DenseVector` 和 `DenseMatrix` 包装 `@mutable.Vector` 与
 `@mutable.Matrix`；`ImmutableDenseVector` 和 `ImmutableDenseMatrix` 包装
 `@immut.Vector` 与 `@immut.Matrix`。
-如果需要 OpenBLAS 支持的 native 矩阵乘法，请显式选择
+如果需要 OpenBLAS 支持的 native 矩阵乘法与向量 BLAS 核心，请显式选择
 [`backends/openblas`](./backends/openblas/api.md)。它是独立的具体后端，
 不是 `@immut.Matrix` 内部的运行时后端选项。
 
@@ -103,7 +104,7 @@ native OpenBLAS 后端，并把代码、文档和 CI 的发布基线统一到同
 如果你想使用抽象能力层来编写后端无关代码，请显式安装它所依赖的上游抽象包：
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.5
+moon add Luna-Flow/linear-algebra@0.4.6
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

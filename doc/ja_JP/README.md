@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-この README は現在のリポジトリ基準である **v0.4.5** に対応しています。
+この README は現在のリポジトリ基準である **v0.4.6** に対応しています。
 
 `mutable` の数値 API は共有の `Luna-Flow/arithmetic.Sqrt` 能力を使い、
 整数埋め込みは `Luna-Flow/luna-generic.IntegralHomomorphism` に従います。
@@ -9,7 +9,7 @@
 `Result[..., LinearAlgebraError]` API を使います。従来の abort する挙動と
 `Option` 戻り値は、明示的な `unchecked_*` メソッドに残しています。
 
-`0.4.5` 基準は、検査付き `0.4.x` API 表面と `0.4.2` で導入した
+`0.4.6` 基準は、検査付き `0.4.x` API 表面と `0.4.2` で導入した
 パック済み行列乗算経路を維持しつつ、古い runtime backend selection の
 考え方を取り除き、明示的な native OpenBLAS バックエンドを導入し、
 コード・文書・CI のリリース基準を同じ意味に揃えたものです。
@@ -27,9 +27,10 @@
   `DenseVector` / `DenseMatrix` と、不変の密ラッパー
   `ImmutableDenseVector` / `ImmutableDenseMatrix` を公開します。
 - **`backends/openblas`**: `native` 専用の OpenBLAS バックエンドです。
-  `Float` と `Double` に対応するリポジトリ所有の `BlasMatrix[T]` ラッパーを公開し、
-  行列乗算に OpenBLAS GEMM を使います。バックエンド選択は runtime selector ではなく
-  具体型で表します。
+  `Float` と `Double` に対応するリポジトリ所有の `BlasMatrix[T]` と
+  `BlasVector[T]` ラッパーを公開し、行列乗算には OpenBLAS GEMM を、ベクトルと
+  行列-ベクトル相互作用には対応する BLAS カーネルを使います。バックエンド選択は
+  runtime selector ではなく具体型で表します。
 - **`error`**: 検査付き線形代数 API の共有エラー語彙です。形状、指数、空行列、
   特異行列、非収束、下位の算術エラーを扱います。
 - **trait 駆動アルゴリズム**: バックエンド非依存コードは、
@@ -52,7 +53,7 @@
 `backends/default` が包む実装本体です。`DenseVector` と `DenseMatrix` は
 `@mutable.Vector` と `@mutable.Matrix` を包み、`ImmutableDenseVector` と
 `ImmutableDenseMatrix` は `@immut.Vector` と `@immut.Matrix` を包みます。
-OpenBLAS による native 行列乗算が必要な場合は、
+OpenBLAS による native 行列乗算やベクトル BLAS カーネルが必要な場合は、
 [`backends/openblas`](./backends/openblas/api.md) を明示的に選びます。これは独立した
 具体バックエンドであり、`@immut.Matrix` 内の runtime backend option ではありません。
 
@@ -109,7 +110,7 @@ OpenBLAS による native 行列乗算が必要な場合は、
 パッケージを明示的に追加してください。
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.5
+moon add Luna-Flow/linear-algebra@0.4.6
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

@@ -1,6 +1,6 @@
 # `linear-algebra/arithmetic`
 
-本页记录当前 `0.4.5` 仓库中 `Luna-Flow/linear-algebra/arithmetic` 的公开 API 基线。
+本页记录当前 `0.4.6` 仓库中 `Luna-Flow/linear-algebra/arithmetic` 的公开 API 基线。
 
 ## 职责
 
@@ -11,7 +11,7 @@
 如果你要把线性代数操作 trait 和共享上游抽象一起使用，先加上这三条依赖：
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.5
+moon add Luna-Flow/linear-algebra@0.4.6
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

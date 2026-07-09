@@ -1,6 +1,6 @@
 # `linear-algebra/error`
 
-本页记录当前 `0.4.5` 仓库中 `Luna-Flow/linear-algebra/error` 的公开 API 基线。
+本页记录当前 `0.4.6` 仓库中 `Luna-Flow/linear-algebra/error` 的公开 API 基线。
 
 ## 职责
 

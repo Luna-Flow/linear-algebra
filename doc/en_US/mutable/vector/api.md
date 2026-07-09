@@ -1,6 +1,6 @@
 # `@mutable.Vector`
 
-API baseline for `@mutable.Vector` in the current `0.4.5` repository state.
+API baseline for `@mutable.Vector` in the current `0.4.6` repository state.
 
 ## Overview
 

@@ -1,13 +1,13 @@
 # `linear-algebra/backends/openblas`
 
 API baseline for `Luna-Flow/linear-algebra/backends/openblas` in the current
-`0.4.5` repository state.
+`0.4.6` repository state.
 
 ## Purpose
 
-`backends/openblas` provides an owned native-only matrix backend that delegates
-matrix multiplication to OpenBLAS GEMM while still implementing the public
-`@algebra` matrix traits on a local wrapper type.
+`backends/openblas` provides owned native-only matrix and vector backend
+wrappers. Matrix multiplication delegates to OpenBLAS GEMM, while vector and
+matrix-vector helpers delegate to the matching BLAS kernels.
 
 This package is separate from `@immut.Matrix`. There is no runtime backend
 selector in `immut`; backend choice is now expressed by the concrete matrix type
@@ -35,13 +35,55 @@ It owns the scalar-specific pieces required by the backend:
 
 - `tolerance()`
   returns the comparison tolerance used by backend tests and result checks.
+- `dot(length, left, right)`
+  dispatches to `cblas_sdot` or `cblas_ddot`.
+- `scal(length, alpha, data)`
+  dispatches to `cblas_sscal` or `cblas_dscal`.
+- `axpy(length, alpha, x, y)`
+  dispatches to `cblas_saxpy` or `cblas_daxpy`.
 - `gemm(m, n, k, left, right)`
   dispatches matrix multiplication to the matching OpenBLAS kernel:
   `cblas_sgemm` for `Float` and `cblas_dgemm` for `Double`.
+- `gemv(row, col, matrix, vector)`
+  dispatches matrix-vector multiplication to `cblas_sgemv` or `cblas_dgemv`.
 
-`BlasMatrix[T]` public construction and conversion APIs require
+`BlasMatrix[T]` and `BlasVector[T]` public construction and conversion APIs require
 `T : BLASInnerType`, so the backend does not expose a half-open “constructible
 for any `T` but only operable for some `T`” surface.
+
+## `BlasVector[T]`
+
+Owned native vector wrapper for the OpenBLAS backend.
+
+### Constructors, Conversions, And Accessors
+
+- `BlasVector::from_immut(inner : @immut.Vector[T]) -> BlasVector[T]`
+- `BlasVector::from_default(inner : @default.ImmutableDenseVector[T]) -> BlasVector[T]`
+- `BlasVector::from_array(data : Array[T]) -> BlasVector[T]`
+- `BlasVector::make(length : Int, value : T) -> BlasVector[T]`
+- `to_immut(self) -> @immut.Vector[T]`
+- `to_default(self) -> @default.ImmutableDenseVector[T]`
+- `to_array(self) -> Array[T]`
+- `length(self) -> Int`
+- `op_get(self, index : Int) -> T`
+
+### Trait Coverage
+
+`BlasVector[T]` currently implements:
+
+- `@algebra.VectorShape`
+- `@algebra.AdditiveVector`
+- `Add`, `Neg`, `Sub`
+- `Show`
+
+It does **not** implement `@algebra.VecMulVector`. BLAS-style `scale`, `dot`,
+and `axpy` are exposed as backend methods rather than new structure traits.
+
+### Backend Methods
+
+- `BlasVector::scale(self, scalar : T) -> BlasVector[T]`
+- `BlasVector::dot(self, other : BlasVector[T]) -> T`
+- `BlasVector::axpy(self, alpha : T, other : BlasVector[T]) -> BlasVector[T]`
 
 ## `BlasMatrix[T]`
 
@@ -80,6 +122,11 @@ inside the backend implementation.
 - `col(self) -> Int`
 - `to_array(self) -> Array[T]`
 
+### Backend Methods
+
+- `BlasMatrix::matvec(self, vector : BlasVector[T]) -> BlasVector[T]`
+  multiplies the matrix by an OpenBLAS backend vector through GEMV.
+
 ## Trait Implementations
 
 `BlasMatrix[T]` currently implements:
@@ -94,6 +141,7 @@ inside the backend implementation.
 Behavior is split intentionally:
 
 - `Mul` uses OpenBLAS GEMM through `BLASInnerType::gemm`.
+- `matvec` uses OpenBLAS GEMV through `BLASInnerType::gemv`.
 - `shape`, `transpose`, `+`, `-`, and unary `-` are implemented locally in
   MoonBit inside this backend package.
 

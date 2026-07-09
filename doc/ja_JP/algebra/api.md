@@ -1,6 +1,6 @@
 # `linear-algebra/algebra`
 
-このページは、現在の `0.4.5` リポジトリにおける
+このページは、現在の `0.4.6` リポジトリにおける
 `Luna-Flow/linear-algebra/algebra` の公開 API 基準をまとめたものです。
 
 ## 役割
@@ -12,7 +12,7 @@
 `algebra` は構造層だけを担当します。共有の上流スカラー抽象も直接使うなら、依存をまとめて追加してください。
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.5
+moon add Luna-Flow/linear-algebra@0.4.6
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

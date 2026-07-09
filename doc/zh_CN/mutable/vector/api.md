@@ -1,6 +1,6 @@
 # `@mutable.Vector`
 
-本页记录 `@mutable.Vector` 在当前 `0.4.5` 仓库状态下的 API 基线。
+本页记录 `@mutable.Vector` 在当前 `0.4.6` 仓库状态下的 API 基线。
 
 ## 概览
 

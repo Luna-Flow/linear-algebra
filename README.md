@@ -2,13 +2,13 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache--2.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.4.5 - Explicit OpenBLAS Backend And API Cleanup
+## v0.4.6 - Backend Vector And MatVec Additions
 
-This README matches the **v0.4.5** repository state. This release keeps the
+This README matches the **v0.4.6** repository state. This release keeps the
 checked `0.4.x` API surface and the packed mutable matrix multiplication work
-introduced in `0.4.2`, while removing the old runtime backend-selection story,
-introducing the explicit native OpenBLAS backend, and aligning the release
-baseline across code, docs, and CI.
+introduced in `0.4.2`, while extending the backend layer with explicit vector
+and matrix-vector helpers, keeping the native OpenBLAS backend explicit, and
+aligning the release baseline across code, docs, and CI.
 
 For earlier release notes and repository history, see
 [CHANGELOG.md](./CHANGELOG.md).
@@ -17,14 +17,18 @@ For earlier release notes and repository history, see
 
 - `immut` no longer exposes runtime backend-selection APIs. Backend choice is
   now expressed by the concrete type you use, not by a runtime ADT.
-- `backends/openblas` is the new explicit native backend. It provides the owned
-  `BlasMatrix[T]` wrapper for `Float` and `Double`, uses OpenBLAS GEMM for
-  matrix multiplication, and participates in the public trait layer.
-- The stale backend-only error surface was removed from the public API, so the
-  checked error package now reflects only live code paths.
-- The README, localized docs, API baseline pages, install snippets, symlinked
-  doc exposure packages, and CI/publish workflows are all aligned to the
-  `0.4.5` release baseline.
+- `backends/default` now provides backend methods `scale`, `dot`, `axpy`, and
+  `matvec` on its dense vector and matrix wrappers.
+- `backends/openblas` now exposes both `BlasMatrix[T]` and `BlasVector[T]` for
+  `Float` and `Double`, using OpenBLAS GEMM for matrix multiplication plus
+  BLAS-backed `dot`, `scal`, `axpy`, and `gemv` for vector and matrix-vector
+  work.
+- Scalar-valued vector products and BLAS-style linear combinations remain
+  backend methods. They were not promoted into new `@algebra` traits in this
+  release.
+- The README, localized docs, API baseline pages, install snippets, generated
+  interfaces, and CI/publish workflows are all aligned to the `0.4.6` release
+  baseline.
 
 ## Layered Architecture
 
@@ -40,11 +44,14 @@ first layered capability packages for backend-independent linear algebra code.
   `AdditiveVector`, `TransposeMatrix`, and `MatMulMatrix`.
 - **`backends/default`**: The reference dense backend layer. It exposes wrapper
   types `DenseVector` / `DenseMatrix` over `mutable`, and
-  `ImmutableDenseVector` / `ImmutableDenseMatrix` over `immut`.
+  `ImmutableDenseVector` / `ImmutableDenseMatrix` over `immut`, plus backend
+  methods for scaling, dot products, AXPY-style combinations, and matrix-vector
+  multiplication.
 - **`backends/openblas`**: A native-only OpenBLAS backend. It exposes the owned
-  `BlasMatrix[T]` wrapper for `Float` and `Double`, uses OpenBLAS GEMM for
-  matrix multiplication, and keeps backend choice explicit through the concrete
-  type rather than a runtime selector.
+  `BlasMatrix[T]` and `BlasVector[T]` wrappers for `Float` and `Double`, uses
+  OpenBLAS GEMM for matrix multiplication, BLAS vector kernels for backend
+  methods like `dot` / `axpy`, and keeps backend choice explicit through the
+  concrete type rather than a runtime selector.
 - **Trait-driven algorithms**: New backend-independent algorithms should depend
   on the smallest capability they need, such as `MatrixShape`,
   `AdditiveVector`, `VecMulVector`, `TransposeMatrix`, or `MatMulMatrix`, not
@@ -72,7 +79,7 @@ The default backend wrappers are built on top of these concrete types:
 `backends/default.ImmutableDenseMatrix` wrap `immut.Vector` and
 `immut.Matrix`. If you want the trait-oriented default backend entry point, see
 [the `backends/default` docs](./doc/en_US/backends/default/api.md).
-For OpenBLAS-backed native matrix multiplication, use
+For OpenBLAS-backed native matrix multiplication and vector kernels, use
 [`backends/openblas`](./doc/en_US/backends/openblas/api.md) explicitly; it is a
 separate concrete backend, not a runtime backend option inside `@immut.Matrix`.
 
@@ -83,7 +90,7 @@ layers, install `linear-algebra` together with the upstream scalar abstraction
 packages it builds on:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.5
+moon add Luna-Flow/linear-algebra@0.4.6
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -242,7 +249,7 @@ Localized README files:
 
 ## Changelog
 
-Older release notes, historical version summaries, and pre-`0.4.5` repository
+Older release notes, historical version summaries, and pre-`0.4.6` repository
 highlights now live in [CHANGELOG.md](./CHANGELOG.md). This README keeps the
 current baseline and entry points front and center.
 

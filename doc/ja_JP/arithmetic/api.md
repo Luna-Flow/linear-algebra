@@ -1,6 +1,6 @@
 # `linear-algebra/arithmetic`
 
-このページは、現在の `0.4.5` リポジトリにおける
+このページは、現在の `0.4.6` リポジトリにおける
 `Luna-Flow/linear-algebra/arithmetic` の公開 API 基準をまとめたものです。
 
 ## 役割
@@ -12,7 +12,7 @@
 線形代数向けの操作 trait と共有の上流抽象を一緒に使うなら、まず次の依存を追加してください。
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.5
+moon add Luna-Flow/linear-algebra@0.4.6
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

@@ -1,7 +1,7 @@
 # `linear-algebra/backends/default`
 
 API baseline for `Luna-Flow/linear-algebra/backends/default` in the current
-`0.4.5` repository state.
+`0.4.6` repository state.
 
 ## Purpose
 
@@ -39,6 +39,15 @@ Owned wrapper for the default mutable dense vector backend.
   returns vector length.
 - `DenseVector::op_get(self, index : Int) -> T`
   supports read indexing.
+
+### Backend Methods
+
+- `DenseVector::scale(self, scalar : T) -> DenseVector[T]`
+  scales the vector element-wise and returns a new backend value.
+- `DenseVector::dot(self, other : DenseVector[T]) -> T`
+  computes the scalar dot product.
+- `DenseVector::axpy(self, alpha : T, other : DenseVector[T]) -> DenseVector[T]`
+  computes the BLAS-style linear combination `alpha * self + other`.
 
 ### Trait Implementations
 
@@ -79,6 +88,12 @@ Owned wrapper for the default mutable dense matrix backend.
 - `DenseMatrix::col(self) -> Int`
   returns column count.
 
+### Backend Methods
+
+- `DenseMatrix::matvec(self, vector : DenseVector[T]) -> DenseVector[T]`
+  multiplies the matrix by a default-backend dense vector and returns a new
+  dense vector wrapper.
+
 ### Trait Implementations
 
 - `Add`, `Neg`, `Sub`, and `Mul` with the matching element-level operation
@@ -111,6 +126,12 @@ Owned wrapper for the default immutable dense vector backend.
 - `ImmutableDenseVector::inner(self) -> @immut.Vector[T]`
 - `ImmutableDenseVector::length(self) -> Int`
 - `ImmutableDenseVector::op_get(self, index : Int) -> T`
+
+### Backend Methods
+
+- `ImmutableDenseVector::scale(self, scalar : T) -> ImmutableDenseVector[T]`
+- `ImmutableDenseVector::dot(self, other : ImmutableDenseVector[T]) -> T`
+- `ImmutableDenseVector::axpy(self, alpha : T, other : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]`
 
 ### Trait Implementations
 
@@ -146,6 +167,12 @@ Owned wrapper for the default immutable dense matrix backend.
 - `ImmutableDenseMatrix::row(self) -> Int`
 - `ImmutableDenseMatrix::col(self) -> Int`
 
+### Backend Methods
+
+- `ImmutableDenseMatrix::matvec(self, vector : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]`
+  multiplies the matrix by an immutable dense vector and returns a new
+  immutable dense vector wrapper.
+
 ### Trait Implementations
 
 - `Add`, `Neg`, `Sub`, and `Mul` with the matching element-level operation
@@ -167,7 +194,8 @@ Owned wrapper for the default immutable dense matrix backend.
 ## Boundary
 
 This package implements outer `algebra` traits for the default backend wrapper
-types. It does not define new structure traits. Scalar-valued products, norms,
-solves, and decompositions remain backend methods or future dedicated
-algorithm-layer APIs unless they can be represented as structure traits or
-closed operations.
+types. It does not define new structure traits. Scalar-valued products and
+matrix-vector interactions described above remain backend methods rather than
+new `@algebra` traits, while norms, solves, and decompositions remain backend
+methods or future dedicated algorithm-layer APIs unless they can be represented
+as structure traits or closed operations.

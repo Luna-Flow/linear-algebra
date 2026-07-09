@@ -1,4 +1,40 @@
 ///|
+///|
+fn[T : @lf_alg.Zero + Add + Mul] dot_immut_vectors(
+  left : @immut.Vector[T],
+  right : @immut.Vector[T],
+) -> T {
+  let len = left.length()
+  guard len == right.length() else {
+    abort("Vector length mismatch for dot product")
+  }
+  let mut sum = T::zero()
+  for i in 0..<len {
+    sum = sum + left[i] * right[i]
+  }
+  sum
+}
+
+///|
+fn[T : @lf_alg.Zero + Add + Mul] matvec_immut(
+  matrix : @immut.Matrix[T],
+  vector : @immut.Vector[T],
+) -> @immut.Vector[T] {
+  let row = matrix.row()
+  let col = matrix.col()
+  guard col == vector.length() else {
+    abort("Matrix and vector dimensions are not compatible for multiplication")
+  }
+  @immut.Vector::makei(row, fn(i) {
+    let mut sum = T::zero()
+    for j in 0..<col {
+      sum = sum + matrix[i][j] * vector[j]
+    }
+    sum
+  })
+}
+
+///|
 pub impl[T : Add] Add for DenseVector[T] with fn add(left, right) {
   DenseVector::from_backend(left.inner + right.inner)
 }
@@ -28,6 +64,31 @@ pub impl[T : Add + Neg] @algebra.AdditiveVector for DenseVector[T]
 
 ///|
 pub impl[T : Add + Neg + Mul] @algebra.VecMulVector for DenseVector[T]
+
+///|
+pub fn[T : Mul] DenseVector::scale(
+  self : DenseVector[T],
+  scalar : T,
+) -> DenseVector[T] {
+  DenseVector::from_backend(self.inner.right_scale(scalar))
+}
+
+///|
+pub fn[T : @lf_alg.AddMonoid + Mul] DenseVector::dot(
+  self : DenseVector[T],
+  other : DenseVector[T],
+) -> T {
+  self.inner.dot(other.inner)
+}
+
+///|
+pub fn[T : Add + Mul] DenseVector::axpy(
+  self : DenseVector[T],
+  alpha : T,
+  other : DenseVector[T],
+) -> DenseVector[T] {
+  self.scale(alpha) + other
+}
 
 ///|
 pub impl[T : Add] Add for ImmutableDenseVector[T] with fn add(left, right) {
@@ -61,6 +122,31 @@ pub impl[T : Add + Neg] @algebra.AdditiveVector for ImmutableDenseVector[T]
 
 ///|
 pub impl[T : Add + Neg + Mul] @algebra.VecMulVector for ImmutableDenseVector[T]
+
+///|
+pub fn[T : Mul] ImmutableDenseVector::scale(
+  self : ImmutableDenseVector[T],
+  scalar : T,
+) -> ImmutableDenseVector[T] {
+  ImmutableDenseVector::from_backend(self.inner.right_scale(scalar))
+}
+
+///|
+pub fn[T : @lf_alg.Zero + Add + Mul] ImmutableDenseVector::dot(
+  self : ImmutableDenseVector[T],
+  other : ImmutableDenseVector[T],
+) -> T {
+  dot_immut_vectors(self.inner, other.inner)
+}
+
+///|
+pub fn[T : Add + Mul] ImmutableDenseVector::axpy(
+  self : ImmutableDenseVector[T],
+  alpha : T,
+  other : ImmutableDenseVector[T],
+) -> ImmutableDenseVector[T] {
+  self.scale(alpha) + other
+}
 
 ///|
 pub impl[T : Add] Add for DenseMatrix[T] with fn add(left, right) {
@@ -104,6 +190,14 @@ pub impl[T : Add + Neg + @lf_alg.AddMonoid + Mul] @algebra.MatMulMatrix for Dens
 ]
 
 ///|
+pub fn[T : @lf_alg.AddMonoid + Mul] DenseMatrix::matvec(
+  self : DenseMatrix[T],
+  vector : DenseVector[T],
+) -> DenseVector[T] {
+  DenseVector::from_backend(self.inner.unchecked_mul_vec(vector.inner()))
+}
+
+///|
 pub impl[T : Add] Add for ImmutableDenseMatrix[T] with fn add(left, right) {
   ImmutableDenseMatrix::from_backend(left.inner + right.inner)
 }
@@ -145,3 +239,11 @@ pub impl[T : Add + Neg] @algebra.AdditiveMatrix for ImmutableDenseMatrix[T]
 pub impl[T : Add + Neg + @lf_alg.Zero + Mul] @algebra.MatMulMatrix for ImmutableDenseMatrix[
   T,
 ]
+
+///|
+pub fn[T : Add + @lf_alg.Zero + Mul] ImmutableDenseMatrix::matvec(
+  self : ImmutableDenseMatrix[T],
+  vector : ImmutableDenseVector[T],
+) -> ImmutableDenseVector[T] {
+  ImmutableDenseVector::from_backend(matvec_immut(self.inner(), vector.inner()))
+}

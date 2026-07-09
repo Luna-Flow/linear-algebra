@@ -1,6 +1,6 @@
 # `linear-algebra/backends/default`
 
-本页记录当前 `0.4.5` 仓库中 `Luna-Flow/linear-algebra/backends/default`
+本页记录当前 `0.4.6` 仓库中 `Luna-Flow/linear-algebra/backends/default`
 的公开 API 基线。
 
 ## 职责
@@ -38,6 +38,15 @@ test "DenseVector wraps a mutable vector backend" {
   返回向量长度。
 - `DenseVector::op_get(self, index : Int) -> T`
   支持只读索引访问。
+
+### 后端方法
+
+- `DenseVector::scale(self, scalar : T) -> DenseVector[T]`
+  对向量做逐元素缩放并返回新的默认后端值。
+- `DenseVector::dot(self, other : DenseVector[T]) -> T`
+  计算标量点积。
+- `DenseVector::axpy(self, alpha : T, other : DenseVector[T]) -> DenseVector[T]`
+  计算 BLAS 风格的 `alpha * self + other`。
 
 ### trait 实现
 
@@ -77,6 +86,11 @@ test "DenseMatrix wraps a mutable matrix backend" {
 - `DenseMatrix::col(self) -> Int`
   返回列数。
 
+### 后端方法
+
+- `DenseMatrix::matvec(self, vector : DenseVector[T]) -> DenseVector[T]`
+  计算矩阵与默认后端稠密向量的乘积，并返回新的稠密向量包装类型。
+
 ### trait 实现
 
 - `Add`、`Neg`、`Sub` 和 `Mul`，并带有对应的元素级操作约束。
@@ -108,6 +122,12 @@ test "ImmutableDenseVector wraps an immutable vector backend" {
 - `ImmutableDenseVector::inner(self) -> @immut.Vector[T]`
 - `ImmutableDenseVector::length(self) -> Int`
 - `ImmutableDenseVector::op_get(self, index : Int) -> T`
+
+### 后端方法
+
+- `ImmutableDenseVector::scale(self, scalar : T) -> ImmutableDenseVector[T]`
+- `ImmutableDenseVector::dot(self, other : ImmutableDenseVector[T]) -> T`
+- `ImmutableDenseVector::axpy(self, alpha : T, other : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]`
 
 ### trait 实现
 
@@ -142,6 +162,11 @@ test "ImmutableDenseMatrix wraps an immutable matrix backend" {
 - `ImmutableDenseMatrix::row(self) -> Int`
 - `ImmutableDenseMatrix::col(self) -> Int`
 
+### 后端方法
+
+- `ImmutableDenseMatrix::matvec(self, vector : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]`
+  计算矩阵与不可变稠密向量的乘积，并返回新的不可变稠密向量包装类型。
+
 ### trait 实现
 
 - `Add`、`Neg`、`Sub` 和 `Mul`，并带有对应的元素级操作约束。
@@ -161,5 +186,6 @@ test "ImmutableDenseMatrix wraps an immutable matrix backend" {
 ## 边界
 
 本包只为默认后端包装类型实现外层 `algebra` trait。它不定义新的结构 trait。
-返回标量的乘积、范数、求解和分解仍然属于后端方法，或未来专门的算法层 API；
-只有在它们能够表示成结构 trait 或同类型闭合运算时，才应提升到这一层。
+这里记录的标量点积与矩阵-向量交互仍然属于后端方法，而不是新的 `@algebra`
+trait；范数、求解和分解也仍然属于后端方法，或未来专门的算法层 API。只有在它们
+能够表示成结构 trait 或同类型闭合运算时，才应提升到这一层。

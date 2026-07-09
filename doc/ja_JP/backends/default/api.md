@@ -1,6 +1,6 @@
 # `linear-algebra/backends/default`
 
-このページは、現在の `0.4.5` リポジトリにおける
+このページは、現在の `0.4.6` リポジトリにおける
 `Luna-Flow/linear-algebra/backends/default` の公開 API 基準をまとめたものです。
 
 ## 役割
@@ -40,6 +40,15 @@ test "DenseVector wraps a mutable vector backend" {
 - `DenseVector::op_get(self, index : Int) -> T`
   読み取りインデックスアクセスを提供します。
 
+### バックエンドメソッド
+
+- `DenseVector::scale(self, scalar : T) -> DenseVector[T]`
+  ベクトルを要素ごとにスケールし、新しい既定バックエンド値を返します。
+- `DenseVector::dot(self, other : DenseVector[T]) -> T`
+  スカラーのドット積を計算します。
+- `DenseVector::axpy(self, alpha : T, other : DenseVector[T]) -> DenseVector[T]`
+  BLAS 風の `alpha * self + other` を計算します。
+
 ### trait 実装
 
 - `Add`、`Neg`、`Sub`、`Mul`。対応する要素演算の制約付きです。
@@ -78,6 +87,11 @@ test "DenseMatrix wraps a mutable matrix backend" {
 - `DenseMatrix::col(self) -> Int`
   列数を返します。
 
+### バックエンドメソッド
+
+- `DenseMatrix::matvec(self, vector : DenseVector[T]) -> DenseVector[T]`
+  行列と既定バックエンド密ベクトルの積を計算し、新しい密ベクトルラッパーを返します。
+
 ### trait 実装
 
 - `Add`、`Neg`、`Sub`、`Mul`。対応する要素演算の制約付きです。
@@ -109,6 +123,12 @@ test "ImmutableDenseVector wraps an immutable vector backend" {
 - `ImmutableDenseVector::inner(self) -> @immut.Vector[T]`
 - `ImmutableDenseVector::length(self) -> Int`
 - `ImmutableDenseVector::op_get(self, index : Int) -> T`
+
+### バックエンドメソッド
+
+- `ImmutableDenseVector::scale(self, scalar : T) -> ImmutableDenseVector[T]`
+- `ImmutableDenseVector::dot(self, other : ImmutableDenseVector[T]) -> T`
+- `ImmutableDenseVector::axpy(self, alpha : T, other : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]`
 
 ### trait 実装
 
@@ -143,6 +163,11 @@ test "ImmutableDenseMatrix wraps an immutable matrix backend" {
 - `ImmutableDenseMatrix::row(self) -> Int`
 - `ImmutableDenseMatrix::col(self) -> Int`
 
+### バックエンドメソッド
+
+- `ImmutableDenseMatrix::matvec(self, vector : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]`
+  行列と不変密ベクトルの積を計算し、新しい不変密ベクトルラッパーを返します。
+
 ### trait 実装
 
 - `Add`、`Neg`、`Sub`、`Mul`。対応する要素演算の制約付きです。
@@ -162,6 +187,8 @@ test "ImmutableDenseMatrix wraps an immutable matrix backend" {
 ## 境界
 
 このパッケージは、既定バックエンドのラッパー型に外側の `algebra` trait を
-実装します。新しい構造 trait は定義しません。スカラー値を返す積、ノルム、
-求解、分解は、構造 trait または同型の閉じた演算として表現できる場合を除き、
-バックエンドメソッドまたは将来の専用アルゴリズム層 API に置くべきです。
+実装します。新しい構造 trait は定義しません。ここで説明したスカラーのドット積や
+行列-ベクトル相互作用も新しい `@algebra` trait にはせず、バックエンドメソッドの
+ままにしています。ノルム、求解、分解も、構造 trait または同型の閉じた演算として
+表現できる場合を除き、バックエンドメソッドまたは将来の専用アルゴリズム層 API に
+置くべきです。

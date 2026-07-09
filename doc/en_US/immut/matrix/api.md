@@ -1,6 +1,6 @@
 # `@immut.Matrix`
 
-API baseline for `@immut.Matrix` in the current `0.4.5` repository state.
+API baseline for `@immut.Matrix` in the current `0.4.6` repository state.
 
 ## Overview
 

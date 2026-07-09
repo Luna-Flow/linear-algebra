@@ -29,6 +29,94 @@ fn[T] zip_data(
 }
 
 ///|
+pub impl[T] @algebra.VectorShape for BlasVector[T] with fn length(self) {
+  self.length
+}
+
+///|
+pub impl[T : BLASInnerType + Show] Show for BlasVector[T] with fn to_string(self) {
+  self.to_immut().to_string()
+}
+
+///|
+pub impl[T : BLASInnerType + Show] Show for BlasVector[T] with fn output(
+  self,
+  logger,
+) {
+  self.to_immut().output(logger)
+}
+
+///|
+pub impl[T : BLASInnerType] Add for BlasVector[T] with fn add(left, right) {
+  guard left.length() == right.length() else {
+    abort("Vector lengths do not match")
+  }
+  BlasVector::from_backend(
+    left.length(),
+    zip_data(left.data, right.data, fn(a, b) { a + b }),
+  )
+}
+
+///|
+pub impl[T : BLASInnerType] Neg for BlasVector[T] with fn neg(value) {
+  BlasVector::from_backend(
+    value.length(),
+    map_data(value.data, fn(elem) { -elem }),
+  )
+}
+
+///|
+pub impl[T : BLASInnerType] Sub for BlasVector[T] with fn sub(left, right) {
+  guard left.length() == right.length() else {
+    abort("Vector lengths do not match")
+  }
+  BlasVector::from_backend(
+    left.length(),
+    zip_data(left.data, right.data, fn(a, b) { a + -b }),
+  )
+}
+
+///|
+pub impl[T : BLASInnerType] @algebra.AdditiveVector for BlasVector[T]
+
+///|
+pub fn[T : BLASInnerType] BlasVector::scale(
+  self : BlasVector[T],
+  scalar : T,
+) -> BlasVector[T] {
+  BlasVector::from_backend(
+    self.length(),
+    T::scal(self.length(), scalar, self.data),
+  )
+}
+
+///|
+pub fn[T : BLASInnerType] BlasVector::dot(
+  self : BlasVector[T],
+  other : BlasVector[T],
+) -> T {
+  guard self.length() == other.length() else {
+    abort("Vector length mismatch for dot product")
+  }
+  T::dot(self.length(), self.data, other.data)
+}
+
+///|
+pub fn[T : BLASInnerType] BlasVector::axpy(
+  self : BlasVector[T],
+  alpha : T,
+  other : BlasVector[T],
+) -> BlasVector[T] {
+  guard self.length() == other.length() else {
+    abort("Vector lengths do not match")
+  }
+  BlasVector::from_backend(
+    self.length(),
+    T::axpy(self.length(), alpha, self.data, other.data),
+  )
+}
+
+///|
 pub impl[T] @internal.HasShape for BlasMatrix[T] with fn shape(
   self,
 ) {
@@ -110,3 +198,17 @@ pub impl[T : BLASInnerType] @algebra.AdditiveMatrix for BlasMatrix[T]
 
 ///|
 pub impl[T : BLASInnerType] @algebra.MatMulMatrix for BlasMatrix[T]
+
+///|
+pub fn[T : BLASInnerType] BlasMatrix::matvec(
+  self : BlasMatrix[T],
+  vector : BlasVector[T],
+) -> BlasVector[T] {
+  guard self.col() == vector.length() else {
+    abort("Matrix and vector dimensions are not compatible for multiplication")
+  }
+  BlasVector::from_backend(
+    self.row(),
+    T::gemv(self.row(), self.col(), self.data, vector.data),
+  )
+}

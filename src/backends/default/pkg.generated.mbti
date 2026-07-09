@@ -25,6 +25,7 @@ pub fn[T] DenseMatrix::col(Self[T]) -> Int
 pub fn[T] DenseMatrix::from_2d_array(Array[Array[T]]) -> Self[T]
 pub fn[T] DenseMatrix::from_backend(@mutable.Matrix[T]) -> Self[T]
 pub fn[T] DenseMatrix::inner(Self[T]) -> @mutable.Matrix[T]
+pub fn[T : @luna-generic.AddMonoid + Mul] DenseMatrix::matvec(Self[T], DenseVector[T]) -> DenseVector[T]
 pub fn[T] DenseMatrix::new(Int, Int, T) -> Self[T]
 pub fn[T] DenseMatrix::row(Self[T]) -> Int
 pub impl[T : Add + Neg] @algebra.AdditiveMatrix for DenseMatrix[T]
@@ -39,12 +40,15 @@ pub impl[T : Add + Neg] Sub for DenseMatrix[T]
 pub struct DenseVector[T] {
   inner : @mutable.Vector[T]
 }
+pub fn[T : Add + Mul] DenseVector::axpy(Self[T], T, Self[T]) -> Self[T]
+pub fn[T : @luna-generic.AddMonoid + Mul] DenseVector::dot(Self[T], Self[T]) -> T
 pub fn[T] DenseVector::from_array(Array[T]) -> Self[T]
 pub fn[T] DenseVector::from_backend(@mutable.Vector[T]) -> Self[T]
 pub fn[T] DenseVector::inner(Self[T]) -> @mutable.Vector[T]
 pub fn[T] DenseVector::length(Self[T]) -> Int
 pub fn[T] DenseVector::make(Int, T) -> Self[T]
 pub fn[T] DenseVector::op_get(Self[T], Int) -> T
+pub fn[T : Mul] DenseVector::scale(Self[T], T) -> Self[T]
 pub impl[T : Add + Neg] @algebra.AdditiveVector for DenseVector[T]
 pub impl[T : Add + Neg + Mul] @algebra.VecMulVector for DenseVector[T]
 pub impl[T] @algebra.VectorShape for DenseVector[T]
@@ -60,6 +64,7 @@ pub fn[T] ImmutableDenseMatrix::col(Self[T]) -> Int
 pub fn[T] ImmutableDenseMatrix::from_2d_array(Array[Array[T]]) -> Self[T]
 pub fn[T] ImmutableDenseMatrix::from_backend(@immut.Matrix[T]) -> Self[T]
 pub fn[T] ImmutableDenseMatrix::inner(Self[T]) -> @immut.Matrix[T]
+pub fn[T : Add + @luna-generic.Zero + Mul] ImmutableDenseMatrix::matvec(Self[T], ImmutableDenseVector[T]) -> ImmutableDenseVector[T]
 pub fn[T] ImmutableDenseMatrix::new(Int, Int, T) -> Self[T]
 pub fn[T] ImmutableDenseMatrix::row(Self[T]) -> Int
 pub impl[T : Add + Neg] @algebra.AdditiveMatrix for ImmutableDenseMatrix[T]
@@ -74,12 +79,15 @@ pub impl[T : Add + Neg] Sub for ImmutableDenseMatrix[T]
 pub struct ImmutableDenseVector[T] {
   inner : @immut.Vector[T]
 }
+pub fn[T : Add + Mul] ImmutableDenseVector::axpy(Self[T], T, Self[T]) -> Self[T]
+pub fn[T : @luna-generic.Zero + Add + Mul] ImmutableDenseVector::dot(Self[T], Self[T]) -> T
 pub fn[T] ImmutableDenseVector::from_array(Array[T]) -> Self[T]
 pub fn[T] ImmutableDenseVector::from_backend(@immut.Vector[T]) -> Self[T]
 pub fn[T] ImmutableDenseVector::inner(Self[T]) -> @immut.Vector[T]
 pub fn[T] ImmutableDenseVector::length(Self[T]) -> Int
 pub fn[T] ImmutableDenseVector::make(Int, T) -> Self[T]
 pub fn[T] ImmutableDenseVector::op_get(Self[T], Int) -> T
+pub fn[T : Mul] ImmutableDenseVector::scale(Self[T], T) -> Self[T]
 pub impl[T : Add + Neg] @algebra.AdditiveVector for ImmutableDenseVector[T]
 pub impl[T : Add + Neg + Mul] @algebra.VecMulVector for ImmutableDenseVector[T]
 pub impl[T] @algebra.VectorShape for ImmutableDenseVector[T]

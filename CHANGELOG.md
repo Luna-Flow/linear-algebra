@@ -4,9 +4,26 @@ All notable repository-release changes are tracked here. The main
 [`README.md`](./README.md) stays focused on the current baseline and entry
 points; older release history lives in this file.
 
-## 0.4.5 - 2026-07-09
+## 0.4.6 - 2026-07-09
 
 Current repository release.
+
+### Highlights
+
+- `backends/default` now exposes backend-local vector and matrix-vector helpers:
+  `scale`, `dot`, `axpy`, and `matvec` on the dense wrapper types.
+- `backends/openblas` now adds the owned `BlasVector[T]` wrapper alongside
+  `BlasMatrix[T]`, with OpenBLAS-backed `dot`, `scal`, `axpy`, and `gemv`
+  paths for `Float` and `Double`.
+- The OpenBLAS backend remains explicit and native-only, but now covers the
+  core vector and matrix-vector interaction surface instead of GEMM alone.
+- Root and multilingual backend documentation now describe the live backend API
+  surface, including the backend-method nature of scalar-valued vector
+  operations.
+
+## 0.4.5 - 2026-07-09
+
+Previous release baseline.
 
 ### Highlights
 
