@@ -1,6 +1,6 @@
 name = "Luna-Flow/linear-algebra"
 
-version = "0.4.3"
+version = "0.4.4"
 
 import {
   "Luna-Flow/arithmetic@0.2.2",
@@ -17,6 +17,6 @@ license = "Apache-2.0"
 
 keywords = [ "linear-algebra", "math" ]
 
-description = "Mutable and immutable matrix and vector libraries for MoonBit, with core linear algebra operations and decompositions."
+description = "Trait-oriented linear algebra foundations for MoonBit, with checked APIs, backend wrappers, and mutable/immutable dense matrix and vector types."
 
 source = "src"

@@ -2,7 +2,7 @@
 
 The documentation in this repository describes the **current implementation on
 the branch**. As of `2026-07-09`, the active documentation baseline is
-**`0.4.3`**.
+**`0.4.4`**.
 
 ## Document Types and Organization
 

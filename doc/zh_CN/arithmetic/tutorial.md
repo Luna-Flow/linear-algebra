@@ -5,7 +5,7 @@
 先把共享抽象层依赖装好：
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.3
+moon add Luna-Flow/linear-algebra@0.4.4
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

@@ -4,9 +4,24 @@ All notable repository-release changes are tracked here. The main
 [`README.md`](./README.md) stays focused on the current baseline and entry
 points; older release history lives in this file.
 
-## 0.4.3 - 2026-07-09
+## 0.4.4 - 2026-07-09
 
 Current repository release.
+
+### Highlights
+
+- Package metadata is now aligned around the current repository positioning:
+  `moon.mod` keeps the Apache 2.0 SPDX license field and now describes the
+  package as trait-oriented linear algebra foundations for MoonBit.
+- The repository metadata and README license presentation are now aligned with
+  the Apache 2.0 project baseline.
+- The multilingual documentation baseline is now lifted to `0.4.4`, so the
+  current release number stays consistent across README files, API baselines,
+  tutorials, and contributor-facing guidance.
+
+## 0.4.3 - 2026-07-09
+
+Previous release baseline.
 
 ### Highlights
 

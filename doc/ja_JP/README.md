@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-この README は現在のリポジトリ基準である **v0.4.3** に対応しています。
+この README は現在のリポジトリ基準である **v0.4.4** に対応しています。
 
 `mutable` の数値 API は共有の `Luna-Flow/arithmetic.Sqrt` 能力を使い、
 整数埋め込みは `Luna-Flow/luna-generic.IntegralHomomorphism` に従います。
@@ -9,9 +9,9 @@
 `Result[..., LinearAlgebraError]` API を使います。従来の abort する挙動と
 `Option` 戻り値は、明示的な `unchecked_*` メソッドに残しています。
 
-`0.4.3` 基準は、検査付き `0.4.x` API 表面と `0.4.2` で導入した
-パック済み行列乗算経路を維持しつつ、多言語ドキュメント基準を更新し、
-README と CHANGELOG の役割分担を明確にします。
+`0.4.4` 基準は、検査付き `0.4.x` API 表面と `0.4.2` で導入した
+パック済み行列乗算経路を維持しつつ、パッケージとリポジトリの metadata を
+現在の trait 指向のプロジェクト位置づけへ揃えたものです。
 
 過去のリリースノートと履歴は [CHANGELOG.md](../../CHANGELOG.md) を参照してください。
 
@@ -98,7 +98,7 @@ README と CHANGELOG の役割分担を明確にします。
 パッケージを明示的に追加してください。
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.3
+moon add Luna-Flow/linear-algebra@0.4.4
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

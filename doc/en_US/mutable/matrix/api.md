@@ -1,6 +1,6 @@
 # `@mutable.Matrix`
 
-API baseline for `@mutable.Matrix` in the current `0.4.3` repository state.
+API baseline for `@mutable.Matrix` in the current `0.4.4` repository state.
 Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance`
 remains defined by `mutable`.
 

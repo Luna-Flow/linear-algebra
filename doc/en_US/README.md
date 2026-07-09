@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-This README matches the current repository baseline for **v0.4.3**.
+This README matches the current repository baseline for **v0.4.4**.
 
 The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt`
 capability, while integral embeddings follow
@@ -9,10 +9,9 @@ capability, while integral embeddings follow
 now use checked `Result[..., LinearAlgebraError]` APIs; the old aborting or
 `Option`-returning behavior is exposed through explicit `unchecked_*` methods.
 
-The `0.4.3` baseline keeps the checked `0.4.x` API surface and the packed
-matrix-multiplication work introduced in `0.4.2`, while refreshing the
-multilingual documentation baseline and making the README/CHANGELOG split
-explicit.
+The `0.4.4` baseline keeps the checked `0.4.x` API surface and the packed
+matrix-multiplication work introduced in `0.4.2`, while aligning package and
+repository metadata with the current trait-oriented project positioning.
 
 For earlier release notes and repository history, see
 [CHANGELOG.md](../../CHANGELOG.md).
@@ -103,7 +102,7 @@ If you want to write backend-independent code with the abstract capability
 layers, add the shared upstream abstraction packages explicitly:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.3
+moon add Luna-Flow/linear-algebra@0.4.4
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

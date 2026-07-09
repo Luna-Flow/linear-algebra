@@ -1,30 +1,25 @@
 # LINEAR-ALGEBRA
 
-[![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
+[![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache--2.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.4.3 - Documentation Baseline And Changelog Split
+## v0.4.4 - Metadata And Release Alignment
 
-This README matches the **v0.4.3** repository state. This release keeps the
+This README matches the **v0.4.4** repository state. This release keeps the
 checked `0.4.x` API surface and the packed mutable matrix multiplication work
-introduced in `0.4.2`, while refreshing the multilingual documentation baseline
-and making the README/CHANGELOG split explicit.
+introduced in `0.4.2`, while packaging the current metadata cleanup into a new
+patch release.
 
 For earlier release notes and repository history, see
 [CHANGELOG.md](./CHANGELOG.md).
 
 ### Maintenance Changes
 
-- `README.md` now focuses on the current release baseline, reader entry points,
-  and package positioning, while `CHANGELOG.md` owns historical release notes.
-- The documentation standard now defines the README/CHANGELOG split together
-  with cross-language file alignment, section-order alignment, and localization
-  expectations.
-- The Chinese and Japanese READMEs now follow the English structure, and the
-  localized `backends/default` API pages now expose the same section
-  granularity as the English reference.
-- The `immut/matrix` tutorial now uses the ASCII blur workflow consistently
-  across languages, and several localized pages now use more natural technical
-  wording.
+- `moon.mod` now keeps the Apache 2.0 SPDX license field together with a
+  package description that matches the repository's trait-oriented positioning.
+- The repository metadata and README license presentation are now aligned with
+  the Apache 2.0 project baseline.
+- The current release baseline is now `0.4.4` across the README, localized
+  docs, API baseline pages, install snippets, and contributor-facing guidance.
 
 ## Layered Architecture
 
@@ -76,7 +71,7 @@ layers, install `linear-algebra` together with the upstream scalar abstraction
 packages it builds on:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.3
+moon add Luna-Flow/linear-algebra@0.4.4
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -225,7 +220,7 @@ Localized README files:
 
 ## Changelog
 
-Older release notes, historical version summaries, and pre-`0.4.3` repository
+Older release notes, historical version summaries, and pre-`0.4.4` repository
 highlights now live in [CHANGELOG.md](./CHANGELOG.md). This README keeps the
 current baseline and entry points front and center.
 
