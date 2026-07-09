@@ -12,6 +12,8 @@ import {
 }
 
 // Values
+pub fn[T : Mul + Add + @luna-generic.Zero] checked_matmul_with(MatMulBackend, Matrix[T], Matrix[T]) -> Result[Matrix[T], @error.LinearAlgebraError]
+
 pub fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]
 
 pub fn[T : Mul + Add + @luna-generic.Zero] matmul(Matrix[T], Matrix[T]) -> Matrix[T]

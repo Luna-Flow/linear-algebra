@@ -7,19 +7,39 @@ pub(all) enum MatMulBackend {
 }
 
 ///|
+fn backend_not_impl_error() -> @la_error.LinearAlgebraError {
+  @la_error.LinearAlgebraError::backend_not_impl(
+    "BlasBackend is reserved for future backend support and is not wired yet",
+  )
+}
+
+///|
+pub fn[T : Mul + Add + Zero] checked_matmul_with(
+  backend : MatMulBackend,
+  a : Matrix[T],
+  b : Matrix[T],
+) -> Result[Matrix[T], @la_error.LinearAlgebraError] {
+  match backend {
+    PureBackend => Ok(matmul_pure_impl(a, b))
+    AutoBackend => Ok(matmul_pure_impl(a, b))
+    CheckedBackend =>
+      match ensure_mul_compatible_checked(a, b) {
+        Ok(_) => Ok(matmul_pure_impl(a, b))
+        Err(err) => Err(err)
+      }
+    BlasBackend => Err(backend_not_impl_error())
+  }
+}
+
+///|
 pub fn[T : Mul + Add + Zero] matmul_with(
   backend : MatMulBackend,
   a : Matrix[T],
   b : Matrix[T],
 ) -> Matrix[T] {
-  match backend {
-    PureBackend => matmul_pure_impl(a, b)
-    AutoBackend => matmul_pure_impl(a, b)
-    CheckedBackend => {
-      ensure_mul_compatible(a, b)
-      matmul_pure_impl(a, b)
-    }
-    BlasBackend => abort("BlasBackend is not wired yet")
+  match checked_matmul_with(backend, a, b) {
+    Ok(product) => product
+    Err(err) => abort(err.message)
   }
 }
 

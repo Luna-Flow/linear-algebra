@@ -686,3 +686,47 @@ test "combine_shape_laws" {
   inspect(vertical.row(), content="3")
   inspect(vertical.col(), content="2")
 }
+
+///|
+test "checked_matmul_with/checked_backend_reports_dimension_mismatch" {
+  let left = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  let right = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let status = match checked_matmul_with(CheckedBackend, left, right) {
+    Ok(_) => "ok"
+    Err(err) =>
+      if err.is_dimension_mismatch() {
+        "dimension_mismatch"
+      } else {
+        "other"
+      }
+  }
+  inspect(status, content="dimension_mismatch")
+}
+
+///|
+test "checked_matmul_with/blas_backend_reports_backend_not_impl" {
+  let left = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let right = Matrix::from_2d_array([[5, 6], [7, 8]])
+  let status = match checked_matmul_with(BlasBackend, left, right) {
+    Ok(_) => "ok"
+    Err(err) => {
+      inspect(
+        err.message,
+        content="BlasBackend is reserved for future backend support and is not wired yet",
+      )
+      if err.is_backend_not_impl() {
+        "backend_not_impl"
+      } else {
+        "other"
+      }
+    }
+  }
+  inspect(status, content="backend_not_impl")
+}
+
+///|
+test "panic matmul_with/blas_backend" {
+  let left = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let right = Matrix::from_2d_array([[5, 6], [7, 8]])
+  ignore(matmul_with(BlasBackend, left, right))
+}

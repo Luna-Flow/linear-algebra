@@ -15,11 +15,13 @@ pub struct LinearAlgebraError {
   message : String
 } derive(Eq)
 pub fn LinearAlgebraError::arithmetic_failure(@arithmetic.ArithmeticError) -> Self
+pub fn LinearAlgebraError::backend_not_impl(String) -> Self
 pub fn LinearAlgebraError::dimension_mismatch(String) -> Self
 pub fn LinearAlgebraError::empty_matrix(String) -> Self
 pub fn LinearAlgebraError::index_out_of_bounds(String) -> Self
 pub fn LinearAlgebraError::invalid_length(String) -> Self
 pub fn LinearAlgebraError::is_arithmetic_failure(Self) -> Bool
+pub fn LinearAlgebraError::is_backend_not_impl(Self) -> Bool
 pub fn LinearAlgebraError::is_dimension_mismatch(Self) -> Bool
 pub fn LinearAlgebraError::is_empty_matrix(Self) -> Bool
 pub fn LinearAlgebraError::is_index_out_of_bounds(Self) -> Bool
@@ -51,6 +53,7 @@ pub enum LinearAlgebraErrorKind {
   SingularMatrix
   NonConvergence
   UnsupportedBackend
+  BackendNotImpl
   ArithmeticFailure(@arithmetic.ArithmeticError)
 } derive(Eq)
 
