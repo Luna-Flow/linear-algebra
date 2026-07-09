@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-This README matches the current repository baseline for **v0.4.2**.
+This README matches the current repository baseline for **v0.4.3**.
 
 The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt`
 capability, while integral embeddings follow
@@ -9,11 +9,13 @@ capability, while integral embeddings follow
 now use checked `Result[..., LinearAlgebraError]` APIs; the old aborting or
 `Option`-returning behavior is exposed through explicit `unchecked_*` methods.
 
-The `0.4.2` maintenance baseline keeps the checked `0.4.x` API surface and
-adds a packed right-hand-side matrix-multiplication path for larger dense
-products. It also lets `perf_support` and `perf_runner` regenerate missing
-benchmark fixtures from tracked metadata, so direct local runs still work on a
-clean checkout.
+The `0.4.3` baseline keeps the checked `0.4.x` API surface and the packed
+matrix-multiplication work introduced in `0.4.2`, while refreshing the
+multilingual documentation baseline and making the README/CHANGELOG split
+explicit.
+
+For earlier release notes and repository history, see
+[CHANGELOG.md](../../CHANGELOG.md).
 
 ## Layered Architecture
 
@@ -28,7 +30,7 @@ clean checkout.
 - **`error`**: Shared error vocabulary for checked linear-algebra APIs,
   including shape, exponent, empty-matrix, singular-matrix, and backend errors.
 - **Trait-driven algorithms**: Backend-independent code should depend on the
-  smallest same-category capability it needs, such as `MatrixShape`, `AdditiveVector`,
+  smallest capability it needs, such as `MatrixShape`, `AdditiveVector`,
   `VecMulVector`, `TransposeMatrix`, or `MatMulMatrix`.
 
 Mappings from vector or matrix objects into scalar-like categories, such as
@@ -39,42 +41,61 @@ The default dense implementation is a backend, not the center of the ecosystem.
 Algorithms should depend on minimal linear algebra traits, not concrete dense
 matrix/vector types.
 
+This repository is intended to be the linear-algebra substrate for higher-level
+math, geometry, and solver-style libraries. Domain-specific solve, regression,
+or optimization workflows should live in downstream packages built on these
+traits, backend wrappers, and concrete matrix/vector types.
+
 The concrete `immut` / `mutable` matrix and vector types are the
 implementations wrapped by `backends/default`. `DenseVector` and `DenseMatrix`
 wrap `@mutable.Vector` and `@mutable.Matrix`, while
 `ImmutableDenseVector` and `ImmutableDenseMatrix` wrap `@immut.Vector` and
 `@immut.Matrix`.
 
-## Start Here
+## Reader Guide
 
-Use this split to choose your starting point:
+- **General application developers**:
+  start with [mutable](./mutable/matrix/api.md) and
+  [immut](./immut/matrix/api.md). These are the concrete APIs for application
+  code such as business tools, utilities, numeric processing, small games, and
+  visualization logic.
+- **Math library / general algorithm developers**:
+  read in this order:
+  [arithmetic](./arithmetic/api.md) ->
+  [algebra](./algebra/api.md) ->
+  [backends/default](./backends/default/api.md) ->
+  [immut / mutable](./immut/matrix/api.md).
+  Start from operation capabilities, then structure capabilities, then the
+  default backend wrappers, and finally the concrete implementations. This is
+  the intended entry path if you are building a higher-level application
+  library or solver-oriented package on top of this repository.
 
-- **Concrete immutable types**:
+## Documentation Entry Points
+
+- **`immut` concrete API**:
   [immut/matrix API](./immut/matrix/api.md),
   [immut/matrix tutorial](./immut/matrix/tutorial.md),
   [immut/vector API](./immut/vector/api.md),
   [immut/vector tutorial](./immut/vector/tutorial.md)
-- **Concrete mutable types**:
+- **`mutable` concrete API**:
   [mutable/matrix API](./mutable/matrix/api.md),
   [mutable/matrix tutorial](./mutable/matrix/tutorial.md),
   [mutable/vector API](./mutable/vector/api.md),
   [mutable/vector tutorial](./mutable/vector/tutorial.md)
-- **Abstract or backend-independent layers**:
+- **Capability and backend layers**:
   [arithmetic API](./arithmetic/api.md),
   [algebra API](./algebra/api.md),
   [backends/default API](./backends/default/api.md),
   [error API](./error/api.md)
 
-## Choosing Between Layers
+## Used In
 
-- Choose **`mutable`** for direct dense matrix/vector work, in-place updates,
-  views, and concrete numerical helpers.
-- Choose **`immut`** for value semantics and concrete dense types that always
-  return fresh values instead of mutating.
-- Choose **`arithmetic`** and **`algebra`** when your algorithm should state
-  only the capabilities it needs.
-- Choose **`backends/default`** when you want the default dense backend exposed
-  through the public algebra traits.
+- **[`Luna-Flow/geometry3d`](https://github.com/Luna-Flow/geometry3d)**:
+  a compact MoonBit 3D geometry foundation built on
+  `Luna-Flow/linear-algebra`. It adds core geometry, camera/view math,
+  backend-neutral rendering, and TUI / Canvas / GSAP backends on top.
+  Its [English docs](https://github.com/Luna-Flow/geometry3d/blob/main/doc/en_US/README.md)
+  are a good concrete downstream entry point.
 
 ## Trait-Oriented Project Setup
 
@@ -82,7 +103,7 @@ If you want to write backend-independent code with the abstract capability
 layers, add the shared upstream abstraction packages explicitly:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.2
+moon add Luna-Flow/linear-algebra@0.4.3
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -123,14 +144,3 @@ models.
 - **`algebra`**: Implemented around `src/algebra`.
 - **`backends/default`**: Implemented around `src/backends/default`.
 - **`error`**: Implemented around `src/error`.
-
-## Documentation Entry Points
-
-- API Reference: [arithmetic](./arithmetic/api.md)
-- API Reference: [algebra](./algebra/api.md)
-- API Reference: [backends/default](./backends/default/api.md)
-- API Reference: [error](./error/api.md)
-- API Reference: [immut/matrix](./immut/matrix/api.md)
-- API Reference: [immut/vector](./immut/vector/api.md)
-- API Reference: [mutable/matrix](./mutable/matrix/api.md)
-- API Reference: [mutable/vector](./mutable/vector/api.md)

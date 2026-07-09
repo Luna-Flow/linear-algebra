@@ -1,6 +1,6 @@
 # `linear-algebra/error`
 
-API baseline for `Luna-Flow/linear-algebra/error` in the current `0.4.2`
+API baseline for `Luna-Flow/linear-algebra/error` in the current `0.4.3`
 repository state.
 
 ## Purpose

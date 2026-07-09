@@ -5,7 +5,7 @@
 如果你想直接使用抽象线性代数能力层，先把完整依赖装好：
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.2
+moon add Luna-Flow/linear-algebra@0.4.3
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -23,7 +23,7 @@ import {
 
 这样分工会很清楚：`@algebra` 负责线性代数结构 trait，`@la_arithmetic` 负责线性代数操作 trait，`@lf_alg` 负责共享上游代数抽象，`@lf_arith` 负责共享上游算术类型。
 
-## 小案例：组织一个与后端无关的 Gram 步骤
+## 小案例：构造一个与后端无关的 Gram 步骤
 
 ```moonbit check
 ///|
@@ -47,7 +47,7 @@ test "algebra tutorial uses linear-algebra traits with a real backend" {
 }
 ```
 
-这个例子展示了，怎样只用本包拥有的线性代数结构 traits 来表达一个与后端无关的步骤：
+这个例子展示了，怎样只用本包拥有的线性代数结构 trait 来表达一个与后端无关的步骤：
 
 1. 用 `MatMulMatrix` 说明算法确实需要矩阵式乘法。
 2. 通过 `MatMulMatrix` 继承到的 `TransposeMatrix` 能力调用转置，而不是直接写死某个稠密后端 API。

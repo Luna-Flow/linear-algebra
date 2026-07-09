@@ -1,6 +1,6 @@
 # `@mutable.Matrix`
 
-本页记录 `@mutable.Matrix` 在当前 `0.4.2` 仓库状态下的 API 基线。依赖平方根的 API 使用 `Luna-Flow/arithmetic.Sqrt`；`Tolerance` 仍由 `mutable` 定义。
+本页记录 `@mutable.Matrix` 在当前 `0.4.3` 仓库状态下的 API 基线。依赖平方根的 API 使用 `Luna-Flow/arithmetic.Sqrt`；`Tolerance` 仍由 `mutable` 定义。
 
 ## 概览
 

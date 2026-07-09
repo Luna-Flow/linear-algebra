@@ -2,7 +2,7 @@
 
 The documentation in this repository describes the **current implementation on
 the branch**. As of `2026-07-09`, the active documentation baseline is
-**`0.4.2`**.
+**`0.4.3`**.
 
 ## Document Types and Organization
 
@@ -12,6 +12,10 @@ the branch**. As of `2026-07-09`, the active documentation baseline is
 2. **User Guide (tutorial.md)** - User-oriented tutorials and best practices
 3. **Design Documentation (design.md)** - Architecture and algorithm descriptions for developers
 4. **Performance Reports** - Reserved for future performance and measurement documentation
+
+`README.md` is the current-baseline document. It should explain the current
+release baseline, entry points, package positioning, and reader guidance.
+`CHANGELOG.md` owns the historical release timeline and older release notes.
 
 ### Documentation Organization Principles
 
@@ -38,6 +42,13 @@ the branch**. As of `2026-07-09`, the active documentation baseline is
 - Further subdivided into `vector`, `matrix`, and similar files under each package
 - Maintain consistency between documentation and code structure
 - Do not document unreleased APIs unless they already exist in the repository implementation
+- Keep the Markdown file set aligned across `en_US`, `zh_CN`, and `ja_JP`
+- Keep the same top-level and second-level section order across languages unless
+  a code-oriented reason makes that impossible
+- Treat the English documentation as the structural source of truth, then localize
+  the same content naturally into Chinese and Japanese
+- Keep `README.md` focused on the current baseline and move older release
+  summaries into `CHANGELOG.md`
 
 ## Shared Rules For `mutable` And `immutable`
 
@@ -71,3 +82,12 @@ the branch**. As of `2026-07-09`, the active documentation baseline is
 - Clearly separate external semantics from internal implementation strategy
 - Performance details such as caching, reuse, and in-place computation belong in design docs or future performance reports, not in the API semantic contract
 - If a `mutable` API has observable behavior due to a performance-oriented design choice, document that behavior explicitly rather than only describing the internal implementation
+- Do not translate code identifiers, API names, type names, package names, file
+  paths, or version strings
+- Keep API references specification-oriented, tutorials usage-oriented, and
+  design docs responsibility- and tradeoff-oriented
+- Prefer short, direct sentences over rhetorical or release-note-style prose
+- Chinese documentation should read like natural written technical Chinese, not
+  word-for-word English translation
+- Japanese documentation should read like natural technical Japanese, not a
+  literal structural copy of Chinese or English phrasing

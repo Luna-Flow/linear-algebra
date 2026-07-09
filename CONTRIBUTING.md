@@ -1,7 +1,7 @@
 # Contribution Guidelines
 
 This guide matches the current repository workflow and the same documentation
-baseline as the rest of the repository: **`0.4.2`**.
+baseline as the rest of the repository: **`0.4.3`**.
 
 ## To Contributors
 
@@ -155,7 +155,8 @@ Developers are encouraged to use MoonBit LSP’s AI-generated code comments to i
 ## 5.3 Release Checklist
 
 - Before publishing to mooncakes, make sure `moon.mod` has already been bumped to the intended unreleased version.
-- Update `README.md` if the current package summary or release notes no longer match the repository state.
+- Update `README.md` and `CHANGELOG.md` if the current package summary, current
+  release notes, or historical release notes no longer match the repository state.
 - Run `moon check --target all` and `./run_test.sh` locally before publishing.
 - If the change touches benchmark fixtures, fixture recovery, or diagnostic runners, also run `LINEAR_ALGEBRA_TEST_BENCH=1 ./run_test.sh`.
 - The GitHub Actions publish workflow reads the release version directly from `moon.mod`.

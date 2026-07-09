@@ -1,6 +1,6 @@
 # `@immut.Matrix`
 
-API baseline for `@immut.Matrix` in the current `0.4.2` repository state.
+API baseline for `@immut.Matrix` in the current `0.4.3` repository state.
 
 ## Overview
 
@@ -93,7 +93,7 @@ Important methods:
 - If backend selection comes from runtime configuration, prefer
   `checked_matmul_with` over `matmul_with`. `BlasBackend` is currently a
   forward-looking placeholder for future backend work, not a live acceleration
-  path in `0.4.2`.
+  path in `0.4.3`.
 - `backends/default.ImmutableDenseMatrix` is a wrapper around this concrete
   implementation. If you want the trait-oriented default backend entry point,
   see [the `backends/default` API](../../backends/default/api.md).

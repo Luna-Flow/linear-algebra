@@ -1,6 +1,6 @@
 # `@immut.Matrix`
 
-このページは、現在の `0.4.2` リポジトリ状態における `@immut.Matrix` の API 基準をまとめたものです。
+このページは、現在の `0.4.3` リポジトリ状態における `@immut.Matrix` の API 基準をまとめたものです。
 
 ## 概要
 
@@ -90,7 +90,7 @@
 - `mutable` パッケージはビューやインプレース更新など、実行寄りの追加 API を意図的に公開しており、それらを `immut` に逆投影しないでください。
 - バックエンド選択が実行時設定から来る場合は、`matmul_with` ではなく
   `checked_matmul_with` を優先してください。`BlasBackend` は現在の
-  `0.4.2` リポジトリでは将来拡張のための予約スロットであり、まだ有効な高速化経路ではありません。
+  `0.4.3` リポジトリでは将来拡張のための予約スロットであり、まだ有効な高速化経路ではありません。
 - `backends/default.ImmutableDenseMatrix` は、この concrete 実装を包む
   ラッパーです。trait 指向の既定バックエンド入口を見たい場合は
   [backends/default API](../../backends/default/api.md) を参照してください。

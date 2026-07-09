@@ -1,6 +1,6 @@
 # `@immut.Matrix`
 
-本页记录 `@immut.Matrix` 在当前 `0.4.2` 仓库状态下的 API 基线。
+本页记录 `@immut.Matrix` 在当前 `0.4.3` 仓库状态下的 API 基线。
 
 ## 概览
 
@@ -87,7 +87,7 @@
 - 对共享代数行为来说，优先依赖 capability traits 和 `backends/default` 包装类型。`@immut.Matrix` 只是默认后端使用的一种稠密实现，不是整个生态的语义中心。
 - `mutable` 包会额外暴露视图和原地更新等执行导向 API，不应把这些能力反向投射到 `immut` 上。
 - 如果后端选择来自运行时配置，优先使用 `checked_matmul_with`，不要直接用
-  `matmul_with`。`BlasBackend` 在当前 `0.4.2` 仓库状态里只是为未来后端扩展预留的占位符，还不是可用加速路径。
+  `matmul_with`。`BlasBackend` 在当前 `0.4.3` 仓库状态里只是为未来后端扩展预留的占位符，还不是可用加速路径。
 - `backends/default.ImmutableDenseMatrix` 包装的就是这个 concrete 实现。
   如果你要从 trait 导向的默认后端入口进入，请看
   [backends/default API](../../backends/default/api.md)。

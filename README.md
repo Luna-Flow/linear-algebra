@@ -2,55 +2,34 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.4.2 - Packed Kernels and Fixture Recovery
+## v0.4.3 - Documentation Baseline And Changelog Split
 
-This README matches the **v0.4.2** repository state. The release keeps the
-checked matrix API surface introduced in `0.4.0` and the public unchecked
-multiplication entry point added in `0.4.1`, while focusing on large-matrix
-throughput and benchmark fixture recovery.
+This README matches the **v0.4.3** repository state. This release keeps the
+checked `0.4.x` API surface and the packed mutable matrix multiplication work
+introduced in `0.4.2`, while refreshing the multilingual documentation baseline
+and making the README/CHANGELOG split explicit.
+
+For earlier release notes and repository history, see
+[CHANGELOG.md](./CHANGELOG.md).
 
 ### Maintenance Changes
 
-- `mutable.Matrix::unchecked_matmul` now switches between the existing
-  unrolled kernel and a packed-right-hand-side kernel, depending on matrix
-  shape and total work.
-- The packed kernel is available on Native, JS, Wasm, and Wasm GC, so larger
-  dense matrix products can reuse right-hand-side columns with fewer repeated
-  cache-unfriendly reads.
-- Checked `mutable.Matrix` multiplication still validates dimensions first and
-  then delegates to `unchecked_matmul`, so the optimized hot path stays in one
-  place.
-- `perf_support` and `perf_runner` now recreate missing
-  `bench/datasets/cases/*.json` fixtures on demand from the tracked dataset
-  registry, which keeps direct local tests and runner commands working on a
-  clean checkout.
-- Bulk benchmark generation still flows through
-  `bench/generate_fixtures.py`, so tracked metadata and generated registries
-  remain aligned.
+- `README.md` now focuses on the current release baseline, reader entry points,
+  and package positioning, while `CHANGELOG.md` owns historical release notes.
+- The documentation standard now defines the README/CHANGELOG split together
+  with cross-language file alignment, section-order alignment, and localization
+  expectations.
+- The Chinese and Japanese READMEs now follow the English structure, and the
+  localized `backends/default` API pages now expose the same section
+  granularity as the English reference.
+- The `immut/matrix` tutorial now uses the ASCII blur workflow consistently
+  across languages, and several localized pages now use more natural technical
+  wording.
 
-## v0.4.0 - Checked Matrix APIs and Layered Capabilities
+## Layered Architecture
 
-The `0.4.0` release made matrix failure modes explicit with checked `Result`
-APIs and added the first layered capability packages for backend-independent
-linear algebra code.
-
-### Breaking Changes
-
-These source-incompatible API changes established the `0.4.x` line.
-
-- `immut.Matrix::{matmul, trace, determinant, pow}` now return
-  `Result[..., @error.LinearAlgebraError]`.
-- `mutable.Matrix::{trace, determinant, inverse, is_invertible, mul_vec, pow,
-  matrix_power, mean, variance, std_dev, max_element, min_element}` now return
-  `Result[..., @error.LinearAlgebraError]`.
-- The old aborting or `Option`-returning behavior remains available through the
-  matching `unchecked_*` methods for callers that intentionally want the legacy
-  contract.
-- New code should handle `Ok` / `Err`; migration code can usually replace
-  direct value calls with `.unwrap()` or the corresponding `unchecked_*` method
-  where the old preconditions are already guaranteed.
-
-### Layered Architecture
+The checked `0.4.x` line keeps runtime matrix failures explicit and exposes the
+first layered capability packages for backend-independent linear algebra code.
 
 - **`arithmetic`**: Linear-algebra-facing operation capabilities. It reuses
   scalar operation traits from `Luna-Flow/luna-generic` and
@@ -63,13 +42,18 @@ These source-incompatible API changes established the `0.4.x` line.
   types `DenseVector` / `DenseMatrix` over `mutable`, and
   `ImmutableDenseVector` / `ImmutableDenseMatrix` over `immut`.
 - **Trait-driven algorithms**: New backend-independent algorithms should depend
-  on the smallest capability they need, such as `MatrixShape`, `AdditiveVector`,
-  `VecMulVector`, `TransposeMatrix`, or `MatMulMatrix`, not directly on one
-  concrete matrix or vector type.
+  on the smallest capability they need, such as `MatrixShape`,
+  `AdditiveVector`, `VecMulVector`, `TransposeMatrix`, or `MatMulMatrix`, not
+  directly on one concrete matrix or vector type.
 
 The default dense implementation is a backend, not the center of the ecosystem.
 Algorithms should depend on minimal linear algebra traits, not concrete dense
 matrix/vector types.
+
+This repository is intended to be a linear-algebra substrate for higher-level
+math, geometry, and solver-style libraries. Domain-specific solve, regression,
+or optimization workflows belong in downstream packages built on these traits,
+backend wrappers, and concrete matrix/vector types.
 
 ### Package Positioning
 
@@ -92,7 +76,7 @@ layers, install `linear-algebra` together with the upstream scalar abstraction
 packages it builds on:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.2
+moon add Luna-Flow/linear-algebra@0.4.3
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -113,7 +97,7 @@ linear-algebra-facing operation traits, `@lf_alg` for shared upstream algebraic
 abstractions, and `@lf_arith` for shared upstream arithmetic types such as
 `ArithmeticContext`.
 
-### What Defines v0.4.0
+### Checked Contracts
 
 - **Checked Matrix Contracts**: Shape, exponent, empty-matrix, and singular
   matrix failures are now represented by `LinearAlgebraError` on the checked
@@ -179,38 +163,49 @@ test "linear-algebra basic workflow" {
 }
 ```
 
-### Find Your Entry Point
+### Reader Guide
 
-Start with the concrete `immut` / `mutable` types when you want to use the
-repository directly. Start with the capability layers when you want
-backend-independent generic code.
+- **General application developers**: Start with
+  [`mutable`](./doc/en_US/mutable/matrix/api.md) and
+  [`immut`](./doc/en_US/immut/matrix/api.md). These are the concrete APIs for
+  application code such as business tools, utilities, numeric processing,
+  small games, and visualization logic.
+- **Math library / general algorithm developers**: Read in this order:
+  [`arithmetic`](./doc/en_US/arithmetic/api.md) ->
+  [`algebra`](./doc/en_US/algebra/api.md) ->
+  [`backends/default`](./doc/en_US/backends/default/api.md) ->
+  [`immut` / `mutable`](./doc/en_US/immut/matrix/api.md). Start from operation
+  capabilities, then structure capabilities, then the default backend wrappers,
+  and finally the concrete implementations. This is the intended entry path if
+  you are building a higher-level linear-algebra application library, geometry
+  package, or solver-style library on top of this repository.
 
-- **I want concrete immutable types**:
+### Documentation Entry Points
+
+- **`immut` concrete API**:
   [`immut.Matrix` API](./doc/en_US/immut/matrix/api.md),
   [`immut.Matrix` tutorial](./doc/en_US/immut/matrix/tutorial.md),
   [`immut.Vector` API](./doc/en_US/immut/vector/api.md),
   [`immut.Vector` tutorial](./doc/en_US/immut/vector/tutorial.md)
-- **I want concrete mutable types**:
+- **`mutable` concrete API**:
   [`mutable.Matrix` API](./doc/en_US/mutable/matrix/api.md),
   [`mutable.Matrix` tutorial](./doc/en_US/mutable/matrix/tutorial.md),
   [`mutable.Vector` API](./doc/en_US/mutable/vector/api.md),
   [`mutable.Vector` tutorial](./doc/en_US/mutable/vector/tutorial.md)
-- **I want abstract capability layers for generic algorithms**:
+- **Capability and backend layers**:
   [`arithmetic` API](./doc/en_US/arithmetic/api.md),
   [`algebra` API](./doc/en_US/algebra/api.md),
   [`backends/default` API](./doc/en_US/backends/default/api.md),
   [`error` API](./doc/en_US/error/api.md)
 
-### How To Choose
+### Used In
 
-- Choose **`mutable`** when you want direct execution-oriented dense matrix or
-  vector work, in-place updates, views, and the full concrete numerical API.
-- Choose **`immut`** when you want value semantics, copy-on-update behavior,
-  and concrete dense matrix/vector types without mutation.
-- Choose **`arithmetic`** and **`algebra`** when you are defining algorithm
-  requirements and want code that is not tied to one concrete backend.
-- Choose **`backends/default`** when you want the repository's default dense
-  backend exposed through the public algebra traits.
+- **[`Luna-Flow/geometry3d`](https://github.com/Luna-Flow/geometry3d)**:
+  a compact MoonBit 3D geometry foundation built on
+  `Luna-Flow/linear-algebra`, with core geometry, camera/view math,
+  backend-neutral frontend rendering, and TUI / Canvas / GSAP backends. See
+  its [English docs](https://github.com/Luna-Flow/geometry3d/blob/main/doc/en_US/README.md)
+  for a concrete downstream package layout built on this repository.
 
 ### Documentation
 
@@ -228,82 +223,11 @@ Localized README files:
 - 🇨🇳 [README.md](./doc/zh_CN/README.md)
 - 🇯🇵 [README.md](./doc/ja_JP/README.md)
 
-## Version History
+## Changelog
 
-| Version | Date | Status | Notes |
-| --- | --- | --- | --- |
-| `0.4.2` | 2026-07-09 | current repository release | Added packed mutable matmul kernels for larger products and automatic benchmark fixture recovery for clean checkouts |
-| `0.4.1` | 2026-07-07 | previous release baseline | Refined benchmark measurement, added public unchecked mutable matmul, optimized mutable hot loops, and simplified publishing |
-| `0.4.0` | 2026-07-07 | previous release baseline | Introduced checked matrix APIs, structured linear-algebra errors, layered capability packages, and default backend wrappers |
-| `0.3.0` | 2026-06-14 | published on mooncakes | Adopted shared `arithmetic.Sqrt`, current `luna-generic` homomorphisms, and ecosystem-wide numeric capability identities |
-| `0.2.12` | 2026-06-06 | published on mooncakes | Strict bounds unification, semantic correctness fixes, benchmark diagnostics expansion, and documentation/audit refresh |
-| `0.2.11` | 2026-05-27 | previous release baseline | Performance-tuned mutable kernels, dedicated wasm-gc backend, benchmark/reporting expansion, and API/doc alignment |
-| `0.2.10` | 2026-05-27 | previous release baseline | Unified flattened mutable storage, matrix views, consistency coverage, benchmark coverage, and release-process alignment |
-| `0.2.9` | 2026-02-03 | published on mooncakes | Published from the earlier `3328195` release state |
-| `0.2.8` | 2026-02-03 | historical baseline | Algorithms and stability milestone used as the comparison baseline for later work |
-
-## Current Repository Highlights
-
-- **Current Release Narrative (0.4.2)**:
-  - Mutable matrix multiplication now adds a packed right-hand-side kernel for
-    larger dense products while keeping the smaller unrolled path for light
-    workloads.
-  - The packed matmul path is implemented consistently across Native, JS, Wasm,
-    and Wasm GC backends.
-  - `perf_support` and `perf_runner` can rebuild a missing benchmark fixture
-    from tracked metadata before executing a direct test or runner command.
-  - Bulk benchmark generation still goes through `bench/generate_fixtures.py`,
-    so the tracked manifest and generated registries remain the source of truth.
-
-- **Previous Release Narrative (0.4.1)**:
-  - Mutable matrix multiplication exposes `unchecked_matmul` for validated call
-    sites and benchmark hot paths.
-  - Matrix multiplication, LU trailing updates, and Cholesky accumulation have
-    backend-aligned loop unrolling.
-  - Benchmark fixture documentation now makes per-case JSON generation an
-    on-demand local artifact.
-  - Publishing uses the version in `moon.mod` directly.
-
-- **Previous Release Narrative (0.4.0)**:
-  - Matrix operations with runtime failure modes now return `Result[..., LinearAlgebraError]`.
-  - Legacy matrix behavior is available through explicit `unchecked_*` methods.
-  - `linear-algebra/error` documents the shared error vocabulary for checked APIs.
-  - `arithmetic`, `algebra`, and `backends/default` provide the new trait-oriented layering for generic algorithms.
-
-- **Previous Release Narrative (0.3.0)**:
-  - Square-root-dependent matrix algorithms now require the shared `arithmetic.Sqrt` capability.
-  - `mutable.Sqrt` is a public re-export of `arithmetic.Sqrt`; the old package-local trait and scalar implementations were removed.
-  - Integral test fixtures and conversion helpers now use target-side `IntegralHomomorphism::from_integral`.
-  - Custom numeric types should implement capabilities in `luna-generic` and `arithmetic` rather than package-specific linear-algebra traits.
-
-- **Earlier Release Narrative (0.2.12)**:
-  - Public matrix, view, and transpose accessors enforce explicit bounds contracts, including zero-row and zero-column edge shapes.
-  - `immut.Matrix` and `mutable.Matrix` are aligned on shared correctness semantics while preserving their value-vs-mutation execution split.
-  - Benchmark diagnostics and the tracked correctness audit reflect the exported `0.2.12` surface.
-
-- **Earlier Release Narrative (0.2.11)**:
-  - `mutable.Matrix` now combines the shared flat storage model from `0.2.10` with follow-up backend kernel optimizations and a dedicated `wasm-gc` implementation.
-  - Public numerical signatures are aligned around `Field` / `Num` / `Tolerance`, and immutable determinant documentation matches the simplified post-`0.2.10` constraint set.
-  - The benchmark stack now includes runtime-loaded fixtures, expanded case metadata, richer summary reporting, a local dashboard, optional Rust comparison runs, and diagnostic replay via `perf_runner`.
-  - The release checklist, benchmark docs, package overview, and localized READMEs are aligned to the `0.2.11` release story.
-
-- **Algorithms & Stability (0.2.8)**:
-  - Added LU- and QR-related decomposition support used by determinant, inverse, rank, and eigen routines.
-  - Shifted determinant and rank behavior toward more stable elimination-based implementations.
-
-- **Native Optimization (0.2.7)**:
-  - Implemented transposition + dot-product strategy for Native matrix multiplication, outperforming naive implementations by more than 2x.
-  - Optimized `make`, `new`, and `transpose` to remove expensive integer division in hot loops.
-
-- **Performance Overhaul (0.2.4)**:
-  - Optimized secondary utilities such as `mapi` and `each_row_col`.
-  - Improved hybrid matrix multiplication and vector linear-combination performance.
-
-- **Other Fixes & Renames**:
-  - `map_row()` / `map_col()` -> `map_row_inplace()` / `map_col_inplace()`
-  - `eachij()` -> `each_row_col()`
-  - Corrected determinant behavior for `0x0` matrices.
-  - Fixed copy-on-conversion behavior between vectors and matrices.
+Older release notes, historical version summaries, and pre-`0.4.3` repository
+highlights now live in [CHANGELOG.md](./CHANGELOG.md). This README keeps the
+current baseline and entry points front and center.
 
 ## Development
 
@@ -350,7 +274,7 @@ case.
 Before triggering the publish workflow:
 
 1. Bump `moon.mod` to the intended next release version before publishing.
-2. Update `README.md` so the release notes and version history match the package contents.
+2. Update `README.md` and `CHANGELOG.md` so the current release notes and historical version notes match the package contents.
 3. Run `moon check --target all` and `./run_test.sh`; both are required before publishing.
 4. If the change touches benchmark fixtures, fixture recovery, or diagnostic runners, also run `LINEAR_ALGEBRA_TEST_BENCH=1 ./run_test.sh`.
 5. Trigger `publish-package`; it will publish the version currently declared in `moon.mod`.
