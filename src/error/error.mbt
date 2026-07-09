@@ -10,9 +10,7 @@ pub enum LinearAlgebraErrorKind {
   EmptyMatrix
   SingularMatrix
   NonConvergence
-  UnsupportedBackend
-  BackendNotImpl
-  ArithmeticFailure(@arith.ArithmeticError)
+  ArithmeticFailure(@lf_arith.ArithmeticError)
 } derive(Eq)
 
 ///|
@@ -88,22 +86,8 @@ pub fn LinearAlgebraError::non_convergence(
 }
 
 ///|
-pub fn LinearAlgebraError::unsupported_backend(
-  message : String,
-) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::UnsupportedBackend, message }
-}
-
-///|
-pub fn LinearAlgebraError::backend_not_impl(
-  message : String,
-) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::BackendNotImpl, message }
-}
-
-///|
 pub fn LinearAlgebraError::arithmetic_failure(
-  error : @arith.ArithmeticError,
+  error : @lf_arith.ArithmeticError,
 ) -> LinearAlgebraError {
   {
     kind: LinearAlgebraErrorKind::ArithmeticFailure(error),
@@ -205,27 +189,6 @@ pub fn LinearAlgebraError::is_non_convergence(
   }
 }
 
-///|
-pub fn LinearAlgebraError::is_unsupported_backend(
-  self : LinearAlgebraError,
-) -> Bool {
-  match self.kind {
-    LinearAlgebraErrorKind::UnsupportedBackend => true
-    _ => false
-  }
-}
-
-///|
-pub fn LinearAlgebraError::is_backend_not_impl(
-  self : LinearAlgebraError,
-) -> Bool {
-  match self.kind {
-    LinearAlgebraErrorKind::BackendNotImpl => true
-    _ => false
-  }
-}
-
-///|
 pub fn LinearAlgebraError::is_arithmetic_failure(
   self : LinearAlgebraError,
 ) -> Bool {
