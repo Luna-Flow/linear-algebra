@@ -1,7 +1,7 @@
 # Benchmarking
 
-This benchmark documentation reflects the current repository state and is
-maintained for the current `0.4.1` repository line.
+This benchmark guide matches the current repository state and the `0.4.2`
+repository line.
 
 This repository ships a steady-state benchmark harness for comparing the
 `mutable` package on the MoonBit native backend and, optionally, against a Rust
@@ -14,8 +14,10 @@ The benchmark subsystem is split across three MoonBit packages:
 - `src/perf_support`: public case metadata, runtime fixture loading, and case execution helpers.
 - `src/perf_runner`: a single-case diagnostic and sampling runner used by the reporting pipeline.
 
-Benchmark runs are intended for local execution and ad hoc comparison work
-rather than a dedicated scheduled GitHub Actions workflow.
+These benchmarks are meant for local runs and ad hoc comparison work, not for a
+dedicated scheduled GitHub Actions workflow.
+They are also outside the default CI and publish acceptance gate unless you
+explicitly opt in with `LINEAR_ALGEBRA_TEST_BENCH=1`.
 
 ## Fixtures
 

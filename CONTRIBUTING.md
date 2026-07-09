@@ -1,13 +1,19 @@
 # Contribution Guidelines
 
-This guide tracks the current repository workflow and follows the same upcoming
-release baseline as the rest of the docs: **`0.2.11`**.
+This guide matches the current repository workflow and the same documentation
+baseline as the rest of the repository: **`0.4.2`**.
 
 ## To Contributors
 
-We warmly welcome developers familiar with various scientific computing libraries related to numerical calculus to join the project, contribute code, and share their valuable experiences. At the same time, we encourage beginners to learn and master numerical methods related to calculus by participating in development and improving documentation. In this project, we hope that both experienced developers and beginners can find contribution goals that interest them by reviewing the project's documentation, tables, and code examples.
+Contributions of all sizes are welcome. If you work on numerical methods,
+scientific computing, compiler-facing performance work, documentation, or test
+infrastructure, there is likely a useful way to help here. The project is also
+a good place to learn: we try to keep the code, tests, and docs readable enough
+for new contributors to trace behavior back to concrete examples.
 
-We sincerely thank all the developers who have contributed to this project. Whether through submitting code, improving documentation, or providing valuable feedback, every effort you make helps to make this project better. Your enthusiasm and wisdom in the development process continually drive the project forward, and bring more opportunities for collaboration within the community. We appreciate your support and dedication, and we look forward to achieving more together, driving this project toward an even brighter future!
+Thank you for spending time on the repository. Code changes, documentation
+improvements, review feedback, bug reports, and reproducible benchmarks all
+move the project forward.
 
 ## Table of Contents
 
@@ -29,15 +35,18 @@ We sincerely thank all the developers who have contributed to this project. Whet
 
 ## 1. Code Style
 
-- The project follows the formatting style enforced by the MoonBit Toolchain. Format your code automatically using the following command:
+- The project follows the formatting style enforced by the MoonBit toolchain.
+  Format your code with:
 
   ```bash
   moon fmt
   ```
 
-  Ensure that you run `moon fmt` before committing your code to maintain consistency.
+  Run `moon fmt` before committing to keep formatting consistent.
 
-  Alternatively, you can use the `ready_to_pr.sh` script to automatically format the code, run checks, generate test coverage files, and create `.mbti` files.
+  You can also use `ready_to_pr.sh` to format the code, run the default
+  multi-target checks, regenerate `.mbti` files, and refresh the tracked
+  host-target coverage snapshot in one pass.
 
 - Prefer `using`-imported names over fully-qualified package calls when the imported names are used repeatedly in a file.
 
@@ -124,10 +133,10 @@ Developers are encouraged to use MoonBit LSP’s AI-generated code comments to i
 
 ### 5.1 Commit Messages
 
-- Use the `ready_to_pr.sh` script before committing to format code, run checks, generate test coverage files, and create `.mbti` files.
+- Use the `ready_to_pr.sh` script before committing to format code, run the default multi-target checks, refresh the host-target coverage snapshot, and create `.mbti` files.
 - Each commit should have a clear description of the changes made.
 - Commit messages should be in **English**, concise, and precise.
-- Use prefixes such as `fix:`, `feat:`, `refactor:`, and `doc:` to indicate the type of change.
+- Use prefixes such as `fix:`, `feat:`, `refactor:`, and `docs:` to indicate the type of change.
 
   Examples:
 
@@ -135,7 +144,7 @@ Developers are encouraged to use MoonBit LSP’s AI-generated code comments to i
   fix: fix bug in something
   feat: add feature for something
   refactor: refactor something
-  doc: add docs for something
+  docs: add docs for something
   ```
 
 ### 5.2 Commit Frequency
@@ -147,7 +156,8 @@ Developers are encouraged to use MoonBit LSP’s AI-generated code comments to i
 
 - Before publishing to mooncakes, make sure `moon.mod` has already been bumped to the intended unreleased version.
 - Update `README.md` if the current package summary or release notes no longer match the repository state.
-- Run `moon check` and `./run_test.sh` locally before publishing.
+- Run `moon check --target all` and `./run_test.sh` locally before publishing.
+- If the change touches benchmark fixtures, fixture recovery, or diagnostic runners, also run `LINEAR_ALGEBRA_TEST_BENCH=1 ./run_test.sh`.
 - The GitHub Actions publish workflow reads the release version directly from `moon.mod`.
 - If mooncakes reports a duplicate version, do not retry the same version. Bump the version first.
 

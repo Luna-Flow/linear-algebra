@@ -1,13 +1,13 @@
 # Correctness Checklist
 
-Last audited: 2026-06-06
+Last audited on 2026-07-09
 
 Legend:
 
 - `Correct`: inspected and backed by tests or clear invariants
 - `Bug`: confirmed incorrect behavior
 - `Risk`: behavior looks plausible but deserves follow-up or can drift
-- `Unverified`: traversed, but not deeply proven in this pass
+- `Unverified`: reviewed, but not deeply proven in this pass
 
 Problem types:
 
@@ -129,8 +129,8 @@ Problem types:
 
 | File | Status | Problem Type | Evidence | Notes |
 | --- | --- | --- | --- | --- |
-| `run_test.sh` | `Correct` | - | Inspected and used in this pass | Enumerates current package/target test matrix. |
-| `ready_to_pr.sh` | `Correct` | - | Inspected directly | Convenience script behavior matches its stated purpose; it is intentionally best-effort automation, not a release gate. |
+| `run_test.sh` | `Correct` | - | Inspected and used in this pass | Default gate covers `immut`, `consistency`, and `mutable` across four targets; benchmark packages remain explicit opt-in through `LINEAR_ALGEBRA_TEST_BENCH=1`. |
+| `ready_to_pr.sh` | `Correct` | - | Inspected directly | Convenience script now separates default multi-target validation from the tracked host-target coverage snapshot; it is intentionally not a release gate by itself. |
 | `update_deps.sh` | `Correct` | - | Inspected directly | Destructive by design but behavior is explicit and consistent with its maintenance purpose. |
 | `.github/workflows/publish.yml` | `Correct` | - | Inspected directly | Reads version from `moon.mod`, runs `run_test.sh` before publish. |
 | `moon.mod` | `Correct` | - | Inspected directly | Canonical version/dependency manifest. |
@@ -140,8 +140,8 @@ Problem types:
 
 | File / Group | Status | Problem Type | Evidence | Notes |
 | --- | --- | --- | --- | --- |
-| `README.md` | `Correct` | - | Checked against current bounds and release workflow claims | Strict bounds statement matches implementation. |
-| `CONTRIBUTING.md` | `Correct` | - | Inspected directly | Current contributor workflow text matches repository scripts and release flow closely enough. |
+| `README.md` | `Correct` | - | Checked against current bounds, fixture recovery flow, and release workflow claims | Release narrative and operational guidance match the `0.4.2` repository state. |
+| `CONTRIBUTING.md` | `Correct` | - | Inspected directly | Contributor workflow text now matches the current `0.4.2` baseline, scripts, and release flow. |
 | `doc/en_US/immut/matrix/api.md` | `Correct` | - | Rewritten this pass against current source and exported API | Documents strict bounds and same-index swap no-op correctly. |
 | `doc/en_US/immut/vector/api.md` | `Correct` | - | Verified against current vector API and tests | No contract mismatch found. |
 | `doc/en_US/mutable/matrix/api.md` | `Correct` | - | Rewritten this pass against current source and `pkg.generated.mbti` | Removed stale duplicates and old signatures. |
