@@ -1,5 +1,5 @@
 ///|
-using @lg {trait One, trait Zero, trait Conjugate, trait Semiring, trait Num}
+using @lf_alg {trait One, trait Zero, trait Conjugate, trait Semiring, trait Num}
 
 ///|
 using @qc_core {trait Arbitrary}

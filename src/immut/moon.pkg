@@ -1,6 +1,6 @@
 import {
   "moonbitlang/core/debug",
-  "Luna-Flow/luna-generic" @lg,
+  "Luna-Flow/luna-generic" @lf_alg,
   "moonbitlang/core/quickcheck" @qc_core,
   "moonbitlang/core/immut/vector" @core_vector,
   "Luna-Flow/linear-algebra/error" @la_error,
