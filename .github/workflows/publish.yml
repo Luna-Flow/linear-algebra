@@ -47,6 +47,9 @@ jobs:
       - name: update registry
         run: moon update
 
+      - name: warm dependencies
+        run: moon check --target all
+
       - name: check
         run: moon check --target all --frozen
 
