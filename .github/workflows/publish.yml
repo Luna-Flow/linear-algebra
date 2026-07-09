@@ -47,11 +47,11 @@ jobs:
       - name: update registry
         run: moon update
 
-      - name: build
-        run: moon build --target all
-
       - name: check
         run: moon check --target all --frozen
+
+      - name: test openblas backend
+        run: moon test src/backends/openblas --target native
 
       - name: test
         run: bash ./run_test.sh --frozen
