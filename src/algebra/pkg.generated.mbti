@@ -1,10 +1,6 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "Luna-Flow/linear-algebra/algebra"
 
-import {
-  "Luna-Flow/luna-generic",
-}
-
 // Values
 
 // Errors
@@ -12,41 +8,6 @@ import {
 // Types and methods
 
 // Type aliases
-pub using @Luna-Flow/linear-algebra/arithmetic {trait Abs}
-
-pub using @luna-generic {trait AddGroup}
-
-pub using @luna-generic {trait AddMonoid}
-
-pub using @Luna-Flow/linear-algebra/arithmetic {trait ApproxEq}
-
-pub using @luna-generic {trait Conjugate}
-
-pub using @luna-generic {trait Field}
-
-pub using @luna-generic {trait Integral}
-
-pub using @luna-generic {trait IntegralHomomorphism}
-
-pub using @luna-generic {trait MulGroup}
-
-pub using @luna-generic {trait MulMonoid}
-
-pub using @luna-generic {trait Nat}
-
-pub using @luna-generic {trait NatHomomorphism}
-
-pub using @luna-generic {trait Num}
-
-pub using @luna-generic {trait One}
-
-pub using @luna-generic {trait Ring}
-
-pub using @luna-generic {trait Semiring}
-
-pub using @Luna-Flow/arithmetic {trait Sqrt}
-
-pub using @luna-generic {trait Zero}
 
 // Traits
 pub(open) trait AdditiveMatrix : TransposeMatrix + Add + Neg + Sub {
@@ -55,14 +16,6 @@ pub(open) trait AdditiveMatrix : TransposeMatrix + Add + Neg + Sub {
 pub(open) trait AdditiveVector : VectorShape + Add + Neg + Sub {
 }
 
-pub(open) trait AdditiveVectorGroup : AdditiveVector + @luna-generic.AddGroup {
-}
-
-pub(open) trait FloatingScalarOps : @luna-generic.Field + @luna-generic.Num + @Luna-Flow/linear-algebra/arithmetic.ApproxEq {
-}
-pub impl FloatingScalarOps for Float
-pub impl FloatingScalarOps for Double
-
 pub(open) trait MatMulMatrix : AdditiveMatrix + Mul {
 }
 
@@ -70,20 +23,8 @@ pub(open) trait MatrixShape {
   fn shape(Self) -> (Int, Int)
 }
 
-pub(open) trait SquareMatrixRing : MatMulMatrix + @luna-generic.Ring {
-}
-
-pub(open) trait SquareMatrixSemiring : MatMulMatrix + @luna-generic.Semiring {
-}
-
 pub(open) trait TransposeMatrix : MatrixShape {
   fn transpose(Self) -> Self
-}
-
-pub(open) trait VecMulRingVector : VecMulVector + @luna-generic.Ring {
-}
-
-pub(open) trait VecMulSemiringVector : VecMulVector + @luna-generic.Semiring {
 }
 
 pub(open) trait VecMulVector : AdditiveVector + Mul {

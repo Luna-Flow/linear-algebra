@@ -1,4 +1,1 @@
-import {
-  "Luna-Flow/luna-generic" @generic,
-  "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,
-}
+// This package only defines linear-algebra-owned structure traits.
