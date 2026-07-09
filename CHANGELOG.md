@@ -10,9 +10,8 @@ Current repository release.
 
 ### Highlights
 
-- The old runtime backend-selection surface was removed from `immut`, including
-  the `MatMulBackend`-style selector API and its related tests and generated
-  interfaces.
+- The old runtime backend-selection surface was removed from `immut`, together
+  with its related tests and generated interfaces.
 - `backends/openblas` is now the explicit native backend surface. It introduces
   the owned `BlasMatrix[T]` wrapper, the backend-local `BLASInnerType`
   abstraction for `Float` and `Double`, and OpenBLAS-backed matrix
