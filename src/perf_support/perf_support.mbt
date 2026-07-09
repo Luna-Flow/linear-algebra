@@ -1,6 +1,6 @@
 ///|
 #warnings("-unused_type_declaration")
-using @lg {trait AddMonoid, trait Field, trait Num}
+using @lf_alg {trait AddMonoid, trait Field, trait Num}
 
 ///|
 pub struct Case {

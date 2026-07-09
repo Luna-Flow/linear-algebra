@@ -78,7 +78,7 @@ pub impl[T : Add + Neg] Sub for DenseMatrix[T] with fn sub(left, right) {
 }
 
 ///|
-pub impl[T : @generic.AddMonoid + Mul] Mul for DenseMatrix[T] with fn mul(
+pub impl[T : @lf_alg.AddMonoid + Mul] Mul for DenseMatrix[T] with fn mul(
   left,
   right,
 ) {
@@ -99,7 +99,7 @@ pub impl[T] @algebra.TransposeMatrix for DenseMatrix[T] with fn transpose(value)
 pub impl[T : Add + Neg] @algebra.AdditiveMatrix for DenseMatrix[T]
 
 ///|
-pub impl[T : Add + Neg + @generic.AddMonoid + Mul] @algebra.MatMulMatrix for DenseMatrix[
+pub impl[T : Add + Neg + @lf_alg.AddMonoid + Mul] @algebra.MatMulMatrix for DenseMatrix[
   T,
 ]
 
@@ -119,7 +119,7 @@ pub impl[T : Add + Neg] Sub for ImmutableDenseMatrix[T] with fn sub(left, right)
 }
 
 ///|
-pub impl[T : Add + @generic.Zero + Mul] Mul for ImmutableDenseMatrix[T] with fn mul(
+pub impl[T : Add + @lf_alg.Zero + Mul] Mul for ImmutableDenseMatrix[T] with fn mul(
   left,
   right,
 ) {
@@ -142,6 +142,6 @@ pub impl[T] @algebra.TransposeMatrix for ImmutableDenseMatrix[T] with fn transpo
 pub impl[T : Add + Neg] @algebra.AdditiveMatrix for ImmutableDenseMatrix[T]
 
 ///|
-pub impl[T : Add + Neg + @generic.Zero + Mul] @algebra.MatMulMatrix for ImmutableDenseMatrix[
+pub impl[T : Add + Neg + @lf_alg.Zero + Mul] @algebra.MatMulMatrix for ImmutableDenseMatrix[
   T,
 ]

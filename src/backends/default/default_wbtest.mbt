@@ -61,6 +61,12 @@ test "default backend matrix algorithms use matrix-like operations" {
 test "default immutable backend checked matmul is constructible" {
   let a = ImmutableDenseMatrix::from_2d_array([[1, 2], [3, 4]])
   let b = ImmutableDenseMatrix::from_2d_array([[0, 1], [1, 0]])
-  let product = @immut.matmul_with(@immut.CheckedBackend, a.inner(), b.inner())
-  inspect(product, content="|2, 1|\n|4, 3|")
+  let status = match a.inner().matmul(b.inner()) {
+    Ok(product) => {
+      inspect(product, content="|2, 1|\n|4, 3|")
+      "ok"
+    }
+    Err(_) => "err"
+  }
+  inspect(status, content="ok")
 }

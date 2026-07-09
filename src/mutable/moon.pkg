@@ -1,14 +1,14 @@
 import {
   "moonbitlang/core/debug",
-  "Luna-Flow/arithmetic",
-  "Luna-Flow/luna-generic" @lg,
+  "Luna-Flow/arithmetic" @lf_arith,
+  "Luna-Flow/luna-generic" @lf_alg,
   "moonbitlang/core/quickcheck" @qc_core,
   "Luna-Flow/linear-algebra/error" @la_error,
   "Luna-Flow/linear-algebra/internal",
 }
 
 import {
-  "Luna-Flow/luna-generic" @lg,
+  "Luna-Flow/luna-generic" @lf_alg,
   "moonbitlang/quickcheck" @qc,
 } for "wbtest"
 

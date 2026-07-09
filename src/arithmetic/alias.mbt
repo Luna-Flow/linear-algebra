@@ -1,8 +1,8 @@
 ///|
-pub using @generic {trait Conjugate, trait Inverse, trait One, trait Zero}
+pub using @lf_alg {trait Conjugate, trait Inverse, trait One, trait Zero}
 
 ///|
-pub using @arith {
+pub using @lf_arith {
   type ArithmeticContext,
   type ArithmeticError,
   type ArithmeticErrorKind,

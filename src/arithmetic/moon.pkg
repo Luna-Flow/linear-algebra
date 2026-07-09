@@ -1,4 +1,4 @@
 import {
-  "Luna-Flow/arithmetic" @arith,
-  "Luna-Flow/luna-generic" @generic,
+  "Luna-Flow/arithmetic" @lf_arith,
+  "Luna-Flow/luna-generic" @lf_alg,
 }

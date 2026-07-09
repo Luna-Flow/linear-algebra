@@ -1,0 +1,20 @@
+import {
+  "Kaida-Amethyst/openblas/cblas" @cblas,
+  "Luna-Flow/linear-algebra/algebra",
+  "Luna-Flow/linear-algebra/backends/default",
+  "Luna-Flow/linear-algebra/immut",
+  "Luna-Flow/linear-algebra/internal",
+  "Luna-Flow/luna-generic" @lf_alg,
+}
+
+supported_targets = "native"
+
+options(
+  link: {
+    "native": {
+      "cc": "clang",
+      "cc-flags": "-I/opt/homebrew/opt/openblas/include -I/usr/include/x86_64-linux-gnu/openblas-pthread -I/usr/include/openblas -w",
+      "cc-link-flags": "-L/opt/homebrew/opt/openblas/lib -L/usr/lib/x86_64-linux-gnu/openblas-pthread -L/usr/lib/x86_64-linux-gnu -lopenblas",
+    },
+  },
+)

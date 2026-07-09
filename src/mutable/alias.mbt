@@ -1,5 +1,5 @@
 ///|
-using @lg {
+using @lf_alg {
   trait One,
   trait Zero,
   trait Conjugate,
@@ -11,7 +11,7 @@ using @lg {
 }
 
 ///|
-pub using @arithmetic {trait Sqrt}
+pub using @lf_arith {trait Sqrt}
 
 ///|
 using @qc_core {trait Arbitrary}

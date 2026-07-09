@@ -1,5 +1,5 @@
 ///|
-using @lg {trait IntegralHomomorphism}
+using @lf_alg {trait IntegralHomomorphism}
 
 ///|
 struct AdjointReal(Int)

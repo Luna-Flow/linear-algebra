@@ -7,6 +7,7 @@ import {
   "Luna-Flow/luna-generic@0.3.3",
   "moonbitlang/quickcheck@0.14.0",
   "moonbitlang/x@0.4.46",
+  "Kaida-Amethyst/openblas@0.1.3",
 }
 
 readme = "README.md"

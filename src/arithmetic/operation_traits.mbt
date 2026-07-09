@@ -54,17 +54,17 @@ pub impl ApproxEq for Int with fn approx_eq(a, b) {
 
 ///|
 pub impl Abs for Float with fn abs(self) {
-  @generic.Num::abs(self)
+  @lf_alg.Num::abs(self)
 }
 
 ///|
 pub impl Abs for Double with fn abs(self) {
-  @generic.Num::abs(self)
+  @lf_alg.Num::abs(self)
 }
 
 ///|
 pub impl Abs for Int with fn abs(self) {
-  @generic.Num::abs(self)
+  @lf_alg.Num::abs(self)
 }
 
 ///|
