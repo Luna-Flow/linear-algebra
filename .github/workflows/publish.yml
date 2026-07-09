@@ -30,6 +30,11 @@ jobs:
           moon version --all
           moonrun --version
 
+      - name: install openblas
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libopenblas-dev
+
       - name: verify package version
         run: |
           test -f moon.mod
