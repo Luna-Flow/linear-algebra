@@ -1,6 +1,6 @@
 # `linear-algebra/backends/default`
 
-このページは、現在の `0.4.6` リポジトリにおける
+このページは、現在の `0.4.7` リポジトリにおける
 `Luna-Flow/linear-algebra/backends/default` の公開 API 基準をまとめたものです。
 
 ## 役割

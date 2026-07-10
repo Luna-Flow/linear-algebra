@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-这份 README 对应当前仓库的 **v0.4.6** 文档基线。
+这份 README 对应当前仓库的 **v0.4.7** 文档基线。
 
 `mutable` 数值 API 现在使用共享的 `Luna-Flow/arithmetic.Sqrt` 能力；
 整数嵌入遵循 `Luna-Flow/luna-generic.IntegralHomomorphism`。在当前版本中，
@@ -8,9 +8,8 @@
 现在都使用带检查的 `Result[..., LinearAlgebraError]` API；旧的 abort 行为
 和 `Option` 返回语义则通过显式的 `unchecked_*` 方法保留。
 
-`0.4.6` 这一基线延续了 `0.4.x` 的带检查 API 表面，也保留了 `0.4.2`
-引入的打包矩阵乘法路径，同时移除了旧的运行时后端选择叙事，引入了显式的
-native OpenBLAS 后端，并把代码、文档和 CI 的发布基线统一到同一个版本语义上。
+`0.4.7` 这一基线新增了与存储无关的 `container` 能力层、通用向量与矩阵
+算法、面向具体存储表示的适配器，以及供外部类型采用的 algebra 集成层级。
 
 更早的版本说明和仓库历史请参见 [CHANGELOG.md](../../CHANGELOG.md)。
 
@@ -117,7 +116,7 @@ native OpenBLAS 后端，并把代码、文档和 CI 的发布基线统一到同
 如果你想使用抽象能力层来编写后端无关代码，请显式安装它所依赖的上游抽象包：
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.6
+moon add Luna-Flow/linear-algebra@0.4.7
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

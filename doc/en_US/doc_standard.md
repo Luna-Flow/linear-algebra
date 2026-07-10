@@ -1,8 +1,8 @@
 # Documentation Standard
 
 The documentation in this repository describes the **current implementation on
-the branch**. As of `2026-07-09`, the active documentation baseline is
-**`0.4.6`**.
+the branch**. As of `2026-07-11`, the active documentation baseline is
+**`0.4.7`**.
 
 ## Document Types and Organization
 

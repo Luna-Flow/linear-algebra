@@ -1,6 +1,6 @@
 # `linear-algebra/algebra`
 
-本页记录当前 `0.4.6` 仓库中 `Luna-Flow/linear-algebra/algebra` 的公开 API 基线。
+本页记录当前 `0.4.7` 仓库中 `Luna-Flow/linear-algebra/algebra` 的公开 API 基线。
 
 ## 实验状态
 
@@ -20,7 +20,7 @@
 `algebra` 只负责结构层。如果你的代码还要直接使用共享的上游标量抽象，把这些依赖一起加上：
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.6
+moon add Luna-Flow/linear-algebra@0.4.7
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

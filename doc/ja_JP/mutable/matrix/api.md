@@ -1,6 +1,6 @@
 # `@mutable.Matrix`
 
-このページは、現在の `0.4.6` リポジトリ状態における `@mutable.Matrix` の API 基準をまとめたものです。平方根を必要とする API は `Luna-Flow/arithmetic.Sqrt` を使用し、`Tolerance` は引き続き `mutable` が定義します。
+このページは、現在の `0.4.7` リポジトリ状態における `@mutable.Matrix` の API 基準をまとめたものです。平方根を必要とする API は `Luna-Flow/arithmetic.Sqrt` を使用し、`Tolerance` は引き続き `mutable` が定義します。
 
 ## 概要
 

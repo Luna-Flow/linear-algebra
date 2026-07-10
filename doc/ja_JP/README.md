@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-この README は現在のリポジトリ基準である **v0.4.6** に対応しています。
+この README は現在のリポジトリ基準である **v0.4.7** に対応しています。
 
 `mutable` の数値 API は共有の `Luna-Flow/arithmetic.Sqrt` 能力を使い、
 整数埋め込みは `Luna-Flow/luna-generic.IntegralHomomorphism` に従います。
@@ -9,10 +9,9 @@
 `Result[..., LinearAlgebraError]` API を使います。従来の abort する挙動と
 `Option` 戻り値は、明示的な `unchecked_*` メソッドに残しています。
 
-`0.4.6` 基準は、検査付き `0.4.x` API 表面と `0.4.2` で導入した
-パック済み行列乗算経路を維持しつつ、古い runtime backend selection の
-考え方を取り除き、明示的な native OpenBLAS バックエンドを導入し、
-コード・文書・CI のリリース基準を同じ意味に揃えたものです。
+`0.4.7` 基準では、ストレージに依存しない `container` 能力層、汎用の
+ベクトル・行列アルゴリズム、具体的なストレージ表現向けアダプター、そして
+外部型のための algebra 接続レベルを追加しました。
 
 過去のリリースノートと履歴は [CHANGELOG.md](../../CHANGELOG.md) を参照してください。
 
@@ -125,7 +124,7 @@ OpenBLAS による native 行列乗算やベクトル BLAS カーネルが必要
 パッケージを明示的に追加してください。
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.6
+moon add Luna-Flow/linear-algebra@0.4.7
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

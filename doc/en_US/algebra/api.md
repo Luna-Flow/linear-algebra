@@ -1,6 +1,6 @@
 # `linear-algebra/algebra`
 
-API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.4.6`
+API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.4.7`
 repository state.
 
 ## Experimental Status
@@ -30,7 +30,7 @@ trait level and understand its operator commitments.
 scalar abstractions, add them explicitly:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.6
+moon add Luna-Flow/linear-algebra@0.4.7
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

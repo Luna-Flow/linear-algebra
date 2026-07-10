@@ -5,7 +5,7 @@
 如果你想直接使用抽象线性代数能力层，先把完整依赖装好：
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.6
+moon add Luna-Flow/linear-algebra@0.4.7
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```

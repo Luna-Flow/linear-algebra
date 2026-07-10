@@ -1,6 +1,6 @@
 # `@immut.Vector`
 
-API baseline for `@immut.Vector` in the current `0.4.6` repository state.
+API baseline for `@immut.Vector` in the current `0.4.7` repository state.
 
 ## Overview
 

@@ -1,7 +1,7 @@
 # `linear-algebra/backends/openblas`
 
 API baseline for `Luna-Flow/linear-algebra/backends/openblas` in the current
-`0.4.6` repository state.
+`0.4.7` repository state.
 
 ## Purpose
 

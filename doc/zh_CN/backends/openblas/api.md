@@ -1,6 +1,6 @@
 # `linear-algebra/backends/openblas`
 
-本页记录当前 `0.4.6` 仓库中 `Luna-Flow/linear-algebra/backends/openblas`
+本页记录当前 `0.4.7` 仓库中 `Luna-Flow/linear-algebra/backends/openblas`
 的公开 API 基线。
 
 ## 职责

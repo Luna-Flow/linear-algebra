@@ -4,7 +4,9 @@ All notable repository-release changes are tracked here. The main
 [`README.md`](./README.md) stays focused on the current baseline and entry
 points; older release history lives in this file.
 
-## 0.4.7
+## 0.4.7 - 2026-07-11
+
+Current repository release.
 
 ### Added
 

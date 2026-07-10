@@ -2,19 +2,25 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache--2.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.4.6 - Backend Vector And MatVec Additions
+## v0.4.7 - Storage-Independent Container Capabilities
 
-This README matches the **v0.4.6** repository state. This release keeps the
-checked `0.4.x` API surface and the packed mutable matrix multiplication work
-introduced in `0.4.2`, while extending the backend layer with explicit vector
-and matrix-vector helpers, keeping the native OpenBLAS backend explicit, and
-aligning the release baseline across code, docs, and CI.
+This README matches the **v0.4.7** repository state. This release introduces a
+storage-independent `container` layer for vector and matrix capabilities,
+generic algorithms, and adapters across the concrete immutable, mutable,
+default dense, view, and OpenBLAS representations.
 
 For earlier release notes and repository history, see
 [CHANGELOG.md](./CHANGELOG.md).
 
 ### Release Notes
 
+- The new `container` layer exposes read, build, persistent-edit, and
+  mutable-edit operation dictionaries without requiring a concrete storage
+  representation.
+- Generic vector/matrix map and conversion algorithms, plus matrix transpose,
+  can now operate through container capabilities and adapters.
+- Algebra integration guidance now documents shape, additive, transpose,
+  Hadamard, and matrix-multiplication capability levels for external types.
 - `immut` no longer exposes runtime backend-selection APIs. Backend choice is
   now expressed by the concrete type you use, not by a runtime ADT.
 - `backends/default` now provides backend methods `scale`, `dot`, `axpy`, and
@@ -26,9 +32,8 @@ For earlier release notes and repository history, see
 - Scalar-valued vector products and BLAS-style linear combinations remain
   backend methods. They were not promoted into new `@algebra` traits in this
   release.
-- The README, localized docs, API baseline pages, install snippets, generated
-  interfaces, and CI/publish workflows are all aligned to the `0.4.6` release
-  baseline.
+- The default test gate now exercises the container packages and default
+  backend across Wasm GC, JavaScript, native, and Wasm targets.
 
 ## Layered Architecture
 
@@ -102,7 +107,7 @@ layers, install `linear-algebra` together with the upstream scalar abstraction
 packages it builds on:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.6
+moon add Luna-Flow/linear-algebra@0.4.7
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -267,7 +272,7 @@ Localized README files:
 
 ## Changelog
 
-Older release notes, historical version summaries, and pre-`0.4.6` repository
+Older release notes, historical version summaries, and pre-`0.4.7` repository
 highlights now live in [CHANGELOG.md](./CHANGELOG.md). This README keeps the
 current baseline and entry points front and center.
 

@@ -1,6 +1,6 @@
 # Luna-Flow/linear-algebra
 
-This README matches the current repository baseline for **v0.4.6**.
+This README matches the current repository baseline for **v0.4.7**.
 
 The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt`
 capability, while integral embeddings follow
@@ -9,10 +9,9 @@ capability, while integral embeddings follow
 now use checked `Result[..., LinearAlgebraError]` APIs; the old aborting or
 `Option`-returning behavior is exposed through explicit `unchecked_*` methods.
 
-The `0.4.6` baseline keeps the checked `0.4.x` API surface and the packed
-matrix-multiplication work introduced in `0.4.2`, while removing the old
-runtime backend-selection story, introducing the explicit native OpenBLAS
-backend, and aligning the release baseline across code, docs, and CI.
+The `0.4.7` baseline adds the storage-independent `container` capability layer,
+generic vector and matrix algorithms, adapters for the concrete storage
+representations, and documented algebra integration levels for external types.
 
 For earlier release notes and repository history, see
 [CHANGELOG.md](../../CHANGELOG.md).
@@ -123,7 +122,7 @@ If you want to write backend-independent code with the abstract capability
 layers, add the shared upstream abstraction packages explicitly:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.6
+moon add Luna-Flow/linear-algebra@0.4.7
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
