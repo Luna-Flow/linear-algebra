@@ -189,6 +189,7 @@ pub fn LinearAlgebraError::is_non_convergence(
   }
 }
 
+///|
 pub fn LinearAlgebraError::is_arithmetic_failure(
   self : LinearAlgebraError,
 ) -> Bool {

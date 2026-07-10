@@ -1,4 +1,5 @@
 ///|
+
 ///|
 fn[T : @lf_alg.Zero + Add + Mul] dot_immut_vectors(
   left : @immut.Vector[T],

@@ -16,10 +16,17 @@ native OpenBLAS 后端，并把代码、文档和 CI 的发布基线统一到同
 
 ## 分层架构
 
+> **实验性功能：** `algebra` 与 `container` 能力层目前用于接入试验和收集生态反馈；
+> 它们的 trait 层级、操作字典、错误契约和函数签名尚未承诺兼容性稳定。下游库暂时不应
+> 把这两个包作为稳定的公开兼容边界。`immut`、`mutable` 和各后端仅仅因为实现或适配
+> 这些能力，并不会因此整体变成实验性 API。
+
 - **`arithmetic`**：面向线性代数的操作能力层。它复用
   `Luna-Flow/luna-generic` 和 `Luna-Flow/arithmetic` 中的标量操作 trait，
   并在需要时补充只表达“可进行某类操作”的 trait。
 - **`algebra`**：数学结构能力层。它只定义线性代数自己拥有的结构 trait。
+- **`container`**：与存储无关的 read/build、持久编辑和可变编辑操作字典，以及
+  map、转换和转置算法。具体适配器位于 `container/adapters`。
 - **`backends/default`**：参考稠密后端层。它公开可变稠密包装类型
   `DenseVector` / `DenseMatrix`，以及不可变稠密包装类型
   `ImmutableDenseVector` / `ImmutableDenseMatrix`。
@@ -60,7 +67,8 @@ native OpenBLAS 后端，并把代码、文档和 CI 的发布基线统一到同
 - **数学库 / 通用算法开发者**：
   建议按这个顺序阅读：
   [arithmetic](./arithmetic/api.md) ->
-  [algebra](./algebra/api.md) ->
+  [algebra](./algebra/integration.md) ->
+  [container](./container/integration.md) ->
   [backends/default](./backends/default/api.md) ->
   [backends/openblas](./backends/openblas/api.md) ->
   [immut / mutable](./immut/matrix/api.md)。
@@ -84,6 +92,11 @@ native OpenBLAS 后端，并把代码、文档和 CI 的发布基线统一到同
 - **能力层与后端层**：
   [arithmetic API](./arithmetic/api.md)、
   [algebra API](./algebra/api.md)、
+  [algebra 生态接入](./algebra/integration.md)、
+  [algebra 教程](./algebra/tutorial.md)、
+  [container API](./container/api.md)、
+  [container 教程](./container/tutorial.md)、
+  [container 生态接入](./container/integration.md)、
   [backends/default API](./backends/default/api.md)、
   [backends/openblas API](./backends/openblas/api.md)、
   [backends/openblas 教程](./backends/openblas/tutorial.md)、
@@ -111,7 +124,7 @@ moon add Luna-Flow/arithmetic@0.2.2
 
 推荐的 `moon.pkg` 导入写法：
 
-```moonbit
+```moonbit nocheck
 import {
   "Luna-Flow/linear-algebra/algebra",
   "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,

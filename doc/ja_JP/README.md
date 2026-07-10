@@ -18,11 +18,20 @@
 
 ## レイヤードアーキテクチャ
 
+> **実験的機能:** `algebra` と `container` の能力層は、接続実験と
+> エコシステムからのフィードバック収集を目的として提供しています。trait 階層、
+> 操作辞書、エラー契約、関数シグネチャの互換性はまだ安定していません。下流ライブラリは、
+> 現時点でこれらのパッケージを安定した公開互換境界として扱わないでください。
+> `immut`、`mutable`、各バックエンドは、これらの能力を実装または適合するという理由だけで
+> 実験的 API になるわけではありません。
+
 - **`arithmetic`**: 線形代数向けの操作能力層です。
   `Luna-Flow/luna-generic` と `Luna-Flow/arithmetic` のスカラー操作 trait を
   再利用し、必要に応じて操作可否だけを表す trait を補います。
 - **`algebra`**: 数学的構造の能力層です。線形代数が自前で持つ構造 trait だけを
   定義します。
+- **`container`**: ストレージ非依存の read/build、永続編集、可変編集の操作辞書と、
+  map、変換、転置アルゴリズムです。具象アダプタは `container/adapters` にあります。
 - **`backends/default`**: 参照用の密バックエンド層です。可変の密ラッパー
   `DenseVector` / `DenseMatrix` と、不変の密ラッパー
   `ImmutableDenseVector` / `ImmutableDenseMatrix` を公開します。
@@ -66,7 +75,8 @@ OpenBLAS による native 行列乗算やベクトル BLAS カーネルが必要
 - **数学ライブラリ / 汎用アルゴリズム開発者**:
   次の順番で読むのがおすすめです。
   [arithmetic](./arithmetic/api.md) ->
-  [algebra](./algebra/api.md) ->
+  [algebra](./algebra/integration.md) ->
+  [container](./container/integration.md) ->
   [backends/default](./backends/default/api.md) ->
   [backends/openblas](./backends/openblas/api.md) ->
   [immut / mutable](./immut/matrix/api.md)。
@@ -89,6 +99,11 @@ OpenBLAS による native 行列乗算やベクトル BLAS カーネルが必要
 - **能力層とバックエンド層**:
   [arithmetic API](./arithmetic/api.md),
   [algebra API](./algebra/api.md),
+  [algebra エコシステム接続](./algebra/integration.md),
+  [algebra tutorial](./algebra/tutorial.md),
+  [container API](./container/api.md),
+  [container tutorial](./container/tutorial.md),
+  [container エコシステム接続](./container/integration.md),
   [backends/default API](./backends/default/api.md),
   [backends/openblas API](./backends/openblas/api.md),
   [backends/openblas tutorial](./backends/openblas/tutorial.md),
@@ -117,7 +132,7 @@ moon add Luna-Flow/arithmetic@0.2.2
 
 推奨される `moon.pkg` の import 例:
 
-```moonbit
+```moonbit nocheck
 import {
   "Luna-Flow/linear-algebra/algebra",
   "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,

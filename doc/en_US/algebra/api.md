@@ -3,6 +3,15 @@
 API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.4.6`
 repository state.
 
+## Experimental Status
+
+`algebra` is an experimental feature. It is ready for backend-integration
+experiments and feedback, but its trait hierarchy, supertrait requirements,
+operator commitments, and function signatures may change incompatibly before
+stabilization. Downstream libraries should depend on the smallest capability
+they need and should not re-export this package as a compatibility-stable
+public boundary yet.
+
 ## Purpose
 
 `algebra` owns the linear-algebra structure traits. Backend packages implement
@@ -10,6 +19,10 @@ these traits for their own concrete data types. The traits in this package are
 split by the minimum capability they require so generic algorithms do not
 accidentally depend on Hadamard multiplication, matrix multiplication, or exact
 floating-point field laws.
+
+External type authors should start with the
+[ecosystem integration guide](./integration.md) to select the smallest valid
+trait level and understand its operator commitments.
 
 ## Project Setup
 

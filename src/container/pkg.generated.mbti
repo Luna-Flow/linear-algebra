@@ -1,0 +1,66 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/linear-algebra/container"
+
+import {
+  "Luna-Flow/linear-algebra/error",
+}
+
+// Values
+pub fn[M1, M2, T] matrix_convert(M1, MatrixReadOps[M1, T], MatrixBuildOps[M2, T]) -> Result[M2, @error.LinearAlgebraError]
+
+pub fn[M1, M2, A, B] matrix_map(M1, MatrixReadOps[M1, A], MatrixBuildOps[M2, B], (A) -> B) -> Result[M2, @error.LinearAlgebraError]
+
+pub fn[M1, M2, T] matrix_transpose(M1, MatrixReadOps[M1, T], MatrixBuildOps[M2, T]) -> Result[M2, @error.LinearAlgebraError]
+
+pub fn[V1, V2, T] vector_convert(V1, VectorReadOps[V1, T], VectorBuildOps[V2, T]) -> Result[V2, @error.LinearAlgebraError]
+
+pub fn[V1, V2, A, B] vector_map(V1, VectorReadOps[V1, A], VectorBuildOps[V2, B], (A) -> B) -> Result[V2, @error.LinearAlgebraError]
+
+// Errors
+
+// Types and methods
+pub struct MatrixBuildOps[M, T] {
+  tabulate : (Int, Int, (Int, Int) -> T) -> Result[M, @error.LinearAlgebraError]
+}
+pub fn[M, T] MatrixBuildOps::new((Int, Int, (Int, Int) -> T) -> Result[M, @error.LinearAlgebraError]) -> Self[M, T]
+
+pub struct MatrixMutableEditOps[M, T] {
+  set : (M, Int, Int, T) -> Result[Unit, @error.LinearAlgebraError]
+}
+pub fn[M, T] MatrixMutableEditOps::new((M, Int, Int, T) -> Result[Unit, @error.LinearAlgebraError]) -> Self[M, T]
+
+pub struct MatrixPersistentEditOps[M, T] {
+  set : (M, Int, Int, T) -> Result[M, @error.LinearAlgebraError]
+}
+pub fn[M, T] MatrixPersistentEditOps::new((M, Int, Int, T) -> Result[M, @error.LinearAlgebraError]) -> Self[M, T]
+
+pub struct MatrixReadOps[M, T] {
+  shape : (M) -> (Int, Int)
+  get : (M, Int, Int) -> Result[T, @error.LinearAlgebraError]
+}
+pub fn[M, T] MatrixReadOps::new((M) -> (Int, Int), (M, Int, Int) -> Result[T, @error.LinearAlgebraError]) -> Self[M, T]
+
+pub struct VectorBuildOps[V, T] {
+  tabulate : (Int, (Int) -> T) -> Result[V, @error.LinearAlgebraError]
+}
+pub fn[V, T] VectorBuildOps::new((Int, (Int) -> T) -> Result[V, @error.LinearAlgebraError]) -> Self[V, T]
+
+pub struct VectorMutableEditOps[V, T] {
+  set : (V, Int, T) -> Result[Unit, @error.LinearAlgebraError]
+}
+pub fn[V, T] VectorMutableEditOps::new((V, Int, T) -> Result[Unit, @error.LinearAlgebraError]) -> Self[V, T]
+
+pub struct VectorPersistentEditOps[V, T] {
+  set : (V, Int, T) -> Result[V, @error.LinearAlgebraError]
+}
+pub fn[V, T] VectorPersistentEditOps::new((V, Int, T) -> Result[V, @error.LinearAlgebraError]) -> Self[V, T]
+
+pub struct VectorReadOps[V, T] {
+  length : (V) -> Int
+  get : (V, Int) -> Result[T, @error.LinearAlgebraError]
+}
+pub fn[V, T] VectorReadOps::new((V) -> Int, (V, Int) -> Result[T, @error.LinearAlgebraError]) -> Self[V, T]
+
+// Type aliases
+
+// Traits

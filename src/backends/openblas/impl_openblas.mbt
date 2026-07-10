@@ -12,10 +12,7 @@ fn[T] transpose_data(
 }
 
 ///|
-fn[T] map_data(
-  data : FixedArray[T],
-  f : (T) -> T,
-) -> FixedArray[T] {
+fn[T] map_data(data : FixedArray[T], f : (T) -> T) -> FixedArray[T] {
   FixedArray::makei(data.length(), fn(i) { f(data[i]) })
 }
 
@@ -34,7 +31,9 @@ pub impl[T] @algebra.VectorShape for BlasVector[T] with fn length(self) {
 }
 
 ///|
-pub impl[T : BLASInnerType + Show] Show for BlasVector[T] with fn to_string(self) {
+pub impl[T : BLASInnerType + Show] Show for BlasVector[T] with fn to_string(
+  self,
+) {
   self.to_immut().to_string()
 }
 
@@ -117,21 +116,19 @@ pub fn[T : BLASInnerType] BlasVector::axpy(
 }
 
 ///|
-pub impl[T] @internal.HasShape for BlasMatrix[T] with fn shape(
-  self,
-) {
+pub impl[T] @internal.HasShape for BlasMatrix[T] with fn shape(self) {
   (self.row, self.col)
 }
 
 ///|
-pub impl[T] @algebra.MatrixShape for BlasMatrix[T] with fn shape(
-  self,
-) {
+pub impl[T] @algebra.MatrixShape for BlasMatrix[T] with fn shape(self) {
   (self.row, self.col)
 }
 
 ///|
-pub impl[T : BLASInnerType + Show] Show for BlasMatrix[T] with fn to_string(self) {
+pub impl[T : BLASInnerType + Show] Show for BlasMatrix[T] with fn to_string(
+  self,
+) {
   self.to_immut().to_string()
 }
 

@@ -1,11 +1,17 @@
 import {
-  "Kaida-Amethyst/openblas/cblas" @cblas,
+  "Kaida-Amethyst/openblas/cblas",
   "Luna-Flow/linear-algebra/algebra",
   "Luna-Flow/linear-algebra/backends/default",
+  "Luna-Flow/linear-algebra/container",
+  "Luna-Flow/linear-algebra/error" @la_error,
   "Luna-Flow/linear-algebra/immut",
   "Luna-Flow/linear-algebra/internal",
   "Luna-Flow/luna-generic" @lf_alg,
 }
+
+import {
+  "Luna-Flow/linear-algebra/container/adapters" @container_adapters,
+} for "wbtest"
 
 supported_targets = "native"
 

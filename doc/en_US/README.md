@@ -19,6 +19,14 @@ For earlier release notes and repository history, see
 
 ## Layered Architecture
 
+> **Experimental features:** The `algebra` and `container` capability layers
+> are available for integration experiments and ecosystem feedback, but their
+> trait hierarchy, operation dictionaries, error contracts, and function
+> signatures are not yet compatibility-stable. Downstream libraries should
+> not use these packages as stable public boundaries yet. This status does not
+> make the concrete `immut`, `mutable`, or backend APIs experimental merely
+> because they implement or adapt these capabilities.
+
 - **`arithmetic`**: Linear-algebra-facing operation capabilities. It reuses
   scalar operation traits from `Luna-Flow/luna-generic` and
   `Luna-Flow/arithmetic`, and adds operation-only traits where needed.
@@ -122,7 +130,7 @@ moon add Luna-Flow/arithmetic@0.2.2
 
 Recommended `moon.pkg` imports:
 
-```moonbit
+```moonbit nocheck
 import {
   "Luna-Flow/linear-algebra/algebra",
   "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,

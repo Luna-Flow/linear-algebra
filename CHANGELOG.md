@@ -4,6 +4,27 @@ All notable repository-release changes are tracked here. The main
 [`README.md`](./README.md) stays focused on the current baseline and entry
 points; older release history lives in this file.
 
+## 0.4.7
+
+### Added
+
+- Added storage-independent vector and matrix read, build, persistent-edit,
+  and mutable-edit operation dictionaries in the new `container` layer.
+- Added backend-independent vector/matrix map, conversion, and matrix transpose
+  algorithms with adapters for immutable, mutable, default dense, view, and
+  natural OpenBLAS read/build capabilities.
+- Documented capability-by-capability ecosystem adoption, adapter ownership,
+  and the boundaries between structural, editing, mathematical, and future
+  kernel integration.
+- Added algebra integration levels covering shape, additive, transpose,
+  Hadamard, and matrix-multiplication traits, including operator and ownership
+  boundaries for external type authors.
+
+### Changed
+
+- Expanded the default test gate to cover `container`, `container/adapters`,
+  and `backends/default` across Wasm GC, JavaScript, native, and Wasm targets.
+
 ## 0.4.6 - 2026-07-09
 
 Current repository release.

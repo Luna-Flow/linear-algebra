@@ -8,6 +8,7 @@ fn[V : @algebra.VecMulVector] vector_mul(left : V, right : V) -> V {
   left * right
 }
 
+///|
 test "default backend exposes mutable and immutable dense matrix shapes" {
   let mutable_matrix : DenseMatrix[Int] = DenseMatrix::from_2d_array([
     [1, 2],

@@ -1,0 +1,1 @@
+../../doc/ja_JP/container/integration.md

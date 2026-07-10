@@ -1,27 +1,17 @@
 ///|
 /// Numeric scalars backed by OpenBLAS GEMM kernels.
-pub trait BLASInnerType : Add + Neg + Mul + Compare + @lf_alg.Zero {
+pub trait BLASInnerType: Add + Neg + Mul + Compare + @lf_alg.Zero {
   fn tolerance() -> Self
-
-  fn dot(
-    length : Int,
-    left : FixedArray[Self],
-    right : FixedArray[Self],
-  ) -> Self
-
-  fn scal(
-    length : Int,
-    alpha : Self,
-    data : FixedArray[Self],
-  ) -> FixedArray[Self]
-
+  fn dot(length : Int, left : FixedArray[Self], right : FixedArray[Self]) -> Self
+  fn scal(length : Int, alpha : Self, data : FixedArray[Self]) -> FixedArray[
+    Self,
+  ]
   fn axpy(
     length : Int,
     alpha : Self,
     x : FixedArray[Self],
     y : FixedArray[Self],
   ) -> FixedArray[Self]
-
   fn gemm(
     m : Int,
     n : Int,
@@ -29,7 +19,6 @@ pub trait BLASInnerType : Add + Neg + Mul + Compare + @lf_alg.Zero {
     left : FixedArray[Self],
     right : FixedArray[Self],
   ) -> FixedArray[Self]
-
   fn gemv(
     row : Int,
     col : Int,
@@ -61,9 +50,7 @@ fn[T] BlasVector::from_backend(
   length : Int,
   data : FixedArray[T],
 ) -> BlasVector[T] {
-  guard length >= 0 else {
-    abort("Vector length must be non-negative")
-  }
+  guard length >= 0 else { abort("Vector length must be non-negative") }
   guard data.length() == length else {
     abort("Vector data length does not match shape")
   }
@@ -90,7 +77,10 @@ pub fn[T : BLASInnerType] BlasVector::from_immut(
   inner : @immut.Vector[T],
 ) -> BlasVector[T] {
   ignore(T::tolerance())
-  { length: inner.length(), data: FixedArray::from_array(inner.iter().to_array()) }
+  {
+    length: inner.length(),
+    data: FixedArray::from_array(inner.iter().to_array()),
+  }
 }
 
 ///|
@@ -101,7 +91,9 @@ pub fn[T : BLASInnerType] BlasVector::from_default(
 }
 
 ///|
-pub fn[T : BLASInnerType] BlasVector::from_array(data : Array[T]) -> BlasVector[T] {
+pub fn[T : BLASInnerType] BlasVector::from_array(
+  data : Array[T],
+) -> BlasVector[T] {
   ignore(T::tolerance())
   let fixed = FixedArray::from_array(data)
   { length: fixed.length(), data: fixed }
@@ -248,13 +240,7 @@ pub impl BLASInnerType for Float with fn axpy(length, alpha, x, y) {
 }
 
 ///|
-pub impl BLASInnerType for Float with fn gemm(
-  m,
-  n,
-  k,
-  left,
-  right,
-) {
+pub impl BLASInnerType for Float with fn gemm(m, n, k, left, right) {
   let output = FixedArray::make(m * n, 0.0F)
   @cblas.cblas_sgemm(
     @cblas.CblasRowMajor,
@@ -320,13 +306,7 @@ pub impl BLASInnerType for Double with fn axpy(length, alpha, x, y) {
 }
 
 ///|
-pub impl BLASInnerType for Double with fn gemm(
-  m,
-  n,
-  k,
-  left,
-  right,
-) {
+pub impl BLASInnerType for Double with fn gemm(m, n, k, left, right) {
   let output = FixedArray::make(m * n, 0.0)
   @cblas.cblas_dgemm(
     @cblas.CblasRowMajor,

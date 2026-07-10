@@ -1,0 +1,78 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/linear-algebra/container/adapters"
+
+import {
+  "Luna-Flow/linear-algebra/backends/default",
+  "Luna-Flow/linear-algebra/container",
+  "Luna-Flow/linear-algebra/immut",
+  "Luna-Flow/linear-algebra/mutable",
+}
+
+// Values
+pub fn[T] dense_matrix_build_ops() -> @container.MatrixBuildOps[@default.DenseMatrix[T], T]
+
+pub fn[T] dense_matrix_mutable_edit_ops() -> @container.MatrixMutableEditOps[@default.DenseMatrix[T], T]
+
+pub fn[T] dense_matrix_read_ops() -> @container.MatrixReadOps[@default.DenseMatrix[T], T]
+
+pub fn[T] dense_vector_build_ops() -> @container.VectorBuildOps[@default.DenseVector[T], T]
+
+pub fn[T] dense_vector_mutable_edit_ops() -> @container.VectorMutableEditOps[@default.DenseVector[T], T]
+
+pub fn[T] dense_vector_read_ops() -> @container.VectorReadOps[@default.DenseVector[T], T]
+
+pub fn[T] immutable_dense_matrix_build_ops() -> @container.MatrixBuildOps[@default.ImmutableDenseMatrix[T], T]
+
+pub fn[T] immutable_dense_matrix_persistent_edit_ops() -> @container.MatrixPersistentEditOps[@default.ImmutableDenseMatrix[T], T]
+
+pub fn[T] immutable_dense_matrix_read_ops() -> @container.MatrixReadOps[@default.ImmutableDenseMatrix[T], T]
+
+pub fn[T] immutable_dense_vector_build_ops() -> @container.VectorBuildOps[@default.ImmutableDenseVector[T], T]
+
+pub fn[T] immutable_dense_vector_persistent_edit_ops() -> @container.VectorPersistentEditOps[@default.ImmutableDenseVector[T], T]
+
+pub fn[T] immutable_dense_vector_read_ops() -> @container.VectorReadOps[@default.ImmutableDenseVector[T], T]
+
+pub fn[T] immutable_matrix_build_ops() -> @container.MatrixBuildOps[@immut.Matrix[T], T]
+
+pub fn[T] immutable_matrix_persistent_edit_ops() -> @container.MatrixPersistentEditOps[@immut.Matrix[T], T]
+
+pub fn[T] immutable_matrix_read_ops() -> @container.MatrixReadOps[@immut.Matrix[T], T]
+
+pub fn[T] immutable_vector_build_ops() -> @container.VectorBuildOps[@immut.Vector[T], T]
+
+pub fn[T] immutable_vector_persistent_edit_ops() -> @container.VectorPersistentEditOps[@immut.Vector[T], T]
+
+pub fn[T] immutable_vector_read_ops() -> @container.VectorReadOps[@immut.Vector[T], T]
+
+pub fn[T] mutable_col_view_mutable_edit_ops() -> @container.VectorMutableEditOps[@mutable.ColView[T], T]
+
+pub fn[T] mutable_col_view_read_ops() -> @container.VectorReadOps[@mutable.ColView[T], T]
+
+pub fn[T] mutable_matrix_build_ops() -> @container.MatrixBuildOps[@mutable.Matrix[T], T]
+
+pub fn[T] mutable_matrix_mutable_edit_ops() -> @container.MatrixMutableEditOps[@mutable.Matrix[T], T]
+
+pub fn[T] mutable_matrix_read_ops() -> @container.MatrixReadOps[@mutable.Matrix[T], T]
+
+pub fn[T] mutable_row_view_mutable_edit_ops() -> @container.VectorMutableEditOps[@mutable.RowView[T], T]
+
+pub fn[T] mutable_row_view_read_ops() -> @container.VectorReadOps[@mutable.RowView[T], T]
+
+pub fn[T] mutable_transpose_mutable_edit_ops() -> @container.MatrixMutableEditOps[@mutable.Transpose[T], T]
+
+pub fn[T] mutable_transpose_read_ops() -> @container.MatrixReadOps[@mutable.Transpose[T], T]
+
+pub fn[T] mutable_vector_build_ops() -> @container.VectorBuildOps[@mutable.Vector[T], T]
+
+pub fn[T] mutable_vector_mutable_edit_ops() -> @container.VectorMutableEditOps[@mutable.Vector[T], T]
+
+pub fn[T] mutable_vector_read_ops() -> @container.VectorReadOps[@mutable.Vector[T], T]
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits

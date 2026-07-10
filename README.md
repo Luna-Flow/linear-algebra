@@ -35,6 +35,15 @@ For earlier release notes and repository history, see
 The checked `0.4.x` line keeps runtime matrix failures explicit and exposes the
 first layered capability packages for backend-independent linear algebra code.
 
+> **Experimental features:** The `algebra` and `container` capability layers
+> are available for integration experiments and ecosystem feedback, but their
+> trait hierarchy, operation dictionaries, error contracts, and function
+> signatures are not yet stable. Downstream libraries should not treat these
+> packages as compatibility-stable public boundaries until they graduate from
+> experimental status. The concrete `immut`, `mutable`, and backend APIs are
+> not covered by this experimental designation solely because they implement
+> or provide adapters for these layers.
+
 - **`arithmetic`**: Linear-algebra-facing operation capabilities. It reuses
   scalar operation traits from `Luna-Flow/luna-generic` and
   `Luna-Flow/arithmetic`, and adds small operation-only traits such as
@@ -42,6 +51,9 @@ first layered capability packages for backend-independent linear algebra code.
 - **`algebra`**: Semantic mathematical structure capabilities. It defines only
   the linear-algebra-owned structure traits such as `MatrixShape`,
   `AdditiveVector`, `TransposeMatrix`, and `MatMulMatrix`.
+- **`container`**: Storage-independent read, build, persistent-edit, and
+  mutable-edit operation dictionaries, plus generic map, conversion, and
+  transpose algorithms. Concrete adapters live in `container/adapters`.
 - **`backends/default`**: The reference dense backend layer. It exposes wrapper
   types `DenseVector` / `DenseMatrix` over `mutable`, and
   `ImmutableDenseVector` / `ImmutableDenseMatrix` over `immut`, plus backend
@@ -189,7 +201,8 @@ test "linear-algebra basic workflow" {
   small games, and visualization logic.
 - **Math library / general algorithm developers**: Read in this order:
   [`arithmetic`](./doc/en_US/arithmetic/api.md) ->
-  [`algebra`](./doc/en_US/algebra/api.md) ->
+  [`algebra`](./doc/en_US/algebra/integration.md) ->
+  [`container`](./doc/en_US/container/integration.md) ->
   [`backends/default`](./doc/en_US/backends/default/api.md) ->
   [`backends/openblas`](./doc/en_US/backends/openblas/api.md) ->
   [`immut` / `mutable`](./doc/en_US/immut/matrix/api.md). Start from operation
@@ -214,6 +227,11 @@ test "linear-algebra basic workflow" {
 - **Capability and backend layers**:
   [`arithmetic` API](./doc/en_US/arithmetic/api.md),
   [`algebra` API](./doc/en_US/algebra/api.md),
+  [`algebra` ecosystem integration](./doc/en_US/algebra/integration.md),
+  [`algebra` tutorial](./doc/en_US/algebra/tutorial.md),
+  [`container` API](./doc/en_US/container/api.md),
+  [`container` tutorial](./doc/en_US/container/tutorial.md),
+  [`container` ecosystem integration](./doc/en_US/container/integration.md),
   [`backends/default` API](./doc/en_US/backends/default/api.md),
   [`backends/openblas` API](./doc/en_US/backends/openblas/api.md),
   [`backends/openblas` tutorial](./doc/en_US/backends/openblas/tutorial.md),
@@ -268,8 +286,10 @@ moon test --enable-coverage
 LINEAR_ALGEBRA_TEST_BENCH=1 ./run_test.sh
 ```
 
-`run_test.sh` runs the default repository gate: `immut`, `consistency`, and
-`mutable` on `wasm-gc`, `js`, `native`, and `wasm`.
+`run_test.sh` runs the default repository gate: `immut`, `consistency`,
+`container`, `container/adapters`, `backends/default`, and `mutable`, with the
+container, default-backend, and mutable packages covered on `wasm-gc`, `js`,
+`native`, and `wasm`.
 
 `perf_support` and `perf_runner` stay opt-in for local fixture-recovery checks
 and performance diagnostics. Run them explicitly with `moon test -p ...` or use

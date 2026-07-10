@@ -1,5 +1,9 @@
 # algebra Design
 
+For external adoption levels, operator semantics, implementation ownership,
+and the relationship with container dictionaries, see the
+[ecosystem integration guide](./integration.md).
+
 ## Responsibilities
 
 - Represent semantic mathematical structures used by linear algebra.
