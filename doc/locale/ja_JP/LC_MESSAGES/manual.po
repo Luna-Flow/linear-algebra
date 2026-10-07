@@ -1,0 +1,2997 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Luna-Flow documentation\n"
+"Report-Msgid-Bugs-To: https://github.com/Luna-Flow\n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: conf.json:summary
+msgid "Trait-oriented linear algebra foundations for MoonBit, with checked APIs, backend wrappers, and mutable/immutable dense matrix and vector types."
+msgstr "MoonBit 向けの trait 指向の線形代数基盤。検査付き API、バックエンドラッパー、可変・不変の密行列とベクトル型を提供します。"
+
+#: manual/api/algebra.md:3
+msgid "API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.4.7` repository state."
+msgstr "このページは、現在の `0.4.7` リポジトリにおける `Luna-Flow/linear-algebra/algebra` の公開 API 基準をまとめたものです。"
+
+#: manual/api/algebra.md:6
+#: manual/api/container.md:7
+msgid "Experimental status"
+msgstr "実験的ステータス"
+
+#: manual/api/algebra.md:8
+msgid "`algebra` is an experimental feature. It is ready for backend-integration experiments and feedback, but its trait hierarchy, supertrait requirements, operator commitments, and function signatures may change incompatibly before stabilization. Downstream libraries should depend on the smallest capability they need and should not re-export this package as a compatibility-stable public boundary yet."
+msgstr "`algebra` は実験的機能です。バックエンド接続の試行とフィードバック収集には利用できますが、 trait 階層、親 trait の要件、演算子の契約、関数シグネチャは、安定化までに互換性なく変更される可能性があります。下流ライブラリは必要最小限の能力だけに依存し、現時点ではこのパッケージを互換性の安定した公開境界として再公開しないでください。"
+
+#: manual/api/algebra.md:15
+#: manual/api/arithmetic.md:6
+#: manual/api/backends/default.md:6
+#: manual/api/backends/openblas.md:6
+#: manual/api/error.md:6
+msgid "Purpose"
+msgstr "目的"
+
+#: manual/api/algebra.md:17
+msgid "`algebra` owns the linear-algebra structure traits. Backend packages implement these traits for their own concrete data types. The traits in this package are split by the minimum capability they require so generic algorithms do not accidentally depend on Hadamard multiplication, matrix multiplication, or exact floating-point field laws."
+msgstr "`algebra` は線形代数の構造を表す trait を提供します。各バックエンドパッケージは、自分が所有する具体データ型に対してこれらの trait を実装します。trait は必要最小限の能力ごとに分かれているため、汎用アルゴリズムが意図せずアダマール積、行列積、または厳密な浮動小数点体の法則に依存することを避けられます。"
+
+#: manual/api/algebra.md:23
+msgid "External type authors should start with the [ecosystem integration guide](../integration/algebra.md) to select the smallest valid trait level and understand its operator commitments."
+msgstr "外部型の作者は、最小の trait レベルと演算子の約束を選ぶため、まず [エコシステム接続ガイド](../integration/algebra.md) を参照してください。"
+
+#: manual/api/algebra.md:27
+#: manual/api/arithmetic.md:12
+#: manual/tutorial/algebra.md:3
+#: manual/tutorial/arithmetic.md:3
+msgid "Project setup"
+msgstr "プロジェクト設定"
+
+#: manual/api/algebra.md:29
+msgid "`algebra` is the structure layer only. If you also need the shared upstream scalar abstractions, add them explicitly:"
+msgstr "`algebra` は構造層だけを担当します。共有の上流スカラー抽象も直接使うなら、依存をまとめて追加してください。"
+
+#: manual/api/algebra.md:38
+#: manual/api/arithmetic.md:23
+#: manual/index.md:111
+#: manual/tutorial/algebra.md:14
+#: manual/tutorial/arithmetic.md:13
+msgid "Recommended `moon.pkg` imports:"
+msgstr "推奨される `moon.pkg` の import 例:"
+
+#: manual/api/algebra.md:49
+msgid "Use `@algebra` for linear-algebra structure traits. Import `@lf_alg` and `@lf_arith` directly when your code also needs the shared upstream abstractions."
+msgstr "線形代数の構造 trait には `@algebra` を使い、共有の上流抽象が必要なときだけ `@lf_alg` と `@lf_arith` を直接参照します。"
+
+#: manual/api/algebra.md:52
+msgid "Matrix shape traits"
+msgstr "行列形状 trait"
+
+#: manual/api/algebra.md:87
+msgid "`MatrixShape` is for matrix-like or tensor-like objects with observable dimensions. `VectorShape` is for vector-like objects with observable length. These traits do not claim any algebraic operation."
+msgstr "`MatrixShape` は二次元の形状を観測できる値、`VectorShape` は長さを観測できるベクトル状の値を表します。これらは代数演算の存在を主張しません。"
+
+#: manual/api/algebra.md:136
+msgid "Represents vector-like objects with additive linear structure. It does not require element-wise multiplication, dot product, norm, or a global zero."
+msgstr "加法的な線形構造を持つベクトル状の値を表します。要素ごとの乗算、内積、ノルム、大域的な零元は要求しません。"
+
+#: manual/api/algebra.md:139
+msgid "Reach for `VecMulVector` only when an algorithm really needs element-wise multiplication:"
+msgstr "アルゴリズムが要素ごとの乗算を本当に必要とする場合だけ、`VecMulVector` を使います。"
+
+#: manual/api/algebra.md:225
+msgid "Represents matrix-like objects with observable shape and same-category transpose. It does not require matrix multiplication because dynamic rectangular matrix multiplication is only defined for compatible runtime shapes."
+msgstr "形状と同じ型への転置を持つ行列状の値を表します。行列積は要求しません。動的な矩形行列の乗算は、実行時の形状が適合する場合にだけ定義される部分操作だからです。"
+
+#: manual/api/algebra.md:229
+msgid "The trait does not require dense storage, contiguous memory, direct element indexing, or mutation support."
+msgstr "この trait は、密な保存形式、連続メモリ、直接の要素インデックス、可変操作も要求しません。"
+
+#: manual/api/algebra.md:232
+msgid "Use the stronger traits only when the algorithm actually needs the extra operation:"
+msgstr "追加の演算が本当に必要なアルゴリズムだけ、より強い trait を使います。"
+
+#: manual/api/algebra.md:291
+#: manual/api/arithmetic.md:153
+#: manual/api/backends/default.md:194
+#: manual/api/backends/openblas.md:148
+#: manual/api/error.md:88
+msgid "Boundary"
+msgstr "境界"
+
+#: manual/api/algebra.md:293
+msgid "Do not add `dot`, `norm`, or inner-product traits here unless the scalar mapping is modeled explicitly. The core algebra package is for minimal structure and same-category operations."
+msgstr "スカラー写像を明示的にモデル化しない限り、`dot`、`norm`、内積の trait はここに追加しません。中核の algebra パッケージは、最小構造と同じ型に閉じた演算のためのものです。"
+
+#: manual/api/arithmetic.md:3
+msgid "API baseline for `Luna-Flow/linear-algebra/arithmetic` in the current `0.4.7` repository state."
+msgstr "このページは、現在の `0.4.7` リポジトリにおける `Luna-Flow/linear-algebra/arithmetic` の公開 API 基準をまとめたものです。"
+
+#: manual/api/arithmetic.md:8
+msgid "`arithmetic` owns operation-level traits used by the linear-algebra package. An operation trait means “this operation is available”; it does not state algebraic laws. Algebraic law-bearing structure belongs in `linear-algebra/algebra`."
+msgstr "`arithmetic` は線形代数パッケージで使う操作レベルの trait を提供します。ここでの trait は「その操作が利用できる」ことだけを表し、代数法則は主張しません。法則を持つ構造は `linear-algebra/algebra` に属します。"
+
+#: manual/api/arithmetic.md:14
+msgid "If you want to use the linear-algebra operation traits together with the shared upstream abstractions, start with:"
+msgstr "線形代数向けの操作 trait と共有の上流抽象を一緒に使うなら、まず次の依存を追加してください。"
+
+#: manual/api/arithmetic.md:33
+msgid "Re-exported types"
+msgstr "再公開される型"
+
+#: manual/api/arithmetic.md:35
+#: manual/api/arithmetic.md:54
+msgid "From `Luna-Flow/arithmetic`:"
+msgstr "`Luna-Flow/arithmetic` から:"
+
+#: manual/api/arithmetic.md:43
+msgid "These preserve their upstream behavior and are used by checked operations."
+msgstr "これらは上流パッケージでの意味を保ち、検査付き演算で使います。"
+
+#: manual/api/arithmetic.md:45
+msgid "Re-exported operation traits"
+msgstr "再公開される操作 trait"
+
+#: manual/api/arithmetic.md:47
+msgid "From `Luna-Flow/luna-generic`:"
+msgstr "`Luna-Flow/luna-generic` から:"
+
+#: manual/api/arithmetic.md:75
+msgid "Absolute-value operation. Implemented for:"
+msgstr "絶対値操作です。実装対象:"
+
+#: manual/api/arithmetic.md:93
+msgid "Approximate equality operation. It is an operation-level capability, not an equivalence-law claim. Implemented for:"
+msgstr "近似等価を判定する操作です。これは操作能力であり、同値関係の法則を主張するものではありません。実装対象:"
+
+#: manual/api/arithmetic.md:113
+msgid "Checked division operation using `ArithmeticContext`. Implemented for:"
+msgstr "`ArithmeticContext` を使う検査付き除算です。`Float` と `Double` に実装されています。"
+
+#: manual/api/arithmetic.md:131
+msgid "Checked square-root operation using `ArithmeticContext`. Implemented for:"
+msgstr "`ArithmeticContext` を使う検査付き平方根です。`Float` と `Double` に実装されています。"
+
+#: manual/api/arithmetic.md:148
+msgid "Checked scalar comparison. Implemented for:"
+msgstr "検査付きスカラー比較です。`Float` と `Double` に実装されています。"
+
+#: manual/api/arithmetic.md:155
+msgid "This package must not import matrix, vector, or backend types. In the dependency graph, it sits below `algebra` and all backend packages."
+msgstr "このパッケージは行列、ベクトル、バックエンド型をインポートしません。依存方向では、`algebra` とすべてのバックエンドパッケージより下位にあります。"
+
+#: manual/api/backends/default.md:3
+msgid "API baseline for `Luna-Flow/linear-algebra/backends/default` in the current `0.4.7` repository state."
+msgstr "このページは、現在の `0.4.7` リポジトリにおける `Luna-Flow/linear-algebra/backends/default` の公開 API 基準をまとめたものです。"
+
+#: manual/api/backends/default.md:8
+msgid "`backends/default` provides owned wrapper types around the existing dense `mutable` and `immut` implementations. Because these wrappers are owned by the default backend package, the package can implement the public `@algebra` traits for them without violating MoonBit's foreign trait / foreign type rule."
+msgstr "`backends/default` は、既存の密 `mutable` / `immut` 実装を包む、このパッケージ所有のラッパー型を提供します。これらのラッパー型は既定バックエンドパッケージが所有するため、MoonBit の foreign trait / foreign type ルールを破ることなく、公開 `@algebra` trait を実装できます。"
+
+#: manual/api/backends/default.md:26
+msgid "Owned wrapper for the default mutable dense vector backend."
+msgstr "既定の可変密ベクトルバックエンドを包む所有ラッパーです。"
+
+#: manual/api/backends/default.md:28
+#: manual/api/backends/default.md:76
+#: manual/api/backends/default.md:121
+#: manual/api/backends/default.md:161
+msgid "Constructors and accessors"
+msgstr "コンストラクタとアクセサ"
+
+#: manual/api/backends/default.md:30
+msgid "`DenseVector::from_backend(inner : @mutable.Vector[T]) -> DenseVector[T]` wraps an existing mutable vector."
+msgstr "`DenseVector::from_backend(inner : @mutable.Vector[T]) -> DenseVector[T]` 既存の可変ベクトルを包みます。"
+
+#: manual/api/backends/default.md:32
+msgid "`DenseVector::from_array(data : Array[T]) -> DenseVector[T]` builds a mutable dense vector from an array."
+msgstr "`DenseVector::from_array(data : Array[T]) -> DenseVector[T]` 配列から可変密ベクトルを構築します。"
+
+#: manual/api/backends/default.md:34
+msgid "`DenseVector::make(length : Int, value : T) -> DenseVector[T]` builds a vector filled with `value`."
+msgstr "`DenseVector::make(length : Int, value : T) -> DenseVector[T]` 全要素が `value` のベクトルを構築します。"
+
+#: manual/api/backends/default.md:36
+msgid "`DenseVector::inner(self) -> @mutable.Vector[T]` returns the wrapped mutable vector."
+msgstr "`DenseVector::inner(self) -> @mutable.Vector[T]` 内部の可変ベクトルを返します。"
+
+#: manual/api/backends/default.md:38
+msgid "`DenseVector::length(self) -> Int` returns vector length."
+msgstr "`DenseVector::length(self) -> Int` ベクトル長を返します。"
+
+#: manual/api/backends/default.md:40
+msgid "`DenseVector::op_get(self, index : Int) -> T` supports read indexing."
+msgstr "`DenseVector::op_get(self, index : Int) -> T` 読み取りインデックスアクセスを提供します。"
+
+#: manual/api/backends/default.md:43
+#: manual/api/backends/default.md:91
+#: manual/api/backends/default.md:130
+#: manual/api/backends/default.md:170
+#: manual/api/backends/openblas.md:82
+#: manual/api/backends/openblas.md:125
+msgid "Backend methods"
+msgstr "バックエンドメソッド"
+
+#: manual/api/backends/default.md:45
+msgid "`DenseVector::scale(self, scalar : T) -> DenseVector[T]` scales the vector element-wise and returns a new backend value."
+msgstr "`DenseVector::scale(self, scalar : T) -> DenseVector[T]` ベクトルを要素ごとにスケールし、新しい既定バックエンド値を返します。"
+
+#: manual/api/backends/default.md:47
+msgid "`DenseVector::dot(self, other : DenseVector[T]) -> T` computes the scalar dot product."
+msgstr "`DenseVector::dot(self, other : DenseVector[T]) -> T` スカラーのドット積を計算します。"
+
+#: manual/api/backends/default.md:49
+msgid "`DenseVector::axpy(self, alpha : T, other : DenseVector[T]) -> DenseVector[T]` computes the BLAS-style linear combination `alpha * self + other`."
+msgstr "`DenseVector::axpy(self, alpha : T, other : DenseVector[T]) -> DenseVector[T]` BLAS 風の `alpha * self + other` を計算します。"
+
+#: manual/api/backends/default.md:52
+#: manual/api/backends/default.md:97
+#: manual/api/backends/default.md:136
+#: manual/api/backends/default.md:176
+#: manual/api/backends/openblas.md:130
+msgid "Trait implementations"
+msgstr "trait 実装"
+
+#: manual/api/backends/default.md:54
+#: manual/api/backends/default.md:99
+#: manual/api/backends/default.md:138
+#: manual/api/backends/default.md:178
+msgid "`Add`, `Neg`, `Sub`, and `Mul` with the matching element-level operation constraints."
+msgstr "`Add`、`Neg`、`Sub`、`Mul`。対応する要素演算の制約付きです。"
+
+#: manual/api/backends/default.md:56
+#: manual/api/backends/default.md:140
+msgid "`@algebra.VectorShape` for all `T`"
+msgstr "任意の `T` に対する `@algebra.VectorShape`"
+
+#: manual/api/backends/default.md:57
+#: manual/api/backends/default.md:141
+msgid "`@algebra.AdditiveVector` when `T : Add + Neg`"
+msgstr "`T : Add + Neg` のときの `@algebra.AdditiveVector`"
+
+#: manual/api/backends/default.md:58
+#: manual/api/backends/default.md:142
+msgid "`@algebra.VecMulVector` when `T : Add + Neg + Mul`"
+msgstr "`T : Add + Neg + Mul` のときの `@algebra.VecMulVector`"
+
+#: manual/api/backends/default.md:74
+msgid "Owned wrapper for the default mutable dense matrix backend."
+msgstr "既定の可変密行列バックエンドを包む所有ラッパーです。"
+
+#: manual/api/backends/default.md:78
+msgid "`DenseMatrix::from_backend(inner : @mutable.Matrix[T]) -> DenseMatrix[T]` wraps an existing mutable matrix."
+msgstr "`DenseMatrix::from_backend(inner : @mutable.Matrix[T]) -> DenseMatrix[T]` 既存の可変行列を包みます。"
+
+#: manual/api/backends/default.md:80
+msgid "`DenseMatrix::from_2d_array(data : Array[Array[T]]) -> DenseMatrix[T]` builds a matrix from row-major nested arrays."
+msgstr "`DenseMatrix::from_2d_array(data : Array[Array[T]]) -> DenseMatrix[T]` 行優先の二次元配列から行列を構築します。"
+
+#: manual/api/backends/default.md:82
+msgid "`DenseMatrix::new(row : Int, col : Int, value : T) -> DenseMatrix[T]` builds a matrix filled with `value`."
+msgstr "`DenseMatrix::new(row : Int, col : Int, value : T) -> DenseMatrix[T]` 全要素が `value` の行列を構築します。"
+
+#: manual/api/backends/default.md:84
+msgid "`DenseMatrix::inner(self) -> @mutable.Matrix[T]` returns the wrapped mutable matrix."
+msgstr "`DenseMatrix::inner(self) -> @mutable.Matrix[T]` 内部の可変行列を返します。"
+
+#: manual/api/backends/default.md:86
+msgid "`DenseMatrix::row(self) -> Int` returns row count."
+msgstr "`DenseMatrix::row(self) -> Int` 行数を返します。"
+
+#: manual/api/backends/default.md:88
+msgid "`DenseMatrix::col(self) -> Int` returns column count."
+msgstr "`DenseMatrix::col(self) -> Int` 列数を返します。"
+
+#: manual/api/backends/default.md:93
+msgid "`DenseMatrix::matvec(self, vector : DenseVector[T]) -> DenseVector[T]` multiplies the matrix by a default-backend dense vector and returns a new dense vector wrapper."
+msgstr "`DenseMatrix::matvec(self, vector : DenseVector[T]) -> DenseVector[T]` 行列と既定バックエンド密ベクトルの積を計算し、新しい密ベクトルラッパーを返します。"
+
+#: manual/api/backends/default.md:101
+#: manual/api/backends/default.md:180
+msgid "`@algebra.MatrixShape` and `@algebra.TransposeMatrix` for all `T`"
+msgstr "任意の `T` に対する `@algebra.MatrixShape` と `@algebra.TransposeMatrix`"
+
+#: manual/api/backends/default.md:102
+#: manual/api/backends/default.md:181
+msgid "`@algebra.AdditiveMatrix` when `T : Add + Neg`"
+msgstr "`T : Add + Neg` のときの `@algebra.AdditiveMatrix`"
+
+#: manual/api/backends/default.md:103
+msgid "`@algebra.MatMulMatrix` when `T : Add + Neg + AddMonoid + Mul`"
+msgstr "`T : Add + Neg + AddMonoid + Mul` のときの `@algebra.MatMulMatrix`"
+
+#: manual/api/backends/default.md:119
+msgid "Owned wrapper for the default immutable dense vector backend."
+msgstr "既定の不変密ベクトルバックエンドを包む所有ラッパーです。"
+
+#: manual/api/backends/default.md:159
+msgid "Owned wrapper for the default immutable dense matrix backend."
+msgstr "既定の不変密行列バックエンドを包む所有ラッパーです。"
+
+#: manual/api/backends/default.md:172
+msgid "`ImmutableDenseMatrix::matvec(self, vector : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]` multiplies the matrix by an immutable dense vector and returns a new immutable dense vector wrapper."
+msgstr "`ImmutableDenseMatrix::matvec(self, vector : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]` 行列と不変密ベクトルの積を計算し、新しい不変密ベクトルラッパーを返します。"
+
+#: manual/api/backends/default.md:182
+msgid "`@algebra.MatMulMatrix` when `T : Add + Neg + Zero + Mul`"
+msgstr "`T : Add + Neg + Zero + Mul` のときの `@algebra.MatMulMatrix`"
+
+#: manual/api/backends/default.md:184
+msgid "Generic helper functions"
+msgstr "汎用補助関数"
+
+#: manual/api/backends/default.md:186
+msgid "`shape_of[M : @algebra.MatrixShape](matrix : M) -> (Int, Int)` returns an object's shape."
+msgstr "`shape_of[M : @algebra.MatrixShape](matrix : M) -> (Int, Int)` オブジェクトの形状を返します。"
+
+#: manual/api/backends/default.md:188
+msgid "`matmul[M : @algebra.MatMulMatrix](left : M, right : M) -> M` dispatches matrix multiplication through the explicit multiplication capability."
+msgstr "`matmul[M : @algebra.MatMulMatrix](left : M, right : M) -> M` 明示的な乗算能力を通して行列乗算を分配します。"
+
+#: manual/api/backends/default.md:191
+msgid "`transpose[M : @algebra.TransposeMatrix](matrix : M) -> M` dispatches closed transpose through the algebra trait."
+msgstr "`transpose[M : @algebra.TransposeMatrix](matrix : M) -> M` algebra trait を通して閉じた転置を分配します。"
+
+#: manual/api/backends/default.md:196
+msgid "This package implements outer `algebra` traits for the default backend wrapper types. It does not define new structure traits. Scalar-valued products and matrix-vector interactions described above remain backend methods rather than new `@algebra` traits, while norms, solves, and decompositions remain backend methods or future dedicated algorithm-layer APIs unless they can be represented as structure traits or closed operations."
+msgstr "このパッケージは、既定バックエンドのラッパー型に外側の `algebra` trait を実装します。新しい構造 trait は定義しません。ここで説明したスカラーのドット積や行列-ベクトル相互作用も新しい `@algebra` trait にはせず、バックエンドメソッドのままにしています。ノルム、求解、分解も、構造 trait または同型の閉じた演算として表現できる場合を除き、バックエンドメソッドまたは将来の専用アルゴリズム層 API に置くべきです。"
+
+#: manual/api/backends/openblas.md:3
+msgid "API baseline for `Luna-Flow/linear-algebra/backends/openblas` in the current `0.4.7` repository state."
+msgstr "このページは、現在の `0.4.7` リポジトリにおける `Luna-Flow/linear-algebra/backends/openblas` の公開 API 基準をまとめたものです。"
+
+#: manual/api/backends/openblas.md:8
+msgid "`backends/openblas` provides owned native-only matrix and vector backend wrappers. Matrix multiplication delegates to OpenBLAS GEMM, while vector and matrix-vector helpers delegate to the matching BLAS kernels."
+msgstr "`backends/openblas` は、行列とベクトルの自前ラッパー型を提供する、リポジトリ所有の `native` 専用バックエンドです。行列乗算は OpenBLAS GEMM に、ベクトルおよび行列-ベクトル補助操作は対応する BLAS カーネルに委譲します。"
+
+#: manual/api/backends/openblas.md:12
+msgid "This package is separate from `@immut.Matrix`. There is no runtime backend selector in `immut`; backend choice is now expressed by the concrete matrix type you use and the compilation target you build for."
+msgstr "このパッケージは `@immut.Matrix` とは別物です。`immut` には runtime backend selector はありません。バックエンド選択は、利用する具体的な行列型と、ビルド対象のプラットフォームで表されます。"
+
+#: manual/api/backends/openblas.md:16
+msgid "Platform constraint"
+msgstr "プラットフォーム制約"
+
+#: manual/api/backends/openblas.md:18
+msgid "Supported target: `native`"
+msgstr "対応ターゲット: `native`"
+
+#: manual/api/backends/openblas.md:19
+msgid "Unsupported targets: `js`, `wasm`, `wasm-gc`"
+msgstr "非対応ターゲット: `js`、`wasm`、`wasm-gc`"
+
+#: manual/api/backends/openblas.md:20
+msgid "Current repository link configuration searches both `/opt/homebrew/opt/openblas/include` and `/opt/homebrew/opt/openblas/lib` for Homebrew on macOS, and `/usr/include/x86_64-linux-gnu/openblas-pthread`, `/usr/include/openblas`, `/usr/lib/x86_64-linux-gnu/openblas-pthread`, and `/usr/lib/x86_64-linux-gnu` for the default Ubuntu OpenBLAS package layout"
+msgstr "現在のリポジトリのリンク設定は、macOS の Homebrew 用 `/opt/homebrew/opt/openblas/include` と `/opt/homebrew/opt/openblas/lib` に加えて、Ubuntu の標準的な OpenBLAS パッケージ配置である `/usr/include/x86_64-linux-gnu/openblas-pthread`、 `/usr/include/openblas`、 `/usr/lib/x86_64-linux-gnu/openblas-pthread`、 `/usr/lib/x86_64-linux-gnu` も探索します"
+
+#: manual/api/backends/openblas.md:31
+msgid "`BLASInnerType` is a backend-local trait implemented only for `Float` and `Double`."
+msgstr "`BLASInnerType` はバックエンド局所の trait で、現在は `Float` と `Double` にだけ実装されています。"
+
+#: manual/api/backends/openblas.md:34
+msgid "It owns the scalar-specific pieces required by the backend:"
+msgstr "このバックエンドで必要なスカラー差分を担当します。"
+
+#: manual/api/backends/openblas.md:36
+msgid "`tolerance()` returns the comparison tolerance used by backend tests and result checks."
+msgstr "`tolerance()` テストと結果検証で使う許容誤差を返します。"
+
+#: manual/api/backends/openblas.md:38
+msgid "`dot(length, left, right)` dispatches to `cblas_sdot` or `cblas_ddot`."
+msgstr "`dot(length, left, right)` `cblas_sdot` または `cblas_ddot` に振り分けます。"
+
+#: manual/api/backends/openblas.md:40
+msgid "`scal(length, alpha, data)` dispatches to `cblas_sscal` or `cblas_dscal`."
+msgstr "`scal(length, alpha, data)` `cblas_sscal` または `cblas_dscal` に振り分けます。"
+
+#: manual/api/backends/openblas.md:42
+msgid "`axpy(length, alpha, x, y)` dispatches to `cblas_saxpy` or `cblas_daxpy`."
+msgstr "`axpy(length, alpha, x, y)` `cblas_saxpy` または `cblas_daxpy` に振り分けます。"
+
+#: manual/api/backends/openblas.md:44
+msgid "`gemm(m, n, k, left, right)` dispatches matrix multiplication to the matching OpenBLAS kernel: `cblas_sgemm` for `Float` and `cblas_dgemm` for `Double`."
+msgstr "`gemm(m, n, k, left, right)` 対応する OpenBLAS カーネルへ振り分けます。 `Float` は `cblas_sgemm`、`Double` は `cblas_dgemm` を使います。"
+
+#: manual/api/backends/openblas.md:47
+msgid "`gemv(row, col, matrix, vector)` dispatches matrix-vector multiplication to `cblas_sgemv` or `cblas_dgemv`."
+msgstr "`gemv(row, col, matrix, vector)` `cblas_sgemv` または `cblas_dgemv` に振り分けます。"
+
+#: manual/api/backends/openblas.md:50
+msgid "`BlasMatrix[T]` and `BlasVector[T]` public construction and conversion APIs require `T : BLASInnerType`, so the backend does not expose a half-open “constructible for any `T` but only operable for some `T`” surface."
+msgstr "`BlasMatrix[T]` と `BlasVector[T]` の公開コンストラクタと変換 API はすべて `T : BLASInnerType` を要求します。そのため、「任意の `T` で作れるが一部の `T` だけが演算できる」という半開きの型面を公開しません。"
+
+#: manual/api/backends/openblas.md:56
+msgid "Owned native vector wrapper for the OpenBLAS backend."
+msgstr "OpenBLAS バックエンド所有の native ベクトルラッパーです。"
+
+#: manual/api/backends/openblas.md:58
+msgid "Constructors, conversions, and accessors"
+msgstr "コンストラクタ・相互変換・アクセサ"
+
+#: manual/api/backends/openblas.md:70
+msgid "Trait coverage"
+msgstr "trait 対応"
+
+#: manual/api/backends/openblas.md:72
+msgid "`BlasVector[T]` currently implements:"
+msgstr "`BlasVector[T]` は現在、次を実装します。"
+
+#: manual/api/backends/openblas.md:79
+msgid "It does **not** implement `@algebra.VecMulVector`. BLAS-style `scale`, `dot`, and `axpy` are exposed as backend methods rather than new structure traits."
+msgstr "`@algebra.VecMulVector` は実装しません。BLAS 風の `scale`、`dot`、`axpy` は、新しい構造 trait ではなくバックエンドメソッドとして公開します。"
+
+#: manual/api/backends/openblas.md:99
+msgid "`BlasMatrix[T]` is the owned concrete backend matrix type for this package. Internally it stores:"
+msgstr "`BlasMatrix[T]` はこのパッケージ所有の具体バックエンド行列型です。内部には次を保持します。"
+
+#: manual/api/backends/openblas.md:104
+msgid "a contiguous `FixedArray[T]` buffer"
+msgstr "連続配置の `FixedArray[T]` バッファ"
+
+#: manual/api/backends/openblas.md:106
+msgid "The public mental model stays row-major. Layout details needed by OpenBLAS stay inside the backend implementation."
+msgstr "公開される心的モデルは row-major のままです。OpenBLAS 呼び出しに必要なレイアウト詳細はバックエンド内部に閉じ込めます。"
+
+#: manual/api/backends/openblas.md:109
+msgid "Constructors and conversions"
+msgstr "コンストラクタと相互変換"
+
+#: manual/api/backends/openblas.md:119
+msgid "Accessors"
+msgstr "アクセサ"
+
+#: manual/api/backends/openblas.md:127
+msgid "`BlasMatrix::matvec(self, vector : BlasVector[T]) -> BlasVector[T]` multiplies the matrix by an OpenBLAS backend vector through GEMV."
+msgstr "`BlasMatrix::matvec(self, vector : BlasVector[T]) -> BlasVector[T]` GEMV を通して行列と OpenBLAS ベクトルの積を計算します。"
+
+#: manual/api/backends/openblas.md:132
+msgid "`BlasMatrix[T]` currently implements:"
+msgstr "`BlasMatrix[T]` は現在、次を実装しています。"
+
+#: manual/api/backends/openblas.md:141
+msgid "Behavior is split intentionally:"
+msgstr "振る舞いは意図的に分担されています。"
+
+#: manual/api/backends/openblas.md:143
+msgid "`Mul` uses OpenBLAS GEMM through `BLASInnerType::gemm`."
+msgstr "`Mul` `BLASInnerType::gemm` を通して OpenBLAS GEMM を使います"
+
+#: manual/api/backends/openblas.md:144
+msgid "`matvec` uses OpenBLAS GEMV through `BLASInnerType::gemv`."
+msgstr "`matvec` `BLASInnerType::gemv` を通して OpenBLAS GEMV を使います"
+
+#: manual/api/backends/openblas.md:145
+msgid "`shape`, `transpose`, `+`, `-`, and unary `-` are implemented locally in MoonBit inside this backend package."
+msgstr "`shape`、`transpose`、`+`、`-`、単項 `-` このバックエンドパッケージ内の MoonBit 実装です"
+
+#: manual/api/backends/openblas.md:150
+msgid "This package exposes an owned trait-compatible backend wrapper. It does not:"
+msgstr "このパッケージが公開するのは、自前で所有する trait 互換のバックエンドラッパーです。次のことは行いません。"
+
+#: manual/api/backends/openblas.md:152
+msgid "add a runtime backend enum"
+msgstr "runtime の backend enum を追加する"
+
+#: manual/api/backends/openblas.md:153
+msgid "retrofit traits directly onto third-party OpenBLAS binding types"
+msgstr "外部 OpenBLAS バインディング型へ直接 trait を後付けする"
+
+#: manual/api/backends/openblas.md:154
+msgid "expose raw OpenBLAS handle types in the public API"
+msgstr "公開 API で生の OpenBLAS ハンドル型を露出する"
+
+#: manual/api/container.md:1
+msgid "Container capability API"
+msgstr "コンテナ能力 API"
+
+#: manual/api/container.md:3
+msgid "The `container` package describes how generic code observes, constructs, and edits linear containers. It does not define mathematical laws or require a dense layout."
+msgstr "`container` パッケージは、ジェネリックコードが線形コンテナを観測、構築、編集する方法を表します。数学的法則や密行列レイアウトは要求しません。"
+
+#: manual/api/container.md:9
+msgid "`container` is an experimental feature. Its read/build model is available for real interoperability trials, while operation-record fields, edit capabilities, error contracts, and generic algorithm signatures may still change incompatibly. Use it as a checked data-interchange and structural transformation layer, not as a compatibility-stable public boundary or a high-performance numerical kernel API."
+msgstr "`container` は実験的機能です。read/build モデルは実際の相互運用実験に利用できますが、操作レコードのフィールド、編集能力、エラー契約、汎用アルゴリズムのシグネチャは、互換性なく変更される可能性があります。検査付きデータ交換と構造変換の層として使い、互換性の安定した公開境界や高性能数値カーネル API としては扱わないでください。"
+
+#: manual/api/container.md:16
+msgid "External library authors should use the capability-level guidance in the [ecosystem integration guide](../integration/container.md) before selecting adapters."
+msgstr "外部ライブラリの作者は、アダプタを選ぶ前に[エコシステム接続ガイド](../integration/container.md)の能力レベルごとの指針を参照してください。"
+
+#: manual/api/container.md:19
+msgid "Capability records"
+msgstr "能力レコード"
+
+#: manual/api/container.md:21
+msgid "`VectorReadOps[V, T]`: `length` and checked `get`."
+msgstr "`VectorReadOps[V, T]`: 長さと検査付き `get`。"
+
+#: manual/api/container.md:22
+msgid "`MatrixReadOps[M, T]`: `shape` and checked `get`."
+msgstr "`MatrixReadOps[M, T]`: 形状と検査付き `get`。"
+
+#: manual/api/container.md:23
+msgid "`VectorBuildOps[V, T]`: checked `tabulate` construction."
+msgstr "`VectorBuildOps[V, T]`: 検査付き `tabulate` 構築。"
+
+#: manual/api/container.md:24
+msgid "`MatrixBuildOps[M, T]`: checked row/column `tabulate` construction."
+msgstr "`MatrixBuildOps[M, T]`: 行列座標を受け取る検査付き `tabulate` 構築。"
+
+#: manual/api/container.md:25
+msgid "`VectorPersistentEditOps[V, T]` and `MatrixPersistentEditOps[M, T]`: checked replacement returning a new value."
+msgstr "`VectorPersistentEditOps[V, T]` と `MatrixPersistentEditOps[M, T]`：新しい値を返す検査付きの置換。"
+
+#: manual/api/container.md:27
+msgid "`VectorMutableEditOps[V, T]` and `MatrixMutableEditOps[M, T]`: checked in-place replacement returning `Result[Unit, LinearAlgebraError]`."
+msgstr "`VectorMutableEditOps[V, T]` と `MatrixMutableEditOps[M, T]`：`Result[Unit, LinearAlgebraError]` を返す、検査付きのその場での置換。"
+
+#: manual/api/container.md:30
+msgid "Each record has a `new` constructor. Read and edit operations must return `IndexOutOfBounds` for invalid coordinates. Builders must return `NegativeDimension` rather than calling an initializer for an invalid shape."
+msgstr "各レコードには `new` コンストラクタがあります。不正な座標は `IndexOutOfBounds`、負の形状は `NegativeDimension` を返します。"
+
+#: manual/api/container.md:34
+msgid "Generic algorithms"
+msgstr "ジェネリックアルゴリズム"
+
+#: manual/api/container.md:36
+msgid "`vector_map` and `matrix_map` may change the container and scalar types."
+msgstr "`vector_map` と `matrix_map` は、コンテナ型とスカラー型を変更できます。"
+
+#: manual/api/container.md:37
+msgid "`vector_convert` and `matrix_convert` preserve the scalar type while changing storage backends."
+msgstr "`vector_convert` と `matrix_convert` は、ストレージのバックエンドを変えつつスカラー型を保持します。"
+
+#: manual/api/container.md:39
+msgid "`matrix_transpose` may produce a different target matrix type."
+msgstr "`matrix_transpose` は、別の型の行列を出力できます。"
+
+#: manual/api/container.md:41
+msgid "The algorithms retain exact degenerate shapes such as `0xN` and `Nx0`. They read into a temporary linear buffer before construction, so a checked read failure cannot leave a partially constructed target."
+msgstr "これらのアルゴリズムは `0xN` や `Nx0` のような退化した形状を正確に保ちます。構築の前に一時的な線形バッファへ読み込むため、検査付きの読み取りが失敗しても、途中まで構築された出力が残ることはありません。"
+
+#: manual/api/container.md:45
+msgid "Repository adapters"
+msgstr "リポジトリアダプタ"
+
+#: manual/api/container.md:47
+msgid "The `container/adapters` package provides factories for `immut.Vector`, `immut.Matrix`, `mutable.Vector`, `mutable.Matrix`, the four default dense wrappers, mutable row/column views, and mutable transpose views. Views provide read and mutable-edit capabilities but no build capability."
+msgstr "`container/adapters` パッケージは、`immut.Vector`、`immut.Matrix`、`mutable.Vector`、`mutable.Matrix`、既定の 4 種類の密ラッパー、可変の行・列ビュー、可変の転置ビューに対する factory を提供します。ビューは read と可変編集の能力を持ちますが、build の能力は持ちません。"
+
+#: manual/api/container.md:52
+msgid "The native-only OpenBLAS package provides `blas_vector_read_ops`, `blas_vector_build_ops`, `blas_matrix_read_ops`, and `blas_matrix_build_ops`. It intentionally does not advertise persistent editing."
+msgstr "native 専用の OpenBLAS パッケージは `blas_vector_read_ops`、`blas_vector_build_ops`、`blas_matrix_read_ops`、`blas_matrix_build_ops` を提供します。永続編集は意図的に提供しません。"
+
+#: manual/api/error.md:3
+msgid "API baseline for `Luna-Flow/linear-algebra/error` in the current `0.4.7` repository state."
+msgstr "このページは、現在の `0.4.7` リポジトリにおける `Luna-Flow/linear-algebra/error` の公開 API 基準をまとめたものです。"
+
+#: manual/api/error.md:8
+msgid "`error` provides the structured error type used by checked linear-algebra APIs. The package lets callers distinguish shape errors, invalid domains, singular matrices, non-convergence, and arithmetic failures without parsing abort messages."
+msgstr "`error` は検査付き線形代数 API で使う構造化エラー型を提供します。呼び出し側は中止メッセージを解析せずに、形状エラー、入力領域のエラー、特異行列、非収束、下位の算術エラーを区別できます。"
+
+#: manual/api/error.md:27
+msgid "The enum classifies the failure. `ArithmeticFailure` wraps the upstream `Luna-Flow/arithmetic.ArithmeticError`."
+msgstr "失敗の種類を表す列挙型です。`ArithmeticFailure` は上流の `Luna-Flow/arithmetic.ArithmeticError` を保持します。"
+
+#: manual/api/error.md:41
+msgid "The struct stores a machine-readable kind and a human-readable message."
+msgstr "機械的に判定できる種類と、人が読むためのメッセージを保持します。"
+
+#: manual/api/error.md:43
+msgid "Constructors"
+msgstr "コンストラクタ"
+
+#: manual/api/error.md:57
+msgid "Predicates"
+msgstr "判定メソッド"
+
+#: manual/api/error.md:71
+msgid "These methods are intended for matching common checked API failures without destructuring the error value."
+msgstr "これらのメソッドは、エラー値を分解せずに検査付き API の代表的な失敗を処理するためのものです。"
+
+#: manual/api/error.md:74
+msgid "Usage"
+msgstr "使用例"
+
+#: manual/api/error.md:90
+msgid "This package defines error values only. It does not implement matrix algorithms, numeric recovery strategies, logging, or formatting policy."
+msgstr "このパッケージはエラー値だけを定義します。行列アルゴリズム、数値的な回復戦略、ログ出力、表示形式の方針は扱いません。"
+
+#: manual/api/immut/matrix.md:3
+msgid "API baseline for `@immut.Matrix` in the current `0.4.7` repository state."
+msgstr "このページは、現在の `0.4.7` リポジトリ状態における `@immut.Matrix` の API 基準をまとめたものです。"
+
+#: manual/api/immut/matrix.md:5
+#: manual/api/immut/vector.md:5
+#: manual/api/mutable/matrix.md:7
+#: manual/api/mutable/vector.md:5
+msgid "Overview"
+msgstr "概要"
+
+#: manual/api/immut/matrix.md:7
+msgid "`@immut.Matrix` is the repository's value-oriented matrix type."
+msgstr "`@immut.Matrix` は、このリポジトリの値指向行列型です。"
+
+#: manual/api/immut/matrix.md:8
+msgid "Operations such as `set`, `swap_rows`, and `swap_cols` return a new matrix."
+msgstr "`set`、`swap_rows`、`swap_cols` などの操作は新しい行列を返します。"
+
+#: manual/api/immut/matrix.md:9
+msgid "Matrix storage is row-major and backed by the immutable vector implementation."
+msgstr "行列は行優先で保持され、基盤には immutable vector 実装を使います。"
+
+#: manual/api/immut/matrix.md:10
+msgid "Public indexed access is strict about bounds. `m[row][col]` and `set(row, col, value)` abort on out-of-range indices, including `0xN` and `Nx0` edge shapes."
+msgstr "公開インデックスアクセスは厳密な境界チェックを行います。`m[row][col]` と `set(row, col, value)` は、`0xN` や `Nx0` を含めて範囲外なら中止します。"
+
+#: manual/api/immut/matrix.md:11
+msgid "`swap_rows(i, i)` and `swap_cols(i, i)` are no-op operations that return the original value unchanged."
+msgstr "`swap_rows(i, i)` と `swap_cols(i, i)` は何もしない操作で、元の値をそのまま返します。"
+
+#: manual/api/immut/matrix.md:13
+#: manual/api/mutable/matrix.md:15
+msgid "Core matrix API"
+msgstr "基本 API"
+
+#: manual/api/immut/matrix.md:15
+msgid "`Matrix::make(row, col, f)` Creates a matrix from a generator function. Negative dimensions abort."
+msgstr "`Matrix::make(row, col, f)` 生成関数から行列を作ります。負の次元では中止します。"
+
+#: manual/api/immut/matrix.md:17
+msgid "`Matrix::new(row, col, elem)` Creates a matrix filled with `elem`. Negative dimensions abort."
+msgstr "`Matrix::new(row, col, elem)` `elem` で埋めた行列を作ります。負の次元では中止します。"
+
+#: manual/api/immut/matrix.md:19
+#: manual/api/mutable/matrix.md:21
+msgid "`Matrix::from_2d_array(arr)` Creates a matrix from a rectangular 2D array. Ragged input aborts."
+msgstr "`Matrix::from_2d_array(arr)` 長方形の 2 次元配列から行列を作ります。行の長さが揃わない入力では中止します。"
+
+#: manual/api/immut/matrix.md:21
+msgid "`Matrix::from_array(row, col, data)` Builds a matrix from a flat immutable vector in row-major order. Negative dimensions or wrong element count abort."
+msgstr "`Matrix::from_array(row, col, data)` 行優先の平坦な不変ベクトルから行列を作ります。負の次元や要素数不一致では中止します。"
+
+#: manual/api/immut/matrix.md:23
+#: manual/api/mutable/matrix.md:25
+msgid "`row()` / `col()` Return the stored shape."
+msgstr "`row()` / `col()` 保存されている形状を返します。"
+
+#: manual/api/immut/matrix.md:25
+msgid "`m[row][col]` Read-only convenience indexing. Row and column bounds are checked explicitly."
+msgstr "`m[row][col]` 読み取り専用の便宜アクセスです。行・列の両方を明示的に検証します。"
+
+#: manual/api/immut/matrix.md:27
+msgid "`set(row, col, elem)` Returns a new matrix with one replaced element. Bounds are checked explicitly."
+msgstr "`set(row, col, elem)` 指定要素だけ差し替えた新しい行列を返します。境界は明示的に検証されます。"
+
+#: manual/api/immut/matrix.md:29
+msgid "`map`, `mapi` Return transformed matrices without mutating the original."
+msgstr "`map`, `mapi` 元の行列を変更せずに変換します。"
+
+#: manual/api/immut/matrix.md:31
+msgid "`transpose()` Returns the materialized transpose."
+msgstr "`transpose()` 実体化された転置行列を返します。"
+
+#: manual/api/immut/matrix.md:33
+msgid "`horizontal_combine`, `vertical_combine` Concatenate matrices with compatible shapes."
+msgstr "`horizontal_combine`, `vertical_combine` 形状が整合する行列を連結します。"
+
+#: manual/api/immut/matrix.md:35
+msgid "`iter`, `iter_row`, `iter_col`, `to_array`, `to_2d_array` Expose row-major iteration and materialized conversions. Row/column iterators abort on invalid indices."
+msgstr "`iter`, `iter_row`, `iter_col`, `to_array`, `to_2d_array` 行優先の反復・変換 API です。行・列イテレータは無効なインデックスで中止します。"
+
+#: manual/api/immut/matrix.md:38
+msgid "Algebraic operations"
+msgstr "代数演算"
+
+#: manual/api/immut/matrix.md:40
+msgid "`+`, `-`, `*` Addition, subtraction, and matrix multiplication. Shape mismatch aborts."
+msgstr "`+`, `-`, `*` 加算、減算、行列積です。形状が一致しない場合は中止します。"
+
+#: manual/api/immut/matrix.md:42
+msgid "`matmul(rhs)`, `trace()`, `determinant()`, `pow(power)` Checked APIs return `Result[..., LinearAlgebraError]` for shape or exponent failures."
+msgstr "`matmul(rhs)`, `trace()`, `determinant()`, `pow(power)` 検査付き API は形状や指数のエラーを `Result[..., LinearAlgebraError]` で返します。"
+
+#: manual/api/immut/matrix.md:44
+msgid "`unchecked_matmul(rhs)`, `unchecked_trace()`, `unchecked_determinant()`, `unchecked_pow(power)` Preserve the old aborting behavior for callers that explicitly want unchecked operations."
+msgstr "`unchecked_matmul(rhs)`, `unchecked_trace()`, `unchecked_determinant()`, `unchecked_pow(power)` unchecked 操作が必要な呼び出し元向けに、従来の abort する挙動を残します。"
+
+#: manual/api/immut/matrix.md:46
+#: manual/api/mutable/matrix.md:65
+msgid "`scale(cst)`, `add_constant(cst)`, unary `-` Element-wise scalar transforms."
+msgstr "`scale(cst)`, `add_constant(cst)`, 単項 `-` 要素ごとのスカラー変換です。"
+
+#: manual/api/immut/matrix.md:48
+msgid "`identity(size)` Creates an identity matrix. Negative `size` aborts."
+msgstr "`identity(size)` 単位行列を作ります。負の `size` では中止します。"
+
+#: manual/api/immut/matrix.md:50
+msgid "`trace()` Checked sum of diagonal entries. Requires a square matrix."
+msgstr "`trace()` 検査付きの対角成分の総和です。正方行列が必要です。"
+
+#: manual/api/immut/matrix.md:52
+msgid "`determinant()` Checked determinant of a square matrix. Uses the current repository implementation with small-size specializations and elimination for larger inputs."
+msgstr "`determinant()` 検査付きの正方行列の行列式です。現在の実装では、小サイズの特殊化と大きめ入力向けの消去法を使います。"
+
+#: manual/api/immut/matrix.md:54
+#: manual/api/mutable/matrix.md:69
+msgid "`pow(power)` Checked square-matrix exponentiation for non-negative integer powers."
+msgstr "`pow(power)` 検査付きの正方行列の非負整数冪です。"
+
+#: manual/api/immut/matrix.md:56
+msgid "`null()`, `is_square()` Shape and zero-matrix helpers."
+msgstr "`null()`, `is_square()` 零行列判定と形状補助です。"
+
+#: manual/api/immut/matrix.md:58
+msgid "`adjoint()` Conjugate transpose for element types implementing `Conjugate`."
+msgstr "`adjoint()` `Conjugate` を持つ要素型に対する共役転置です。"
+
+#: manual/api/immut/matrix.md:60
+msgid "`swap_rows(r1, r2)`, `swap_cols(c1, c2)` Return a new matrix with the chosen rows or columns swapped. Out-of-range indices abort; same-index swaps leave the value unchanged."
+msgstr "`swap_rows(r1, r2)`, `swap_cols(c1, c2)` 指定した行・列を入れ替えた新しい行列を返します。範囲外では停止し、同じインデックスの入れ替えは何もしません。"
+
+#: manual/api/immut/matrix.md:65
+msgid "`MatrixFn` is the lazy functional companion to `Matrix`."
+msgstr "`MatrixFn` は `Matrix` の遅延・関数型コンパニオンです。"
+
+#: manual/api/immut/matrix.md:66
+msgid "It follows the same non-negative-dimension rule."
+msgstr "非負次元のルールを共有します。"
+
+#: manual/api/immut/matrix.md:67
+msgid "`MatrixFn::from_2d_array([])` yields a `0x0` matrix."
+msgstr "`MatrixFn::from_2d_array([])` は `0x0` を返します。"
+
+#: manual/api/immut/matrix.md:68
+msgid "`MatrixFn::from_2d_array([[], ...])` preserves zero-column shapes."
+msgstr "`MatrixFn::from_2d_array([[], ...])` は列数 0 の形状を保ちます。"
+
+#: manual/api/immut/matrix.md:69
+msgid "Ragged input is rejected eagerly."
+msgstr "行ごとの長さが揃わない入力は早い段階で拒否されます。"
+
+#: manual/api/immut/matrix.md:70
+msgid "Row access validates the row immediately, and element access validates the column through the functional backing contract."
+msgstr "行アクセス時に行インデックスを即時検証し、要素アクセス時には関数バックエンド経由で列インデックスも検証します。"
+
+#: manual/api/immut/matrix.md:72
+msgid "Important methods:"
+msgstr "主なメソッド:"
+
+#: manual/api/immut/matrix.md:80
+#: manual/api/immut/vector.md:56
+#: manual/api/mutable/matrix.md:100
+#: manual/api/mutable/vector.md:60
+msgid "Guidance"
+msgstr "使い分け"
+
+#: manual/api/immut/matrix.md:82
+msgid "For shared algebraic behavior, prefer the capability traits and the `backends/default` wrapper types. `@immut.Matrix` is one dense implementation used by the default backend, not the semantic center of the ecosystem."
+msgstr "共有される代数的振る舞いについては、capability trait と `backends/default` のラッパー型を優先してください。`@immut.Matrix` は既定バックエンドで使う密実装の 1 つであり、エコシステム全体の意味論中心ではありません。"
+
+#: manual/api/immut/matrix.md:85
+msgid "The mutable package intentionally exposes extra execution-oriented APIs such as views and in-place updates; those should not be projected back onto `immut`."
+msgstr "`mutable` パッケージはビューやインプレース更新など、実行寄りの追加 API を意図的に公開しており、それらを `immut` に逆投影しないでください。"
+
+#: manual/api/immut/matrix.md:86
+msgid "`backends/default.ImmutableDenseMatrix` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
+msgstr "`backends/default.ImmutableDenseMatrix` は、この concrete 実装を包むラッパーです。trait 指向の既定バックエンド入口を見たい場合は [backends/default API](../backends/default.md) を参照してください。"
+
+#: manual/api/immut/vector.md:3
+msgid "API baseline for `@immut.Vector` in the current `0.4.7` repository state."
+msgstr "このページは、現在の `0.4.7` リポジトリ状態における `@immut.Vector` の API 基準をまとめたものです。"
+
+#: manual/api/immut/vector.md:7
+msgid "`@immut.Vector` is the repository's value-oriented vector type."
+msgstr "`@immut.Vector` は、このリポジトリの値指向ベクトル型です。"
+
+#: manual/api/immut/vector.md:8
+msgid "The public type is also exported under the package alias `VecLib[T]`."
+msgstr "公開型はパッケージ別名 `VecLib[T]` としても利用できます。"
+
+#: manual/api/immut/vector.md:9
+msgid "Storage is backed by the immutable core vector alias `VecCore[T]`."
+msgstr "ストレージは、core の不変ベクトル別名 `VecCore[T]` を土台にしています。"
+
+#: manual/api/immut/vector.md:10
+msgid "Operations such as `set`, `map`, `left_scale`, and `right_scale` always return a new vector."
+msgstr "`set`、`map`、`left_scale`、`right_scale` などの操作は常に新しいベクトルを返します。"
+
+#: manual/api/immut/vector.md:12
+msgid "The package does not expose in-place updates or a dot-product helper."
+msgstr "このパッケージはインプレース更新や公開 `dot()` ヘルパーを持ちません。"
+
+#: manual/api/immut/vector.md:14
+#: manual/api/mutable/vector.md:13
+msgid "Core API"
+msgstr "基本 API"
+
+#: manual/api/immut/vector.md:16
+msgid "`Vector::from_array(arr)` Builds a vector from a mutable `Array[T]`."
+msgstr "`Vector::from_array(arr)` 可変 `Array[T]` からベクトルを構築します。"
+
+#: manual/api/immut/vector.md:18
+msgid "`Vector::make(n, elem)` / `Vector::makei(n, f)` Create a constant vector or generate one from indices."
+msgstr "`Vector::make(n, elem)` / `Vector::makei(n, f)` 定数ベクトルまたは添字から生成するベクトルを作ります。"
+
+#: manual/api/immut/vector.md:20
+#: manual/api/mutable/vector.md:17
+msgid "`length()` Returns the vector length."
+msgstr "`length()` ベクトル長を返します。"
+
+#: manual/api/immut/vector.md:22
+msgid "`v[i]` Reads one element. Bounds follow the underlying immutable vector contract."
+msgstr "`v[i]` 1 要素を読み取ります。境界挙動は基底の不変ベクトル契約に従います。"
+
+#: manual/api/immut/vector.md:24
+msgid "`set(i, x)` Returns a new vector with one replaced element."
+msgstr "`set(i, x)` 指定位置だけを差し替えた新しいベクトルを返します。"
+
+#: manual/api/immut/vector.md:26
+msgid "`iter()` Exposes an iterator over the elements in order."
+msgstr "`iter()` 要素を順番にたどるイテレータを返します。"
+
+#: manual/api/immut/vector.md:29
+msgid "Value transforms"
+msgstr "値を返す変換"
+
+#: manual/api/immut/vector.md:31
+msgid "`map(f)` / `zip_with(other, f)` Return transformed vectors without mutating the original."
+msgstr "`map(f)` / `zip_with(other, f)` 元の値を変えずに、変換後の新しいベクトルを返します。"
+
+#: manual/api/immut/vector.md:33
+msgid "`add_constant(cst)` Adds the same scalar to every element."
+msgstr "`add_constant(cst)` 全要素に同じスカラーを加えます。"
+
+#: manual/api/immut/vector.md:35
+msgid "`left_scale(scalar)` / `right_scale(scalar)` Apply scalar multiplication and return a new vector."
+msgstr "`left_scale(scalar)` / `right_scale(scalar)` スカラー倍した新しいベクトルを返します。"
+
+#: manual/api/immut/vector.md:37
+#: manual/api/mutable/vector.md:34
+msgid "`lerp(other, alpha)` Computes `(1 - alpha) * self + alpha * other`."
+msgstr "`lerp(other, alpha)` `(1 - alpha) * self + alpha * other` を計算します。"
+
+#: manual/api/immut/vector.md:39
+#: manual/api/mutable/vector.md:36
+msgid "`+`, `*`, unary `-` Element-wise addition, Hadamard multiplication, and negation."
+msgstr "`+`、`*`、単項 `-` 要素ごとの加算、アダマール積、符号反転です。"
+
+#: manual/api/immut/vector.md:41
+msgid "`lin_comb(scalar_a, self, scalar_b, other)` Top-level helper for a two-vector linear combination."
+msgstr "`lin_comb(scalar_a, self, scalar_b, other)` 2 本のベクトルの線形結合を作るトップレベル補助関数です。"
+
+#: manual/api/immut/vector.md:44
+msgid "Length mismatches for shared element-wise operations follow the underlying vector contract and abort."
+msgstr "共有される要素ごとの演算で長さが一致しない場合は、基底ベクトルの契約に従って中止します。"
+
+#: manual/api/immut/vector.md:47
+msgid "Matrix conversions"
+msgstr "行列変換"
+
+#: manual/api/immut/vector.md:49
+msgid "`to_col_matrix()` / `to_row_matrix()` Materialize the vector as an `n x 1` or `1 x n` matrix."
+msgstr "`to_col_matrix()` / `to_row_matrix()` ベクトルを `n x 1` または `1 x n` の行列へ物化します。"
+
+#: manual/api/immut/vector.md:51
+#: manual/api/mutable/vector.md:55
+msgid "`scaled_matrix()` Builds a diagonal matrix with the vector on the main diagonal."
+msgstr "`scaled_matrix()` このベクトルを主対角に持つ対角行列を作ります。"
+
+#: manual/api/immut/vector.md:53
+#: manual/api/mutable/vector.md:57
+msgid "`tensor_product(other)` Computes the outer product and returns a matrix."
+msgstr "`tensor_product(other)` 外積を計算して行列を返します。"
+
+#: manual/api/immut/vector.md:58
+msgid "Use `@immut.Vector` when downstream code benefits from explicit value semantics."
+msgstr "明示的な値セマンティクスが重要なら `@immut.Vector` を使います。"
+
+#: manual/api/immut/vector.md:60
+msgid "Use `@mutable.Vector` instead when you need in-place updates or the public `dot()` helper."
+msgstr "インプレース更新や公開 `dot()` ヘルパーが必要なら `@mutable.Vector` を使ってください。"
+
+#: manual/api/immut/vector.md:62
+msgid "`backends/default.ImmutableDenseVector` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
+msgstr "`backends/default.ImmutableDenseVector` は、この concrete 実装を包むラッパーです。trait 指向の既定バックエンド入口を見たい場合は [backends/default API](../backends/default.md) を参照してください。"
+
+#: manual/api/mutable/matrix.md:3
+msgid "API baseline for `@mutable.Matrix` in the current `0.4.7` repository state. Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance` remains defined by `mutable`."
+msgstr "このページは、現在の `0.4.7` リポジトリ状態における `@mutable.Matrix` の API 基準をまとめたものです。平方根を必要とする API は `Luna-Flow/arithmetic.Sqrt` を使用し、`Tolerance` は引き続き `mutable` が定義します。"
+
+#: manual/api/mutable/matrix.md:9
+msgid "`@mutable.Matrix` is the repository's execution-oriented matrix type."
+msgstr "`@mutable.Matrix` は、このリポジトリの実行指向行列型です。"
+
+#: manual/api/mutable/matrix.md:10
+msgid "`set`, `swap_rows`, `swap_cols`, `map_inplace`, row/column view updates, and transpose updates modify the underlying matrix in place."
+msgstr "`set`、`swap_rows`、`swap_cols`、`map_inplace`、行/列ビューの更新、転置ビューの更新は、基底行列をその場で変更します。"
+
+#: manual/api/mutable/matrix.md:11
+msgid "Public storage is a flat row-major `Array[T]` across backends. Backend-specific files differ in execution tuning, not in the public matrix model."
+msgstr "公開ストレージは全バックエンドで行優先のフラット `Array[T]` です。バックエンドごとの違いは主に実行最適化であり、公開データモデルではありません。"
+
+#: manual/api/mutable/matrix.md:12
+msgid "Public access is strict about bounds. `get`, `set`, `m[row][col]`, `row_view`, `col_view`, extraction helpers, iterators, and transpose-view access reject out-of-range indices consistently, including zero-row and zero-column edge shapes."
+msgstr "公開アクセスは厳密な境界チェックを行います。`get`、`set`、`m[row][col]`、`row_view`、`col_view`、抽出用メソッド、イテレータ、転置ビューのアクセスは、`0xN` や `Nx0` を含めて範囲外を一貫して拒否します。"
+
+#: manual/api/mutable/matrix.md:13
+msgid "`swap_rows(i, i)` and `swap_cols(i, i)` leave the matrix unchanged. Out-of-range row or column indices abort explicitly instead of relying on accidental storage access."
+msgstr "`swap_rows(i, i)` と `swap_cols(i, i)` は何もしない操作です。範囲外インデックスは、偶然の配列アクセスに依存せず明示的に停止します。"
+
+#: manual/api/mutable/matrix.md:17
+msgid "`Matrix::make(row, col, f)` Builds a matrix from a generator function. Negative dimensions abort."
+msgstr "`Matrix::make(row, col, f)` 生成関数から行列を構築します。負の次元では停止します。"
+
+#: manual/api/mutable/matrix.md:19
+msgid "`Matrix::new(row, col, elem)` Builds a matrix filled with `elem`. Negative dimensions abort."
+msgstr "`Matrix::new(row, col, elem)` `elem` で埋めた行列を構築します。負の次元では停止します。"
+
+#: manual/api/mutable/matrix.md:23
+msgid "`Matrix::from_array(row, col, data)` Uses a flat row-major array as matrix storage. Negative dimensions or wrong element count abort."
+msgstr "`Matrix::from_array(row, col, data)` 行優先の平坦配列を指定された形状で使います。負の次元や要素数不一致では停止します。"
+
+#: manual/api/mutable/matrix.md:27
+msgid "`get(row, col)` / `set(row, col, elem)` Fast random access with explicit bounds checks."
+msgstr "`get(row, col)` / `set(row, col, elem)` 明示的な境界チェック付きの高速ランダムアクセスです。"
+
+#: manual/api/mutable/matrix.md:29
+msgid "`m[row][col]` Convenience syntax backed by `Lens[T]`. It is valid for read and write, but repeated bulk work should prefer `row_view`, `col_view`, or the dedicated row/column helpers."
+msgstr "`m[row][col]` `Lens[T]` を使う便宜構文です。読み書き可能ですが、繰り返し処理では `row_view`、`col_view`、専用メソッドを優先してください。"
+
+#: manual/api/mutable/matrix.md:31
+msgid "`copy()` Deep-copies the matrix."
+msgstr "`copy()` 行列を深くコピーします。"
+
+#: manual/api/mutable/matrix.md:33
+msgid "`map`, `mapi` Return a transformed matrix."
+msgstr "`map`, `mapi` 変換済みの新しい行列を返します。"
+
+#: manual/api/mutable/matrix.md:35
+msgid "`map_inplace`, `map_row_inplace`, `map_col_inplace` Apply in-place transforms."
+msgstr "`map_inplace`, `map_row_inplace`, `map_col_inplace` その場で変換します。"
+
+#: manual/api/mutable/matrix.md:37
+msgid "`each`, `eachi`, `each_row_col`, `each_row`, `each_col`, `eachi_row`, `eachi_col` Traversal helpers."
+msgstr "`each`, `eachi`, `each_row_col`, `each_row`, `each_col`, `eachi_row`, `eachi_col` 走査用メソッド群です。"
+
+#: manual/api/mutable/matrix.md:39
+msgid "`iter`, `iter_row`, `iter_col` Iterators with checked row/column bounds."
+msgstr "`iter`, `iter_row`, `iter_col` 境界チェック付きイテレータ群です。"
+
+#: manual/api/mutable/matrix.md:41
+msgid "`row_to_array`, `col_to_array`, `row_to_vector`, `col_to_vector`, `to_array`, `to_2d_array`, `to_vector` Materialization helpers with checked indices where applicable."
+msgstr "`row_to_array`, `col_to_array`, `row_to_vector`, `col_to_vector`, `to_array`, `to_2d_array`, `to_vector` 配列やベクトルへ変換するメソッド群です。必要なインデックスは検証されます。"
+
+#: manual/api/mutable/matrix.md:43
+msgid "`transpose()` Returns a materialized transpose."
+msgstr "`transpose()` 実体化された転置行列を返します。"
+
+#: manual/api/mutable/matrix.md:45
+msgid "`to_transpose()` Returns a live transpose view."
+msgstr "`to_transpose()` 元の行列に接続された転置ビューを返します。"
+
+#: manual/api/mutable/matrix.md:47
+msgid "`horizontal_combine`, `vertical_combine` Concatenate compatible matrices."
+msgstr "`horizontal_combine`, `vertical_combine` 形状が整合する行列を連結します。"
+
+#: manual/api/mutable/matrix.md:50
+msgid "Views and transpose"
+msgstr "ビューと転置"
+
+#: manual/api/mutable/matrix.md:52
+msgid "`row_view(row)` / `col_view(col)` Return live views into the underlying matrix."
+msgstr "`row_view(row)` / `col_view(col)` 元の行列に接続されたビューを返します。"
+
+#: manual/api/mutable/matrix.md:54
+msgid "`RowView` and `ColView` Expose `get`, `set`, `iter`, `each`, `eachi`, `map_inplace`, `to_array`, and `to_vector`."
+msgstr "`RowView` と `ColView` `get`、`set`、`iter`、`each`、`eachi`、`map_inplace`、`to_array`、`to_vector` を公開します。"
+
+#: manual/api/mutable/matrix.md:56
+msgid "`Transpose` Exposes the same matrix-like surface over a live transposed view."
+msgstr "`Transpose` 元の行列に接続された転置ビュー上で、行列に近い API を提供します。"
+
+#: manual/api/mutable/matrix.md:58
+msgid "`Transpose::swap_rows` and `Transpose::swap_cols` Delegate to the underlying matrix with the same strict bounds semantics."
+msgstr "`Transpose::swap_rows` / `Transpose::swap_cols` 基底行列へ委譲し、同じ厳密な境界セマンティクスを持ちます。"
+
+#: manual/api/mutable/matrix.md:61
+msgid "Algebraic and numeric API"
+msgstr "代数・数値 API"
+
+#: manual/api/mutable/matrix.md:63
+msgid "`+`, `-`, `*` Matrix addition, subtraction, and multiplication."
+msgstr "`+`, `-`, `*` 行列加算、減算、乗算です。"
+
+#: manual/api/mutable/matrix.md:67
+msgid "`identity(size)` Identity matrix constructor. Negative `size` aborts."
+msgstr "`identity(size)` 単位行列を作ります。負の `size` では中止します。"
+
+#: manual/api/mutable/matrix.md:71
+msgid "`matrix_power(n)` Checked public wrapper around `pow(n)`."
+msgstr "`matrix_power(n)` `pow(n)` の検査付き公開別名です。"
+
+#: manual/api/mutable/matrix.md:73
+msgid "`trace()` Checked sum of diagonal entries. Requires a square matrix and returns `Result[..., LinearAlgebraError]`."
+msgstr "`trace()` 対角成分の総和を検査付きで計算します。正方行列が必要で、`Result[..., LinearAlgebraError]` を返します。"
+
+#: manual/api/mutable/matrix.md:75
+msgid "`determinant()` Checked determinant of a square matrix."
+msgstr "`determinant()` 正方行列の行列式を検査付きで計算します。"
+
+#: manual/api/mutable/matrix.md:77
+msgid "`inverse()`, `is_invertible()` Checked inversion helpers for square matrices. Singular inverse returns `Err`."
+msgstr "`inverse()`, `is_invertible()` 逆行列関連の検査付きメソッドです。特異行列の逆行列は `Err` を返します。"
+
+#: manual/api/mutable/matrix.md:79
+msgid "`mul_vec(vector)` Checked matrix-vector multiplication. Shape mismatch returns `Err`."
+msgstr "`mul_vec(vector)` 行列ベクトル積を検査付きで計算します。形状が合わない場合は `Err` を返します。"
+
+#: manual/api/mutable/matrix.md:81
+msgid "`mean()`, `variance()`, `std_dev()`, `max_element()`, `min_element()` Checked aggregate helpers. Empty matrices return `Err`."
+msgstr "`mean()`, `variance()`, `std_dev()`, `max_element()`, `min_element()` 集約値を検査付きで計算します。空行列では `Err` を返します。"
+
+#: manual/api/mutable/matrix.md:83
+msgid "`unchecked_trace()`, `unchecked_determinant()`, `unchecked_inverse()`, `unchecked_is_invertible()`, `unchecked_pow()`, `unchecked_matrix_power()`, `unchecked_mul_vec()`, `unchecked_mean()`, `unchecked_variance()`, `unchecked_std_dev()`, `unchecked_max_element()`, `unchecked_min_element()` Preserve the old aborting or `Option`-returning behavior."
+msgstr "`unchecked_trace()`, `unchecked_determinant()`, `unchecked_inverse()`, `unchecked_is_invertible()`, `unchecked_pow()`, `unchecked_matrix_power()`, `unchecked_mul_vec()`, `unchecked_mean()`, `unchecked_variance()`, `unchecked_std_dev()`, `unchecked_max_element()`, `unchecked_min_element()` 従来の abort または `Option` を返す挙動を残します。"
+
+#: manual/api/mutable/matrix.md:85
+msgid "`rank()` Rank computed through the current repository algorithm."
+msgstr "`rank()` 現行実装のアルゴリズムで行列の階数を返します。"
+
+#: manual/api/mutable/matrix.md:87
+msgid "`reduce_row_elimination()` In-place-style row reduction on the mutable matrix value."
+msgstr "`reduce_row_elimination()` 可変行列の値に対して行基本変形を行います。"
+
+#: manual/api/mutable/matrix.md:89
+msgid "`cholesky_decomposition()` Cholesky factorization for supported numeric inputs."
+msgstr "`cholesky_decomposition()` 対応する数値入力向けの Cholesky 分解です。"
+
+#: manual/api/mutable/matrix.md:91
+msgid "`eigen()`, `power_method()` Public eigen-related APIs for supported numeric cases. The specialized 2x2 helper used by the implementation is not part of the public package interface."
+msgstr "`eigen()`, `power_method()` 現在公開されている固有値関連 API です。実装内部の 2x2 特化ヘルパーは公開インターフェイスではありません。"
+
+#: manual/api/mutable/matrix.md:95
+msgid "`is_square()`, `null()`, `is_symmetric()`, `is_positive_definite()` Structural and numeric predicates."
+msgstr "`is_square()`, `null()`, `is_symmetric()`, `is_positive_definite()` 構造や数値性を判定する述語です。"
+
+#: manual/api/mutable/matrix.md:97
+msgid "`frobenius_norm()` Non-checked aggregate numeric helper for supported element types."
+msgstr "`frobenius_norm()` 対応する要素型向けの、検査付きでない集約メソッドです。"
+
+#: manual/api/mutable/matrix.md:102
+msgid "Backends are expected to expose the same public semantics. The repository currently keeps separate kernel files for `native`, `js`, `wasm`, and `wasm-gc`, so tests and documentation should be read as backend-invariant unless a note says otherwise."
+msgstr "各バックエンドは同じ公開セマンティクスを提供する前提です。現在のリポジトリは `native`、`js`、`wasm`、`wasm-gc` ごとにカーネルファイルを分けていますが、特記がない限りドキュメントとテストはバックエンドに依存しない公開挙動を表します。"
+
+#: manual/api/mutable/matrix.md:103
+msgid "For code shared across `immut` and `mutable`, rely on the common algebraic surface and not on identical mutation semantics."
+msgstr "`immut` と `mutable` の間で共有するコードでは、共通の代数 API に依存し、更新セマンティクスまで同一だと仮定しないでください。"
+
+#: manual/api/mutable/matrix.md:104
+msgid "`backends/default.DenseMatrix` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
+msgstr "`backends/default.DenseMatrix` は、この concrete 実装を包むラッパーです。 trait 指向の既定バックエンド入口を見たい場合は [backends/default API](../backends/default.md) を参照してください。"
+
+#: manual/api/mutable/vector.md:3
+msgid "API baseline for `@mutable.Vector` in the current `0.4.7` repository state."
+msgstr "このページは、現在の `0.4.7` リポジトリ状態における `@mutable.Vector` の API 基準をまとめたものです。"
+
+#: manual/api/mutable/vector.md:7
+msgid "`@mutable.Vector` is the repository's mutation-oriented vector type."
+msgstr "`@mutable.Vector` は、このリポジトリの更新指向ベクトル型です。"
+
+#: manual/api/mutable/vector.md:8
+msgid "Storage is a wrapped `Array[T]`, so indexed writes update the underlying mutable buffer directly."
+msgstr "ストレージは `Array[T]` のラッパーなので、インデックス書き込みは内部バッファを直接更新します。"
+
+#: manual/api/mutable/vector.md:10
+msgid "Even in this package, many algebraic helpers still return fresh vectors so callers can choose between mutation and value-producing transforms."
+msgstr "それでも多くの代数ヘルパーは新しいベクトルを返すため、更新と値変換を使い分けられます。"
+
+#: manual/api/mutable/vector.md:15
+msgid "`Vector::from_array(arr)` / `Vector::make(n, elem)` / `Vector::makei(n, f)` Construct vectors from existing data, a repeated value, or an index function."
+msgstr "`Vector::from_array(arr)` / `Vector::make(n, elem)` / `Vector::makei(n, f)` 既存データ、反復値、添字関数からベクトルを作ります。"
+
+#: manual/api/mutable/vector.md:19
+msgid "`v[i]` / `v[i] = x` Read and write one element. Bounds follow `Array[T]` behavior."
+msgstr "`v[i]` / `v[i] = x` 1 要素を読み書きします。境界挙動は `Array[T]` に従います。"
+
+#: manual/api/mutable/vector.md:21
+msgid "`copy()` Returns a deep copy of the vector."
+msgstr "`copy()` 現在のベクトルを深く複製します。"
+
+#: manual/api/mutable/vector.md:23
+msgid "`iter()` Exposes an iterator over the current elements."
+msgstr "`iter()` 現在の要素を順番にたどるイテレータを返します。"
+
+#: manual/api/mutable/vector.md:26
+msgid "Value-producing helpers"
+msgstr "新しいベクトルを返すヘルパー"
+
+#: manual/api/mutable/vector.md:28
+msgid "`map(f)` / `zip_with(other, f)` Return a transformed vector without mutating `self`."
+msgstr "`map(f)` / `zip_with(other, f)` `self` を変更せず、変換後のベクトルを返します。"
+
+#: manual/api/mutable/vector.md:30
+msgid "`add_constant(cst)` Adds the same scalar to each element."
+msgstr "`add_constant(cst)` すべての要素へ同じスカラーを加えます。"
+
+#: manual/api/mutable/vector.md:32
+msgid "`left_scale(scalar)` / `right_scale(scalar)` Return scaled vectors."
+msgstr "`left_scale(scalar)` / `right_scale(scalar)` スカラー倍した新しいベクトルを返します。"
+
+#: manual/api/mutable/vector.md:39
+msgid "In-place helpers"
+msgstr "インプレースヘルパー"
+
+#: manual/api/mutable/vector.md:41
+msgid "`map_inplace(f)` Rewrites every element in place."
+msgstr "`map_inplace(f)` すべての要素を書き換えます。"
+
+#: manual/api/mutable/vector.md:43
+msgid "`left_scale_inplace(scalar)` / `right_scale_inplace(scalar)` Apply scalar multiplication in place."
+msgstr "`left_scale_inplace(scalar)` / `right_scale_inplace(scalar)` スカラー倍をインプレースで適用します。"
+
+#: manual/api/mutable/vector.md:46
+msgid "Scalar and matrix helpers"
+msgstr "スカラー・行列ヘルパー"
+
+#: manual/api/mutable/vector.md:48
+msgid "`dot(other)` Computes the dot product. Length mismatch aborts."
+msgstr "`dot(other)` 内積を計算します。長さが一致しない場合は中止します。"
+
+#: manual/api/mutable/vector.md:50
+msgid "`lin_comb(weights, vectors)` Top-level helper that builds one vector from weighted input vectors. Empty inputs, mismatched counts, or mismatched vector lengths abort."
+msgstr "`lin_comb(weights, vectors)` 重み配列と入力ベクトル群から 1 本のベクトルを組み立てるトップレベル補助関数です。空入力、個数不一致、長さ不一致は中止します。"
+
+#: manual/api/mutable/vector.md:53
+msgid "`to_col_matrix()` / `to_row_matrix()` Convert the vector into matrix form."
+msgstr "`to_col_matrix()` / `to_row_matrix()` ベクトルを行列形式へ変換します。"
+
+#: manual/api/mutable/vector.md:62
+msgid "Use direct indexing or `*_inplace` helpers when the workload is truly mutation-heavy."
+msgstr "更新主体のワークロードでは、直接のインデックス操作や `*_inplace` ヘルパーを使います。"
+
+#: manual/api/mutable/vector.md:64
+msgid "Use the non-`inplace` helpers when you need a fresh vector or want code that mirrors `@immut.Vector` more closely."
+msgstr "以前の値を残したい場合や `@immut.Vector` に近い書き方をしたい場合は、新しいベクトルを返すヘルパーを使ってください。"
+
+#: manual/api/mutable/vector.md:66
+msgid "`backends/default.DenseVector` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
+msgstr "`backends/default.DenseVector` は、この concrete 実装を包むラッパーです。 trait 指向の既定バックエンド入口を見たい場合は [backends/default API](../backends/default.md) を参照してください。"
+
+#: manual/conventions.md:1
+msgid "Repository conventions"
+msgstr "リポジトリの規約"
+
+#: manual/conventions.md:3
+msgid "These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.4.7`**."
+msgstr "これらの規則は、Luna-Flow のドキュメント標準を linear-algebra 向けに補うものです。マニュアルは現在のブランチの実装を記述し、現在の文書基準は **`0.4.7`** です。"
+
+#: manual/conventions.md:5
+msgid "Pages and chapters"
+msgstr "ページと章"
+
+#: manual/conventions.md:7
+msgid "The [overview](index.md) describes the current release baseline: what the release contains, where to start reading, and how the packages are positioned. `CHANGELOG.md` owns the historical release timeline and older release notes."
+msgstr "[概要](index.md)は現在のリリース基準、つまりリリースの内容、読み始める場所、各パッケージの位置づけを説明します。`CHANGELOG.md` は過去バージョンの時系列と古いリリースノートを担当します。"
+
+#: manual/conventions.md:8
+msgid "The `immut` and `mutable` packages are documented per type rather than per package: `api/immut/matrix.md` and `api/immut/vector.md`, and the same under `api/mutable/`, `design/` and `tutorial/`."
+msgstr "`immut` と `mutable` パッケージは、パッケージ単位ではなく型単位で文書化します。`api/immut/matrix.md` と `api/immut/vector.md` のように分け、`api/mutable/`、`design/`、`tutorial/` でも同じ構成にします。"
+
+#: manual/conventions.md:9
+msgid "The `integration/` chapter explains how external types join the `algebra` and `container` capability layers."
+msgstr "`integration/` 章では、外部の型が `algebra` と `container` の能力層に参加する方法を説明します。"
+
+#: manual/conventions.md:10
+msgid "Keep API references specification-oriented, tutorials usage-oriented, and design docs responsibility- and tradeoff-oriented"
+msgstr "API 文書は仕様中心、tutorial は使い方中心、design は責務・境界・トレードオフ中心に書き分けます。"
+
+#: manual/conventions.md:11
+msgid "Backend wrapper packages should document platform constraints, conversion boundaries, and whether behavior is implemented locally or delegated to an external library kernel"
+msgstr "バックエンドラッパーパッケージでは、プラットフォーム制約、変換境界、各挙動がローカル実装か外部ライブラリのカーネル委譲かを明記します。"
+
+#: manual/conventions.md:12
+msgid "Prefer short, direct sentences over rhetorical or release-note-style prose"
+msgstr "冗長な言い回しやリリースノート調の文章を避け、短く直接的な技術文に寄せます。"
+
+#: manual/conventions.md:14
+msgid "Shared rules for `mutable` and `immutable`"
+msgstr "`mutable` と `immutable` の共通規約"
+
+#: manual/conventions.md:16
+msgid "API alignment"
+msgstr "API 整合性の原則"
+
+#: manual/conventions.md:18
+msgid "`mutable` and `immutable` should expose the same public API whenever practical"
+msgstr "`mutable` と `immutable` は、可能な限り同じ公開 API を提供します。"
+
+#: manual/conventions.md:19
+msgid "When both packages support the same capability, keep function names, parameter order, return semantics, and error conventions aligned"
+msgstr "両方のパッケージが同じ機能を持つ場合は、関数名、引数順、戻り値の意味、エラー規約を揃えることを優先します。"
+
+#: manual/conventions.md:20
+msgid "If full alignment is not possible, the docs must state the difference, the reason, and the recommended usage"
+msgstr "完全に揃えられない場合は、差分、理由、推奨される利用場面を文書で明示します。"
+
+#: manual/conventions.md:21
+msgid "Every new public API should be evaluated for both packages by default"
+msgstr "新しい公開 API を追加するときは、原則として両方のパッケージで提供すべきかを検討します。"
+
+#: manual/conventions.md:23
+msgid "Design principles for `immutable`"
+msgstr "`immutable` パッケージの設計原則"
+
+#: manual/conventions.md:25
+msgid "Prefer functional, declarative, and composable interface design"
+msgstr "関数型、宣言的、かつ合成しやすいインターフェース設計を優先します。"
+
+#: manual/conventions.md:26
+msgid "Prefer returning new values instead of exposing in-place mutation semantics"
+msgstr "破壊的更新を露出するよりも、新しい値を返す形を優先します。"
+
+#: manual/conventions.md:27
+msgid "Avoid making callers reason about hidden state, shared mutable state, or timing-sensitive behavior"
+msgstr "呼び出し側に隠れた状態、共有可変状態、タイミング依存の振る舞いを意識させないようにします。"
+
+#: manual/conventions.md:28
+msgid "The docs should emphasize value semantics, referential transparency, and composition patterns"
+msgstr "ドキュメントでは値セマンティクス、参照透過性、合成方法を重視して説明します。"
+
+#: manual/conventions.md:29
+msgid "Even when there is a performance tradeoff, preserve clear and stable external semantics first"
+msgstr "性能上のトレードオフがある場合でも、まず外部セマンティクスの明確さと安定性を守ります。"
+
+#: manual/conventions.md:31
+msgid "Design principles for `mutable`"
+msgstr "`mutable` パッケージの設計原則"
+
+#: manual/conventions.md:33
+msgid "Prioritize performance, memory reuse, and low-level execution efficiency"
+msgstr "性能、メモリ再利用、低レベル実行効率を優先します。"
+
+#: manual/conventions.md:34
+msgid "Internal mutable state, in-place updates, and other side effects are acceptable inside the library"
+msgstr "ライブラリ内部での可変状態、破壊的更新、その他の副作用は許容されます。"
+
+#: manual/conventions.md:35
+msgid "Those side effects should remain encapsulated in the implementation rather than leaking into the caller's mental model"
+msgstr "ただし、それらの副作用は実装内部に閉じ込め、利用者のメンタルモデルへ漏らさないようにします。"
+
+#: manual/conventions.md:36
+msgid "The public API should still feel pure, stable, and function-oriented instead of exposing internal mutability as a contract"
+msgstr "公開 API は依然として純粋で安定しており、関数型の使い心地を保つべきです。内部の可変実装を契約として露出してはいけません。"
+
+#: manual/conventions.md:37
+msgid "Introduce package-specific deviations from `immutable` only when the performance benefit is concrete and necessary"
+msgstr "`immutable` と異なる専用 API は、性能上の利点が明確かつ必要な場合にのみ導入します。"
+
+#: manual/conventions.md:39
+msgid "Documentation requirements"
+msgstr "ドキュメント記述要件"
+
+#: manual/conventions.md:41
+msgid "Use the same section structure and terminology across `mutable` and `immutable` API docs whenever possible"
+msgstr "`mutable` と `immutable` の API 文書では、可能な限り同じ節構成と用語を使います。"
+
+#: manual/conventions.md:42
+msgid "Cross-reference corresponding APIs so readers can compare semantics and cost models easily"
+msgstr "対応する API 同士を相互参照できるようにし、意味論とコストモデルを比較しやすくします。"
+
+#: manual/conventions.md:43
+msgid "Clearly separate external semantics from internal implementation strategy"
+msgstr "外部セマンティクスと内部実装方針を明確に分けて記述します。"
+
+#: manual/conventions.md:44
+msgid "Performance details such as caching, reuse, and in-place computation belong in design pages or the `performance/` chapter, not in the API semantic contract."
+msgstr "キャッシュ、再利用、破壊的計算などの性能に関する詳細は、API の意味論的な契約ではなく、設計ページまたは `performance/` 章に書きます。"
+
+#: manual/conventions.md:45
+msgid "If a `mutable` API has observable behavior due to a performance-oriented design choice, document that behavior explicitly rather than only describing the internal implementation"
+msgstr "`mutable` 側で性能重視の設計により可観測な挙動差がある場合は、内部実装の説明だけで済ませず、その挙動を明示します。"
+
+#: manual/conventions.md:47
+msgid "Translations"
+msgstr "翻訳"
+
+#: manual/conventions.md:49
+msgid "Chinese translations should read like natural written technical Chinese, not word-for-word English translation."
+msgstr "中国語訳は、英語の逐語訳ではなく、自然な書き言葉の技術中国語にします。"
+
+#: manual/conventions.md:50
+msgid "Japanese translations should read like natural technical Japanese, not a literal structural copy of Chinese or English phrasing."
+msgstr "日本語訳は、中国語や英語の文型をそのまま写すのではなく、自然な技術文体の日本語にします。"
+
+#: manual/design/algebra.md:1
+msgid "algebra design"
+msgstr "algebra 設計"
+
+#: manual/design/algebra.md:3
+msgid "For external adoption levels, operator semantics, implementation ownership, and the relationship with container dictionaries, see the [ecosystem integration guide](../integration/algebra.md)."
+msgstr "外部接続レベル、演算子の意味、実装の所有者、container 辞書との関係は [エコシステム接続ガイド](../integration/algebra.md) を参照してください。"
+
+#: manual/design/algebra.md:7
+#: manual/design/arithmetic.md:3
+#: manual/design/backends/default.md:3
+#: manual/design/backends/openblas.md:3
+#: manual/design/error.md:3
+#: manual/design/immut/matrix.md:3
+#: manual/design/immut/vector.md:3
+#: manual/design/mutable/matrix.md:3
+#: manual/design/mutable/vector.md:3
+msgid "Responsibilities"
+msgstr "責務"
+
+#: manual/design/algebra.md:9
+msgid "Represent semantic mathematical structures used by linear algebra."
+msgstr "線形代数で使う意味論的な数学構造を表します。"
+
+#: manual/design/algebra.md:10
+msgid "Keep structure-level traits separate from operation-only arithmetic traits."
+msgstr "構造レベルの trait と、操作だけを表す算術 trait を分離します。"
+
+#: manual/design/algebra.md:11
+msgid "Avoid treating approximate floating-point behavior as exact algebraic law."
+msgstr "近似的な浮動小数点の振る舞いを、厳密な代数法則として扱いません。"
+
+#: manual/design/algebra.md:12
+msgid "Keep shape, additive operations, Hadamard multiplication, matrix multiplication, and scalar-valued mappings as separate capabilities."
+msgstr "形状、加法演算、アダマール積、行列積、スカラー値を返す写像を、それぞれ独立した能力として保ちます。"
+
+#: manual/design/algebra.md:14
+msgid "Express object-level linear algebra operations by composing existing operator traits such as `Add`, `Mul`, `Neg`, and `Sub` only when a trait actually needs those operations."
+msgstr "オブジェクト単位の線形代数演算は、trait がその演算を本当に必要とする場合にだけ、`Add`、`Mul`、`Neg`、`Sub` などの既存の演算子 trait を組み合わせて表します。"
+
+#: manual/design/algebra.md:17
+msgid "Keep shared upstream scalar abstractions outside this package; import them directly in user code when an algorithm really needs them."
+msgstr "共有の上流スカラー抽象はこのパッケージに包み込まず、必要なときだけ利用側コードから直接インポートします。"
+
+#: manual/design/algebra.md:20
+#: manual/design/arithmetic.md:10
+#: manual/design/backends/default.md:10
+#: manual/design/error.md:11
+msgid "Non-responsibilities"
+msgstr "非責務"
+
+#: manual/design/algebra.md:22
+msgid "Do not import dense backend types."
+msgstr "密バックエンド型をインポートしません。"
+
+#: manual/design/algebra.md:23
+msgid "Do not define storage, mutability, or algorithm execution traits."
+msgstr "保存形式、可変操作、アルゴリズム実行の trait は定義しません。"
+
+#: manual/design/algebra.md:24
+msgid "Do not place inner product, norm, or other scalar-valued functors in the core structure layer."
+msgstr "内積、ノルムなど、スカラー値を返す写像を中核構造層に置きません。"
+
+#: manual/design/algebra.md:26
+msgid "Do not introduce `Module` or `VectorSpace` without an explicit scalar-action model."
+msgstr "明示的なスカラー作用モデルなしに `Module` や `VectorSpace` を追加しません。"
+
+#: manual/design/algebra.md:28
+msgid "Do not introduce a package-local shape-dependent zero in place of upstream `Zero`."
+msgstr "パッケージ固有の形状依存の零元を、上流の `Zero` の代わりに導入しません。"
+
+#: manual/design/algebra.md:30
+msgid "Do not put partial operations such as dynamic rectangular matrix multiplication in the minimum matrix shape trait."
+msgstr "動的な矩形行列乗算のような部分演算を、最小の行列形状 trait に入れません。"
+
+#: manual/design/algebra.md:33
+#: manual/design/arithmetic.md:16
+#: manual/design/error.md:19
+msgid "Maintenance notes"
+msgstr "保守メモ"
+
+#: manual/design/algebra.md:35
+msgid "If a future trait needs scalar association, design it explicitly instead of encoding a fixed scalar such as `Double` into a public trait."
+msgstr "将来の trait がスカラーの関連付けを必要とするなら、`Double` のような固定スカラーを公開 trait に埋め込むのではなく、その関係を明示的に設計します。"
+
+#: manual/design/arithmetic.md:1
+msgid "arithmetic design"
+msgstr "arithmetic 設計"
+
+#: manual/design/arithmetic.md:5
+msgid "Keep low-level computable operations separate from semantic algebraic laws."
+msgstr "低レベルの計算可能操作を、意味論的な代数法則から分離します。"
+
+#: manual/design/arithmetic.md:6
+msgid "Reuse existing ecosystem scalar traits instead of redefining them locally."
+msgstr "既存エコシステムのスカラー trait を再利用します。"
+
+#: manual/design/arithmetic.md:7
+msgid "Add only small operation traits when linear-algebra-facing code needs a stable name."
+msgstr "線形代数統合名が不足している場合だけ、小さな操作 trait を追加します。"
+
+#: manual/design/arithmetic.md:12
+msgid "Do not define vector-space, module, matrix, or backend capabilities here."
+msgstr "ベクトル空間、加群、行列、バックエンド能力は定義しません。"
+
+#: manual/design/arithmetic.md:13
+msgid "Do not make floating-point types claim exact algebraic laws."
+msgstr "浮動小数点型に厳密な代数法則を主張させません。"
+
+#: manual/design/arithmetic.md:14
+msgid "Do not import `immut`, `mutable`, or `backends/default`."
+msgstr "`immut`、`mutable`、`backends/default` をインポートしません。"
+
+#: manual/design/arithmetic.md:18
+msgid "When adding a new trait, name the operation directly and document that it represents availability of an operation, not a mathematical structure."
+msgstr "新しい trait を追加するときは、名前をその操作に直接対応させ、「数学構造」ではなく「その操作が使えること」を表すと明記します。"
+
+#: manual/design/backends/default.md:1
+msgid "backends/default design"
+msgstr "backends/default 設計"
+
+#: manual/design/backends/default.md:5
+msgid "Present `immut` and `mutable` as default dense backends through owned wrapper types."
+msgstr "`immut` と `mutable` を既定の密行列・密ベクトルバックエンドとして提示します。"
+
+#: manual/design/backends/default.md:7
+msgid "Implement capability traits for the default dense matrix and vector types."
+msgstr "既定の密行列・密ベクトル型に能力 trait を実装します。"
+
+#: manual/design/backends/default.md:8
+msgid "Provide small generic helpers that exercise trait-based dispatch."
+msgstr "trait による分派を確認する小さな汎用ヘルパーを提供します。"
+
+#: manual/design/backends/default.md:12
+msgid "Do not redefine scalar algebra or arithmetic laws."
+msgstr "スカラー代数や算術法則を再定義しません。"
+
+#: manual/design/backends/default.md:13
+msgid "Do not require all future backends to become dense or contiguous."
+msgstr "将来のバックエンドに密表現や連続ストレージを要求しません。"
+
+#: manual/design/backends/default.md:14
+msgid "Do not make scalar-valued maps part of the core linear algebra trait surface."
+msgstr "スカラー値を返す写像を中核の線形代数 trait 層に含めません。"
+
+#: manual/design/backends/default.md:16
+msgid "Extension model"
+msgstr "拡張モデル"
+
+#: manual/design/backends/default.md:18
+msgid "Future sparse, lazy, static-size, GPU, or external-library backends should implement the same structural traits directly. They should not need to convert into `DenseMatrix` or `DenseVector` before generic algorithms can use them."
+msgstr "将来の疎、遅延、静的サイズ、GPU、外部ライブラリのバックエンドは、同じ構造 trait を直接実装するべきです。`DenseMatrix` や `DenseVector` への変換を必須にしません。"
+
+#: manual/design/backends/openblas.md:1
+msgid "backends/openblas design"
+msgstr "backends/openblas 設計"
+
+#: manual/design/backends/openblas.md:5
+msgid "Provide a concrete native-only matrix backend that can participate in the public `@algebra` trait ecosystem."
+msgstr "公開 `@algebra` trait エコシステムに参加できる `native` 専用の具体行列バックエンドを提供する"
+
+#: manual/design/backends/openblas.md:7
+msgid "Keep the backend's owned public type local to this repository as `BlasMatrix[T]`."
+msgstr "バックエンド所有の公開型を `BlasMatrix[T]` として保つ"
+
+#: manual/design/backends/openblas.md:9
+msgid "Use OpenBLAS GEMM for matrix multiplication while keeping the rest of the first-pass matrix surface implemented locally in MoonBit."
+msgstr "行列乗算には OpenBLAS GEMM を使い、それ以外の初期行列面は MoonBit ローカル実装に残す"
+
+#: manual/design/backends/openblas.md:11
+msgid "Hide OpenBLAS layout and binding details behind a repository-owned API."
+msgstr "OpenBLAS のレイアウトやバインディング詳細を、リポジトリ所有 API の内側へ隠す"
+
+#: manual/design/backends/openblas.md:13
+msgid "Why this is a wrapper backend"
+msgstr "なぜラッパーバックエンドなのか"
+
+#: manual/design/backends/openblas.md:15
+msgid "This package is a trait-compatible backend wrapper."
+msgstr "このパッケージは trait 互換のバックエンドラッパーです。"
+
+#: manual/design/backends/openblas.md:17
+msgid "It is not:"
+msgstr "次のものではありません。"
+
+#: manual/design/backends/openblas.md:19
+msgid "a runtime backend selector"
+msgstr "runtime backend selector"
+
+#: manual/design/backends/openblas.md:20
+msgid "a global backend enum"
+msgstr "グローバルな backend enum"
+
+#: manual/design/backends/openblas.md:21
+msgid "a direct trait implementation on the foreign OpenBLAS binding types"
+msgstr "外部 OpenBLAS バインディング型への直接 trait 実装"
+
+#: manual/design/backends/openblas.md:23
+msgid "The wrapper exists so the package owns the concrete matrix type and can attach `@algebra` trait implementations without running into MoonBit's foreign trait / foreign type restriction."
+msgstr "ラッパーにしている理由は、パッケージが具体行列型を所有し、MoonBit の foreign trait / foreign type 制約に触れずに `@algebra` trait を実装できるようにするためです。"
+
+#: manual/design/backends/openblas.md:27
+msgid "Type and target decide behavior"
+msgstr "型とターゲットが挙動を決める"
+
+#: manual/design/backends/openblas.md:29
+msgid "Backend choice is now determined by two things:"
+msgstr "現在のバックエンド選択は、次の 2 つで決まります。"
+
+#: manual/design/backends/openblas.md:31
+msgid "type choice `@immut.Matrix[T]` and `@default.ImmutableDenseMatrix[T]` use the repository's existing dense implementations, while `@openblas.BlasMatrix[T]` uses the OpenBLAS-backed multiplication path"
+msgstr "型の選択 `@immut.Matrix[T]` と `@default.ImmutableDenseMatrix[T]` は既存の密実装を使い、 `@openblas.BlasMatrix[T]` は OpenBLAS 対応の行列乗算経路を使います"
+
+#: manual/design/backends/openblas.md:35
+msgid "target choice `backends/openblas` only participates in `native` builds"
+msgstr "ターゲットの選択 `backends/openblas` は `native` ビルドにだけ参加します"
+
+#: manual/design/backends/openblas.md:38
+msgid "There is no runtime API for asking `@immut.Matrix` to switch to a different backend."
+msgstr "`@immut.Matrix` に対して、実行時に別バックエンドへ切り替える API はありません。"
+
+#: manual/design/backends/openblas.md:41
+msgid "Scalar strategy"
+msgstr "スカラー戦略"
+
+#: manual/design/backends/openblas.md:43
+msgid "`BLASInnerType` is intentionally backend-local. It captures the scalar-specific pieces this wrapper needs:"
+msgstr "`BLASInnerType` は意図的にバックエンド局所へ閉じた抽象です。このラッパーが本当に必要とするスカラー差分を表します。"
+
+#: manual/design/backends/openblas.md:46
+msgid "dispatch to the correct GEMM kernel"
+msgstr "正しい GEMM カーネルへの振り分け"
+
+#: manual/design/backends/openblas.md:47
+msgid "provide a tolerance value for backend validation"
+msgstr "バックエンド検証用の許容誤差の提供"
+
+#: manual/design/backends/openblas.md:49
+msgid "The repository currently implements this trait only for `Float` and `Double`. That matches the current OpenBLAS-backed matrix surface and avoids exposing a misleading generic type story."
+msgstr "現状、この trait は `Float` と `Double` にしか実装していません。これは現在の OpenBLAS 行列面と一致しており、誤解を招く無制限ジェネリクスを避けます。"
+
+#: manual/design/backends/openblas.md:53
+msgid "Operation split"
+msgstr "操作分担"
+
+#: manual/design/backends/openblas.md:55
+msgid "`Mul` delegates to OpenBLAS GEMM"
+msgstr "`Mul` OpenBLAS GEMM に委譲します"
+
+#: manual/design/backends/openblas.md:57
+msgid "`shape`, `transpose`, `+`, `-`, `neg` stay as local MoonBit implementations for the first version"
+msgstr "`shape`、`transpose`、`+`、`-`、`neg` ローカルの MoonBit 実装のままです"
+
+#: manual/design/backends/openblas.md:60
+msgid "This split keeps the API complete enough for trait-oriented generic code without pretending that every matrix operation must already be backed by a BLAS routine."
+msgstr "この分担によって、trait 指向の汎用コードに十分な行列面を渡しつつ、「すべての操作が最初から BLAS ルーチンである」とは装いません。"
+
+#: manual/design/container.md:1
+msgid "Container capability design"
+msgstr "コンテナ能力の設計"
+
+#: manual/design/container.md:3
+msgid "Mathematical and structural capabilities"
+msgstr "数学能力と構造能力"
+
+#: manual/design/container.md:5
+msgid "The `algebra` package describes mathematical behavior such as addition, transpose, and multiplication. The `container` package describes structural behavior: shape observation, checked element access, construction, and the two distinct editing models. A type may implement either layer without claiming the other."
+msgstr "`algebra` は加算、転置、乗算などの数学的振る舞いを表します。`container` は形状、検査付きアクセス、構築、編集モデルを表します。一方だけを提供する型も正当です。"
+
+#: manual/design/container.md:11
+msgid "Explicit operation dictionaries represent the relationship between container type, element type, and operation. This is clearer than forcing the multi-parameter relationship into a global trait and lets one external type publish several scalar-specific or policy-specific dictionaries."
+msgstr "コンテナ型、要素型、操作の関係は小さな明示的辞書で表します。多引数関係を無理にグローバルトレイトへ押し込まず、外部型が用途別の辞書を提供できます。"
+
+#: manual/design/container.md:16
+msgid "The [ecosystem integration guide](../integration/container.md) defines the supported adoption levels and adapter ownership rules for external libraries."
+msgstr "[エコシステム接続ガイド](../integration/container.md)は、外部ライブラリが採用できる接続レベルとアダプタの所有規則を定めています。"
+
+#: manual/design/container.md:19
+msgid "Ownership and editing"
+msgstr "所有権と編集"
+
+#: manual/design/container.md:21
+msgid "Persistent editing returns a new value and must preserve the source even when the implementation uses shared backing storage. Mutable editing changes the supplied container and returns `Unit` inside the checked result. Keeping these records separate prevents generic code from confusing copying with mutation."
+msgstr "永続編集は新しい値を返し、実装が共有ストレージを使う場合でも元の値を保持しなければなりません。可変編集は渡されたコンテナを変更し、検査付きの結果の中で `Unit` を返します。これらのレコードを分けることで、ジェネリックコードがコピーと変更を混同しなくなります。"
+
+#: manual/design/container.md:26
+msgid "Generic `insert`, `delete`, `create`, and `remove` are absent. Removing a sparse entry, setting a value to zero, deleting a row, and resizing a matrix are different operations and must remain separate optional capabilities."
+msgstr "汎用 `insert` / `delete` / `create` / `remove` は定義しません。疎要素の削除、ゼロ代入、行削除、サイズ変更は別の操作です。"
+
+#: manual/design/container.md:30
+msgid "Dependency direction"
+msgstr "依存方向と将来"
+
+#: manual/design/container.md:32
+msgid "`container` depends only on `error`. `container/adapters` depends on the core capability package and the dense implementations. OpenBLAS depends on the core package directly and remains native-only. Neither `algebra` nor the concrete dense implementations depend on the adapter package."
+msgstr "`container` は `error` のみに依存し、`container/adapters` が具象実装へ依存します。 OpenBLAS は `container` へ直接依存し native 限定のままです。将来の `MatrixKernelOps[M, T]` は read/build を変更せず、行交換や行基本変形を持つ任意辞書として追加できます。"
+
+#: manual/design/container.md:37
+msgid "Future kernels"
+msgstr "将来の kernel"
+
+#: manual/design/container.md:39
+msgid "A future `MatrixKernelOps[M, T]` may group checked read/write, row swap, row scale, and scaled-row addition for elimination algorithms. It should be an optional dictionary layered beside read/build, not a requirement added to them."
+msgstr "将来の `MatrixKernelOps[M, T]` は、消去法のアルゴリズム向けに、検査付きの読み書き、行の交換、行のスケーリング、スカラー倍した行の加算をまとめる可能性があります。それは read/build の横に置く任意の辞書であるべきで、それらへの追加要件にしてはいけません。"
+
+#: manual/design/container.md:44
+msgid "Sparse matrices can provide read/build dictionaries that interpret absent entries according to their own representation. Views can provide read/edit without construction."
+msgstr "疎行列は、存在しない要素を自身の表現に従って解釈する read/build 辞書を提供できます。ビューは構築なしで read/edit を提供できます。"
+
+#: manual/design/error.md:1
+msgid "error design"
+msgstr "error 設計"
+
+#: manual/design/error.md:5
+msgid "Provide the shared error vocabulary for checked linear-algebra APIs."
+msgstr "検査付き線形代数 API で共有するエラー語彙を提供します。"
+
+#: manual/design/error.md:6
+msgid "Keep a stable machine-readable `kind` beside a human-readable `message`."
+msgstr "人が読むための `message` と、機械的に判定できる `kind` を併せて保持します。"
+
+#: manual/design/error.md:7
+msgid "Let callers branch on common failure categories without parsing text."
+msgstr "呼び出し側がメッセージ文字列を解析せずに、代表的な失敗の種類で分岐できるようにします。"
+
+#: manual/design/error.md:8
+msgid "Preserve arithmetic errors from lower-level scalar operations through `ArithmeticFailure`."
+msgstr "下位のスカラー演算から伝播した算術エラーを `ArithmeticFailure` として保持します。"
+
+#: manual/design/error.md:13
+msgid "Do not implement matrix, vector, or backend algorithms here."
+msgstr "ここでは行列、ベクトル、バックエンドのアルゴリズムを実装しません。"
+
+#: manual/design/error.md:14
+msgid "Do not define recovery policies for singular matrices, non-convergence, or arithmetic failures."
+msgstr "特異行列、非収束、算術エラーからの回復方針は定義しません。"
+
+#: manual/design/error.md:16
+msgid "Do not decide logging, localization, or presentation formatting."
+msgstr "ログ出力、ローカライズ、表示形式の方針は扱いません。"
+
+#: manual/design/error.md:17
+msgid "Do not use the text message as the semantic contract for control flow."
+msgstr "制御フローの意味論を `message` の文面に依存させません。"
+
+#: manual/design/error.md:21
+msgid "Add a new error kind only when checked public APIs need to expose a distinct class of failure. Keep constructors and predicate methods aligned with the enum so callers can create and inspect errors without destructuring values directly."
+msgstr "新しいエラー種別は、検査付きの公開 API が区別して返すべき失敗分類を追加するときだけ導入します。列挙子、コンストラクタ、判定メソッドをそろえておくことで、呼び出し側はエラー値を直接分解せずに生成と判定を行えます。"
+
+#: manual/design/immut/matrix.md:1
+msgid "immut/matrix design"
+msgstr "immut/matrix 設計"
+
+#: manual/design/immut/matrix.md:5
+msgid "Provide a value-oriented `Matrix[T]` whose transformation methods return new matrices."
+msgstr "値指向の `Matrix[T]` を提供し、変換操作は新しい行列を返します。"
+
+#: manual/design/immut/matrix.md:6
+msgid "Keep matrix storage row-major through the immutable vector-backed representation."
+msgstr "不変ベクトルに支えられた表現で、行優先の保存順を保ちます。"
+
+#: manual/design/immut/matrix.md:7
+msgid "Keep checked matrix operations explicit: shape, exponent, and domain failures belong in `Result[..., LinearAlgebraError]`."
+msgstr "失敗し得る行列操作では検査付き API を使い、形状・指数・入力領域のエラーを `Result[..., LinearAlgebraError]` で表します。"
+
+#: manual/design/immut/matrix.md:9
+#: manual/design/immut/vector.md:10
+#: manual/design/mutable/matrix.md:9
+#: manual/design/mutable/vector.md:10
+msgid "Invariants"
+msgstr "不変条件"
+
+#: manual/design/immut/matrix.md:11
+msgid "Constructors reject negative dimensions and non-rectangular input."
+msgstr "コンストラクタは負の次元と行長の揃わない入力を拒否します。"
+
+#: manual/design/immut/matrix.md:12
+msgid "Indexed access and row/column iterators enforce the same bounds rules as the mutable matrix API."
+msgstr "インデックスアクセス、行イテレータ、列イテレータは可変行列 API と同じ境界意味論に揃えます。"
+
+#: manual/design/immut/matrix.md:13
+msgid "Matrix algebra should stay aligned with `mutable` where both packages expose the same operation, while preserving value semantics."
+msgstr "`immut` と `mutable` の両方が同じ代数操作を公開する場合は、値セマンティクスを保ちながら意味論を揃えます。"
+
+#: manual/design/immut/vector.md:1
+msgid "immut/vector design"
+msgstr "immut/vector 設計"
+
+#: manual/design/immut/vector.md:5
+msgid "Provide a value-oriented `Vector[T]` backed by the core persistent vector storage alias."
+msgstr "値指向の `Vector[T]` を提供し、内部では中核の永続ベクトル保存を使います。"
+
+#: manual/design/immut/vector.md:6
+msgid "Keep shared vector algebra aligned with `@mutable.Vector` where the observable operation is the same."
+msgstr "可観測な操作が同じ共有部分では、`@mutable.Vector` と代数意味論を揃えます。"
+
+#: manual/design/immut/vector.md:7
+msgid "Exclude in-place mutation APIs from the immutable package."
+msgstr "不変パッケージではインプレース更新 API を公開しません。"
+
+#: manual/design/immut/vector.md:8
+msgid "Keep scalar-reducing helpers such as `dot()` out of this package's public surface."
+msgstr "`dot()` のようなスカラー帰着ヘルパーは、この公開パッケージに持ち込みません。"
+
+#: manual/design/immut/vector.md:12
+msgid "`set`, `map`, and scale operations return new vectors."
+msgstr "`set`、`map`、スケール操作は新しいベクトルを返します。"
+
+#: manual/design/immut/vector.md:13
+msgid "Indexing follows the underlying immutable vector bounds behavior."
+msgstr "インデックスアクセスは基底の不変ベクトルの境界挙動に従います。"
+
+#: manual/design/immut/vector.md:14
+msgid "Matrix conversion helpers produce row or column matrices without exposing mutable storage."
+msgstr "行列変換ヘルパーは行行列または列行列を生成し、可変ストレージを公開しません。"
+
+#: manual/design/immut/vector.md:15
+msgid "Shared element-wise operations stay aligned with `@mutable.Vector`, but the immutable package remains focused on value-producing transforms."
+msgstr "共有される要素ごとの演算は `@mutable.Vector` と揃えつつ、このパッケージ自体は新しい値を返す変換に集中します。"
+
+#: manual/design/mutable/matrix.md:1
+msgid "mutable/matrix design"
+msgstr "mutable/matrix 設計"
+
+#: manual/design/mutable/matrix.md:5
+msgid "Provide an execution-oriented `Matrix[T]` with row-major `Array[T]` storage across supported backends."
+msgstr "実行指向の `Matrix[T]` を提供し、対応バックエンド全体で行優先の `Array[T]` 保存モデルを保ちます。"
+
+#: manual/design/mutable/matrix.md:6
+msgid "Keep live row, column, and transpose views connected to the underlying matrix."
+msgstr "行ビュー、列ビュー、転置ビューを基底行列に接続された状態で扱います。"
+
+#: manual/design/mutable/matrix.md:7
+msgid "Keep checked APIs for runtime failures while preserving explicit `unchecked_*` methods for legacy contracts."
+msgstr "実行時失敗には検査付き API を用意し、旧契約は明示的な `unchecked_*` メソッドで残します。"
+
+#: manual/design/mutable/matrix.md:11
+msgid "Backend-specific files may tune kernels, but they must expose the same public semantics."
+msgstr "バックエンド固有ファイルはカーネルを最適化できますが、同じ公開意味論を提供する必要があります。"
+
+#: manual/design/mutable/matrix.md:12
+msgid "Bounds checks are explicit for matrix, view, iterator, and transpose access."
+msgstr "行列、ビュー、イテレータ、転置アクセスはいずれも明示的な境界チェックを行います。"
+
+#: manual/design/mutable/matrix.md:13
+msgid "Shared algebraic operations should stay semantically aligned with `immut` where both packages expose them."
+msgstr "`mutable` と `immut` の両方が同じ代数操作を公開する場合は、意味論を揃えます。"
+
+#: manual/design/mutable/vector.md:1
+msgid "mutable/vector design"
+msgstr "mutable/vector 設計"
+
+#: manual/design/mutable/vector.md:5
+msgid "Provide an execution-oriented `Vector[T]` backed by `Array[T]`."
+msgstr "実行指向の `Vector[T]` を提供し、内部では `Array[T]` をラップします。"
+
+#: manual/design/mutable/vector.md:6
+msgid "Support direct indexed reads and writes for workloads that need in-place updates."
+msgstr "インプレース更新が必要なワークロード向けに、直接のインデックス読み書きを提供します。"
+
+#: manual/design/mutable/vector.md:7
+msgid "Keep non-`inplace` algebraic helpers available for value-producing transforms."
+msgstr "新しい値を返す変換も選べるように、`inplace` 接尾辞を持たない代数ヘルパーも残します。"
+
+#: manual/design/mutable/vector.md:8
+msgid "Keep scalar-reducing and aggregate helpers such as `dot()` in the mutable package."
+msgstr "`dot()` や `lin_comb(...)` のようなスカラー帰着・組み合わせヘルパーは可変パッケージ側に置きます。"
+
+#: manual/design/mutable/vector.md:12
+msgid "`*_inplace` methods mutate the existing vector and return `Unit`."
+msgstr "`*_inplace` メソッドは既存のベクトルを変更し、`Unit` を返します。"
+
+#: manual/design/mutable/vector.md:13
+msgid "`map`, scale helpers, `zip_with`, and matrix conversion helpers return new values."
+msgstr "`map`、スケールヘルパー、`zip_with`、行列変換ヘルパーは新しい値を返します。"
+
+#: manual/design/mutable/vector.md:14
+msgid "Vector algebra should stay aligned with `@immut.Vector` for the shared operation subset."
+msgstr "共有される操作部分では、`@immut.Vector` と代数意味論を揃えます。"
+
+#: manual/design/mutable/vector.md:15
+msgid "Length-sensitive helpers such as `dot()` and `lin_comb(...)` reject inconsistent inputs explicitly."
+msgstr "`dot()` や `lin_comb(...)` のように長さへ依存するヘルパーは、不整合な入力を明示的に拒否します。"
+
+#: manual/index.md:1
+msgid "Luna-Flow/linear-algebra"
+msgstr "Luna-Flow/linear-algebra"
+
+#: manual/index.md:3
+msgid "This overview matches the current repository baseline for **v0.4.7**."
+msgstr "この概要は現在のリポジトリ基準である **v0.4.7** に対応しています。"
+
+#: manual/index.md:5
+msgid "The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt` capability, while integral embeddings follow `Luna-Flow/luna-generic.IntegralHomomorphism`. `Tolerance` remains local to the `mutable` package in this release. Matrix operations with runtime failure modes now use checked `Result[..., LinearAlgebraError]` APIs; the old aborting or `Option`-returning behavior is exposed through explicit `unchecked_*` methods."
+msgstr "`mutable` の数値 API は共有の `Luna-Flow/arithmetic.Sqrt` 能力を使い、整数埋め込みは `Luna-Flow/luna-generic.IntegralHomomorphism` に従います。現行リリースでは `Tolerance` は引き続き `mutable` パッケージに属します。実行時に失敗し得る行列操作は、現在は検査付き `Result[..., LinearAlgebraError]` API を使います。従来の abort する挙動と `Option` 戻り値は、明示的な `unchecked_*` メソッドに残しています。"
+
+#: manual/index.md:12
+msgid "The `0.4.7` baseline adds the storage-independent `container` capability layer, generic vector and matrix algorithms, adapters for the concrete storage representations, and documented algebra integration levels for external types."
+msgstr "`0.4.7` 基準では、ストレージに依存しない `container` 能力層、汎用のベクトル・行列アルゴリズム、具体的なストレージ表現向けアダプター、そして外部型のための algebra 接続レベルを追加しました。"
+
+#: manual/index.md:16
+msgid "For earlier release notes and repository history, see [CHANGELOG.md](../../CHANGELOG.md)."
+msgstr "過去のリリースノートと履歴は [CHANGELOG.md](../../CHANGELOG.md) を参照してください。"
+
+#: manual/index.md:19
+msgid "Layered architecture"
+msgstr "レイヤードアーキテクチャ"
+
+#: manual/index.md:21
+msgid "**Experimental features:** The `algebra` and `container` capability layers are available for integration experiments and ecosystem feedback, but their trait hierarchy, operation dictionaries, error contracts, and function signatures are not yet compatibility-stable. Downstream libraries should not use these packages as stable public boundaries yet. This status does not make the concrete `immut`, `mutable`, or backend APIs experimental merely because they implement or adapt these capabilities."
+msgstr "**実験的機能:** `algebra` と `container` の能力層は、接続実験とエコシステムからのフィードバック収集を目的として提供しています。trait 階層、操作辞書、エラー契約、関数シグネチャの互換性はまだ安定していません。下流ライブラリは、現時点でこれらのパッケージを安定した公開互換境界として扱わないでください。 `immut`、`mutable`、各バックエンドは、これらの能力を実装または適合するという理由だけで実験的 API になるわけではありません。"
+
+#: manual/index.md:29
+msgid "**`arithmetic`**: Linear-algebra-facing operation capabilities. It reuses scalar operation traits from `Luna-Flow/luna-generic` and `Luna-Flow/arithmetic`, and adds operation-only traits where needed."
+msgstr "**`arithmetic`**: 線形代数向けの操作能力層です。 `Luna-Flow/luna-generic` と `Luna-Flow/arithmetic` のスカラー操作 trait を再利用し、必要に応じて操作可否だけを表す trait を補います。"
+
+#: manual/index.md:32
+msgid "**`algebra`**: Semantic mathematical structure capabilities. It defines only the linear-algebra-owned structure traits."
+msgstr "**`algebra`**: 数学的構造の能力層です。線形代数が自前で持つ構造 trait だけを定義します。"
+
+#: manual/index.md:34
+msgid "**`backends/default`**: The reference dense backend layer. It exposes mutable dense wrappers `DenseVector` / `DenseMatrix` and immutable dense wrappers `ImmutableDenseVector` / `ImmutableDenseMatrix`."
+msgstr "**`backends/default`**: 参照用の密バックエンド層です。可変の密ラッパー `DenseVector` / `DenseMatrix` と、不変の密ラッパー `ImmutableDenseVector` / `ImmutableDenseMatrix` を公開します。"
+
+#: manual/index.md:37
+msgid "**`backends/openblas`**: A native-only OpenBLAS backend. It exposes the owned `BlasMatrix[T]` and `BlasVector[T]` wrappers for `Float` and `Double`, uses OpenBLAS GEMM for matrix multiplication, and provides backend methods backed by BLAS vector and matrix-vector kernels."
+msgstr "**`backends/openblas`**: `native` 専用の OpenBLAS バックエンドです。 `Float` と `Double` に対応するリポジトリ所有の `BlasMatrix[T]` と `BlasVector[T]` ラッパーを公開し、行列乗算には OpenBLAS GEMM を、ベクトルと行列-ベクトル相互作用には対応する BLAS カーネルを使います。バックエンド選択は runtime selector ではなく具体型で表します。"
+
+#: manual/index.md:41
+msgid "**`error`**: Shared error vocabulary for checked linear-algebra APIs, including shape, exponent, empty-matrix, singular-matrix, non-convergence, and arithmetic failures."
+msgstr "**`error`**: 検査付き線形代数 API の共有エラー語彙です。形状、指数、空行列、特異行列、非収束、下位の算術エラーを扱います。"
+
+#: manual/index.md:44
+msgid "**Trait-driven algorithms**: Backend-independent code should depend on the smallest capability it needs, such as `MatrixShape`, `AdditiveVector`, `VecMulVector`, `TransposeMatrix`, or `MatMulMatrix`."
+msgstr "**trait 駆動アルゴリズム**: バックエンド非依存コードは、 `MatrixShape`、`AdditiveVector`、`VecMulVector`、`TransposeMatrix`、 `MatMulMatrix` のような最小限の必要能力に依存するべきです。"
+
+#: manual/index.md:48
+msgid "Mappings from vector or matrix objects into scalar-like categories, such as inner products or norms, are backend or algorithm details. They are not part of the core structure trait layer."
+msgstr "内積やノルムのように、ベクトルや行列をスカラー的な量へ写す能力は、バックエンドまたはアルゴリズムの詳細です。中核の構造 trait 層には含めません。"
+
+#: manual/index.md:52
+msgid "The default dense implementation is a backend, not the center of the ecosystem. Algorithms should depend on minimal linear algebra traits, not concrete dense matrix/vector types."
+msgstr "既定の密実装はあくまで 1 つのバックエンドであり、エコシステムの中心ではありません。アルゴリズムは具体的な密行列・密ベクトル型ではなく、最小限の線形代数 trait に依存するべきです。"
+
+#: manual/index.md:56
+msgid "This repository is intended to be the linear-algebra substrate for higher-level math, geometry, and solver-style libraries. Domain-specific solve, regression, or optimization workflows should live in downstream packages built on these traits, backend wrappers, and concrete matrix/vector types."
+msgstr "このリポジトリは、より上位の数学ライブラリ、幾何ライブラリ、solver 風ライブラリのための線形代数基盤として位置付けています。分野固有の solve、回帰、最適化ワークフローは、これらの trait、バックエンドラッパー、具体的な行列/ベクトル型の上に作る下流パッケージへ置く想定です。"
+
+#: manual/index.md:61
+msgid "The concrete `immut` / `mutable` matrix and vector types are the implementations wrapped by `backends/default`. `DenseVector` and `DenseMatrix` wrap `@mutable.Vector` and `@mutable.Matrix`, while `ImmutableDenseVector` and `ImmutableDenseMatrix` wrap `@immut.Vector` and `@immut.Matrix`. For OpenBLAS-backed native matrix multiplication and vector kernels, choose [`backends/openblas`](./api/backends/openblas.md) explicitly. It is a separate concrete backend, not a runtime backend option inside `@immut.Matrix`."
+msgstr "具体的な `immut` / `mutable` の行列・ベクトル型は、 `backends/default` が包む実装本体です。`DenseVector` と `DenseMatrix` は `@mutable.Vector` と `@mutable.Matrix` を包み、`ImmutableDenseVector` と `ImmutableDenseMatrix` は `@immut.Vector` と `@immut.Matrix` を包みます。 OpenBLAS による native 行列乗算やベクトル BLAS カーネルが必要な場合は、 [`backends/openblas`](./api/backends/openblas.md) を明示的に選びます。これは独立した具体バックエンドであり、`@immut.Matrix` 内の runtime backend option ではありません。"
+
+#: manual/index.md:70
+msgid "Reader guide"
+msgstr "読者ガイド"
+
+#: manual/index.md:72
+msgid "**General application developers**: start with [mutable](./api/mutable/matrix.md) and [immut](./api/immut/matrix.md). These are the concrete APIs for application code such as business tools, utilities, numeric processing, small games, and visualization logic."
+msgstr "**一般的なアプリケーション開発者**: [mutable](./api/mutable/matrix.md) と [immut](./api/immut/matrix.md) から読み始めてください。これらは業務ツール、ユーティリティ、数値処理、小さなゲーム、可視化ロジックのようなアプリケーションコード向けの具体 API です。"
+
+#: manual/index.md:77
+msgid "**Math library / general algorithm developers**: read in this order: [arithmetic](./api/arithmetic.md) -> [algebra](./integration/algebra.md) -> [container](./integration/container.md) -> [backends/default](./api/backends/default.md) -> [backends/openblas](./api/backends/openblas.md) -> [immut / mutable](./api/immut/matrix.md). Start from operation capabilities, then structure capabilities, then the default backend wrappers, then the optional OpenBLAS native wrapper, and finally the concrete implementations. This is the intended entry path if you are building a higher-level application library or solver-oriented package on top of this repository."
+msgstr "**数学ライブラリ / 汎用アルゴリズム開発者**: 次の順番で読むのがおすすめです。 [arithmetic](./api/arithmetic.md) -> [algebra](./integration/algebra.md) -> [container](./integration/container.md) -> [backends/default](./api/backends/default.md) -> [backends/openblas](./api/backends/openblas.md) -> [immut / mutable](./api/immut/matrix.md)。まず操作能力、次に構造能力、その次に既定バックエンドのラッパー、さらに任意の OpenBLAS native ラッパー、最後に具体実装へ進みます。より上位のアプリケーションライブラリ、幾何パッケージ、 solver 系パッケージをこの上に構築する場合の推奨入口でもあります。"
+
+#: manual/index.md:91
+msgid "Used in"
+msgstr "下流での利用例"
+
+#: manual/index.md:93
+msgid "**[`Luna-Flow/geometry3d`](https://github.com/Luna-Flow/geometry3d)**: a compact MoonBit 3D geometry foundation built on `Luna-Flow/linear-algebra`. It adds core geometry, camera/view math, backend-neutral rendering, and TUI / Canvas / GSAP backends on top. Its [documentation](https://luna-flow.github.io/en/geometry3d/) is a good concrete downstream entry point."
+msgstr "**[`Luna-Flow/geometry3d`](https://github.com/Luna-Flow/geometry3d)**: `Luna-Flow/linear-algebra` の上に構築された、MoonBit 用のコンパクトな 3D 幾何基盤です。その上で core 幾何、camera/view 数学、バックエンド非依存レンダリング、TUI / Canvas / GSAP バックエンドを提供します。その[ドキュメント](https://luna-flow.github.io/en/geometry3d/)は具体的な下流利用例として読みやすい入口です。"
+
+#: manual/index.md:100
+msgid "Trait-oriented project setup"
+msgstr "抽象層を使うための設定"
+
+#: manual/index.md:102
+msgid "If you want to write backend-independent code with the abstract capability layers, add the shared upstream abstraction packages explicitly:"
+msgstr "抽象能力層を使ってバックエンド非依存コードを書きたい場合は、前提になる上流抽象パッケージを明示的に追加してください。"
+
+#: manual/index.md:122
+msgid "Use `@algebra` for linear-algebra structure traits, `@la_arithmetic` for linear-algebra-facing operation traits, `@lf_alg` for shared upstream algebraic abstractions, and `@lf_arith` for shared upstream arithmetic types."
+msgstr "`@algebra` は線形代数の構造 trait、`@la_arithmetic` は線形代数向けの操作 trait、 `@lf_alg` は共有の上流代数抽象、`@lf_arith` は共有の上流算術型を指します。"
+
+#: manual/index.md:126
+msgid "Repository positioning"
+msgstr "リポジトリの位置づけ"
+
+#: manual/index.md:128
+msgid "Matrix and vector infrastructure with both mutable and immutable execution models."
+msgstr "可変と不変の両方の実行モデルを備えた行列・ベクトル基盤です。"
+
+#: manual/index.md:131
+msgid "Module overview"
+msgstr "モジュール概要"
+
+#: manual/index.md:133
+msgid "**`immut/matrix`**: Implemented around `src/immut`."
+msgstr "**`immut/matrix`**: 実装は `src/immut`"
+
+#: manual/index.md:134
+msgid "**`immut/vector`**: Implemented around `src/immut`."
+msgstr "**`immut/vector`**: 実装は `src/immut`"
+
+#: manual/index.md:135
+msgid "**`mutable/matrix`**: Implemented around `src/mutable`."
+msgstr "**`mutable/matrix`**: 実装は `src/mutable`"
+
+#: manual/index.md:136
+msgid "**`mutable/vector`**: Implemented around `src/mutable`."
+msgstr "**`mutable/vector`**: 実装は `src/mutable`"
+
+#: manual/index.md:137
+msgid "**`arithmetic`**: Implemented around `src/arithmetic`."
+msgstr "**`arithmetic`**: 実装は `src/arithmetic`"
+
+#: manual/index.md:138
+msgid "**`algebra`**: Implemented around `src/algebra`."
+msgstr "**`algebra`**: 実装は `src/algebra`"
+
+#: manual/index.md:139
+msgid "**`container`**: Implemented around `src/container` and `src/container/adapters`."
+msgstr "**`container`**: 実装は `src/container` と `src/container/adapters`"
+
+#: manual/index.md:140
+msgid "**`backends/default`**: Implemented around `src/backends/default`."
+msgstr "**`backends/default`**: 実装は `src/backends/default`"
+
+#: manual/index.md:141
+msgid "**`backends/openblas`**: Implemented around `src/backends/openblas`."
+msgstr "**`backends/openblas`**: 実装は `src/backends/openblas`"
+
+#: manual/index.md:142
+msgid "**`error`**: Implemented around `src/error`."
+msgstr "**`error`**: 実装は `src/error`"
+
+#: manual/integration/algebra.md:1
+msgid "Algebra ecosystem integration"
+msgstr "Algebra エコシステムへの接続"
+
+#: manual/integration/algebra.md:3
+msgid "The `algebra` package is for mathematical capabilities of whole vector and matrix objects. External libraries should implement only the traits whose operation meaning, closure, and ownership behavior match their types."
+msgstr "`algebra` はベクトル・行列オブジェクト全体の数学能力を表します。外部ライブラリは、演算の意味、閉性、所有権の振る舞いが実際の型に合う trait だけを実装します。"
+
+#: manual/integration/algebra.md:7
+msgid "Choose an algebra level"
+msgstr "Algebra レベルを選ぶ"
+
+#: manual/integration/algebra.md:9
+msgid "Vector and matrix traits form separate capability paths:"
+msgstr "ベクトルの trait と行列の trait は、それぞれ別の能力の系統を構成します。"
+
+#: manual/integration/algebra.md:11
+msgid "Path"
+msgstr "系統"
+
+#: manual/integration/algebra.md:11
+msgid "Trait"
+msgstr "Trait"
+
+#: manual/integration/algebra.md:11
+msgid "Prerequisites"
+msgstr "前提"
+
+#: manual/integration/algebra.md:11
+msgid "Mathematical commitment"
+msgstr "数学的な約束"
+
+#: manual/integration/algebra.md:13
+#: manual/integration/algebra.md:16
+msgid "Shape"
+msgstr "形状"
+
+#: manual/integration/algebra.md:13
+#: manual/integration/algebra.md:16
+#: manual/integration/container.md:11
+msgid "None"
+msgstr "なし"
+
+#: manual/integration/algebra.md:13
+msgid "Reports a vector length"
+msgstr "ベクトル長を返す"
+
+#: manual/integration/algebra.md:14
+msgid "Vector 1"
+msgstr "ベクトル 1"
+
+#: manual/integration/algebra.md:14
+msgid "Closed vector addition, negation, and subtraction"
+msgstr "同じ型で加算・符号反転・減算"
+
+#: manual/integration/algebra.md:15
+msgid "Vector 2"
+msgstr "ベクトル 2"
+
+#: manual/integration/algebra.md:15
+msgid "`Mul` means element-wise/Hadamard multiplication"
+msgstr "`Mul` は要素積/Hadamard 積"
+
+#: manual/integration/algebra.md:16
+msgid "Reports matrix dimensions"
+msgstr "行列形状を返す"
+
+#: manual/integration/algebra.md:17
+msgid "Matrix 1"
+msgstr "行列 1"
+
+#: manual/integration/algebra.md:17
+msgid "Transpose returns the same matrix type"
+msgstr "転置が同じ行列型を返す"
+
+#: manual/integration/algebra.md:18
+msgid "Matrix 2"
+msgstr "行列 2"
+
+#: manual/integration/algebra.md:18
+msgid "Closed matrix addition, negation, and subtraction"
+msgstr "同じ型で行列加算・符号反転・減算"
+
+#: manual/integration/algebra.md:19
+msgid "Matrix 3"
+msgstr "行列 3"
+
+#: manual/integration/algebra.md:19
+msgid "`Mul` means matrix multiplication"
+msgstr "`Mul` は行列積"
+
+#: manual/integration/algebra.md:21
+msgid "Stop at the smallest level required by downstream algorithms. Shape traits do not imply element access. `TransposeMatrix` does not imply matrix multiplication. `AdditiveVector` does not imply dot product, norm, scalar action, or element-wise multiplication."
+msgstr "下流アルゴリズムに必要な最小レベルで止めます。Shape は要素アクセスを意味せず、 `TransposeMatrix` は行列積を意味しません。`AdditiveVector` は内積、norm、スカラー作用、要素積を意味しません。"
+
+#: manual/integration/algebra.md:26
+msgid "Important operator boundary"
+msgstr "演算子境界"
+
+#: manual/integration/algebra.md:28
+msgid "The stronger traits reuse MoonBit operators and return `Self`, not `Result`. Before implementing one, confirm all of the following:"
+msgstr "強い trait は MoonBit の演算子を再利用し、`Result` ではなく `Self` を返します。実装前に次を確認します。"
+
+#: manual/integration/algebra.md:31
+msgid "The operator already has the documented meaning for the type. In particular, `Mul` must not mean Hadamard multiplication on a `MatMulMatrix`."
+msgstr "演算子の既存の意味が trait と一致する。特に `MatMulMatrix` の `Mul` は行列積です。"
+
+#: manual/integration/algebra.md:33
+msgid "Results remain in the same concrete type."
+msgstr "結果が同じ具象型に閉じている。"
+
+#: manual/integration/algebra.md:34
+msgid "Runtime shape preconditions and failure behavior are clearly documented."
+msgstr "runtime の形状前提と失敗動作が文書化されている。"
+
+#: manual/integration/algebra.md:35
+msgid "The operation does not silently switch storage backends or ownership models."
+msgstr "演算中にバックエンドや所有権モデルを暗黙に切り替えない。"
+
+#: manual/integration/algebra.md:37
+msgid "Dynamic rectangular matrix multiplication may be invalid for some shape pairs. `MatMulMatrix` does not standardize a checked error channel for that case. A backend that needs a checked public operation should retain its checked method and implement `MatMulMatrix` only when its operator contract is acceptable."
+msgstr "動的な長方形行列では、形状によって積が不正になる場合があります。 `MatMulMatrix` 自体は検査付きエラーチャネルを定義しません。checked method が必要なバックエンドはそれを保持し、演算子契約が適切な場合だけ trait を実装します。"
+
+#: manual/integration/algebra.md:42
+msgid "Algebra and container are independent"
+msgstr "Algebra と Container は独立"
+
+#: manual/integration/algebra.md:44
+msgid "Need"
+msgstr "必要なこと"
+
+#: manual/integration/algebra.md:44
+msgid "Use"
+msgstr "使用する層"
+
+#: manual/integration/algebra.md:46
+msgid "Observe elements or convert storage"
+msgstr "要素観測・ストレージ変換"
+
+#: manual/integration/algebra.md:46
+msgid "`container` read/build dictionaries"
+msgstr "`container` の read/build 辞書"
+
+#: manual/integration/algebra.md:47
+msgid "Express closed whole-object mathematics"
+msgstr "同じ型に閉じた数学演算"
+
+#: manual/integration/algebra.md:47
+msgid "`algebra` traits"
+msgstr "`algebra` trait"
+
+#: manual/integration/algebra.md:48
+msgid "Do both"
+msgstr "両方"
+
+#: manual/integration/algebra.md:48
+msgid "Implement the relevant algebra traits and publish container dictionaries"
+msgstr "対応する trait と辞書を別々に提供"
+
+#: manual/integration/algebra.md:50
+msgid "`MatrixShape` is a semantic shape capability; it is not checked element access. `MatrixReadOps` includes shape plus checked indexed reads. Algebra transpose is same-type and closed; container transpose may build a different target type."
+msgstr "`MatrixShape` は意味上の形状能力であり、検査付き要素アクセスではありません。 algebra の転置は同じ型を返し、container の転置は別の型を構築できます。"
+
+#: manual/integration/algebra.md:54
+msgid "Do not implement broad scalar traits merely to make a container type appear more algebraic. Import `Luna-Flow/luna-generic` and `Luna-Flow/arithmetic` directly only for scalar laws and operations the backend genuinely supports."
+msgstr "container 接続のためだけに広いスカラー trait を実装しないでください。実際に支える法則と演算に限り `Luna-Flow/luna-generic` と `Luna-Flow/arithmetic` を使います。"
+
+#: manual/integration/algebra.md:58
+msgid "Where implementations belong"
+msgstr "実装を置く場所"
+
+#: manual/integration/algebra.md:60
+msgid "Public operator and algebra implementations should normally live in the package that owns the concrete type. This keeps method/trait resolution predictable and lets the type owner define the operation semantics."
+msgstr "公開演算子と algebra 実装は、通常は具象型を所有するパッケージに置きます。これによりメソッドと trait の解決が予測しやすくなり、型の所有者が演算の意味を決められます。"
+
+#: manual/integration/algebra.md:64
+msgid "If a separate interoperability package is necessary, prefer an owned wrapper type in that package and implement the algebra traits for the wrapper. Do not assume a bridge package can safely redefine the meaning of operators on an unowned external type."
+msgstr "別の相互運用パッケージが必要な場合は、そのパッケージが所有する wrapper 型を作り、wrapper に algebra trait を実装します。所有していない外部型の演算子の意味を bridge パッケージが安全に再定義できるとは考えないでください。"
+
+#: manual/integration/algebra.md:69
+msgid "Complete same-type example"
+msgstr "同じ型に閉じた例"
+
+#: manual/integration/algebra.md:71
+msgid "This is deliberately a `1x1` matrix type, not a scalar pretending to be an arbitrary dynamic matrix. For `1x1` matrices, transpose is the identity, entry-wise addition is matrix addition, and multiplying the single entries is exactly standard matrix multiplication. The fixed shape makes every operation closed and removes runtime shape failure from the example."
+msgstr "これはスカラーを任意の動的行列に見せかけた例ではなく、意図的に `1x1` 行列型です。 `1x1` 行列では転置は恒等、要素加算は行列加算、唯一の要素同士の積は標準行列積と完全に一致します。固定形状により全演算が同じ型に閉じ、runtime 形状失敗もありません。"
+
+#: manual/integration/algebra.md:134
+msgid "An external library may stop after `MatrixShape`, `TransposeMatrix`, or `AdditiveMatrix`; the final two implementations are not mandatory. A dynamic matrix backend must additionally define what its operators do for incompatible shapes rather than copying the fixed-shape assumptions from this example."
+msgstr "外部ライブラリは `MatrixShape`、`TransposeMatrix`、`AdditiveMatrix` のどこで止めても構いません。動的行列バックエンドは、この固定形状の前提をコピーせず、互換性のない形状に対する演算子の動作を別途定義する必要があります。"
+
+#: manual/integration/algebra.md:139
+#: manual/integration/container.md:160
+msgid "Integration checklist"
+msgstr "接続チェックリスト"
+
+#: manual/integration/algebra.md:141
+msgid "Select the smallest trait that matches the algorithm and the type."
+msgstr "型とアルゴリズムに合う最小 trait を選ぶ。"
+
+#: manual/integration/algebra.md:142
+msgid "Confirm the existing `Add`, `Neg`, `Sub`, or `Mul` meaning matches the algebra trait before declaring conformance."
+msgstr "`Add` / `Neg` / `Sub` / `Mul` の意味が trait と一致することを確認する。"
+
+#: manual/integration/algebra.md:144
+msgid "Test closure, shape behavior, transpose shape reversal, and representative algebraic laws supported by the type."
+msgstr "閉性、形状、転置後の形状、型が支える代表的な法則をテストする。"
+
+#: manual/integration/algebra.md:146
+msgid "Test invalid dynamic shape behavior wherever an operator has runtime preconditions."
+msgstr "runtime 形状前提がある演算子は不正形状の動作もテストする。"
+
+#: manual/integration/algebra.md:148
+msgid "Document whether operations allocate, share storage, or mutate hidden state."
+msgstr "allocation、共有ストレージ、隠れた mutation を文書化する。"
+
+#: manual/integration/algebra.md:149
+msgid "Keep dot product, norm, scalar action, decomposition, and solvers outside these traits unless a future dedicated capability defines them."
+msgstr "将来の専用能力が定義しない限り、内積、norm、スカラー作用、分解、solver をこれらの trait に含めない。"
+
+#: manual/integration/algebra.md:151
+msgid "Add container dictionaries separately when element-level interoperability is also required."
+msgstr "要素単位の相互運用が必要なら container 辞書を別に追加する。"
+
+#: manual/integration/container.md:1
+msgid "Luna-Flow ecosystem integration"
+msgstr "Luna-Flow エコシステムへの接続"
+
+#: manual/integration/container.md:3
+msgid "External libraries should adopt only the capabilities that match their real semantics. Integration is not an all-or-nothing conformance level, and no library needs to expose its storage representation."
+msgstr "外部ライブラリは、実際の意味に合う能力だけを選んで提供します。接続は一括適合ではなく、内部ストレージを公開する必要もありません。"
+
+#: manual/integration/container.md:7
+msgid "Choose the structural boundary"
+msgstr "構造能力の境界を選ぶ"
+
+#: manual/integration/container.md:9
+msgid "Level"
+msgstr "レベル"
+
+#: manual/integration/container.md:9
+msgid "Capability supplied"
+msgstr "提供する能力"
+
+#: manual/integration/container.md:9
+msgid "The type can participate as"
+msgstr "参加できる役割"
+
+#: manual/integration/container.md:11
+msgid "A standalone type using its own API"
+msgstr "独自 API を使う独立型"
+
+#: manual/integration/container.md:12
+msgid "`VectorReadOps` or `MatrixReadOps`"
+msgstr "`VectorReadOps` または `MatrixReadOps`"
+
+#: manual/integration/container.md:12
+msgid "A source for map, conversion, or transpose"
+msgstr "map、変換、転置の入力"
+
+#: manual/integration/container.md:13
+msgid "`VectorBuildOps` or `MatrixBuildOps`"
+msgstr "`VectorBuildOps` または `MatrixBuildOps`"
+
+#: manual/integration/container.md:13
+msgid "A target for map, conversion, or transpose"
+msgstr "map、変換、転置の出力"
+
+#: manual/integration/container.md:14
+msgid "Matching read and build dictionaries"
+msgstr "対応する read と build"
+
+#: manual/integration/container.md:14
+msgid "Both source and target in generic transformations"
+msgstr "ジェネリック変換の入力と出力"
+
+#: manual/integration/container.md:15
+msgid "4P"
+msgstr "4P"
+
+#: manual/integration/container.md:15
+msgid "Persistent edit dictionary"
+msgstr "永続編集辞書"
+
+#: manual/integration/container.md:15
+msgid "A checked copy-on-replacement value"
+msgstr "検査付き copy-on-replacement 値"
+
+#: manual/integration/container.md:16
+msgid "4M"
+msgstr "4M"
+
+#: manual/integration/container.md:16
+msgid "Mutable edit dictionary"
+msgstr "可変編集辞書"
+
+#: manual/integration/container.md:16
+msgid "A checked in-place update target"
+msgstr "検査付き原地更新対象"
+
+#: manual/integration/container.md:18
+msgid "Levels 4P and 4M are alternatives determined by ownership semantics, not a progression where every backend should implement both. Views commonly provide read plus mutable edit but no build. An append-only or generated container may provide build without read. A foreign handle may intentionally provide read only."
+msgstr "4P と 4M は所有権モデルで決まる選択肢であり、両方を実装するための段階ではありません。ビューは read と可変編集だけを持ち、build を持たないことが自然です。外部ハンドルは read のみ、生成専用コンテナは build のみでも構いません。"
+
+#: manual/integration/container.md:24
+msgid "Algorithm requirements"
+msgstr "アルゴリズムが要求する能力"
+
+#: manual/integration/container.md:26
+msgid "Algorithm"
+msgstr "アルゴリズム"
+
+#: manual/integration/container.md:26
+msgid "Source requirement"
+msgstr "入力の要件"
+
+#: manual/integration/container.md:26
+msgid "Target requirement"
+msgstr "出力の要件"
+
+#: manual/integration/container.md:26
+msgid "Scalar relationship"
+msgstr "スカラーの関係"
+
+#: manual/integration/container.md:28
+#: manual/integration/container.md:29
+msgid "May change `A` to `B`"
+msgstr "`A` から `B` へ変更可"
+
+#: manual/integration/container.md:30
+#: manual/integration/container.md:31
+#: manual/integration/container.md:32
+msgid "Preserves `T`"
+msgstr "`T` を保持"
+
+#: manual/integration/container.md:34
+msgid "A read dictionary does not imply construction, editing, arithmetic, contiguous memory, or cheap random access. A build dictionary does not imply that the result can be read back. Edit dictionaries do not imply resizing, insertion, deletion, or sparse-entry removal."
+msgstr "read は構築、編集、算術、連続メモリ、安価なランダムアクセスを意味しません。 build は読み戻しを意味しません。編集辞書は resize、insert、delete、疎要素削除を意味しません。"
+
+#: manual/integration/container.md:39
+msgid "Mathematical capabilities are independent"
+msgstr "数学能力は独立している"
+
+#: manual/integration/container.md:41
+msgid "The `algebra` package describes operations such as addition, transpose, and matrix multiplication. The `container` package describes observation and construction. An external type may choose either axis independently:"
+msgstr "`algebra` は加算、転置、行列積などを記述し、`container` は観測と構築を記述します。外部型はそれぞれを独立に選べます。container のみなら代数法則を主張せずデータ変換へ参加でき、algebra のみなら要素を公開せず閉じた数学演算を提供できます。"
+
+#: manual/integration/container.md:45
+msgid "Container-only integration supports data movement and structural algorithms without claiming algebraic laws for the scalar or container."
+msgstr "container だけの接続は、スカラーやコンテナの代数法則を主張することなく、データの移動と構造的なアルゴリズムを可能にします。"
+
+#: manual/integration/container.md:47
+msgid "Algebra-only integration supports closed mathematical operations without exposing individual elements."
+msgstr "algebra だけの接続は、個々の要素を公開せずに、同じ型に閉じた数学演算を可能にします。"
+
+#: manual/integration/container.md:49
+msgid "Supplying both enables both families of generic algorithms, but one does not automatically satisfy the other."
+msgstr "両方を提供すると両系統のジェネリックアルゴリズムに参加できますが、一方を満たしても他方が自動的に満たされるわけではありません。"
+
+#: manual/integration/container.md:52
+msgid "Do not add broad scalar trait implementations merely to obtain container interoperability. Add mathematical traits only when the type actually provides the documented operation and laws."
+msgstr "container 接続のためだけに広いスカラー trait を実装しないでください。数学 trait は、型がその演算と法則を本当に満たす場合だけ追加します。"
+
+#: manual/integration/container.md:56
+msgid "Who owns the adapter"
+msgstr "アダプタの所有者"
+
+#: manual/integration/container.md:58
+msgid "Prefer the following ownership order:"
+msgstr "次の所有順序を優先します。"
+
+#: manual/integration/container.md:60
+msgid "The library that owns the container type publishes its operation-dictionary factories when depending on `Luna-Flow/linear-algebra/container` is natural."
+msgstr "型を所有するライブラリが `Luna-Flow/linear-algebra/container` への依存を自然に受け入れられるなら、そこで操作辞書の factory を公開します。"
+
+#: manual/integration/container.md:62
+msgid "A small bridge package owns the adapters when neither project should depend directly on the other."
+msgstr "双方に直接依存を置きたくない場合は、小さな bridge パッケージが所有します。"
+
+#: manual/integration/container.md:64
+msgid "`Luna-Flow/linear-algebra` should contain adapters only for implementations maintained in this repository."
+msgstr "`Luna-Flow/linear-algebra` 本体には、このリポジトリで管理する実装のアダプタだけを置きます。"
+
+#: manual/integration/container.md:67
+msgid "This direction prevents the core package from accumulating optional backend dependencies. Factory names should identify the container and capability, and the factory may carry scalar constraints that are genuinely required by the backend."
+msgstr "この方向により、中核パッケージに任意のバックエンド依存が蓄積しません。factory の名前はコンテナと能力を示し、factory はバックエンドが本当に必要とするスカラー制約を持てます。"
+
+#: manual/integration/container.md:72
+msgid "Complete external adapter"
+msgstr "完全な外部アダプタ例"
+
+#: manual/integration/container.md:74
+msgid "This example owns a row-major array, but only the operation dictionaries expose its semantics. The generic transpose targets Luna's immutable matrix type, so the example exercises a real cross-implementation boundary."
+msgstr "この例は行優先配列を所有しますが、その意味は操作辞書だけから公開します。転置先には Luna の immutable 行列を使い、実際の異種実装境界を検証します。"
+
+#: manual/integration/container.md:156
+msgid "The backend remains responsible for validating negative dimensions, preserving `0xN` and `Nx0`, reporting invalid coordinates with `LinearAlgebraError`, and honoring its documented ownership behavior."
+msgstr "バックエンドは負の次元、`0xN` / `Nx0`、不正座標、所有権規則を自身で保証します。"
+
+#: manual/integration/container.md:162
+msgid "Select only the dictionaries supported by the real storage and ownership model."
+msgstr "実際のストレージと所有権に合う辞書だけを選ぶ。"
+
+#: manual/integration/container.md:164
+msgid "Keep checked access and construction panic-free."
+msgstr "検査付きアクセスと構築で panic しない。"
+
+#: manual/integration/container.md:165
+msgid "Test first/last and invalid indices, empty and degenerate shapes, and initializer coordinate ordering."
+msgstr "境界 index、空・退化形状、initializer の座標順をテストする。"
+
+#: manual/integration/container.md:167
+msgid "For persistent editing, prove that the source remains unchanged."
+msgstr "永続編集では、元の値が変わらないことを確認する。"
+
+#: manual/integration/container.md:168
+msgid "For mutable editing, prove that failure performs no partial mutation."
+msgstr "可変編集では、失敗時に部分的な変更が起きないことを確認する。"
+
+#: manual/integration/container.md:169
+msgid "Test at least one generic map or conversion in both supported directions."
+msgstr "対応する両方向で、ジェネリックな map または変換を少なくとも 1 つテストする。"
+
+#: manual/integration/container.md:170
+msgid "Document performance characteristics such as remote access, decompression, or sparse materialization costs without changing the semantic contract."
+msgstr "remote access、展開、疎行列 materialization などの性能特性を、意味論的な契約を変えずに文書化する。"
+
+#: manual/integration/container.md:173
+msgid "Future optimized kernel dictionaries should be additional opt-in capabilities. They must not become prerequisites for read/build interoperability."
+msgstr "将来の最適化 kernel 辞書は追加の opt-in 能力であり、read/build の相互運用の前提にしてはいけません。"
+
+#: manual/tutorial/algebra.md:1
+msgid "algebra tutorial"
+msgstr "algebra チュートリアル"
+
+#: manual/tutorial/algebra.md:5
+msgid "If you want to use the abstract linear-algebra layers directly, install the full dependency set first:"
+msgstr "抽象線形代数レイヤーを直接使うなら、まず依存一式を追加してください。"
+
+#: manual/tutorial/algebra.md:25
+msgid "This gives you one clear split: `@algebra` for linear-algebra structure traits, `@la_arithmetic` for linear-algebra-facing operation traits, `@lf_alg` for the shared upstream algebraic abstractions, and `@lf_arith` for upstream arithmetic types."
+msgstr "役割分担は明確です。`@algebra` は線形代数の構造 trait、`@la_arithmetic` は線形代数向けの操作 trait、`@lf_alg` は共有の上流代数抽象、`@lf_arith` は共有の上流算術型を扱います。"
+
+#: manual/tutorial/algebra.md:30
+msgid "Small case: build one backend-independent Gram step"
+msgstr "小さなケース: バックエンド非依存の Gram ステップを組み立てる"
+
+#: manual/tutorial/algebra.md:54
+msgid "This case shows how to describe a backend-independent linear-algebra step in terms of the structure traits owned by this package:"
+msgstr "この例は、このパッケージ自身が持つ線形代数 trait だけで、バックエンド非依存の処理を書けることを示しています。"
+
+#: manual/tutorial/algebra.md:57
+msgid "Require `MatMulMatrix` so the algorithm can multiply one matrix-like value by another."
+msgstr "`MatMulMatrix` で、行列らしい乗算が必要だと表現する。"
+
+#: manual/tutorial/algebra.md:58
+msgid "Reuse `TransposeMatrix` through the `MatMulMatrix` hierarchy instead of naming a dense backend API directly."
+msgstr "`MatMulMatrix` 系列から使える `TransposeMatrix` で転置を呼び出し、密実装 API に直結しない。"
+
+#: manual/tutorial/algebra.md:59
+msgid "Ask `MatrixShape` for the result shape without depending on storage layout."
+msgstr "`MatrixShape` で結果形状を読み出し、保存形式に依存しない。"
+
+#: manual/tutorial/algebra.md:60
+msgid "Run the same helper on a real default backend wrapper to confirm the trait contract is practical, not just abstract."
+msgstr "最後に既定バックエンドの実装型へそのまま適用し、抽象 trait が実運用の能力につながっていることを確かめる。"
+
+#: manual/tutorial/algebra.md:62
+msgid "The result stays generic while still expressing a recognizably linear-algebraic operation."
+msgstr "こうしておくと、線形代数の意味を保ったままアルゴリズムを汎用化できます。"
+
+#: manual/tutorial/algebra.md:65
+#: manual/tutorial/arithmetic.md:46
+#: manual/tutorial/backends/default.md:32
+#: manual/tutorial/error.md:37
+#: manual/tutorial/immut/matrix.md:91
+#: manual/tutorial/immut/vector.md:40
+#: manual/tutorial/mutable/matrix.md:36
+#: manual/tutorial/mutable/vector.md:36
+msgid "Suggested flow"
+msgstr "推奨フロー"
+
+#: manual/tutorial/algebra.md:67
+msgid "Reach for `algebra` when the mathematical meaning matters more than one backend helper."
+msgstr "アルゴリズムが「どのバックエンドか」より「どんな構造が必要か」を重視するなら、まず `algebra` から考えます。"
+
+#: manual/tutorial/algebra.md:68
+msgid "Use traits such as `AdditiveVector`, `MatrixShape`, `TransposeMatrix`, and `MatMulMatrix` to state the required structure."
+msgstr "`AdditiveVector`、`MatrixShape`、`TransposeMatrix`、`MatMulMatrix` などの trait で必要な構造を表します。"
+
+#: manual/tutorial/algebra.md:69
+msgid "Add narrower arithmetic-only constraints only when the algorithm truly needs a specific computable operation."
+msgstr "本当に特定の計算操作が必要なときだけ、より狭い arithmetic 制約を追加します。"
+
+#: manual/tutorial/algebra.md:71
+#: manual/tutorial/arithmetic.md:52
+#: manual/tutorial/backends/default.md:38
+#: manual/tutorial/error.md:43
+#: manual/tutorial/immut/matrix.md:97
+#: manual/tutorial/immut/vector.md:46
+#: manual/tutorial/mutable/matrix.md:42
+#: manual/tutorial/mutable/vector.md:43
+msgid "Practical guidance"
+msgstr "実践ガイド"
+
+#: manual/tutorial/algebra.md:73
+msgid "Prefer the smallest structure that still matches the algorithm's mathematical meaning."
+msgstr "アルゴリズムの意味を表せる最小の構造制約を選びます。"
+
+#: manual/tutorial/algebra.md:74
+msgid "Keep backend-specific products, norms, or solve routines out of the core structure layer unless they can be expressed generically."
+msgstr "内積、ノルム、求解のようなバックエンド特化の振る舞いは、安易にコア構造層へ入れないようにします。"
+
+#: manual/tutorial/arithmetic.md:1
+msgid "arithmetic tutorial"
+msgstr "arithmetic チュートリアル"
+
+#: manual/tutorial/arithmetic.md:5
+msgid "Install the shared abstraction packages first:"
+msgstr "まず共有抽象パッケージを追加してください。"
+
+#: manual/tutorial/arithmetic.md:23
+msgid "Small case: turn a signed residual into a penalty signal"
+msgstr "小さなケース: 符号付き残差をペナルティ値に変える"
+
+#: manual/tutorial/arithmetic.md:37
+msgid "This case is small, but it captures the role of the `arithmetic` layer:"
+msgstr "この例は小さいですが、`arithmetic` 層の役割をそのまま表しています。"
+
+#: manual/tutorial/arithmetic.md:39
+msgid "Start from a raw scalar value produced by a linear-algebra routine."
+msgstr "線形代数処理から生まれた生のスカラー値を受け取る。"
+
+#: manual/tutorial/arithmetic.md:40
+msgid "Ask only for the concrete operation you need, here `Abs`."
+msgstr "ここで本当に必要な操作だけを要求する。今回は `Abs`。"
+
+#: manual/tutorial/arithmetic.md:41
+msgid "Convert the signed residual into a penalty value without claiming a richer algebraic structure."
+msgstr "より強い代数構造を主張せず、符号付き残差をペナルティ値へ変換する。"
+
+#: manual/tutorial/arithmetic.md:43
+msgid "That is the right fit when the algorithm needs a computable helper, not a full mathematical contract."
+msgstr "必要なのが「計算可能な操作」であって「完全な数学構造」ではない場合、この分け方が最も自然です。"
+
+#: manual/tutorial/arithmetic.md:48
+msgid "Use `arithmetic` when the algorithm needs an operation such as `abs`, checked division, checked square root, or approximate comparison."
+msgstr "`abs`、検査付き除算、検査付き平方根、近似比較のような具体操作が必要なら `arithmetic` を使います。"
+
+#: manual/tutorial/arithmetic.md:49
+msgid "Keep the requirement as narrow as possible so more scalar types can satisfy it."
+msgstr "制約はできるだけ狭く保ち、より多くのスカラー型で再利用できるようにします。"
+
+#: manual/tutorial/arithmetic.md:50
+msgid "Move up to `algebra` only when the algorithm depends on a stronger structural meaning."
+msgstr "より強い構造的意味が必要になったときだけ `algebra` へ上がります。"
+
+#: manual/tutorial/arithmetic.md:54
+msgid "Prefer existing `Luna-Flow/luna-generic` or `Luna-Flow/arithmetic` traits when they already express the operation."
+msgstr "`Luna-Flow/luna-generic` や `Luna-Flow/arithmetic` に既存の trait があるなら、それを優先して使います。"
+
+#: manual/tutorial/arithmetic.md:55
+msgid "Add local linear-algebra-facing traits only when an upstream capability name is missing."
+msgstr "上流に適切な名前がない場合にだけ、線形代数向けのローカル trait を追加します。"
+
+#: manual/tutorial/arithmetic.md:56
+msgid "Do not use an arithmetic-only trait as a substitute for a stronger algebraic guarantee."
+msgstr "arithmetic-only trait を、より強い代数保証の代わりに使わないでください。"
+
+#: manual/tutorial/backends/default.md:1
+msgid "backends/default tutorial"
+msgstr "backends/default チュートリアル"
+
+#: manual/tutorial/backends/default.md:3
+msgid "Small case: accept the default dense backend without hard-wiring the algorithm"
+msgstr "小さなケース: 既定の密バックエンドを使いつつ、アルゴリズムは固定しない"
+
+#: manual/tutorial/backends/default.md:23
+msgid "This case demonstrates the intended role of the default backend layer:"
+msgstr "この例は、既定バックエンド層をどう使うべきかを表しています。"
+
+#: manual/tutorial/backends/default.md:25
+msgid "Construct a concrete dense matrix with `DenseMatrix`."
+msgstr "`DenseMatrix` で、すぐ使える具体的な密行列を作る。"
+
+#: manual/tutorial/backends/default.md:26
+msgid "Pass it into a helper that asks only for `MatrixShape`."
+msgstr "それを `MatrixShape` だけを要求する補助関数へ渡す。"
+
+#: manual/tutorial/backends/default.md:27
+msgid "Let `@default.shape_of` bridge the concrete wrapper and the public trait-oriented view."
+msgstr "`@default.shape_of` で、具体ラッパー型と公開 trait ベースの見方をつなぐ。"
+
+#: manual/tutorial/backends/default.md:29
+msgid "That gives users a ready-to-use dense backend while still keeping new algorithms portable."
+msgstr "こうしておくと、利用者には使いやすい既定バックエンドを渡しつつ、新しいアルゴリズムは他バックエンドへ持ち運びやすくなります。"
+
+#: manual/tutorial/backends/default.md:34
+msgid "Start with `DenseMatrix`, `DenseVector`, `ImmutableDenseMatrix`, or `ImmutableDenseVector` when you want the repository's reference backend immediately."
+msgstr "まずリポジトリ既定の参照実装を使いたいなら、`DenseMatrix`、`DenseVector`、`ImmutableDenseMatrix`、`ImmutableDenseVector` から始めます。"
+
+#: manual/tutorial/backends/default.md:35
+msgid "Write new reusable helpers against `algebra` traits such as `MatrixShape`."
+msgstr "再利用したいアルゴリズムは `MatrixShape` のような `algebra` trait に依存させます。"
+
+#: manual/tutorial/backends/default.md:36
+msgid "Keep the backend wrapper at the boundary where concrete storage is actually chosen."
+msgstr "具体ストレージや具体バックエンドの選択は、できるだけ外側の境界に残します。"
+
+#: manual/tutorial/backends/default.md:40
+msgid "Use the default backend wrappers when you want a public dense implementation with straightforward constructors."
+msgstr "そのまま使える公開の密実装が必要なときは、default backend のラッパー型を使います。"
+
+#: manual/tutorial/backends/default.md:41
+msgid "Keep backend-specific products, norms, solve strategies, or decompositions in the backend or a dedicated algorithm layer unless they can be expressed as same-category structural operations."
+msgstr "スカラー値を返す積、ノルム、求解戦略、分解戦略のようなバックエンド特化の挙動は、同種の構造演算として表せない限り、バックエンド層または専用アルゴリズム層に置きます。"
+
+#: manual/tutorial/backends/default.md:42
+msgid "Treat `backends/default` as a bridge layer, not as the only place where generic linear algebra code should live."
+msgstr "`backends/default` は橋渡しの層であって、汎用線形代数コードの唯一の置き場ではありません。"
+
+#: manual/tutorial/backends/openblas.md:1
+msgid "backends/openblas tutorial"
+msgstr "backends/openblas チュートリアル"
+
+#: manual/tutorial/backends/openblas.md:3
+msgid "Before you start"
+msgstr "はじめに"
+
+#: manual/tutorial/backends/openblas.md:5
+msgid "`backends/openblas` is `native` only. The current repository configuration searches OpenBLAS from:"
+msgstr "`backends/openblas` は `native` 専用です。現在のリポジトリ設定は、次の OpenBLAS 配置を探索します。"
+
+#: manual/tutorial/backends/openblas.md:15
+msgid "This covers the default Homebrew layout on macOS and the default Ubuntu OpenBLAS package layout. If OpenBLAS is not installed in one of those places, native build and test commands for this package will fail at compile or link time."
+msgstr "これは macOS の Homebrew 配置と Ubuntu の標準 OpenBLAS パッケージ配置をカバーします。これらの場所に OpenBLAS がない場合、このパッケージの `native` ビルドやテストはコンパイルまたはリンク時に失敗します。"
+
+#: manual/tutorial/backends/openblas.md:20
+msgid "Construct a `BlasMatrix`"
+msgstr "`BlasMatrix` を作る"
+
+#: manual/tutorial/backends/openblas.md:34
+msgid "Use `Float` or `Double`. Those are the only scalar types that currently implement `BLASInnerType`."
+msgstr "現在使えるスカラーは `Float` と `Double` だけです。これらだけが `BLASInnerType` を実装しています。"
+
+#: manual/tutorial/backends/openblas.md:37
+msgid "Multiply matrices through OpenBLAS"
+msgstr "OpenBLAS で行列乗算する"
+
+#: manual/tutorial/backends/openblas.md:56
+msgid "`Mul` is the operation that goes through OpenBLAS GEMM. Dimension mismatch keeps the same semantics as the repository's other unchecked matrix multiplication paths: it aborts."
+msgstr "現時点で実際に OpenBLAS GEMM を使うのは `Mul` です。次元が合わない場合の意味論は、このリポジトリの他の unchecked 行列乗算経路と同じで abort になります。"
+
+#: manual/tutorial/backends/openblas.md:60
+msgid "Convert between `BlasMatrix` and the default immutable dense backend"
+msgstr "既定の不変密バックエンドと相互変換する"
+
+#: manual/tutorial/backends/openblas.md:75
+msgid "Equivalent conversion APIs also exist for the concrete immutable matrix type:"
+msgstr "具体的な不変行列型との相互変換も同じく用意されています。"
+
+#: manual/tutorial/backends/openblas.md:80
+msgid "Minimal native test flow"
+msgstr "最小の `native` テストフロー"
+
+#: manual/tutorial/backends/openblas.md:82
+msgid "Use native commands when exercising this backend:"
+msgstr "このバックエンドを使うときは `native` ターゲットで実行してください。"
+
+#: manual/tutorial/backends/openblas.md:89
+msgid "If you want to depend on this package from another MoonBit package, keep the same rule in mind: choose `BlasMatrix` explicitly and build for `native`."
+msgstr "他の MoonBit パッケージから依存する場合も同じです。`BlasMatrix` を明示的に選び、 `native` でビルドします。"
+
+#: manual/tutorial/container.md:1
+msgid "Container capability tutorial"
+msgstr "コンテナ能力チュートリアル"
+
+#: manual/tutorial/container.md:3
+msgid "Convert between existing backends"
+msgstr "既存バックエンド間の変換"
+
+#: manual/tutorial/container.md:5
+msgid "This example copies a default mutable dense matrix into the default immutable dense representation. Later mutation of the source cannot affect the target."
+msgstr "この例は、既定の可変密行列を既定の不変密表現へコピーします。その後に元の行列を変更しても、コピー先には影響しません。"
+
+#: manual/tutorial/container.md:22
+msgid "Use `matrix_map` instead when conversion also changes the scalar type."
+msgstr "要素型も変更する場合は `matrix_map` を使います。"
+
+#: manual/tutorial/error.md:1
+msgid "error tutorial"
+msgstr "error チュートリアル"
+
+#: manual/tutorial/error.md:3
+msgid "Small case: classify a failed inverse request"
+msgstr "小さなケース: 失敗した逆行列要求を分類する"
+
+#: manual/tutorial/error.md:28
+msgid "This case models a caller that wants to recover differently from different matrix failures:"
+msgstr "この例は、呼び出し側が失敗理由ごとに回復方法を変えたい場面を想定しています。"
+
+#: manual/tutorial/error.md:31
+msgid "Call a checked API that returns `Result[..., LinearAlgebraError]`."
+msgstr "`Result[..., LinearAlgebraError]` を返す検査付き API を呼ぶ。"
+
+#: manual/tutorial/error.md:32
+msgid "Branch on the error predicates instead of guessing from a message string."
+msgstr "メッセージ文字列を推測に使わず、エラー判定メソッドで分岐する。"
+
+#: manual/tutorial/error.md:33
+msgid "Return a fallback diagnostic only when the failure does not match a known recovery path."
+msgstr "既知の回復経路に当てはまらない場合だけ、一般的な診断メッセージへ戻る。"
+
+#: manual/tutorial/error.md:35
+msgid "That keeps control flow stable even if the human-readable message changes."
+msgstr "こうしておくと、人間向けメッセージが将来調整されても制御フローは安定したままです。"
+
+#: manual/tutorial/error.md:39
+msgid "Use checked matrix APIs in user-facing or data-dependent code."
+msgstr "ユーザー入力や実行時データを扱うコードでは、検査付き行列 API を優先します。"
+
+#: manual/tutorial/error.md:40
+msgid "Match on `Ok` / `Err` as close as possible to the place where recovery decisions are made."
+msgstr "回復判断が必要な場所の近くで `Ok` / `Err` を処理します。"
+
+#: manual/tutorial/error.md:41
+msgid "Use `is_dimension_mismatch`, `is_negative_exponent`, `is_empty_matrix`, `is_non_square_matrix`, and related predicates to drive control flow."
+msgstr "`is_dimension_mismatch`、`is_negative_exponent`、`is_empty_matrix`、`is_non_square_matrix` などの判定メソッドで制御フローを組み立てます。"
+
+#: manual/tutorial/error.md:45
+msgid "Use `message` for diagnostics, logs, or a final fallback error, not for control-flow parsing."
+msgstr "`message` は診断、ログ、最後のフォールバック表示に使い、制御フロー判定には使いません。"
+
+#: manual/tutorial/error.md:46
+msgid "Treat `ArithmeticFailure` as a boundary for scalar arithmetic errors coming from lower-level arithmetic packages."
+msgstr "`ArithmeticFailure` は下位の算術パッケージから来る境界エラーとして扱います。"
+
+#: manual/tutorial/error.md:47
+msgid "Fall back to `unchecked_*` only when surrounding code has already guaranteed the required preconditions."
+msgstr "周囲のロジックで前提条件を保証済みの場合だけ `unchecked_*` へ戻ります。"
+
+#: manual/tutorial/immut/matrix.md:1
+msgid "immut/matrix tutorial"
+msgstr "immut/matrix チュートリアル"
+
+#: manual/tutorial/immut/matrix.md:3
+msgid "Small case: blur a tiny ASCII sprite with a 3x3 kernel"
+msgstr "小さなケース: `3x3` カーネルで ASCII スプライトをぼかす"
+
+#: manual/tutorial/immut/matrix.md:79
+msgid "This case shows a value-oriented matrix workflow that feels close to a real image-processing toy:"
+msgstr "このケースは、実際の小さな用途に寄せた値セマンティクスの行列処理です。"
+
+#: manual/tutorial/immut/matrix.md:82
+msgid "Store a tiny sprite as an intensity matrix."
+msgstr "小さな ASCII スプライトを輝度行列として持つ。"
+
+#: manual/tutorial/immut/matrix.md:83
+msgid "Rebuild a new matrix with `Matrix::make`, one blurred output cell at a time."
+msgstr "`Matrix::make` で出力行列を 1 セルずつ作り直す。"
+
+#: manual/tutorial/immut/matrix.md:84
+msgid "Sample a 3x3 neighborhood with index reads such as `source[row][col]`."
+msgstr "`source[row][col]` の索引アクセスで `3x3` 近傍を読む。"
+
+#: manual/tutorial/immut/matrix.md:85
+msgid "Render the result back into visible ASCII output for a quick correctness check."
+msgstr "最後に文字列へ戻して、ぼかし結果を目で確認する。"
+
+#: manual/tutorial/immut/matrix.md:87
+msgid "Because the blur returns a new matrix, the original sprite stays available for comparison. That is often the nicest property of the immutable path when you want to inspect intermediate transforms."
+msgstr "ぼかし結果は新しい行列として返るため、元のスプライトは比較用にそのまま残ります。途中結果を見比べたいときに、不変行列はとても扱いやすいです。"
+
+#: manual/tutorial/immut/matrix.md:93
+#: manual/tutorial/mutable/matrix.md:38
+msgid "Build matrices with `Matrix::from_2d_array`, `Matrix::make`, `Matrix::new`, or `Matrix::from_array`."
+msgstr "`Matrix::from_2d_array`、`Matrix::make`、`Matrix::new`、`Matrix::from_array` で行列を作ります。"
+
+#: manual/tutorial/immut/matrix.md:94
+msgid "Use `Matrix::make` when every output cell depends on a neighborhood or stencil from the source matrix."
+msgstr "出力セルごとに元行列の近傍や stencil を参照する処理では、`Matrix::make` を優先します。"
+
+#: manual/tutorial/immut/matrix.md:95
+msgid "Prefer checked `matmul`, `trace`, `determinant`, and `pow` when shape or domain failures can come from runtime data."
+msgstr "形状や入力領域の失敗が実行時データから来る場合は、検査付きの `matmul`、`trace`、`determinant`、`pow` を優先します。"
+
+#: manual/tutorial/immut/matrix.md:99
+msgid "Use `unchecked_*` only when surrounding code has already enforced the required preconditions."
+msgstr "周辺ロジックで前提条件をすでに保証している場合だけ `unchecked_*` を使います。"
+
+#: manual/tutorial/immut/matrix.md:100
+msgid "Use `MatrixFn` when a lazy functional matrix representation is more appropriate than materialized storage."
+msgstr "遅延された関数的な行列表現が物理保存より適している場合は `MatrixFn` を使います。"
+
+#: manual/tutorial/immut/matrix.md:101
+msgid "Clamp or otherwise define your border policy explicitly when you write kernel-style transforms."
+msgstr "カーネル系の変換では、境界をどう扱うかを明示してください。この例では edge clamp を使っています。"
+
+#: manual/tutorial/immut/matrix.md:102
+msgid "Prefer the immutable path when updates should remain explicit and old matrix values still need to be preserved for later steps."
+msgstr "更新を明示的な値変換として扱い、以前の行列値も後続処理で保持したいなら、不変行列の流れが向いています。"
+
+#: manual/tutorial/immut/vector.md:1
+msgid "immut/vector tutorial"
+msgstr "immut/vector チュートリアル"
+
+#: manual/tutorial/immut/vector.md:3
+msgid "Small case: rebuild a published feature vector"
+msgstr "小さなケース: 公開済み特徴ベクトルを作り直す"
+
+#: manual/tutorial/immut/vector.md:31
+msgid "This case reads like a tiny release-preparation pipeline:"
+msgstr "このケースは、小さなリリース前パイプラインとして捉えられます。"
+
+#: manual/tutorial/immut/vector.md:33
+msgid "Start from a published feature vector."
+msgstr "既に公開されているベースベクトルを用意する。"
+
+#: manual/tutorial/immut/vector.md:34
+msgid "Apply one explicit correction with `set`."
+msgstr "`set` で 1 箇所だけ明示的に補正する。"
+
+#: manual/tutorial/immut/vector.md:35
+msgid "Build a new weighted vector with `lin_comb`."
+msgstr "`lin_comb` で新しい重み付きベクトルを組み立てる。"
+
+#: manual/tutorial/immut/vector.md:36
+msgid "Expand it into a matrix-shaped artifact with `tensor_product`."
+msgstr "`tensor_product` で行列状の成果物へ広げる。"
+
+#: manual/tutorial/immut/vector.md:38
+msgid "At no point is the original vector mutated, so earlier states remain usable."
+msgstr "元のベクトルは一切変更されないため、前の状態もそのまま再利用できます。"
+
+#: manual/tutorial/immut/vector.md:42
+#: manual/tutorial/mutable/vector.md:38
+msgid "Create vectors with `Vector::from_array`, `Vector::make`, or `Vector::makei`."
+msgstr "`Vector::from_array`、`Vector::make`、`Vector::makei` でベクトルを作ります。"
+
+#: manual/tutorial/immut/vector.md:43
+msgid "Use `set`, `map`, `left_scale`, and `right_scale` when you want a new vector."
+msgstr "新しいベクトルが必要な場合は `set`、`map`、`left_scale`、`right_scale` を使います。"
+
+#: manual/tutorial/immut/vector.md:44
+msgid "Use `tensor_product`, `scaled_matrix`, `to_row_matrix`, and `to_col_matrix` for matrix-facing conversions."
+msgstr "行列へつなぐ変換には `tensor_product`、`scaled_matrix`、`to_row_matrix`、`to_col_matrix` を使います。"
+
+#: manual/tutorial/immut/vector.md:48
+msgid "Choose `@immut.Vector` when downstream code benefits from explicit value semantics."
+msgstr "下流コードで明示的な値セマンティクスが必要な場合は `@immut.Vector` を選びます。"
+
+#: manual/tutorial/immut/vector.md:49
+msgid "Use `@mutable.Vector` instead when repeated in-place updates or a public `dot()` helper are part of the workload."
+msgstr "繰り返しインプレース更新したい場合や公開 `dot()` ヘルパーが必要な場合は `@mutable.Vector` を選びます。"
+
+#: manual/tutorial/immut/vector.md:50
+msgid "Use the immutable path when every structural change should produce a fresh value that can be passed onward safely."
+msgstr "構造変更のたびに新しい値を返し、古い値もそのまま保持したいなら、この不変ベクトル側から始めてください。"
+
+#: manual/tutorial/mutable/matrix.md:1
+msgid "mutable/matrix tutorial"
+msgstr "mutable/matrix チュートリアル"
+
+#: manual/tutorial/mutable/matrix.md:3
+msgid "Small case: calibrate a dense numeric matrix"
+msgstr "小さなケース: 密行列を校正する"
+
+#: manual/tutorial/mutable/matrix.md:26
+msgid "This pattern works well when a matrix is a live working buffer:"
+msgstr "この形は、行列をライブな作業バッファとして扱うときに使いやすい流れです。"
+
+#: manual/tutorial/mutable/matrix.md:28
+msgid "Build the matrix once."
+msgstr "具体的な行列を一度だけ構築する。"
+
+#: manual/tutorial/mutable/matrix.md:29
+msgid "Use `row_view` and `col_view` to patch the hot regions directly."
+msgstr "`row_view` と `col_view` でホットな領域を直接更新する。"
+
+#: manual/tutorial/mutable/matrix.md:30
+msgid "Run checked numeric APIs like `determinant()` and `inverse()` after the edits are complete."
+msgstr "編集後に `determinant()` や `inverse()` のような検査付き数値 API を呼ぶ。"
+
+#: manual/tutorial/mutable/matrix.md:33
+msgid "That combination is the fastest path when the matrix is a concrete execution object rather than a historical value."
+msgstr "行列が履歴値ではなく実行対象そのものなら、この流れが最も素直です。"
+
+#: manual/tutorial/mutable/matrix.md:39
+msgid "Use `get` and `set` for direct element access, and `row_view` / `col_view` for repeated row or column work."
+msgstr "直接の要素アクセスには `get` と `set` を使い、特定の行や列を繰り返し扱う場合は `row_view` / `col_view` を使います。"
+
+#: manual/tutorial/mutable/matrix.md:40
+msgid "Use checked methods such as `trace`, `determinant`, `inverse`, `mul_vec`, and `pow` when inputs may fail at runtime."
+msgstr "入力が実行時に失敗し得る場合は、検査付きの `trace`、`determinant`、`inverse`、`mul_vec`、`pow` を使います。"
+
+#: manual/tutorial/mutable/matrix.md:44
+msgid "Use `to_transpose()` when you need a live transposed view; use `transpose()` when you need a materialized matrix."
+msgstr "基底行列に接続された転置ビューが必要なら `to_transpose()`、物理的な転置行列が必要なら `transpose()` を使います。"
+
+#: manual/tutorial/mutable/matrix.md:45
+msgid "Use `unchecked_*` only after shape, non-emptiness, and singularity preconditions have already been enforced."
+msgstr "形状、非空、非特異などの前提条件をすでに保証している場合だけ `unchecked_*` を使います。"
+
+#: manual/tutorial/mutable/matrix.md:46
+msgid "Reach for row/column views when one region of the matrix will be updated or inspected repeatedly."
+msgstr "特定の行や列を繰り返し読み書きするなら、毎回添字計算を繰り返すよりビューを使うほうが扱いやすいです。"
+
+#: manual/tutorial/mutable/vector.md:1
+msgid "mutable/vector tutorial"
+msgstr "mutable/vector チュートリアル"
+
+#: manual/tutorial/mutable/vector.md:3
+msgid "Small case: score a candidate with a working copy"
+msgstr "小さなケース: 作業コピーで候補を採点する"
+
+#: manual/tutorial/mutable/vector.md:28
+msgid "This is a solid mutation-oriented pattern:"
+msgstr "これは可変ベクトルでよく使う形です。"
+
+#: manual/tutorial/mutable/vector.md:30
+msgid "Keep the caller-facing vector unchanged."
+msgstr "呼び出し元が渡した元のベクトルは残す。"
+
+#: manual/tutorial/mutable/vector.md:31
+msgid "Take a `copy()` as a working buffer."
+msgstr "`copy()` で作業用バッファを作る。"
+
+#: manual/tutorial/mutable/vector.md:32
+msgid "Perform normalization and scaling with `map_inplace` and `left_scale_inplace`."
+msgstr "`map_inplace` と `left_scale_inplace` で前処理する。"
+
+#: manual/tutorial/mutable/vector.md:34
+msgid "Finish with `dot` once the vector is ready for scoring."
+msgstr "最後に `dot` で採点する。"
+
+#: manual/tutorial/mutable/vector.md:39
+msgid "Use `v[i]` and `v[i] = x` for direct element access."
+msgstr "`v[i]` と `v[i] = x` で要素を直接読み書きします。"
+
+#: manual/tutorial/mutable/vector.md:40
+msgid "Use `map_inplace`, `left_scale_inplace`, and `right_scale_inplace` when mutation is intended."
+msgstr "元の値を変更する意図がある場合は `map_inplace`、`left_scale_inplace`、`right_scale_inplace` を使います。"
+
+#: manual/tutorial/mutable/vector.md:41
+msgid "Use `dot`, `lin_comb`, `tensor_product`, `to_row_matrix`, and `to_col_matrix` when the vector participates in larger algebraic or matrix-building work."
+msgstr "帰着、線形結合、行列変換には `dot`、`lin_comb`、`tensor_product`、`to_row_matrix`、`to_col_matrix` を使います。"
+
+#: manual/tutorial/mutable/vector.md:45
+msgid "Use non-`inplace` helpers when you need a fresh vector instead of modifying the original."
+msgstr "元のベクトルを残したい場合は、`inplace` 接尾辞を持たないヘルパーを使います。"
+
+#: manual/tutorial/mutable/vector.md:46
+msgid "Call `copy()` before mutating when a caller still needs the previous value."
+msgstr "変更前の値も後で使うなら、先に `copy()` を取ってからインプレース操作に入ります。"
+
+#: manual/tutorial/mutable/vector.md:47
+msgid "Reach for `dot`, `lin_comb`, and matrix-conversion helpers once the vector is participating in a larger numerical workflow."
+msgstr "ベクトルがより大きな数値処理に入ったら、`dot`、`lin_comb`、行列変換ヘルパーへ進むと流れがつかみやすいです。"
+
+#, fuzzy
+#~ msgid "Documentation Standard"
+#~ msgstr "ドキュメント標準"
+
+#, fuzzy
+#~ msgid "Document Types and Organization"
+#~ msgstr "ドキュメントの種類と構成"
+
+#, fuzzy
+#~ msgid "Main Document Types"
+#~ msgstr "主なドキュメントの種類"
+
+#, fuzzy
+#~ msgid "**API Reference Documentation (api.md)** - Detailed specifications for each public interface"
+#~ msgstr "**APIリファレンス (api.md)** - 各公開インターフェースの詳細な仕様記述"
+
+#, fuzzy
+#~ msgid "**User Guide (tutorial.md)** - User-oriented tutorials and best practices"
+#~ msgstr "**ユーザガイド (tutorial.md)** - 利用者向けのチュートリアルとベストプラクティス"
+
+#, fuzzy
+#~ msgid "**Design Documentation (design.md)** - Architecture and algorithm descriptions for developers"
+#~ msgstr "**設計ドキュメント (design.md)** - 開発者向けのアーキテクチャとアルゴリズムの説明"
+
+#, fuzzy
+#~ msgid "**Performance Reports** - Reserved for future performance and measurement documentation"
+#~ msgstr "**性能レポート** - 将来再構築する性能・計測ドキュメントのための予約枠"
+
+#~ msgid "`README.md` is the current-baseline document. It should explain the current release baseline, entry points, package positioning, and reader guidance. `CHANGELOG.md` owns the historical release timeline and older release notes."
+#~ msgstr "`README.md` は現行基準の文書であり、現在のリリース基準、入口、パッケージの位置づけ、読者向け案内をまとめます。`CHANGELOG.md` は過去バージョンの時系列と、古いリリースノートを担当します。"
+
+#, fuzzy
+#~ msgid "Documentation Organization Principles"
+#~ msgstr "ドキュメント構成の原則"
+
+#, fuzzy
+#~ msgid "Organized by package/file, for example:"
+#~ msgstr "パッケージ/ファイルごとに構成します。例："
+
+#~ msgid "Further subdivided into `vector`, `matrix`, and similar files under each package"
+#~ msgstr "各パッケージの下で、`vector`、`matrix` などのテーマごとにさらに細分化します。"
+
+#, fuzzy
+#~ msgid "Maintain consistency between documentation and code structure"
+#~ msgstr "ドキュメントとコード構造の一貫性を維持します。"
+
+#, fuzzy
+#~ msgid "Do not document unreleased APIs unless they already exist in the repository implementation"
+#~ msgstr "リポジトリ実装に存在しない未公開 API を先回りして記述してはいけません。"
+
+#~ msgid "Keep the Markdown file set aligned across `en_US`, `zh_CN`, and `ja_JP`"
+#~ msgstr "`en_US`、`zh_CN`、`ja_JP` の 3 言語で同じ Markdown ファイル集合を保ちます。"
+
+#, fuzzy
+#~ msgid "Keep the same top-level and second-level section order across languages unless a code-oriented reason makes that impossible"
+#~ msgstr "各言語で見出しの大枠と節順を揃えます。コード上の理由がない限り、言語ごとに独自構成へ崩しません。"
+
+#, fuzzy
+#~ msgid "Treat the English documentation as the structural source of truth, then localize the same content naturally into Chinese and Japanese"
+#~ msgstr "既定では英語ドキュメントを構成上の基準とし、同じ内容を中国語と日本語へ自然にローカライズします。"
+
+#~ msgid "Treat `doc/*` as the only hand-written prose source. The `src/doc_*` packages are exposure layers and should contain symlinks back to these files rather than independent Markdown bodies."
+#~ msgstr "`doc/*` を唯一の手書き本文の事実源とします。`src/doc_*` パッケージは文書公開層であり、独立した Markdown 本文ではなく、これらのファイルへの symlink を置きます。"
+
+#~ msgid "Keep `README.md` focused on the current baseline and move older release summaries into `CHANGELOG.md`"
+#~ msgstr "`README.md` は現在基準に集中させ、古いバージョン要約は `CHANGELOG.md` へ移します。"
+
+#, fuzzy
+#~ msgid "Do not translate code identifiers, API names, type names, package names, file paths, or version strings"
+#~ msgstr "コード識別子、API 名、型名、パッケージ名、ファイルパス、バージョン文字列は翻訳しません。"
+
+#, fuzzy
+#~ msgid "Documentation Entry Points"
+#~ msgstr "ドキュメント入口"
+
+#~ msgid "**`immut` concrete API**: [immut/matrix API](./api/immut/matrix.md), [immut/matrix tutorial](./tutorial/immut/matrix.md), [immut/vector API](./api/immut/vector.md), [immut/vector tutorial](./tutorial/immut/vector.md)"
+#~ msgstr "**`immut` 具体 API**: [immut/matrix API](./api/immut/matrix.md), [immut/matrix tutorial](./tutorial/immut/matrix.md), [immut/vector API](./api/immut/vector.md), [immut/vector tutorial](./tutorial/immut/vector.md)"
+
+#~ msgid "**`mutable` concrete API**: [mutable/matrix API](./api/mutable/matrix.md), [mutable/matrix tutorial](./tutorial/mutable/matrix.md), [mutable/vector API](./api/mutable/vector.md), [mutable/vector tutorial](./tutorial/mutable/vector.md)"
+#~ msgstr "**`mutable` 具体 API**: [mutable/matrix API](./api/mutable/matrix.md), [mutable/matrix tutorial](./tutorial/mutable/matrix.md), [mutable/vector API](./api/mutable/vector.md), [mutable/vector tutorial](./tutorial/mutable/vector.md)"
+
+#~ msgid "**Capability and backend layers**: [arithmetic API](./api/arithmetic.md), [algebra API](./api/algebra.md), [backends/default API](./api/backends/default.md), [backends/openblas API](./api/backends/openblas.md), [backends/openblas tutorial](./tutorial/backends/openblas.md), [error API](./api/error.md)"
+#~ msgstr "**能力層とバックエンド層**: [arithmetic API](./api/arithmetic.md), [algebra API](./api/algebra.md), [algebra エコシステム接続](./integration/algebra.md), [algebra tutorial](./tutorial/algebra.md), [container API](./api/container.md), [container tutorial](./tutorial/container.md), [container エコシステム接続](./integration/container.md), [backends/default API](./api/backends/default.md), [backends/openblas API](./api/backends/openblas.md), [backends/openblas tutorial](./tutorial/backends/openblas.md), [error API](./api/error.md)"
+
+#, fuzzy
+#~ msgid "Documentation Layout"
+#~ msgstr "ドキュメント構成"
+
+#~ msgid "`README.md` for the repository narrative and release baseline."
+#~ msgstr "`README.md` はリポジトリの説明と現行基準をまとめます。"
+
+#~ msgid "`doc_standard.md` for the documentation contract."
+#~ msgstr "`doc_standard.md` は文書契約をまとめます。"
+
+#~ msgid "Module or subsystem folders with `api.md`, `tutorial.md`, and `design.md`."
+#~ msgstr "各モジュールやサブシステム配下には `api.md`、`tutorial.md`、`design.md` を置きます。"
+
+#~ msgid "`doc/*` is the hand-written documentation source. The `src/doc_*` packages expose those files through symlinks for MoonBit package documentation."
+#~ msgstr "`doc/*` が手書き本文の事実源です。`src/doc_*` パッケージは MoonBit パッケージドキュメント向けに、それらのファイルを symlink で公開します。"

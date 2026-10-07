@@ -142,13 +142,13 @@ Problem types:
 | --- | --- | --- | --- | --- |
 | `README.md` | `Correct` | - | Checked against current bounds, fixture recovery flow, and release workflow claims | Release narrative and operational guidance match the `0.4.2` repository state. |
 | `CONTRIBUTING.md` | `Correct` | - | Inspected directly | Contributor workflow text now matches the current `0.4.2` baseline, scripts, and release flow. |
-| `doc/en_US/immut/matrix/api.md` | `Correct` | - | Rewritten this pass against current source and exported API | Documents strict bounds and same-index swap no-op correctly. |
-| `doc/en_US/immut/vector/api.md` | `Correct` | - | Verified against current vector API and tests | No contract mismatch found. |
-| `doc/en_US/mutable/matrix/api.md` | `Correct` | - | Rewritten this pass against current source and `pkg.generated.mbti` | Removed stale duplicates and old signatures. |
-| `doc/en_US/mutable/vector/api.md` | `Correct` | - | Verified against current vector API and tests | No contract mismatch found. |
-| `doc/en_US/doc_standard.md` | `Correct` | - | Contract/process doc only | No runtime behavior. |
-| `doc/ja_JP/*` | `Correct` | - | README verified; matrix API docs rewritten this pass | Japanese docs are aligned with current English/source semantics. |
-| `doc/zh_CN/*` | `Correct` | - | README verified; matrix API docs rewritten this pass | Chinese docs are aligned with current English/source semantics. |
+| `doc/manual/api/immut/matrix.md` | `Correct` | - | Rewritten this pass against current source and exported API | Documents strict bounds and same-index swap no-op correctly. |
+| `doc/manual/api/immut/vector.md` | `Correct` | - | Verified against current vector API and tests | No contract mismatch found. |
+| `doc/manual/api/mutable/matrix.md` | `Correct` | - | Rewritten this pass against current source and `pkg.generated.mbti` | Removed stale duplicates and old signatures. |
+| `doc/manual/api/mutable/vector.md` | `Correct` | - | Verified against current vector API and tests | No contract mismatch found. |
+| `doc/manual/conventions.md` | `Correct` | - | Contract/process doc only | No runtime behavior. |
+| `doc/locale/ja_JP/LC_MESSAGES/manual.po` | `Correct` | - | README verified; matrix API docs rewritten this pass | Japanese docs are aligned with current English/source semantics. |
+| `doc/locale/zh_CN/LC_MESSAGES/manual.po` | `Correct` | - | README verified; matrix API docs rewritten this pass | Chinese docs are aligned with current English/source semantics. |
 
 ## Tracked Non-Implementation Metadata
 

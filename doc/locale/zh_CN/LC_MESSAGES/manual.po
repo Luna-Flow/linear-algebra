@@ -1,0 +1,2983 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Luna-Flow documentation\n"
+"Report-Msgid-Bugs-To: https://github.com/Luna-Flow\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: conf.json:summary
+msgid "Trait-oriented linear algebra foundations for MoonBit, with checked APIs, backend wrappers, and mutable/immutable dense matrix and vector types."
+msgstr "面向 MoonBit 的 trait 导向线性代数基础库，提供受检 API、后端包装类型，以及可变与不可变的稠密矩阵和向量类型。"
+
+#: manual/api/algebra.md:3
+msgid "API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.4.7` repository state."
+msgstr "本页记录当前 `0.4.7` 仓库中 `Luna-Flow/linear-algebra/algebra` 的公开 API 基线。"
+
+#: manual/api/algebra.md:6
+#: manual/api/container.md:7
+msgid "Experimental status"
+msgstr "实验状态"
+
+#: manual/api/algebra.md:8
+msgid "`algebra` is an experimental feature. It is ready for backend-integration experiments and feedback, but its trait hierarchy, supertrait requirements, operator commitments, and function signatures may change incompatibly before stabilization. Downstream libraries should depend on the smallest capability they need and should not re-export this package as a compatibility-stable public boundary yet."
+msgstr "`algebra` 是实验性功能。它已经可以用于后端接入试验和收集反馈，但 trait 层级、父 trait 要求、运算符承诺和函数签名在稳定前仍可能发生不兼容变更。下游库应只依赖实际需要的最小能力，暂时不要把这个包重新导出为承诺兼容性稳定的公开边界。"
+
+#: manual/api/algebra.md:15
+#: manual/api/arithmetic.md:6
+#: manual/api/backends/default.md:6
+#: manual/api/backends/openblas.md:6
+#: manual/api/error.md:6
+msgid "Purpose"
+msgstr "用途"
+
+#: manual/api/algebra.md:17
+msgid "`algebra` owns the linear-algebra structure traits. Backend packages implement these traits for their own concrete data types. The traits in this package are split by the minimum capability they require so generic algorithms do not accidentally depend on Hadamard multiplication, matrix multiplication, or exact floating-point field laws."
+msgstr "`algebra` 拥有线性代数结构 traits。后端包为自己的具体数据类型实现这些 traits。这里的 traits 按最小能力拆分，避免泛型算法无意依赖 Hadamard 乘法、矩阵乘法或精确浮点域公理。"
+
+#: manual/api/algebra.md:23
+msgid "External type authors should start with the [ecosystem integration guide](../integration/algebra.md) to select the smallest valid trait level and understand its operator commitments."
+msgstr "外部类型作者应先阅读[生态接入指南](../integration/algebra.md)，选择最小有效 trait 层级并确认相应的运算符承诺。"
+
+#: manual/api/algebra.md:27
+#: manual/api/arithmetic.md:12
+#: manual/tutorial/algebra.md:3
+#: manual/tutorial/arithmetic.md:3
+msgid "Project setup"
+msgstr "项目配置"
+
+#: manual/api/algebra.md:29
+msgid "`algebra` is the structure layer only. If you also need the shared upstream scalar abstractions, add them explicitly:"
+msgstr "`algebra` 只负责结构层。如果你的代码还要直接使用共享的上游标量抽象，把这些依赖一起加上："
+
+#: manual/api/algebra.md:38
+#: manual/api/arithmetic.md:23
+#: manual/index.md:111
+#: manual/tutorial/algebra.md:14
+#: manual/tutorial/arithmetic.md:13
+msgid "Recommended `moon.pkg` imports:"
+msgstr "推荐的 `moon.pkg` 导入写法："
+
+#: manual/api/algebra.md:49
+msgid "Use `@algebra` for linear-algebra structure traits. Import `@lf_alg` and `@lf_arith` directly when your code also needs the shared upstream abstractions."
+msgstr "`@algebra` 用来引用线性代数结构 traits；如果代码还需要共享的上游抽象，再直接导入 `@lf_alg` 和 `@lf_arith`。"
+
+#: manual/api/algebra.md:52
+msgid "Matrix shape traits"
+msgstr "矩阵形状 trait"
+
+#: manual/api/algebra.md:87
+msgid "`MatrixShape` is for matrix-like or tensor-like objects with observable dimensions. `VectorShape` is for vector-like objects with observable length. These traits do not claim any algebraic operation."
+msgstr "`MatrixShape` 表示可观测二维形状的对象；`VectorShape` 表示可观测长度的向量式对象。它们不声明任何代数运算。"
+
+#: manual/api/algebra.md:136
+msgid "Represents vector-like objects with additive linear structure. It does not require element-wise multiplication, dot product, norm, or a global zero."
+msgstr "表示具有加法线性结构的向量式对象。它不要求逐元素乘法、内积、范数或全局零元。"
+
+#: manual/api/algebra.md:139
+msgid "Reach for `VecMulVector` only when an algorithm really needs element-wise multiplication:"
+msgstr "只有算法确实需要逐元素乘法时，才使用 `VecMulVector`："
+
+#: manual/api/algebra.md:225
+msgid "Represents matrix-like objects with observable shape and same-category transpose. It does not require matrix multiplication because dynamic rectangular matrix multiplication is only defined for compatible runtime shapes."
+msgstr "表示具有可观测形状和同类型转置操作的矩阵式对象。它不要求矩阵乘法，因为动态矩形矩阵乘法只在运行时形状兼容时才有定义。"
+
+#: manual/api/algebra.md:229
+msgid "The trait does not require dense storage, contiguous memory, direct element indexing, or mutation support."
+msgstr "该 trait 也不要求稠密存储、连续内存、直接元素索引或可变操作。"
+
+#: manual/api/algebra.md:232
+msgid "Use the stronger traits only when the algorithm actually needs the extra operation:"
+msgstr "只有算法确实需要额外运算时，才继续使用更强的 traits："
+
+#: manual/api/algebra.md:291
+#: manual/api/arithmetic.md:153
+#: manual/api/backends/default.md:194
+#: manual/api/backends/openblas.md:148
+#: manual/api/error.md:88
+msgid "Boundary"
+msgstr "边界"
+
+#: manual/api/algebra.md:293
+msgid "Do not add `dot`, `norm`, or inner-product traits here unless the scalar mapping is modeled explicitly. The core algebra package is for minimal structure and same-category operations."
+msgstr "不要在这里加入 `dot`、`norm` 或内积 trait，除非显式建模其标量映射。核心 algebra 包只放最小结构和同类型闭合运算。"
+
+#: manual/api/arithmetic.md:3
+msgid "API baseline for `Luna-Flow/linear-algebra/arithmetic` in the current `0.4.7` repository state."
+msgstr "本页记录当前 `0.4.7` 仓库中 `Luna-Flow/linear-algebra/arithmetic` 的公开 API 基线。"
+
+#: manual/api/arithmetic.md:8
+msgid "`arithmetic` owns operation-level traits used by the linear-algebra package. An operation trait means “this operation is available”; it does not state algebraic laws. Algebraic law-bearing structure belongs in `linear-algebra/algebra`."
+msgstr "`arithmetic` 拥有线性代数包使用的操作级 traits。操作 trait 只表示“该操作可用”，不声明代数律。带代数律的结构属于 `linear-algebra/algebra`。"
+
+#: manual/api/arithmetic.md:14
+msgid "If you want to use the linear-algebra operation traits together with the shared upstream abstractions, start with:"
+msgstr "如果你要把线性代数操作 trait 和共享上游抽象一起使用，先加上这三条依赖："
+
+#: manual/api/arithmetic.md:33
+msgid "Re-exported types"
+msgstr "重导出的类型"
+
+#: manual/api/arithmetic.md:35
+#: manual/api/arithmetic.md:54
+msgid "From `Luna-Flow/arithmetic`:"
+msgstr "来自 `Luna-Flow/arithmetic`："
+
+#: manual/api/arithmetic.md:43
+msgid "These preserve their upstream behavior and are used by checked operations."
+msgstr "这些类型保持上游行为，用于带检查的运算。"
+
+#: manual/api/arithmetic.md:45
+msgid "Re-exported operation traits"
+msgstr "重导出的操作 traits"
+
+#: manual/api/arithmetic.md:47
+msgid "From `Luna-Flow/luna-generic`:"
+msgstr "来自 `Luna-Flow/luna-generic`："
+
+#: manual/api/arithmetic.md:75
+msgid "Absolute-value operation. Implemented for:"
+msgstr "绝对值操作。当前实现给："
+
+#: manual/api/arithmetic.md:93
+msgid "Approximate equality operation. It is an operation-level capability, not an equivalence-law claim. Implemented for:"
+msgstr "近似相等操作。它是操作能力，不是等价关系公理声明。当前实现给："
+
+#: manual/api/arithmetic.md:113
+msgid "Checked division operation using `ArithmeticContext`. Implemented for:"
+msgstr "带 `ArithmeticContext` 的除法检查。当前实现给 `Float` 和 `Double`。"
+
+#: manual/api/arithmetic.md:131
+msgid "Checked square-root operation using `ArithmeticContext`. Implemented for:"
+msgstr "带 `ArithmeticContext` 的平方根检查。当前实现给 `Float` 和 `Double`。"
+
+#: manual/api/arithmetic.md:148
+msgid "Checked scalar comparison. Implemented for:"
+msgstr "带检查的标量比较。当前实现给 `Float` 和 `Double`。"
+
+#: manual/api/arithmetic.md:155
+msgid "This package must not import matrix, vector, or backend types. In the dependency graph, it sits below `algebra` and all backend packages."
+msgstr "本包不能导入矩阵、向量或后端类型。在依赖方向上，它位于 `algebra` 和所有后端包之下。"
+
+#: manual/api/backends/default.md:3
+msgid "API baseline for `Luna-Flow/linear-algebra/backends/default` in the current `0.4.7` repository state."
+msgstr "本页记录当前 `0.4.7` 仓库中 `Luna-Flow/linear-algebra/backends/default` 的公开 API 基线。"
+
+#: manual/api/backends/default.md:8
+msgid "`backends/default` provides owned wrapper types around the existing dense `mutable` and `immut` implementations. Because these wrappers are owned by the default backend package, the package can implement the public `@algebra` traits for them without violating MoonBit's foreign trait / foreign type rule."
+msgstr "`backends/default` 为现有的稠密 `mutable` 与 `immut` 实现提供本包拥有的包装类型。因为这些包装类型属于默认后端包，所以这里可以为它们实现公开的 `@algebra` trait，而不会违反 MoonBit 的 foreign trait / foreign type 规则。"
+
+#: manual/api/backends/default.md:26
+msgid "Owned wrapper for the default mutable dense vector backend."
+msgstr "默认可变稠密向量后端的自有包装类型。"
+
+#: manual/api/backends/default.md:28
+#: manual/api/backends/default.md:76
+#: manual/api/backends/default.md:121
+#: manual/api/backends/default.md:161
+msgid "Constructors and accessors"
+msgstr "构造与访问"
+
+#: manual/api/backends/default.md:30
+msgid "`DenseVector::from_backend(inner : @mutable.Vector[T]) -> DenseVector[T]` wraps an existing mutable vector."
+msgstr "`DenseVector::from_backend(inner : @mutable.Vector[T]) -> DenseVector[T]` 包装一个已有的可变向量。"
+
+#: manual/api/backends/default.md:32
+msgid "`DenseVector::from_array(data : Array[T]) -> DenseVector[T]` builds a mutable dense vector from an array."
+msgstr "`DenseVector::from_array(data : Array[T]) -> DenseVector[T]` 从数组构造一个可变稠密向量。"
+
+#: manual/api/backends/default.md:34
+msgid "`DenseVector::make(length : Int, value : T) -> DenseVector[T]` builds a vector filled with `value`."
+msgstr "`DenseVector::make(length : Int, value : T) -> DenseVector[T]` 构造一个所有元素都为 `value` 的向量。"
+
+#: manual/api/backends/default.md:36
+msgid "`DenseVector::inner(self) -> @mutable.Vector[T]` returns the wrapped mutable vector."
+msgstr "`DenseVector::inner(self) -> @mutable.Vector[T]` 返回内部包装的可变向量。"
+
+#: manual/api/backends/default.md:38
+msgid "`DenseVector::length(self) -> Int` returns vector length."
+msgstr "`DenseVector::length(self) -> Int` 返回向量长度。"
+
+#: manual/api/backends/default.md:40
+msgid "`DenseVector::op_get(self, index : Int) -> T` supports read indexing."
+msgstr "`DenseVector::op_get(self, index : Int) -> T` 支持只读索引访问。"
+
+#: manual/api/backends/default.md:43
+#: manual/api/backends/default.md:91
+#: manual/api/backends/default.md:130
+#: manual/api/backends/default.md:170
+#: manual/api/backends/openblas.md:82
+#: manual/api/backends/openblas.md:125
+msgid "Backend methods"
+msgstr "后端方法"
+
+#: manual/api/backends/default.md:45
+msgid "`DenseVector::scale(self, scalar : T) -> DenseVector[T]` scales the vector element-wise and returns a new backend value."
+msgstr "`DenseVector::scale(self, scalar : T) -> DenseVector[T]` 对向量做逐元素缩放并返回新的默认后端值。"
+
+#: manual/api/backends/default.md:47
+msgid "`DenseVector::dot(self, other : DenseVector[T]) -> T` computes the scalar dot product."
+msgstr "`DenseVector::dot(self, other : DenseVector[T]) -> T` 计算标量点积。"
+
+#: manual/api/backends/default.md:49
+msgid "`DenseVector::axpy(self, alpha : T, other : DenseVector[T]) -> DenseVector[T]` computes the BLAS-style linear combination `alpha * self + other`."
+msgstr "`DenseVector::axpy(self, alpha : T, other : DenseVector[T]) -> DenseVector[T]` 计算 BLAS 风格的 `alpha * self + other`。"
+
+#: manual/api/backends/default.md:52
+#: manual/api/backends/default.md:97
+#: manual/api/backends/default.md:136
+#: manual/api/backends/default.md:176
+#: manual/api/backends/openblas.md:130
+msgid "Trait implementations"
+msgstr "trait 实现"
+
+#: manual/api/backends/default.md:54
+#: manual/api/backends/default.md:99
+#: manual/api/backends/default.md:138
+#: manual/api/backends/default.md:178
+msgid "`Add`, `Neg`, `Sub`, and `Mul` with the matching element-level operation constraints."
+msgstr "`Add`、`Neg`、`Sub` 和 `Mul`，并带有对应的元素级操作约束。"
+
+#: manual/api/backends/default.md:56
+#: manual/api/backends/default.md:140
+msgid "`@algebra.VectorShape` for all `T`"
+msgstr "任意 `T` 上的 `@algebra.VectorShape`"
+
+#: manual/api/backends/default.md:57
+#: manual/api/backends/default.md:141
+msgid "`@algebra.AdditiveVector` when `T : Add + Neg`"
+msgstr "当 `T : Add + Neg` 时的 `@algebra.AdditiveVector`"
+
+#: manual/api/backends/default.md:58
+#: manual/api/backends/default.md:142
+msgid "`@algebra.VecMulVector` when `T : Add + Neg + Mul`"
+msgstr "当 `T : Add + Neg + Mul` 时的 `@algebra.VecMulVector`"
+
+#: manual/api/backends/default.md:74
+msgid "Owned wrapper for the default mutable dense matrix backend."
+msgstr "默认可变稠密矩阵后端的自有包装类型。"
+
+#: manual/api/backends/default.md:78
+msgid "`DenseMatrix::from_backend(inner : @mutable.Matrix[T]) -> DenseMatrix[T]` wraps an existing mutable matrix."
+msgstr "`DenseMatrix::from_backend(inner : @mutable.Matrix[T]) -> DenseMatrix[T]` 包装一个已有的可变矩阵。"
+
+#: manual/api/backends/default.md:80
+msgid "`DenseMatrix::from_2d_array(data : Array[Array[T]]) -> DenseMatrix[T]` builds a matrix from row-major nested arrays."
+msgstr "`DenseMatrix::from_2d_array(data : Array[Array[T]]) -> DenseMatrix[T]` 从按行组织的二维数组构造矩阵。"
+
+#: manual/api/backends/default.md:82
+msgid "`DenseMatrix::new(row : Int, col : Int, value : T) -> DenseMatrix[T]` builds a matrix filled with `value`."
+msgstr "`DenseMatrix::new(row : Int, col : Int, value : T) -> DenseMatrix[T]` 构造一个所有元素都为 `value` 的矩阵。"
+
+#: manual/api/backends/default.md:84
+msgid "`DenseMatrix::inner(self) -> @mutable.Matrix[T]` returns the wrapped mutable matrix."
+msgstr "`DenseMatrix::inner(self) -> @mutable.Matrix[T]` 返回内部包装的可变矩阵。"
+
+#: manual/api/backends/default.md:86
+msgid "`DenseMatrix::row(self) -> Int` returns row count."
+msgstr "`DenseMatrix::row(self) -> Int` 返回行数。"
+
+#: manual/api/backends/default.md:88
+msgid "`DenseMatrix::col(self) -> Int` returns column count."
+msgstr "`DenseMatrix::col(self) -> Int` 返回列数。"
+
+#: manual/api/backends/default.md:93
+msgid "`DenseMatrix::matvec(self, vector : DenseVector[T]) -> DenseVector[T]` multiplies the matrix by a default-backend dense vector and returns a new dense vector wrapper."
+msgstr "`DenseMatrix::matvec(self, vector : DenseVector[T]) -> DenseVector[T]` 计算矩阵与默认后端稠密向量的乘积，并返回新的稠密向量包装类型。"
+
+#: manual/api/backends/default.md:101
+#: manual/api/backends/default.md:180
+msgid "`@algebra.MatrixShape` and `@algebra.TransposeMatrix` for all `T`"
+msgstr "任意 `T` 上的 `@algebra.MatrixShape` 和 `@algebra.TransposeMatrix`"
+
+#: manual/api/backends/default.md:102
+#: manual/api/backends/default.md:181
+msgid "`@algebra.AdditiveMatrix` when `T : Add + Neg`"
+msgstr "当 `T : Add + Neg` 时的 `@algebra.AdditiveMatrix`"
+
+#: manual/api/backends/default.md:103
+msgid "`@algebra.MatMulMatrix` when `T : Add + Neg + AddMonoid + Mul`"
+msgstr "当 `T : Add + Neg + AddMonoid + Mul` 时的 `@algebra.MatMulMatrix`"
+
+#: manual/api/backends/default.md:119
+msgid "Owned wrapper for the default immutable dense vector backend."
+msgstr "默认不可变稠密向量后端的自有包装类型。"
+
+#: manual/api/backends/default.md:159
+msgid "Owned wrapper for the default immutable dense matrix backend."
+msgstr "默认不可变稠密矩阵后端的自有包装类型。"
+
+#: manual/api/backends/default.md:172
+msgid "`ImmutableDenseMatrix::matvec(self, vector : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]` multiplies the matrix by an immutable dense vector and returns a new immutable dense vector wrapper."
+msgstr "`ImmutableDenseMatrix::matvec(self, vector : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]` 计算矩阵与不可变稠密向量的乘积，并返回新的不可变稠密向量包装类型。"
+
+#: manual/api/backends/default.md:182
+msgid "`@algebra.MatMulMatrix` when `T : Add + Neg + Zero + Mul`"
+msgstr "当 `T : Add + Neg + Zero + Mul` 时的 `@algebra.MatMulMatrix`"
+
+#: manual/api/backends/default.md:184
+msgid "Generic helper functions"
+msgstr "泛型辅助函数"
+
+#: manual/api/backends/default.md:186
+msgid "`shape_of[M : @algebra.MatrixShape](matrix : M) -> (Int, Int)` returns an object's shape."
+msgstr "`shape_of[M : @algebra.MatrixShape](matrix : M) -> (Int, Int)` 返回对象的形状。"
+
+#: manual/api/backends/default.md:188
+msgid "`matmul[M : @algebra.MatMulMatrix](left : M, right : M) -> M` dispatches matrix multiplication through the explicit multiplication capability."
+msgstr "`matmul[M : @algebra.MatMulMatrix](left : M, right : M) -> M` 通过显式的乘法能力分发矩阵乘法。"
+
+#: manual/api/backends/default.md:191
+msgid "`transpose[M : @algebra.TransposeMatrix](matrix : M) -> M` dispatches closed transpose through the algebra trait."
+msgstr "`transpose[M : @algebra.TransposeMatrix](matrix : M) -> M` 通过 algebra trait 分发闭合转置。"
+
+#: manual/api/backends/default.md:196
+msgid "This package implements outer `algebra` traits for the default backend wrapper types. It does not define new structure traits. Scalar-valued products and matrix-vector interactions described above remain backend methods rather than new `@algebra` traits, while norms, solves, and decompositions remain backend methods or future dedicated algorithm-layer APIs unless they can be represented as structure traits or closed operations."
+msgstr "本包只为默认后端包装类型实现外层 `algebra` trait。它不定义新的结构 trait。这里记录的标量点积与矩阵-向量交互仍然属于后端方法，而不是新的 `@algebra` trait；范数、求解和分解也仍然属于后端方法，或未来专门的算法层 API。只有在它们能够表示成结构 trait 或同类型闭合运算时，才应提升到这一层。"
+
+#: manual/api/backends/openblas.md:3
+msgid "API baseline for `Luna-Flow/linear-algebra/backends/openblas` in the current `0.4.7` repository state."
+msgstr "本页记录当前 `0.4.7` 仓库中 `Luna-Flow/linear-algebra/backends/openblas` 的公开 API 基线。"
+
+#: manual/api/backends/openblas.md:8
+msgid "`backends/openblas` provides owned native-only matrix and vector backend wrappers. Matrix multiplication delegates to OpenBLAS GEMM, while vector and matrix-vector helpers delegate to the matching BLAS kernels."
+msgstr "`backends/openblas` 提供仓库自有、仅支持 `native` 的矩阵与向量后端包装类型。矩阵乘法委托给 OpenBLAS GEMM，向量和矩阵-向量辅助能力则委托给对应的 BLAS 内核。"
+
+#: manual/api/backends/openblas.md:12
+msgid "This package is separate from `@immut.Matrix`. There is no runtime backend selector in `immut`; backend choice is now expressed by the concrete matrix type you use and the compilation target you build for."
+msgstr "这个包与 `@immut.Matrix` 分离。`immut` 现在没有 runtime backend selector；后端选择体现在你显式使用的具体矩阵类型，以及你编译到的目标平台上。"
+
+#: manual/api/backends/openblas.md:16
+msgid "Platform constraint"
+msgstr "平台约束"
+
+#: manual/api/backends/openblas.md:18
+msgid "Supported target: `native`"
+msgstr "支持目标：`native`"
+
+#: manual/api/backends/openblas.md:19
+msgid "Unsupported targets: `js`, `wasm`, `wasm-gc`"
+msgstr "不支持目标：`js`、`wasm`、`wasm-gc`"
+
+#: manual/api/backends/openblas.md:20
+msgid "Current repository link configuration searches both `/opt/homebrew/opt/openblas/include` and `/opt/homebrew/opt/openblas/lib` for Homebrew on macOS, and `/usr/include/x86_64-linux-gnu/openblas-pthread`, `/usr/include/openblas`, `/usr/lib/x86_64-linux-gnu/openblas-pthread`, and `/usr/lib/x86_64-linux-gnu` for the default Ubuntu OpenBLAS package layout"
+msgstr "当前仓库的链接配置会同时搜索 macOS Homebrew 的 `/opt/homebrew/opt/openblas/include` 与 `/opt/homebrew/opt/openblas/lib`，以及 Ubuntu 默认 OpenBLAS 包布局的 `/usr/include/x86_64-linux-gnu/openblas-pthread`、 `/usr/include/openblas`、 `/usr/lib/x86_64-linux-gnu/openblas-pthread`、 `/usr/lib/x86_64-linux-gnu`"
+
+#: manual/api/backends/openblas.md:31
+msgid "`BLASInnerType` is a backend-local trait implemented only for `Float` and `Double`."
+msgstr "`BLASInnerType` 是后端局部 trait，目前只为 `Float` 与 `Double` 提供实现。"
+
+#: manual/api/backends/openblas.md:34
+msgid "It owns the scalar-specific pieces required by the backend:"
+msgstr "它负责封装这个后端需要的标量差异："
+
+#: manual/api/backends/openblas.md:36
+msgid "`tolerance()` returns the comparison tolerance used by backend tests and result checks."
+msgstr "`tolerance()` 返回测试与结果校验使用的容差。"
+
+#: manual/api/backends/openblas.md:38
+msgid "`dot(length, left, right)` dispatches to `cblas_sdot` or `cblas_ddot`."
+msgstr "`dot(length, left, right)` 调度到 `cblas_sdot` 或 `cblas_ddot`。"
+
+#: manual/api/backends/openblas.md:40
+msgid "`scal(length, alpha, data)` dispatches to `cblas_sscal` or `cblas_dscal`."
+msgstr "`scal(length, alpha, data)` 调度到 `cblas_sscal` 或 `cblas_dscal`。"
+
+#: manual/api/backends/openblas.md:42
+msgid "`axpy(length, alpha, x, y)` dispatches to `cblas_saxpy` or `cblas_daxpy`."
+msgstr "`axpy(length, alpha, x, y)` 调度到 `cblas_saxpy` 或 `cblas_daxpy`。"
+
+#: manual/api/backends/openblas.md:44
+msgid "`gemm(m, n, k, left, right)` dispatches matrix multiplication to the matching OpenBLAS kernel: `cblas_sgemm` for `Float` and `cblas_dgemm` for `Double`."
+msgstr "`gemm(m, n, k, left, right)` 调度到对应的 OpenBLAS 内核： `Float` 走 `cblas_sgemm`，`Double` 走 `cblas_dgemm`。"
+
+#: manual/api/backends/openblas.md:47
+msgid "`gemv(row, col, matrix, vector)` dispatches matrix-vector multiplication to `cblas_sgemv` or `cblas_dgemv`."
+msgstr "`gemv(row, col, matrix, vector)` 调度到 `cblas_sgemv` 或 `cblas_dgemv`。"
+
+#: manual/api/backends/openblas.md:50
+msgid "`BlasMatrix[T]` and `BlasVector[T]` public construction and conversion APIs require `T : BLASInnerType`, so the backend does not expose a half-open “constructible for any `T` but only operable for some `T`” surface."
+msgstr "`BlasMatrix[T]` 与 `BlasVector[T]` 的公开构造与转换 API 都要求 `T : BLASInnerType`，因此不会暴露 “任意 `T` 都能构造，但只有一部分 `T` 能真正参与运算”的半开放类型表面。"
+
+#: manual/api/backends/openblas.md:56
+msgid "Owned native vector wrapper for the OpenBLAS backend."
+msgstr "OpenBLAS 后端的自有 native 向量包装类型。"
+
+#: manual/api/backends/openblas.md:58
+msgid "Constructors, conversions, and accessors"
+msgstr "构造、互转与访问器"
+
+#: manual/api/backends/openblas.md:70
+msgid "Trait coverage"
+msgstr "trait 覆盖"
+
+#: manual/api/backends/openblas.md:72
+msgid "`BlasVector[T]` currently implements:"
+msgstr "`BlasVector[T]` 当前实现："
+
+#: manual/api/backends/openblas.md:79
+msgid "It does **not** implement `@algebra.VecMulVector`. BLAS-style `scale`, `dot`, and `axpy` are exposed as backend methods rather than new structure traits."
+msgstr "它**没有**实现 `@algebra.VecMulVector`。BLAS 风格的 `scale`、`dot`、`axpy` 仍然以 backend 方法形式公开，而不是新的结构 trait。"
+
+#: manual/api/backends/openblas.md:99
+msgid "`BlasMatrix[T]` is the owned concrete backend matrix type for this package. Internally it stores:"
+msgstr "`BlasMatrix[T]` 是该包自有的具体后端矩阵类型。它在内部保存："
+
+#: manual/api/backends/openblas.md:104
+msgid "a contiguous `FixedArray[T]` buffer"
+msgstr "连续存储的 `FixedArray[T]` buffer"
+
+#: manual/api/backends/openblas.md:106
+msgid "The public mental model stays row-major. Layout details needed by OpenBLAS stay inside the backend implementation."
+msgstr "公开心智模型保持为 row-major。调用 OpenBLAS 所需的布局细节被封装在后端内部，不会暴露给调用者。"
+
+#: manual/api/backends/openblas.md:109
+msgid "Constructors and conversions"
+msgstr "构造与互转"
+
+#: manual/api/backends/openblas.md:119
+msgid "Accessors"
+msgstr "访问器"
+
+#: manual/api/backends/openblas.md:127
+msgid "`BlasMatrix::matvec(self, vector : BlasVector[T]) -> BlasVector[T]` multiplies the matrix by an OpenBLAS backend vector through GEMV."
+msgstr "`BlasMatrix::matvec(self, vector : BlasVector[T]) -> BlasVector[T]` 通过 GEMV 计算矩阵与 OpenBLAS 后端向量的乘积。"
+
+#: manual/api/backends/openblas.md:132
+msgid "`BlasMatrix[T]` currently implements:"
+msgstr "`BlasMatrix[T]` 当前实现了："
+
+#: manual/api/backends/openblas.md:141
+msgid "Behavior is split intentionally:"
+msgstr "这些行为是有意分层的："
+
+#: manual/api/backends/openblas.md:143
+msgid "`Mul` uses OpenBLAS GEMM through `BLASInnerType::gemm`."
+msgstr "`Mul` 通过 `BLASInnerType::gemm` 调用 OpenBLAS GEMM。"
+
+#: manual/api/backends/openblas.md:144
+msgid "`matvec` uses OpenBLAS GEMV through `BLASInnerType::gemv`."
+msgstr "`matvec` 通过 `BLASInnerType::gemv` 调用 OpenBLAS GEMV。"
+
+#: manual/api/backends/openblas.md:145
+msgid "`shape`, `transpose`, `+`, `-`, and unary `-` are implemented locally in MoonBit inside this backend package."
+msgstr "`shape`、`transpose`、`+`、`-` 与一元 `-` 目前都在这个后端包里用 MoonBit 本地实现。"
+
+#: manual/api/backends/openblas.md:150
+msgid "This package exposes an owned trait-compatible backend wrapper. It does not:"
+msgstr "这个包公开的是自有的、兼容 trait 的后端包装层。它不会："
+
+#: manual/api/backends/openblas.md:152
+msgid "add a runtime backend enum"
+msgstr "添加运行时 backend enum"
+
+#: manual/api/backends/openblas.md:153
+msgid "retrofit traits directly onto third-party OpenBLAS binding types"
+msgstr "把 trait 直接加装到第三方 OpenBLAS 绑定类型上"
+
+#: manual/api/backends/openblas.md:154
+msgid "expose raw OpenBLAS handle types in the public API"
+msgstr "在公开 API 中暴露原始 OpenBLAS 句柄类型"
+
+#: manual/api/container.md:1
+msgid "Container capability API"
+msgstr "容器能力 API"
+
+#: manual/api/container.md:3
+msgid "The `container` package describes how generic code observes, constructs, and edits linear containers. It does not define mathematical laws or require a dense layout."
+msgstr "`container` 包描述泛型代码如何观察、构造和编辑线性容器，不规定数学定律、稠密布局或所有权模型。"
+
+#: manual/api/container.md:9
+msgid "`container` is an experimental feature. Its read/build model is available for real interoperability trials, while operation-record fields, edit capabilities, error contracts, and generic algorithm signatures may still change incompatibly. Use it as a checked data-interchange and structural transformation layer, not as a compatibility-stable public boundary or a high-performance numerical kernel API."
+msgstr "`container` 是实验性功能。它的 read/build 模型已经可以用于真实的互操作试验，但操作记录字段、编辑能力、错误契约和泛型算法签名仍可能发生不兼容变更。应把它用于带检查的数据交换和结构转换，而不是兼容性稳定的公开边界或高性能数值计算内核 API。"
+
+#: manual/api/container.md:16
+msgid "External library authors should use the capability-level guidance in the [ecosystem integration guide](../integration/container.md) before selecting adapters."
+msgstr "外部库作者在选择适配器之前，应先参考[生态接入指南](../integration/container.md)中按能力级别给出的建议。"
+
+#: manual/api/container.md:19
+msgid "Capability records"
+msgstr "能力记录"
+
+#: manual/api/container.md:21
+msgid "`VectorReadOps[V, T]`: `length` and checked `get`."
+msgstr "`VectorReadOps[V, T]`：长度和受检 `get`。"
+
+#: manual/api/container.md:22
+msgid "`MatrixReadOps[M, T]`: `shape` and checked `get`."
+msgstr "`MatrixReadOps[M, T]`：形状和受检 `get`。"
+
+#: manual/api/container.md:23
+msgid "`VectorBuildOps[V, T]`: checked `tabulate` construction."
+msgstr "`VectorBuildOps[V, T]`：受检 `tabulate` 构造。"
+
+#: manual/api/container.md:24
+msgid "`MatrixBuildOps[M, T]`: checked row/column `tabulate` construction."
+msgstr "`MatrixBuildOps[M, T]`：按行列坐标执行的受检 `tabulate` 构造。"
+
+#: manual/api/container.md:25
+msgid "`VectorPersistentEditOps[V, T]` and `MatrixPersistentEditOps[M, T]`: checked replacement returning a new value."
+msgstr "`VectorPersistentEditOps[V, T]` 与 `MatrixPersistentEditOps[M, T]`：受检替换，返回新值。"
+
+#: manual/api/container.md:27
+msgid "`VectorMutableEditOps[V, T]` and `MatrixMutableEditOps[M, T]`: checked in-place replacement returning `Result[Unit, LinearAlgebraError]`."
+msgstr "`VectorMutableEditOps[V, T]` 与 `MatrixMutableEditOps[M, T]`：受检的原地替换，返回 `Result[Unit, LinearAlgebraError]`。"
+
+#: manual/api/container.md:30
+msgid "Each record has a `new` constructor. Read and edit operations must return `IndexOutOfBounds` for invalid coordinates. Builders must return `NegativeDimension` rather than calling an initializer for an invalid shape."
+msgstr "每个记录都提供 `new` 构造函数。非法坐标返回 `IndexOutOfBounds`，负形状返回 `NegativeDimension`。"
+
+#: manual/api/container.md:34
+msgid "Generic algorithms"
+msgstr "泛型算法"
+
+#: manual/api/container.md:36
+msgid "`vector_map` and `matrix_map` may change the container and scalar types."
+msgstr "`vector_map` 与 `matrix_map` 可以改变容器类型和标量类型。"
+
+#: manual/api/container.md:37
+msgid "`vector_convert` and `matrix_convert` preserve the scalar type while changing storage backends."
+msgstr "`vector_convert` 与 `matrix_convert` 在切换存储后端的同时保持标量类型不变。"
+
+#: manual/api/container.md:39
+msgid "`matrix_transpose` may produce a different target matrix type."
+msgstr "`matrix_transpose` 可以生成不同类型的目标矩阵。"
+
+#: manual/api/container.md:41
+msgid "The algorithms retain exact degenerate shapes such as `0xN` and `Nx0`. They read into a temporary linear buffer before construction, so a checked read failure cannot leave a partially constructed target."
+msgstr "这些算法会精确保留 `0xN` 与 `Nx0` 等退化形状。它们在构造之前先读入一个临时线性缓冲区，因此受检读取失败不会留下构造了一半的目标。"
+
+#: manual/api/container.md:45
+msgid "Repository adapters"
+msgstr "仓库适配器"
+
+#: manual/api/container.md:47
+msgid "The `container/adapters` package provides factories for `immut.Vector`, `immut.Matrix`, `mutable.Vector`, `mutable.Matrix`, the four default dense wrappers, mutable row/column views, and mutable transpose views. Views provide read and mutable-edit capabilities but no build capability."
+msgstr "`container/adapters` 包为 `immut.Vector`、`immut.Matrix`、`mutable.Vector`、`mutable.Matrix`、四个默认稠密包装类型、可变行/列视图以及可变转置视图提供 factory。视图提供 read 与可变编辑能力，但不提供 build 能力。"
+
+#: manual/api/container.md:52
+msgid "The native-only OpenBLAS package provides `blas_vector_read_ops`, `blas_vector_build_ops`, `blas_matrix_read_ops`, and `blas_matrix_build_ops`. It intentionally does not advertise persistent editing."
+msgstr "仅支持 native 的 OpenBLAS 包提供 `blas_vector_read_ops`、`blas_vector_build_ops`、`blas_matrix_read_ops` 与 `blas_matrix_build_ops`，并有意不提供持久编辑。"
+
+#: manual/api/error.md:3
+msgid "API baseline for `Luna-Flow/linear-algebra/error` in the current `0.4.7` repository state."
+msgstr "本页记录当前 `0.4.7` 仓库中 `Luna-Flow/linear-algebra/error` 的公开 API 基线。"
+
+#: manual/api/error.md:8
+msgid "`error` provides the structured error type used by checked linear-algebra APIs. The package lets callers distinguish shape errors, invalid domains, singular matrices, non-convergence, and arithmetic failures without parsing abort messages."
+msgstr "`error` 提供带检查线性代数 API 共用的结构化错误类型。调用者可以根据错误种类区分形状错误、非法输入域、奇异矩阵、非收敛，以及底层算术错误，而不需要解析 abort 文本。"
+
+#: manual/api/error.md:27
+msgid "The enum classifies the failure. `ArithmeticFailure` wraps the upstream `Luna-Flow/arithmetic.ArithmeticError`."
+msgstr "该枚举用来表示失败类型。`ArithmeticFailure` 会携带上游 `Luna-Flow/arithmetic.ArithmeticError`。"
+
+#: manual/api/error.md:41
+msgid "The struct stores a machine-readable kind and a human-readable message."
+msgstr "该结构同时保存机器可判断的错误种类和给人阅读的消息。"
+
+#: manual/api/error.md:43
+msgid "Constructors"
+msgstr "构造函数"
+
+#: manual/api/error.md:57
+msgid "Predicates"
+msgstr "判断方法"
+
+#: manual/api/error.md:71
+msgid "These methods are intended for matching common checked API failures without destructuring the error value."
+msgstr "这些方法用于处理带检查 API 的常见错误，不需要调用者拆开错误值。"
+
+#: manual/api/error.md:74
+msgid "Usage"
+msgstr "使用示例"
+
+#: manual/api/error.md:90
+msgid "This package defines error values only. It does not implement matrix algorithms, numeric recovery strategies, logging, or formatting policy."
+msgstr "本包只定义错误值，不实现矩阵算法、数值恢复策略、日志或格式化策略。"
+
+#: manual/api/immut/matrix.md:3
+msgid "API baseline for `@immut.Matrix` in the current `0.4.7` repository state."
+msgstr "本页记录 `@immut.Matrix` 在当前 `0.4.7` 仓库状态下的 API 基线。"
+
+#: manual/api/immut/matrix.md:5
+#: manual/api/immut/vector.md:5
+#: manual/api/mutable/matrix.md:7
+#: manual/api/mutable/vector.md:5
+msgid "Overview"
+msgstr "概览"
+
+#: manual/api/immut/matrix.md:7
+msgid "`@immut.Matrix` is the repository's value-oriented matrix type."
+msgstr "`@immut.Matrix` 是仓库里的值语义矩阵类型。"
+
+#: manual/api/immut/matrix.md:8
+msgid "Operations such as `set`, `swap_rows`, and `swap_cols` return a new matrix."
+msgstr "`set`、`swap_rows`、`swap_cols` 等操作都会返回新矩阵。"
+
+#: manual/api/immut/matrix.md:9
+msgid "Matrix storage is row-major and backed by the immutable vector implementation."
+msgstr "行列式数据按行优先顺序存储，底层使用 immutable vector 实现。"
+
+#: manual/api/immut/matrix.md:10
+msgid "Public indexed access is strict about bounds. `m[row][col]` and `set(row, col, value)` abort on out-of-range indices, including `0xN` and `Nx0` edge shapes."
+msgstr "公开索引访问采用严格边界检查。`m[row][col]` 和 `set(row, col, value)` 在越界时都会中止，包括 `0xN` 和 `Nx0` 边界形状。"
+
+#: manual/api/immut/matrix.md:11
+msgid "`swap_rows(i, i)` and `swap_cols(i, i)` are no-op operations that return the original value unchanged."
+msgstr "`swap_rows(i, i)` 与 `swap_cols(i, i)` 不改变矩阵，直接返回原值。"
+
+#: manual/api/immut/matrix.md:13
+#: manual/api/mutable/matrix.md:15
+msgid "Core matrix API"
+msgstr "核心 API"
+
+#: manual/api/immut/matrix.md:15
+msgid "`Matrix::make(row, col, f)` Creates a matrix from a generator function. Negative dimensions abort."
+msgstr "`Matrix::make(row, col, f)` 用生成函数创建矩阵。负维度会中止。"
+
+#: manual/api/immut/matrix.md:17
+msgid "`Matrix::new(row, col, elem)` Creates a matrix filled with `elem`. Negative dimensions abort."
+msgstr "`Matrix::new(row, col, elem)` 创建所有元素都为 `elem` 的矩阵。负维度会中止。"
+
+#: manual/api/immut/matrix.md:19
+#: manual/api/mutable/matrix.md:21
+msgid "`Matrix::from_2d_array(arr)` Creates a matrix from a rectangular 2D array. Ragged input aborts."
+msgstr "`Matrix::from_2d_array(arr)` 从矩形二维数组构造矩阵。行长不一致的输入会中止。"
+
+#: manual/api/immut/matrix.md:21
+msgid "`Matrix::from_array(row, col, data)` Builds a matrix from a flat immutable vector in row-major order. Negative dimensions or wrong element count abort."
+msgstr "`Matrix::from_array(row, col, data)` 从按行优先排列的不可变向量构造矩阵。负维度或元素数量不匹配会中止。"
+
+#: manual/api/immut/matrix.md:23
+#: manual/api/mutable/matrix.md:25
+msgid "`row()` / `col()` Return the stored shape."
+msgstr "`row()` / `col()` 返回保存的形状。"
+
+#: manual/api/immut/matrix.md:25
+msgid "`m[row][col]` Read-only convenience indexing. Row and column bounds are checked explicitly."
+msgstr "`m[row][col]` 只读便捷索引语法。会显式检查行和列边界。"
+
+#: manual/api/immut/matrix.md:27
+msgid "`set(row, col, elem)` Returns a new matrix with one replaced element. Bounds are checked explicitly."
+msgstr "`set(row, col, elem)` 返回只替换一个元素的新矩阵。边界会显式检查。"
+
+#: manual/api/immut/matrix.md:29
+msgid "`map`, `mapi` Return transformed matrices without mutating the original."
+msgstr "`map`, `mapi` 返回转换后的新矩阵，不修改原值。"
+
+#: manual/api/immut/matrix.md:31
+msgid "`transpose()` Returns the materialized transpose."
+msgstr "`transpose()` 返回实化后的转置矩阵。"
+
+#: manual/api/immut/matrix.md:33
+msgid "`horizontal_combine`, `vertical_combine` Concatenate matrices with compatible shapes."
+msgstr "`horizontal_combine`, `vertical_combine` 拼接形状兼容的矩阵。"
+
+#: manual/api/immut/matrix.md:35
+msgid "`iter`, `iter_row`, `iter_col`, `to_array`, `to_2d_array` Expose row-major iteration and materialized conversions. Row/column iterators abort on invalid indices."
+msgstr "`iter`, `iter_row`, `iter_col`, `to_array`, `to_2d_array` 提供行优先迭代与物化转换。行/列迭代器在非法索引下会中止。"
+
+#: manual/api/immut/matrix.md:38
+msgid "Algebraic operations"
+msgstr "代数操作"
+
+#: manual/api/immut/matrix.md:40
+msgid "`+`, `-`, `*` Addition, subtraction, and matrix multiplication. Shape mismatch aborts."
+msgstr "`+`, `-`, `*` 加法、减法和矩阵乘法。形状不匹配会中止。"
+
+#: manual/api/immut/matrix.md:42
+msgid "`matmul(rhs)`, `trace()`, `determinant()`, `pow(power)` Checked APIs return `Result[..., LinearAlgebraError]` for shape or exponent failures."
+msgstr "`matmul(rhs)`, `trace()`, `determinant()`, `pow(power)` 这些带检查的 API 会在形状或指数错误时返回 `Result[..., LinearAlgebraError]`。"
+
+#: manual/api/immut/matrix.md:44
+msgid "`unchecked_matmul(rhs)`, `unchecked_trace()`, `unchecked_determinant()`, `unchecked_pow(power)` Preserve the old aborting behavior for callers that explicitly want unchecked operations."
+msgstr "`unchecked_matmul(rhs)`, `unchecked_trace()`, `unchecked_determinant()`, `unchecked_pow(power)` 保留旧的直接 abort 行为，供明确需要 unchecked 操作的调用方使用。"
+
+#: manual/api/immut/matrix.md:46
+#: manual/api/mutable/matrix.md:65
+msgid "`scale(cst)`, `add_constant(cst)`, unary `-` Element-wise scalar transforms."
+msgstr "`scale(cst)`, `add_constant(cst)`, 单目 `-` 逐元素的标量变换。"
+
+#: manual/api/immut/matrix.md:48
+msgid "`identity(size)` Creates an identity matrix. Negative `size` aborts."
+msgstr "`identity(size)` 创建单位矩阵。负 `size` 会中止。"
+
+#: manual/api/immut/matrix.md:50
+msgid "`trace()` Checked sum of diagonal entries. Requires a square matrix."
+msgstr "`trace()` 带检查的对角线求和，要求方阵。"
+
+#: manual/api/immut/matrix.md:52
+msgid "`determinant()` Checked determinant of a square matrix. Uses the current repository implementation with small-size specializations and elimination for larger inputs."
+msgstr "`determinant()` 带检查的方阵行列式。当前实现对小尺寸使用特化，对更大输入使用消元路径。"
+
+#: manual/api/immut/matrix.md:54
+#: manual/api/mutable/matrix.md:69
+msgid "`pow(power)` Checked square-matrix exponentiation for non-negative integer powers."
+msgstr "`pow(power)` 带检查的方阵非负整数幂。"
+
+#: manual/api/immut/matrix.md:56
+msgid "`null()`, `is_square()` Shape and zero-matrix helpers."
+msgstr "`null()`, `is_square()` 零矩阵与形状判断辅助。"
+
+#: manual/api/immut/matrix.md:58
+msgid "`adjoint()` Conjugate transpose for element types implementing `Conjugate`."
+msgstr "`adjoint()` 对实现了 `Conjugate` 的元素类型返回共轭转置。"
+
+#: manual/api/immut/matrix.md:60
+msgid "`swap_rows(r1, r2)`, `swap_cols(c1, c2)` Return a new matrix with the chosen rows or columns swapped. Out-of-range indices abort; same-index swaps leave the value unchanged."
+msgstr "`swap_rows(r1, r2)`, `swap_cols(c1, c2)` 返回交换指定行或列后的新矩阵。越界会中止；相同索引不改变矩阵。"
+
+#: manual/api/immut/matrix.md:65
+msgid "`MatrixFn` is the lazy functional companion to `Matrix`."
+msgstr "`MatrixFn` 是 `Matrix` 的惰性函数式版本。"
+
+#: manual/api/immut/matrix.md:66
+msgid "It follows the same non-negative-dimension rule."
+msgstr "它与 `Matrix` 共享非负维度规则。"
+
+#: manual/api/immut/matrix.md:67
+msgid "`MatrixFn::from_2d_array([])` yields a `0x0` matrix."
+msgstr "`MatrixFn::from_2d_array([])` 返回 `0x0`。"
+
+#: manual/api/immut/matrix.md:68
+msgid "`MatrixFn::from_2d_array([[], ...])` preserves zero-column shapes."
+msgstr "`MatrixFn::from_2d_array([[], ...])` 保留零列形状。"
+
+#: manual/api/immut/matrix.md:69
+msgid "Ragged input is rejected eagerly."
+msgstr "行长不一致的输入会被及早拒绝。"
+
+#: manual/api/immut/matrix.md:70
+msgid "Row access validates the row immediately, and element access validates the column through the functional backing contract."
+msgstr "行访问会立即校验行索引，元素访问则通过函数式后端契约校验列索引。"
+
+#: manual/api/immut/matrix.md:72
+msgid "Important methods:"
+msgstr "主要方法："
+
+#: manual/api/immut/matrix.md:80
+#: manual/api/immut/vector.md:56
+#: manual/api/mutable/matrix.md:100
+#: manual/api/mutable/vector.md:60
+msgid "Guidance"
+msgstr "使用建议"
+
+#: manual/api/immut/matrix.md:82
+msgid "For shared algebraic behavior, prefer the capability traits and the `backends/default` wrapper types. `@immut.Matrix` is one dense implementation used by the default backend, not the semantic center of the ecosystem."
+msgstr "对共享代数行为来说，优先依赖 capability traits 和 `backends/default` 包装类型。`@immut.Matrix` 只是默认后端使用的一种稠密实现，不是整个生态的语义中心。"
+
+#: manual/api/immut/matrix.md:85
+msgid "The mutable package intentionally exposes extra execution-oriented APIs such as views and in-place updates; those should not be projected back onto `immut`."
+msgstr "`mutable` 包会额外暴露视图和原地更新等执行导向 API，不应把这些能力反向投射到 `immut` 上。"
+
+#: manual/api/immut/matrix.md:86
+msgid "`backends/default.ImmutableDenseMatrix` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
+msgstr "`backends/default.ImmutableDenseMatrix` 包装的就是这个 concrete 实现。如果你要从 trait 导向的默认后端入口进入，请看 [backends/default API](../backends/default.md)。"
+
+#: manual/api/immut/vector.md:3
+msgid "API baseline for `@immut.Vector` in the current `0.4.7` repository state."
+msgstr "本页记录 `@immut.Vector` 在当前 `0.4.7` 仓库状态下的 API 基线。"
+
+#: manual/api/immut/vector.md:7
+msgid "`@immut.Vector` is the repository's value-oriented vector type."
+msgstr "`@immut.Vector` 是仓库里的值语义向量类型。"
+
+#: manual/api/immut/vector.md:8
+msgid "The public type is also exported under the package alias `VecLib[T]`."
+msgstr "这个公开类型同时以包别名 `VecLib[T]` 导出。"
+
+#: manual/api/immut/vector.md:9
+msgid "Storage is backed by the immutable core vector alias `VecCore[T]`."
+msgstr "底层存储使用不可变核心向量别名 `VecCore[T]`。"
+
+#: manual/api/immut/vector.md:10
+msgid "Operations such as `set`, `map`, `left_scale`, and `right_scale` always return a new vector."
+msgstr "`set`、`map`、`left_scale`、`right_scale` 等操作始终返回新向量。"
+
+#: manual/api/immut/vector.md:12
+msgid "The package does not expose in-place updates or a dot-product helper."
+msgstr "本包不提供原地更新，也不提供公开的 `dot()` 辅助函数。"
+
+#: manual/api/immut/vector.md:14
+#: manual/api/mutable/vector.md:13
+msgid "Core API"
+msgstr "核心 API"
+
+#: manual/api/immut/vector.md:16
+msgid "`Vector::from_array(arr)` Builds a vector from a mutable `Array[T]`."
+msgstr "`Vector::from_array(arr)` 从可变 `Array[T]` 构造向量。"
+
+#: manual/api/immut/vector.md:18
+msgid "`Vector::make(n, elem)` / `Vector::makei(n, f)` Create a constant vector or generate one from indices."
+msgstr "`Vector::make(n, elem)` / `Vector::makei(n, f)` 创建常量向量，或按索引生成向量。"
+
+#: manual/api/immut/vector.md:20
+#: manual/api/mutable/vector.md:17
+msgid "`length()` Returns the vector length."
+msgstr "`length()` 返回向量长度。"
+
+#: manual/api/immut/vector.md:22
+msgid "`v[i]` Reads one element. Bounds follow the underlying immutable vector contract."
+msgstr "`v[i]` 读取单个元素。边界行为遵循底层不可变向量契约。"
+
+#: manual/api/immut/vector.md:24
+msgid "`set(i, x)` Returns a new vector with one replaced element."
+msgstr "`set(i, x)` 返回一个在指定位置替换过元素的新向量。"
+
+#: manual/api/immut/vector.md:26
+msgid "`iter()` Exposes an iterator over the elements in order."
+msgstr "`iter()` 按顺序遍历向量元素。"
+
+#: manual/api/immut/vector.md:29
+msgid "Value transforms"
+msgstr "值变换"
+
+#: manual/api/immut/vector.md:31
+msgid "`map(f)` / `zip_with(other, f)` Return transformed vectors without mutating the original."
+msgstr "`map(f)` / `zip_with(other, f)` 返回变换后的新向量，不修改原值。"
+
+#: manual/api/immut/vector.md:33
+msgid "`add_constant(cst)` Adds the same scalar to every element."
+msgstr "`add_constant(cst)` 给每个元素加上同一个标量。"
+
+#: manual/api/immut/vector.md:35
+msgid "`left_scale(scalar)` / `right_scale(scalar)` Apply scalar multiplication and return a new vector."
+msgstr "`left_scale(scalar)` / `right_scale(scalar)` 返回缩放后的新向量。"
+
+#: manual/api/immut/vector.md:37
+#: manual/api/mutable/vector.md:34
+msgid "`lerp(other, alpha)` Computes `(1 - alpha) * self + alpha * other`."
+msgstr "`lerp(other, alpha)` 计算 `(1 - alpha) * self + alpha * other`。"
+
+#: manual/api/immut/vector.md:39
+#: manual/api/mutable/vector.md:36
+msgid "`+`, `*`, unary `-` Element-wise addition, Hadamard multiplication, and negation."
+msgstr "`+`、`*`、一元 `-` 分别表示按元素加法、Hadamard 乘法和取负。"
+
+#: manual/api/immut/vector.md:41
+msgid "`lin_comb(scalar_a, self, scalar_b, other)` Top-level helper for a two-vector linear combination."
+msgstr "`lin_comb(scalar_a, self, scalar_b, other)` 顶层辅助函数，用于两个向量的线性组合。"
+
+#: manual/api/immut/vector.md:44
+msgid "Length mismatches for shared element-wise operations follow the underlying vector contract and abort."
+msgstr "共享的按元素操作如果长度不一致，会按底层向量契约直接中止。"
+
+#: manual/api/immut/vector.md:47
+msgid "Matrix conversions"
+msgstr "矩阵转换"
+
+#: manual/api/immut/vector.md:49
+msgid "`to_col_matrix()` / `to_row_matrix()` Materialize the vector as an `n x 1` or `1 x n` matrix."
+msgstr "`to_col_matrix()` / `to_row_matrix()` 把向量物化为 `n x 1` 或 `1 x n` 矩阵。"
+
+#: manual/api/immut/vector.md:51
+#: manual/api/mutable/vector.md:55
+msgid "`scaled_matrix()` Builds a diagonal matrix with the vector on the main diagonal."
+msgstr "`scaled_matrix()` 创建以该向量为主对角线的对角矩阵。"
+
+#: manual/api/immut/vector.md:53
+#: manual/api/mutable/vector.md:57
+msgid "`tensor_product(other)` Computes the outer product and returns a matrix."
+msgstr "`tensor_product(other)` 计算外积并返回矩阵。"
+
+#: manual/api/immut/vector.md:58
+msgid "Use `@immut.Vector` when downstream code benefits from explicit value semantics."
+msgstr "当下游代码需要明确的值语义时，优先使用 `@immut.Vector`。"
+
+#: manual/api/immut/vector.md:60
+msgid "Use `@mutable.Vector` instead when you need in-place updates or the public `dot()` helper."
+msgstr "如果你需要原地更新或公开的 `dot()` 辅助函数，请改用 `@mutable.Vector`。"
+
+#: manual/api/immut/vector.md:62
+msgid "`backends/default.ImmutableDenseVector` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
+msgstr "`backends/default.ImmutableDenseVector` 包装的就是这个 concrete 实现。如果你要从 trait 导向的默认后端入口进入，请看 [backends/default API](../backends/default.md)。"
+
+#: manual/api/mutable/matrix.md:3
+msgid "API baseline for `@mutable.Matrix` in the current `0.4.7` repository state. Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance` remains defined by `mutable`."
+msgstr "本页记录 `@mutable.Matrix` 在当前 `0.4.7` 仓库状态下的 API 基线。依赖平方根的 API 使用 `Luna-Flow/arithmetic.Sqrt`；`Tolerance` 仍由 `mutable` 定义。"
+
+#: manual/api/mutable/matrix.md:9
+msgid "`@mutable.Matrix` is the repository's execution-oriented matrix type."
+msgstr "`@mutable.Matrix` 是仓库里的执行导向矩阵类型。"
+
+#: manual/api/mutable/matrix.md:10
+msgid "`set`, `swap_rows`, `swap_cols`, `map_inplace`, row/column view updates, and transpose updates modify the underlying matrix in place."
+msgstr "`set`、`swap_rows`、`swap_cols`、`map_inplace`、行/列视图更新以及转置视图更新，都会直接修改底层矩阵。"
+
+#: manual/api/mutable/matrix.md:11
+msgid "Public storage is a flat row-major `Array[T]` across backends. Backend-specific files differ in execution tuning, not in the public matrix model."
+msgstr "公开存储模型在所有后端上都是按行优先的扁平 `Array[T]`。后端文件之间的差异主要是执行优化，而不是公开矩阵模型。"
+
+#: manual/api/mutable/matrix.md:12
+msgid "Public access is strict about bounds. `get`, `set`, `m[row][col]`, `row_view`, `col_view`, extraction helpers, iterators, and transpose-view access reject out-of-range indices consistently, including zero-row and zero-column edge shapes."
+msgstr "公开访问采用严格边界检查。`get`、`set`、`m[row][col]`、`row_view`、`col_view`、提取辅助函数、迭代器和转置视图访问，都会一致地拒绝越界索引，包括 `0xN` 和 `Nx0` 边界形状。"
+
+#: manual/api/mutable/matrix.md:13
+msgid "`swap_rows(i, i)` and `swap_cols(i, i)` leave the matrix unchanged. Out-of-range row or column indices abort explicitly instead of relying on accidental storage access."
+msgstr "`swap_rows(i, i)` 与 `swap_cols(i, i)` 不改变矩阵。越界索引会显式中止，而不是依赖底层存储“恰好访问出错”。"
+
+#: manual/api/mutable/matrix.md:17
+msgid "`Matrix::make(row, col, f)` Builds a matrix from a generator function. Negative dimensions abort."
+msgstr "`Matrix::make(row, col, f)` 用生成函数构造矩阵。负维度会中止。"
+
+#: manual/api/mutable/matrix.md:19
+msgid "`Matrix::new(row, col, elem)` Builds a matrix filled with `elem`. Negative dimensions abort."
+msgstr "`Matrix::new(row, col, elem)` 构造所有元素都为 `elem` 的矩阵。负维度会中止。"
+
+#: manual/api/mutable/matrix.md:23
+msgid "`Matrix::from_array(row, col, data)` Uses a flat row-major array as matrix storage. Negative dimensions or wrong element count abort."
+msgstr "`Matrix::from_array(row, col, data)` 将按行优先排列的一维数组按指定形状作为矩阵。负维度或元素数量不匹配会中止。"
+
+#: manual/api/mutable/matrix.md:27
+msgid "`get(row, col)` / `set(row, col, elem)` Fast random access with explicit bounds checks."
+msgstr "`get(row, col)` / `set(row, col, elem)` 带显式边界检查的快速随机访问。"
+
+#: manual/api/mutable/matrix.md:29
+msgid "`m[row][col]` Convenience syntax backed by `Lens[T]`. It is valid for read and write, but repeated bulk work should prefer `row_view`, `col_view`, or the dedicated row/column helpers."
+msgstr "`m[row][col]` 基于 `Lens[T]` 的便捷语法。可以读写，但在重复批量操作时应优先使用 `row_view`、`col_view` 或专用辅助函数。"
+
+#: manual/api/mutable/matrix.md:31
+msgid "`copy()` Deep-copies the matrix."
+msgstr "`copy()` 深拷贝矩阵。"
+
+#: manual/api/mutable/matrix.md:33
+msgid "`map`, `mapi` Return a transformed matrix."
+msgstr "`map`, `mapi` 返回转换后的新矩阵。"
+
+#: manual/api/mutable/matrix.md:35
+msgid "`map_inplace`, `map_row_inplace`, `map_col_inplace` Apply in-place transforms."
+msgstr "`map_inplace`, `map_row_inplace`, `map_col_inplace` 原地变换。"
+
+#: manual/api/mutable/matrix.md:37
+msgid "`each`, `eachi`, `each_row_col`, `each_row`, `each_col`, `eachi_row`, `eachi_col` Traversal helpers."
+msgstr "`each`, `eachi`, `each_row_col`, `each_row`, `each_col`, `eachi_row`, `eachi_col` 遍历辅助函数。"
+
+#: manual/api/mutable/matrix.md:39
+msgid "`iter`, `iter_row`, `iter_col` Iterators with checked row/column bounds."
+msgstr "`iter`, `iter_row`, `iter_col` 带边界检查的迭代器。"
+
+#: manual/api/mutable/matrix.md:41
+msgid "`row_to_array`, `col_to_array`, `row_to_vector`, `col_to_vector`, `to_array`, `to_2d_array`, `to_vector` Materialization helpers with checked indices where applicable."
+msgstr "`row_to_array`, `col_to_array`, `row_to_vector`, `col_to_vector`, `to_array`, `to_2d_array`, `to_vector` 物化辅助函数；需要索引时会做校验。"
+
+#: manual/api/mutable/matrix.md:43
+msgid "`transpose()` Returns a materialized transpose."
+msgstr "`transpose()` 返回物化后的转置矩阵。"
+
+#: manual/api/mutable/matrix.md:45
+msgid "`to_transpose()` Returns a live transpose view."
+msgstr "`to_transpose()` 返回一个与底层矩阵保持连接的转置视图。"
+
+#: manual/api/mutable/matrix.md:47
+msgid "`horizontal_combine`, `vertical_combine` Concatenate compatible matrices."
+msgstr "`horizontal_combine`, `vertical_combine` 拼接形状兼容的矩阵。"
+
+#: manual/api/mutable/matrix.md:50
+msgid "Views and transpose"
+msgstr "视图与转置"
+
+#: manual/api/mutable/matrix.md:52
+msgid "`row_view(row)` / `col_view(col)` Return live views into the underlying matrix."
+msgstr "`row_view(row)` / `col_view(col)` 返回与底层矩阵保持连接的视图。"
+
+#: manual/api/mutable/matrix.md:54
+msgid "`RowView` and `ColView` Expose `get`, `set`, `iter`, `each`, `eachi`, `map_inplace`, `to_array`, and `to_vector`."
+msgstr "`RowView` 与 `ColView` 暴露 `get`、`set`、`iter`、`each`、`eachi`、`map_inplace`、`to_array`、`to_vector`。"
+
+#: manual/api/mutable/matrix.md:56
+msgid "`Transpose` Exposes the same matrix-like surface over a live transposed view."
+msgstr "`Transpose` 在转置视图上提供接近矩阵的 API 表面。"
+
+#: manual/api/mutable/matrix.md:58
+msgid "`Transpose::swap_rows` and `Transpose::swap_cols` Delegate to the underlying matrix with the same strict bounds semantics."
+msgstr "`Transpose::swap_rows` / `Transpose::swap_cols` 委托到底层矩阵，并共享同样严格的边界语义。"
+
+#: manual/api/mutable/matrix.md:61
+msgid "Algebraic and numeric API"
+msgstr "代数与数值 API"
+
+#: manual/api/mutable/matrix.md:63
+msgid "`+`, `-`, `*` Matrix addition, subtraction, and multiplication."
+msgstr "`+`, `-`, `*` 矩阵加法、减法和乘法。"
+
+#: manual/api/mutable/matrix.md:67
+msgid "`identity(size)` Identity matrix constructor. Negative `size` aborts."
+msgstr "`identity(size)` 单位矩阵构造器。负 `size` 会中止。"
+
+#: manual/api/mutable/matrix.md:71
+msgid "`matrix_power(n)` Checked public wrapper around `pow(n)`."
+msgstr "`matrix_power(n)` `pow(n)` 的带检查公开别名。"
+
+#: manual/api/mutable/matrix.md:73
+msgid "`trace()` Checked sum of diagonal entries. Requires a square matrix and returns `Result[..., LinearAlgebraError]`."
+msgstr "`trace()` 带检查的对角线求和。要求方阵，并返回 `Result[..., LinearAlgebraError]`。"
+
+#: manual/api/mutable/matrix.md:75
+msgid "`determinant()` Checked determinant of a square matrix."
+msgstr "`determinant()` 带检查的方阵行列式。"
+
+#: manual/api/mutable/matrix.md:77
+msgid "`inverse()`, `is_invertible()` Checked inversion helpers for square matrices. Singular inverse returns `Err`."
+msgstr "`inverse()`, `is_invertible()` 带检查的逆矩阵相关辅助函数。奇异矩阵求逆返回 `Err`。"
+
+#: manual/api/mutable/matrix.md:79
+msgid "`mul_vec(vector)` Checked matrix-vector multiplication. Shape mismatch returns `Err`."
+msgstr "`mul_vec(vector)` 带检查的矩阵向量乘法。形状不匹配时返回 `Err`。"
+
+#: manual/api/mutable/matrix.md:81
+msgid "`mean()`, `variance()`, `std_dev()`, `max_element()`, `min_element()` Checked aggregate helpers. Empty matrices return `Err`."
+msgstr "`mean()`, `variance()`, `std_dev()`, `max_element()`, `min_element()` 带检查的聚合辅助函数。空矩阵返回 `Err`。"
+
+#: manual/api/mutable/matrix.md:83
+msgid "`unchecked_trace()`, `unchecked_determinant()`, `unchecked_inverse()`, `unchecked_is_invertible()`, `unchecked_pow()`, `unchecked_matrix_power()`, `unchecked_mul_vec()`, `unchecked_mean()`, `unchecked_variance()`, `unchecked_std_dev()`, `unchecked_max_element()`, `unchecked_min_element()` Preserve the old aborting or `Option`-returning behavior."
+msgstr "`unchecked_trace()`, `unchecked_determinant()`, `unchecked_inverse()`, `unchecked_is_invertible()`, `unchecked_pow()`, `unchecked_matrix_power()`, `unchecked_mul_vec()`, `unchecked_mean()`, `unchecked_variance()`, `unchecked_std_dev()`, `unchecked_max_element()`, `unchecked_min_element()` 保留旧的 abort 或 `Option` 返回行为。"
+
+#: manual/api/mutable/matrix.md:85
+msgid "`rank()` Rank computed through the current repository algorithm."
+msgstr "`rank()` 按当前仓库算法计算矩阵的秩。"
+
+#: manual/api/mutable/matrix.md:87
+msgid "`reduce_row_elimination()` In-place-style row reduction on the mutable matrix value."
+msgstr "`reduce_row_elimination()` 在可变矩阵值上执行行消元。"
+
+#: manual/api/mutable/matrix.md:89
+msgid "`cholesky_decomposition()` Cholesky factorization for supported numeric inputs."
+msgstr "`cholesky_decomposition()` 对支持的数值输入执行 Cholesky 分解。"
+
+#: manual/api/mutable/matrix.md:91
+msgid "`eigen()`, `power_method()` Public eigen-related APIs for supported numeric cases. The specialized 2x2 helper used by the implementation is not part of the public package interface."
+msgstr "`eigen()`, `power_method()` 当前公开的特征值相关 API。实现内部使用的 2x2 特化辅助函数不是公开接口。"
+
+#: manual/api/mutable/matrix.md:95
+msgid "`is_square()`, `null()`, `is_symmetric()`, `is_positive_definite()` Structural and numeric predicates."
+msgstr "`is_square()`, `null()`, `is_symmetric()`, `is_positive_definite()` 结构与数值判定辅助。"
+
+#: manual/api/mutable/matrix.md:97
+msgid "`frobenius_norm()` Non-checked aggregate numeric helper for supported element types."
+msgstr "`frobenius_norm()` 面向支持元素类型的非检查式聚合辅助函数。"
+
+#: manual/api/mutable/matrix.md:102
+msgid "Backends are expected to expose the same public semantics. The repository currently keeps separate kernel files for `native`, `js`, `wasm`, and `wasm-gc`, so tests and documentation should be read as backend-invariant unless a note says otherwise."
+msgstr "各后端应暴露相同的公开语义。当前仓库仍保留 `native`、`js`、`wasm`、`wasm-gc` 四套内核文件，但除非特别说明，文档与测试都按后端无关的公开行为来理解。"
+
+#: manual/api/mutable/matrix.md:103
+msgid "For code shared across `immut` and `mutable`, rely on the common algebraic surface and not on identical mutation semantics."
+msgstr "当你编写同时适用于 `immut` 和 `mutable` 的代码时，应依赖它们共享的代数 API，而不是假设修改语义也完全相同。"
+
+#: manual/api/mutable/matrix.md:104
+msgid "`backends/default.DenseMatrix` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
+msgstr "`backends/default.DenseMatrix` 包装的就是这个 concrete 实现。如果你要从 trait 导向的默认后端入口进入，请看 [backends/default API](../backends/default.md)。"
+
+#: manual/api/mutable/vector.md:3
+msgid "API baseline for `@mutable.Vector` in the current `0.4.7` repository state."
+msgstr "本页记录 `@mutable.Vector` 在当前 `0.4.7` 仓库状态下的 API 基线。"
+
+#: manual/api/mutable/vector.md:7
+msgid "`@mutable.Vector` is the repository's mutation-oriented vector type."
+msgstr "`@mutable.Vector` 是仓库里的可变向量类型。"
+
+#: manual/api/mutable/vector.md:8
+msgid "Storage is a wrapped `Array[T]`, so indexed writes update the underlying mutable buffer directly."
+msgstr "底层存储是包装后的 `Array[T]`，因此索引写入会直接更新内部缓冲区。"
+
+#: manual/api/mutable/vector.md:10
+msgid "Even in this package, many algebraic helpers still return fresh vectors so callers can choose between mutation and value-producing transforms."
+msgstr "即使在这个包里，很多代数辅助函数仍然会返回新向量，便于调用方在“原地修改”和“返回新值”之间显式选择。"
+
+#: manual/api/mutable/vector.md:15
+msgid "`Vector::from_array(arr)` / `Vector::make(n, elem)` / `Vector::makei(n, f)` Construct vectors from existing data, a repeated value, or an index function."
+msgstr "`Vector::from_array(arr)` / `Vector::make(n, elem)` / `Vector::makei(n, f)` 分别用于从现有数据、重复值或索引函数构造向量。"
+
+#: manual/api/mutable/vector.md:19
+msgid "`v[i]` / `v[i] = x` Read and write one element. Bounds follow `Array[T]` behavior."
+msgstr "`v[i]` / `v[i] = x` 读取或写入单个元素。边界行为遵循 `Array[T]`。"
+
+#: manual/api/mutable/vector.md:21
+msgid "`copy()` Returns a deep copy of the vector."
+msgstr "`copy()` 返回当前向量的深拷贝。"
+
+#: manual/api/mutable/vector.md:23
+msgid "`iter()` Exposes an iterator over the current elements."
+msgstr "`iter()` 按当前顺序遍历元素。"
+
+#: manual/api/mutable/vector.md:26
+msgid "Value-producing helpers"
+msgstr "返回新向量的辅助函数"
+
+#: manual/api/mutable/vector.md:28
+msgid "`map(f)` / `zip_with(other, f)` Return a transformed vector without mutating `self`."
+msgstr "`map(f)` / `zip_with(other, f)` 返回变换后的新向量，不修改 `self`。"
+
+#: manual/api/mutable/vector.md:30
+msgid "`add_constant(cst)` Adds the same scalar to each element."
+msgstr "`add_constant(cst)` 给每个元素加上同一个标量。"
+
+#: manual/api/mutable/vector.md:32
+msgid "`left_scale(scalar)` / `right_scale(scalar)` Return scaled vectors."
+msgstr "`left_scale(scalar)` / `right_scale(scalar)` 返回缩放后的新向量。"
+
+#: manual/api/mutable/vector.md:39
+msgid "In-place helpers"
+msgstr "原地辅助函数"
+
+#: manual/api/mutable/vector.md:41
+msgid "`map_inplace(f)` Rewrites every element in place."
+msgstr "`map_inplace(f)` 原地改写所有元素。"
+
+#: manual/api/mutable/vector.md:43
+msgid "`left_scale_inplace(scalar)` / `right_scale_inplace(scalar)` Apply scalar multiplication in place."
+msgstr "`left_scale_inplace(scalar)` / `right_scale_inplace(scalar)` 原地执行标量缩放。"
+
+#: manual/api/mutable/vector.md:46
+msgid "Scalar and matrix helpers"
+msgstr "标量与矩阵辅助函数"
+
+#: manual/api/mutable/vector.md:48
+msgid "`dot(other)` Computes the dot product. Length mismatch aborts."
+msgstr "`dot(other)` 计算点积。长度不一致时会直接中止。"
+
+#: manual/api/mutable/vector.md:50
+msgid "`lin_comb(weights, vectors)` Top-level helper that builds one vector from weighted input vectors. Empty inputs, mismatched counts, or mismatched vector lengths abort."
+msgstr "`lin_comb(weights, vectors)` 顶层辅助函数，用一组权重和输入向量组合出新向量。空输入、数量不一致或向量长度不一致都会直接中止。"
+
+#: manual/api/mutable/vector.md:53
+msgid "`to_col_matrix()` / `to_row_matrix()` Convert the vector into matrix form."
+msgstr "`to_col_matrix()` / `to_row_matrix()` 把向量转换成矩阵形式。"
+
+#: manual/api/mutable/vector.md:62
+msgid "Use direct indexing or `*_inplace` helpers when the workload is truly mutation-heavy."
+msgstr "当工作负载确实以更新为主时，直接使用索引或 `*_inplace` 辅助函数。"
+
+#: manual/api/mutable/vector.md:64
+msgid "Use the non-`inplace` helpers when you need a fresh vector or want code that mirrors `@immut.Vector` more closely."
+msgstr "当你希望保留旧值，或让代码风格更接近 `@immut.Vector` 时，优先使用那些返回新向量的辅助函数。"
+
+#: manual/api/mutable/vector.md:66
+msgid "`backends/default.DenseVector` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
+msgstr "`backends/default.DenseVector` 包装的就是这个 concrete 实现。如果你要从 trait 导向的默认后端入口进入，请看 [backends/default API](../backends/default.md)。"
+
+#: manual/conventions.md:1
+msgid "Repository conventions"
+msgstr "仓库约定"
+
+#: manual/conventions.md:3
+msgid "These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.4.7`**."
+msgstr "这些规则是 Luna-Flow 文档标准在 linear-algebra 中的补充。手册描述当前分支中的真实实现；当前文档基线为 **`0.4.7`**。"
+
+#: manual/conventions.md:5
+msgid "Pages and chapters"
+msgstr "页面与章节"
+
+#: manual/conventions.md:7
+msgid "The [overview](index.md) describes the current release baseline: what the release contains, where to start reading, and how the packages are positioned. `CHANGELOG.md` owns the historical release timeline and older release notes."
+msgstr "[概览](index.md)说明当前的版本基线：该版本包含什么、从哪里开始阅读，以及各个包的定位。`CHANGELOG.md` 负责承载历史版本时间线和较旧的发布说明。"
+
+#: manual/conventions.md:8
+msgid "The `immut` and `mutable` packages are documented per type rather than per package: `api/immut/matrix.md` and `api/immut/vector.md`, and the same under `api/mutable/`, `design/` and `tutorial/`."
+msgstr "`immut` 与 `mutable` 包按类型而不是按包编写文档：`api/immut/matrix.md` 与 `api/immut/vector.md`，`api/mutable/`、`design/` 和 `tutorial/` 下也采用相同的划分。"
+
+#: manual/conventions.md:9
+msgid "The `integration/` chapter explains how external types join the `algebra` and `container` capability layers."
+msgstr "`integration/` 章节说明外部类型如何接入 `algebra` 与 `container` 能力层。"
+
+#: manual/conventions.md:10
+msgid "Keep API references specification-oriented, tutorials usage-oriented, and design docs responsibility- and tradeoff-oriented"
+msgstr "API 文档偏规格说明，tutorial 偏使用路径，design 偏职责边界与取舍，不要把三类文体混写"
+
+#: manual/conventions.md:11
+msgid "Backend wrapper packages should document platform constraints, conversion boundaries, and whether behavior is implemented locally or delegated to an external library kernel"
+msgstr "后端包装包需要说明平台约束、转换边界，以及相关行为是在本地实现还是委托给外部库内核"
+
+#: manual/conventions.md:12
+msgid "Prefer short, direct sentences over rhetorical or release-note-style prose"
+msgstr "尽量使用短句、直述句，避免口语化、宣传式或版本说明式表达"
+
+#: manual/conventions.md:14
+msgid "Shared rules for `mutable` and `immutable`"
+msgstr "`mutable` 与 `immutable` 的统一规范"
+
+#: manual/conventions.md:16
+msgid "API alignment"
+msgstr "API 对齐原则"
+
+#: manual/conventions.md:18
+msgid "`mutable` and `immutable` should expose the same public API whenever practical"
+msgstr "`mutable` 与 `immutable` 应尽可能提供相同的公开 API"
+
+#: manual/conventions.md:19
+msgid "When both packages support the same capability, keep function names, parameter order, return semantics, and error conventions aligned"
+msgstr "当两个包都支持同一能力时，优先保持一致的函数名、参数顺序、返回语义与错误约定"
+
+#: manual/conventions.md:20
+msgid "If full alignment is not possible, the docs must state the difference, the reason, and the recommended usage"
+msgstr "如果因为实现约束无法完全一致，文档必须明确说明差异、原因以及推荐使用场景"
+
+#: manual/conventions.md:21
+msgid "Every new public API should be evaluated for both packages by default"
+msgstr "新增公开接口时，默认同时评估是否应在两个包中都提供"
+
+#: manual/conventions.md:23
+msgid "Design principles for `immutable`"
+msgstr "`immutable` 包的设计原则"
+
+#: manual/conventions.md:25
+msgid "Prefer functional, declarative, and composable interface design"
+msgstr "优先采用函数式、声明式、可组合的接口设计"
+
+#: manual/conventions.md:26
+msgid "Prefer returning new values instead of exposing in-place mutation semantics"
+msgstr "优先返回新值，而不是暴露原地修改语义"
+
+#: manual/conventions.md:27
+msgid "Avoid making callers reason about hidden state, shared mutable state, or timing-sensitive behavior"
+msgstr "避免让调用者感知隐藏状态、共享可变状态或时序敏感行为"
+
+#: manual/conventions.md:28
+msgid "The docs should emphasize value semantics, referential transparency, and composition patterns"
+msgstr "文档应强调值语义、引用透明性与组合方式"
+
+#: manual/conventions.md:29
+msgid "Even when there is a performance tradeoff, preserve clear and stable external semantics first"
+msgstr "如果存在性能上的妥协，仍应优先保持外部语义清晰、稳定、易推理"
+
+#: manual/conventions.md:31
+msgid "Design principles for `mutable`"
+msgstr "`mutable` 包的设计原则"
+
+#: manual/conventions.md:33
+msgid "Prioritize performance, memory reuse, and low-level execution efficiency"
+msgstr "优先关注性能、内存复用与底层执行效率"
+
+#: manual/conventions.md:34
+msgid "Internal mutable state, in-place updates, and other side effects are acceptable inside the library"
+msgstr "允许在库内部使用可变状态、原地更新和其他必要副作用"
+
+#: manual/conventions.md:35
+msgid "Those side effects should remain encapsulated in the implementation rather than leaking into the caller's mental model"
+msgstr "这些副作用应尽可能封装在实现内部，不应扩散到调用者的心智模型中"
+
+#: manual/conventions.md:36
+msgid "The public API should still feel pure, stable, and function-oriented instead of exposing internal mutability as a contract"
+msgstr "对外 API 仍应保持纯净、稳定、函数式风格，避免把内部可变实现直接暴露为接口约束"
+
+#: manual/conventions.md:37
+msgid "Introduce package-specific deviations from `immutable` only when the performance benefit is concrete and necessary"
+msgstr "只有在性能收益明确且必要时，才引入与 `immutable` 不一致的特殊接口"
+
+#: manual/conventions.md:39
+msgid "Documentation requirements"
+msgstr "文档写作要求"
+
+#: manual/conventions.md:41
+msgid "Use the same section structure and terminology across `mutable` and `immutable` API docs whenever possible"
+msgstr "在 `mutable` 与 `immutable` 的 API 文档中，优先使用相同的小节结构与术语"
+
+#: manual/conventions.md:42
+msgid "Cross-reference corresponding APIs so readers can compare semantics and cost models easily"
+msgstr "对应接口应互相链接或交叉引用，方便读者比较两个包的语义与成本"
+
+#: manual/conventions.md:43
+msgid "Clearly separate external semantics from internal implementation strategy"
+msgstr "文档需要明确区分“外部语义”与“内部实现策略”"
+
+#: manual/conventions.md:44
+msgid "Performance details such as caching, reuse, and in-place computation belong in design pages or the `performance/` chapter, not in the API semantic contract."
+msgstr "缓存、复用、原地计算等性能细节应写入设计页面或 `performance/` 章节，而不是写进 API 语义契约。"
+
+#: manual/conventions.md:45
+msgid "If a `mutable` API has observable behavior due to a performance-oriented design choice, document that behavior explicitly rather than only describing the internal implementation"
+msgstr "当某个 `mutable` 接口为了性能采取特殊行为时，必须明确写出其可观察影响，而不是只描述内部实现细节"
+
+#: manual/conventions.md:47
+msgid "Translations"
+msgstr "翻译"
+
+#: manual/conventions.md:49
+msgid "Chinese translations should read like natural written technical Chinese, not word-for-word English translation."
+msgstr "中文译文应当是自然的书面技术汉语，避免逐词硬翻和不必要的中英夹杂。"
+
+#: manual/conventions.md:50
+msgid "Japanese translations should read like natural technical Japanese, not a literal structural copy of Chinese or English phrasing."
+msgstr "日文译文应当是自然的技术文体，不应照搬中文或英文句式。"
+
+#: manual/design/algebra.md:1
+msgid "algebra design"
+msgstr "algebra 设计"
+
+#: manual/design/algebra.md:3
+msgid "For external adoption levels, operator semantics, implementation ownership, and the relationship with container dictionaries, see the [ecosystem integration guide](../integration/algebra.md)."
+msgstr "外部接入层级、运算符语义、实现归属以及与 container 字典的关系，请参阅 [生态接入指南](../integration/algebra.md)。"
+
+#: manual/design/algebra.md:7
+#: manual/design/arithmetic.md:3
+#: manual/design/backends/default.md:3
+#: manual/design/backends/openblas.md:3
+#: manual/design/error.md:3
+#: manual/design/immut/matrix.md:3
+#: manual/design/immut/vector.md:3
+#: manual/design/mutable/matrix.md:3
+#: manual/design/mutable/vector.md:3
+msgid "Responsibilities"
+msgstr "职责"
+
+#: manual/design/algebra.md:9
+msgid "Represent semantic mathematical structures used by linear algebra."
+msgstr "表示线性代数需要的语义数学结构。"
+
+#: manual/design/algebra.md:10
+msgid "Keep structure-level traits separate from operation-only arithmetic traits."
+msgstr "将结构级 trait 与操作级算术 trait 分开。"
+
+#: manual/design/algebra.md:11
+msgid "Avoid treating approximate floating-point behavior as exact algebraic law."
+msgstr "避免把近似浮点行为写成精确代数律。"
+
+#: manual/design/algebra.md:12
+msgid "Keep shape, additive operations, Hadamard multiplication, matrix multiplication, and scalar-valued mappings as separate capabilities."
+msgstr "将形状、加法运算、Hadamard 乘法、矩阵乘法以及返回标量值的映射保持为彼此独立的能力。"
+
+#: manual/design/algebra.md:14
+msgid "Express object-level linear algebra operations by composing existing operator traits such as `Add`, `Mul`, `Neg`, and `Sub` only when a trait actually needs those operations."
+msgstr "只有当某个 trait 确实需要这些运算时，才通过组合 `Add`、`Mul`、`Neg`、`Sub` 等现有运算符 trait 来表达对象级的线性代数运算。"
+
+#: manual/design/algebra.md:17
+msgid "Keep shared upstream scalar abstractions outside this package; import them directly in user code when an algorithm really needs them."
+msgstr "把共享上游标量抽象留在包外，只有用户代码确实需要时再直接导入。"
+
+#: manual/design/algebra.md:20
+#: manual/design/arithmetic.md:10
+#: manual/design/backends/default.md:10
+#: manual/design/error.md:11
+msgid "Non-responsibilities"
+msgstr "非职责"
+
+#: manual/design/algebra.md:22
+msgid "Do not import dense backend types."
+msgstr "不导入稠密后端类型。"
+
+#: manual/design/algebra.md:23
+msgid "Do not define storage, mutability, or algorithm execution traits."
+msgstr "不定义存储、可变操作或算法执行 trait。"
+
+#: manual/design/algebra.md:24
+msgid "Do not place inner product, norm, or other scalar-valued functors in the core structure layer."
+msgstr "不把内积、范数等返回标量值的映射放入核心结构层。"
+
+#: manual/design/algebra.md:26
+msgid "Do not introduce `Module` or `VectorSpace` without an explicit scalar-action model."
+msgstr "不在缺少显式标量作用模型时引入 `Module` 或 `VectorSpace`。"
+
+#: manual/design/algebra.md:28
+msgid "Do not introduce a package-local shape-dependent zero in place of upstream `Zero`."
+msgstr "不用包内依赖形状的零元替代上游 `Zero`。"
+
+#: manual/design/algebra.md:30
+msgid "Do not put partial operations such as dynamic rectangular matrix multiplication in the minimum matrix shape trait."
+msgstr "不把动态矩形矩阵乘法这种部分运算塞进最小矩阵形状 trait。"
+
+#: manual/design/algebra.md:33
+#: manual/design/arithmetic.md:16
+#: manual/design/error.md:19
+msgid "Maintenance notes"
+msgstr "维护说明"
+
+#: manual/design/algebra.md:35
+msgid "If a future trait needs scalar association, design it explicitly instead of encoding a fixed scalar such as `Double` into a public trait."
+msgstr "如果未来某个 trait 需要关联标量类型，应显式设计出来，而不是把 `Double` 之类的固定标量偷偷编码进公开 trait。"
+
+#: manual/design/arithmetic.md:1
+msgid "arithmetic design"
+msgstr "arithmetic 设计"
+
+#: manual/design/arithmetic.md:5
+msgid "Keep low-level computable operations separate from semantic algebraic laws."
+msgstr "把低层可计算操作和语义代数律分开。"
+
+#: manual/design/arithmetic.md:6
+msgid "Reuse existing ecosystem scalar traits instead of redefining them locally."
+msgstr "复用生态已有标量 traits，而不是在本仓库重复定义。"
+
+#: manual/design/arithmetic.md:7
+msgid "Add only small operation traits when linear-algebra-facing code needs a stable name."
+msgstr "只在缺少线性代数集成名称时添加小的操作级 trait。"
+
+#: manual/design/arithmetic.md:12
+msgid "Do not define vector-space, module, matrix, or backend capabilities here."
+msgstr "不定义向量空间、模、矩阵或后端能力。"
+
+#: manual/design/arithmetic.md:13
+msgid "Do not make floating-point types claim exact algebraic laws."
+msgstr "不让浮点类型声称精确代数律。"
+
+#: manual/design/arithmetic.md:14
+msgid "Do not import `immut`, `mutable`, or `backends/default`."
+msgstr "不导入 `immut`、`mutable` 或 `backends/default`。"
+
+#: manual/design/arithmetic.md:18
+msgid "When adding a new trait, name the operation directly and document that it represents availability of an operation, not a mathematical structure."
+msgstr "新增 trait 时，名字应直接对应具体操作，并明确写出：它表示“这个操作可用”，而不是“这里成立一个数学结构”。"
+
+#: manual/design/backends/default.md:1
+msgid "backends/default design"
+msgstr "backends/default 设计"
+
+#: manual/design/backends/default.md:5
+msgid "Present `immut` and `mutable` as default dense backends through owned wrapper types."
+msgstr "将 `immut` 和 `mutable` 呈现为默认稠密后端。"
+
+#: manual/design/backends/default.md:7
+msgid "Implement capability traits for the default dense matrix and vector types."
+msgstr "为默认稠密矩阵/向量类型实现能力 trait。"
+
+#: manual/design/backends/default.md:8
+msgid "Provide small generic helpers that exercise trait-based dispatch."
+msgstr "提供小型泛型辅助函数来验证基于 trait 的分发。"
+
+#: manual/design/backends/default.md:12
+msgid "Do not redefine scalar algebra or arithmetic laws."
+msgstr "不重新定义标量代数或算术律。"
+
+#: manual/design/backends/default.md:13
+msgid "Do not require all future backends to become dense or contiguous."
+msgstr "不要求未来后端必须是稠密后端或连续存储。"
+
+#: manual/design/backends/default.md:14
+msgid "Do not make scalar-valued maps part of the core linear algebra trait surface."
+msgstr "不把返回标量值的映射放入核心线性代数 trait 层。"
+
+#: manual/design/backends/default.md:16
+msgid "Extension model"
+msgstr "扩展模型"
+
+#: manual/design/backends/default.md:18
+msgid "Future sparse, lazy, static-size, GPU, or external-library backends should implement the same structural traits directly. They should not need to convert into `DenseMatrix` or `DenseVector` before generic algorithms can use them."
+msgstr "未来的稀疏、惰性、静态尺寸、GPU 或外部库后端应直接实现相同的结构 trait，不需要先转换成 `DenseMatrix` 或 `DenseVector`。"
+
+#: manual/design/backends/openblas.md:1
+msgid "backends/openblas design"
+msgstr "backends/openblas 设计"
+
+#: manual/design/backends/openblas.md:5
+msgid "Provide a concrete native-only matrix backend that can participate in the public `@algebra` trait ecosystem."
+msgstr "提供一个能够接入公开 `@algebra` trait 生态的、仅支持 `native` 的具体矩阵后端。"
+
+#: manual/design/backends/openblas.md:7
+msgid "Keep the backend's owned public type local to this repository as `BlasMatrix[T]`."
+msgstr "把后端自有的公开类型固定为 `BlasMatrix[T]`。"
+
+#: manual/design/backends/openblas.md:9
+msgid "Use OpenBLAS GEMM for matrix multiplication while keeping the rest of the first-pass matrix surface implemented locally in MoonBit."
+msgstr "对矩阵乘法使用 OpenBLAS GEMM，同时把首版其余矩阵表面留在 MoonBit 本地实现。"
+
+#: manual/design/backends/openblas.md:11
+msgid "Hide OpenBLAS layout and binding details behind a repository-owned API."
+msgstr "把 OpenBLAS 的布局与绑定细节藏在仓库自有 API 后面。"
+
+#: manual/design/backends/openblas.md:13
+msgid "Why this is a wrapper backend"
+msgstr "为什么它是包装后端"
+
+#: manual/design/backends/openblas.md:15
+msgid "This package is a trait-compatible backend wrapper."
+msgstr "这个包是一个“兼容 trait 的后端包装层”。"
+
+#: manual/design/backends/openblas.md:17
+msgid "It is not:"
+msgstr "它不是："
+
+#: manual/design/backends/openblas.md:19
+msgid "a runtime backend selector"
+msgstr "runtime backend selector"
+
+#: manual/design/backends/openblas.md:20
+msgid "a global backend enum"
+msgstr "全局 backend enum"
+
+#: manual/design/backends/openblas.md:21
+msgid "a direct trait implementation on the foreign OpenBLAS binding types"
+msgstr "直接在外部 OpenBLAS 绑定类型上实现 trait 的做法"
+
+#: manual/design/backends/openblas.md:23
+msgid "The wrapper exists so the package owns the concrete matrix type and can attach `@algebra` trait implementations without running into MoonBit's foreign trait / foreign type restriction."
+msgstr "之所以需要包装层，是因为包必须拥有具体矩阵类型，才能在不触发 MoonBit foreign trait / foreign type 限制的前提下，为它挂上 `@algebra` traits。"
+
+#: manual/design/backends/openblas.md:27
+msgid "Type and target decide behavior"
+msgstr "类型与目标共同决定行为"
+
+#: manual/design/backends/openblas.md:29
+msgid "Backend choice is now determined by two things:"
+msgstr "现在的后端选择由两件事决定："
+
+#: manual/design/backends/openblas.md:31
+msgid "type choice `@immut.Matrix[T]` and `@default.ImmutableDenseMatrix[T]` use the repository's existing dense implementations, while `@openblas.BlasMatrix[T]` uses the OpenBLAS-backed multiplication path"
+msgstr "类型选择 `@immut.Matrix[T]` 与 `@default.ImmutableDenseMatrix[T]` 继续使用仓库现有的稠密实现；`@openblas.BlasMatrix[T]` 则使用 OpenBLAS 支持的矩阵乘法路径"
+
+#: manual/design/backends/openblas.md:35
+msgid "target choice `backends/openblas` only participates in `native` builds"
+msgstr "目标选择 `backends/openblas` 只参与 `native` 构建"
+
+#: manual/design/backends/openblas.md:38
+msgid "There is no runtime API for asking `@immut.Matrix` to switch to a different backend."
+msgstr "`@immut.Matrix` 不再提供运行时切换后端的 API。"
+
+#: manual/design/backends/openblas.md:41
+msgid "Scalar strategy"
+msgstr "标量策略"
+
+#: manual/design/backends/openblas.md:43
+msgid "`BLASInnerType` is intentionally backend-local. It captures the scalar-specific pieces this wrapper needs:"
+msgstr "`BLASInnerType` 是有意保持在后端内部的局部抽象。它封装这个包装层真正需要的标量差异："
+
+#: manual/design/backends/openblas.md:46
+msgid "dispatch to the correct GEMM kernel"
+msgstr "分发到正确的 GEMM 内核"
+
+#: manual/design/backends/openblas.md:47
+msgid "provide a tolerance value for backend validation"
+msgstr "提供后端校验所用的容差值"
+
+#: manual/design/backends/openblas.md:49
+msgid "The repository currently implements this trait only for `Float` and `Double`. That matches the current OpenBLAS-backed matrix surface and avoids exposing a misleading generic type story."
+msgstr "当前仓库只为 `Float` 与 `Double` 实现该 trait。这与现有 OpenBLAS 后端矩阵表面一致，也避免对外讲出一个误导性的“泛型无上限”故事。"
+
+#: manual/design/backends/openblas.md:53
+msgid "Operation split"
+msgstr "操作分工"
+
+#: manual/design/backends/openblas.md:55
+msgid "`Mul` delegates to OpenBLAS GEMM"
+msgstr "`Mul` 委托给 OpenBLAS GEMM"
+
+#: manual/design/backends/openblas.md:57
+msgid "`shape`, `transpose`, `+`, `-`, `neg` stay as local MoonBit implementations for the first version"
+msgstr "`shape`、`transpose`、`+`、`-`、`neg` 保持为本地 MoonBit 实现"
+
+#: manual/design/backends/openblas.md:60
+msgid "This split keeps the API complete enough for trait-oriented generic code without pretending that every matrix operation must already be backed by a BLAS routine."
+msgstr "这种分工保证了 trait 导向泛型代码已经可以使用完整的矩阵外形，同时不假装所有操作都必须在首版就接入 BLAS 例程。"
+
+#: manual/design/container.md:1
+msgid "Container capability design"
+msgstr "容器能力设计"
+
+#: manual/design/container.md:3
+msgid "Mathematical and structural capabilities"
+msgstr "数学能力与结构能力"
+
+#: manual/design/container.md:5
+msgid "The `algebra` package describes mathematical behavior such as addition, transpose, and multiplication. The `container` package describes structural behavior: shape observation, checked element access, construction, and the two distinct editing models. A type may implement either layer without claiming the other."
+msgstr "`algebra` 描述加法、转置和乘法等数学行为；`container` 描述形状、受检访问、构造和两种编辑模型。类型可以只实现其中一层。"
+
+#: manual/design/container.md:11
+msgid "Explicit operation dictionaries represent the relationship between container type, element type, and operation. This is clearer than forcing the multi-parameter relationship into a global trait and lets one external type publish several scalar-specific or policy-specific dictionaries."
+msgstr "容器类型、元素类型和操作之间的关系通过小型显式字典表达，避免把多参数关系勉强塞入全局 trait，也允许外部类型按不同标量或策略提供多个字典。"
+
+#: manual/design/container.md:16
+msgid "The [ecosystem integration guide](../integration/container.md) defines the supported adoption levels and adapter ownership rules for external libraries."
+msgstr "[生态接入指南](../integration/container.md)规定了外部库可采用的接入级别以及适配器的归属规则。"
+
+#: manual/design/container.md:19
+msgid "Ownership and editing"
+msgstr "所有权与编辑"
+
+#: manual/design/container.md:21
+msgid "Persistent editing returns a new value and must preserve the source even when the implementation uses shared backing storage. Mutable editing changes the supplied container and returns `Unit` inside the checked result. Keeping these records separate prevents generic code from confusing copying with mutation."
+msgstr "持久编辑返回新值，即使实现共享底层存储也必须保持源值不变。可变编辑修改传入的容器，并在受检结果中返回 `Unit`。两类记录分开后，泛型代码不会混淆复制与原地修改。"
+
+#: manual/design/container.md:26
+msgid "Generic `insert`, `delete`, `create`, and `remove` are absent. Removing a sparse entry, setting a value to zero, deleting a row, and resizing a matrix are different operations and must remain separate optional capabilities."
+msgstr "基础协议不定义通用 `insert`、`delete`、`create` 或 `remove`。删除稀疏存储项、写入零、删除行和调整尺寸是不同操作。"
+
+#: manual/design/container.md:30
+msgid "Dependency direction"
+msgstr "依赖方向与未来扩展"
+
+#: manual/design/container.md:32
+msgid "`container` depends only on `error`. `container/adapters` depends on the core capability package and the dense implementations. OpenBLAS depends on the core package directly and remains native-only. Neither `algebra` nor the concrete dense implementations depend on the adapter package."
+msgstr "`container` 仅依赖 `error`；`container/adapters` 依赖具体稠密实现；OpenBLAS 直接依赖核心 `container` 并保持 native 限定。未来可以增加可选的 `MatrixKernelOps[M, T]`，包含受检写入、换行和行基本变换，而不破坏 read/build。"
+
+#: manual/design/container.md:37
+msgid "Future kernels"
+msgstr "未来的 kernel"
+
+#: manual/design/container.md:39
+msgid "A future `MatrixKernelOps[M, T]` may group checked read/write, row swap, row scale, and scaled-row addition for elimination algorithms. It should be an optional dictionary layered beside read/build, not a requirement added to them."
+msgstr "未来的 `MatrixKernelOps[M, T]` 可以为消元算法汇集受检读写、行交换、行缩放和倍加行等操作。它应当是与 read/build 并列的可选字典，而不是附加给它们的要求。"
+
+#: manual/design/container.md:44
+msgid "Sparse matrices can provide read/build dictionaries that interpret absent entries according to their own representation. Views can provide read/edit without construction."
+msgstr "稀疏矩阵可以提供按自身表示解释缺省项的 read/build 字典。视图可以只提供 read/edit 而不提供构造。"
+
+#: manual/design/error.md:1
+msgid "error design"
+msgstr "error 设计"
+
+#: manual/design/error.md:5
+msgid "Provide the shared error vocabulary for checked linear-algebra APIs."
+msgstr "为带检查的线性代数 API 提供共享的错误类型。"
+
+#: manual/design/error.md:6
+msgid "Keep a stable machine-readable `kind` beside a human-readable `message`."
+msgstr "同时保留适合程序判断的 `kind` 和适合人阅读的 `message`。"
+
+#: manual/design/error.md:7
+msgid "Let callers branch on common failure categories without parsing text."
+msgstr "让调用者不需要解析错误文本，就能按常见失败类别分支处理。"
+
+#: manual/design/error.md:8
+msgid "Preserve arithmetic errors from lower-level scalar operations through `ArithmeticFailure`."
+msgstr "通过 `ArithmeticFailure` 保留下层标量运算传播出来的算术错误。"
+
+#: manual/design/error.md:13
+msgid "Do not implement matrix, vector, or backend algorithms here."
+msgstr "不在这里实现矩阵、向量或后端算法。"
+
+#: manual/design/error.md:14
+msgid "Do not define recovery policies for singular matrices, non-convergence, or arithmetic failures."
+msgstr "不定义奇异矩阵、非收敛或算术错误的恢复策略。"
+
+#: manual/design/error.md:16
+msgid "Do not decide logging, localization, or presentation formatting."
+msgstr "不负责日志、国际化或展示格式。"
+
+#: manual/design/error.md:17
+msgid "Do not use the text message as the semantic contract for control flow."
+msgstr "不把 `message` 文本作为控制流判断的语义契约。"
+
+#: manual/design/error.md:21
+msgid "Add a new error kind only when checked public APIs need to expose a distinct class of failure. Keep constructors and predicate methods aligned with the enum so callers can create and inspect errors without destructuring values directly."
+msgstr "只有当带检查的公开 API 需要暴露一类新的失败时，才新增错误种类。新增时应同步维护枚举项、构造函数和判断方法，让调用者无需直接拆解错误值也能创建和识别错误。"
+
+#: manual/design/immut/matrix.md:1
+msgid "immut/matrix design"
+msgstr "immut/matrix 设计"
+
+#: manual/design/immut/matrix.md:5
+msgid "Provide a value-oriented `Matrix[T]` whose transformation methods return new matrices."
+msgstr "提供值语义导向的 `Matrix[T]`，转换操作返回新矩阵。"
+
+#: manual/design/immut/matrix.md:6
+msgid "Keep matrix storage row-major through the immutable vector-backed representation."
+msgstr "通过不可变向量支撑的表示保持按行优先存储。"
+
+#: manual/design/immut/matrix.md:7
+msgid "Keep checked matrix operations explicit: shape, exponent, and domain failures belong in `Result[..., LinearAlgebraError]`."
+msgstr "对可能失败的矩阵操作使用带检查 API，让形状、指数和输入域错误通过 `Result[..., LinearAlgebraError]` 表达。"
+
+#: manual/design/immut/matrix.md:9
+#: manual/design/immut/vector.md:10
+#: manual/design/mutable/matrix.md:9
+#: manual/design/mutable/vector.md:10
+msgid "Invariants"
+msgstr "不变量"
+
+#: manual/design/immut/matrix.md:11
+msgid "Constructors reject negative dimensions and non-rectangular input."
+msgstr "构造器会拒绝负维度和行长不一致的输入。"
+
+#: manual/design/immut/matrix.md:12
+msgid "Indexed access and row/column iterators enforce the same bounds rules as the mutable matrix API."
+msgstr "索引访问、行迭代器和列迭代器与可变矩阵 API 保持一致的边界语义。"
+
+#: manual/design/immut/matrix.md:13
+msgid "Matrix algebra should stay aligned with `mutable` where both packages expose the same operation, while preserving value semantics."
+msgstr "当 `immut` 与 `mutable` 都暴露同一代数操作时，应保持语义对齐，同时保留不可变值语义。"
+
+#: manual/design/immut/vector.md:1
+msgid "immut/vector design"
+msgstr "immut/vector 设计"
+
+#: manual/design/immut/vector.md:5
+msgid "Provide a value-oriented `Vector[T]` backed by the core persistent vector storage alias."
+msgstr "提供值语义导向的 `Vector[T]`，底层使用核心持久向量存储别名。"
+
+#: manual/design/immut/vector.md:6
+msgid "Keep shared vector algebra aligned with `@mutable.Vector` where the observable operation is the same."
+msgstr "在可观察操作相同的共享子集上，与 `@mutable.Vector` 保持代数语义对齐。"
+
+#: manual/design/immut/vector.md:7
+msgid "Exclude in-place mutation APIs from the immutable package."
+msgstr "不在不可变包中暴露原地修改 API。"
+
+#: manual/design/immut/vector.md:8
+msgid "Keep scalar-reducing helpers such as `dot()` out of this package's public surface."
+msgstr "不把 `dot()` 这类标量归约辅助函数放进这个公开接口里。"
+
+#: manual/design/immut/vector.md:12
+msgid "`set`, `map`, and scale operations return new vectors."
+msgstr "`set`、`map` 和缩放操作返回新向量。"
+
+#: manual/design/immut/vector.md:13
+msgid "Indexing follows the underlying immutable vector bounds behavior."
+msgstr "索引访问遵循底层不可变向量的边界行为。"
+
+#: manual/design/immut/vector.md:14
+msgid "Matrix conversion helpers produce row or column matrices without exposing mutable storage."
+msgstr "矩阵转换辅助函数生成行矩阵或列矩阵，不暴露可变存储。"
+
+#: manual/design/immut/vector.md:15
+msgid "Shared element-wise operations stay aligned with `@mutable.Vector`, but the immutable package remains focused on value-producing transforms."
+msgstr "共享的按元素操作会尽量与 `@mutable.Vector` 对齐，但这个包仍然只关注返回新值的变换。"
+
+#: manual/design/mutable/matrix.md:1
+msgid "mutable/matrix design"
+msgstr "mutable/matrix 设计"
+
+#: manual/design/mutable/matrix.md:5
+msgid "Provide an execution-oriented `Matrix[T]` with row-major `Array[T]` storage across supported backends."
+msgstr "提供执行导向的 `Matrix[T]`，在支持的后端上保持按行优先的 `Array[T]` 存储模型。"
+
+#: manual/design/mutable/matrix.md:6
+msgid "Keep live row, column, and transpose views connected to the underlying matrix."
+msgstr "让行视图、列视图和转置视图始终连接到底层矩阵。"
+
+#: manual/design/mutable/matrix.md:7
+msgid "Keep checked APIs for runtime failures while preserving explicit `unchecked_*` methods for legacy contracts."
+msgstr "为运行时失败保留带检查 API，同时用显式 `unchecked_*` 方法承载旧契约。"
+
+#: manual/design/mutable/matrix.md:11
+msgid "Backend-specific files may tune kernels, but they must expose the same public semantics."
+msgstr "后端专用文件可以优化内核，但必须暴露相同的公开语义。"
+
+#: manual/design/mutable/matrix.md:12
+msgid "Bounds checks are explicit for matrix, view, iterator, and transpose access."
+msgstr "矩阵、视图、迭代器和转置访问都执行显式边界检查。"
+
+#: manual/design/mutable/matrix.md:13
+msgid "Shared algebraic operations should stay semantically aligned with `immut` where both packages expose them."
+msgstr "当 `mutable` 与 `immut` 都暴露同一代数操作时，应保持语义对齐。"
+
+#: manual/design/mutable/vector.md:1
+msgid "mutable/vector design"
+msgstr "mutable/vector 设计"
+
+#: manual/design/mutable/vector.md:5
+msgid "Provide an execution-oriented `Vector[T]` backed by `Array[T]`."
+msgstr "提供执行导向的 `Vector[T]`，底层包装 `Array[T]`。"
+
+#: manual/design/mutable/vector.md:6
+msgid "Support direct indexed reads and writes for workloads that need in-place updates."
+msgstr "支持直接索引读写，服务需要原地更新的工作负载。"
+
+#: manual/design/mutable/vector.md:7
+msgid "Keep non-`inplace` algebraic helpers available for value-producing transforms."
+msgstr "保留不带 `inplace` 后缀的代数辅助函数，让调用方也能选择返回新值的变换。"
+
+#: manual/design/mutable/vector.md:8
+msgid "Keep scalar-reducing and aggregate helpers such as `dot()` in the mutable package."
+msgstr "把 `dot()` 这类标量归约和 `lin_comb(...)` 这类组合辅助函数留在可变包中。"
+
+#: manual/design/mutable/vector.md:12
+msgid "`*_inplace` methods mutate the existing vector and return `Unit`."
+msgstr "`*_inplace` 方法修改现有向量并返回 `Unit`。"
+
+#: manual/design/mutable/vector.md:13
+msgid "`map`, scale helpers, `zip_with`, and matrix conversion helpers return new values."
+msgstr "`map`、缩放辅助函数、`zip_with` 和矩阵转换辅助函数返回新值。"
+
+#: manual/design/mutable/vector.md:14
+msgid "Vector algebra should stay aligned with `@immut.Vector` for the shared operation subset."
+msgstr "在共享操作子集上，向量代数语义应与 `@immut.Vector` 保持对齐。"
+
+#: manual/design/mutable/vector.md:15
+msgid "Length-sensitive helpers such as `dot()` and `lin_comb(...)` reject inconsistent inputs explicitly."
+msgstr "`dot()` 和 `lin_comb(...)` 这类对长度敏感的辅助函数会显式拒绝不一致的输入。"
+
+#: manual/index.md:1
+msgid "Luna-Flow/linear-algebra"
+msgstr "Luna-Flow/linear-algebra"
+
+#: manual/index.md:3
+msgid "This overview matches the current repository baseline for **v0.4.7**."
+msgstr "这份概览对应当前仓库的 **v0.4.7** 基线。"
+
+#: manual/index.md:5
+msgid "The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt` capability, while integral embeddings follow `Luna-Flow/luna-generic.IntegralHomomorphism`. `Tolerance` remains local to the `mutable` package in this release. Matrix operations with runtime failure modes now use checked `Result[..., LinearAlgebraError]` APIs; the old aborting or `Option`-returning behavior is exposed through explicit `unchecked_*` methods."
+msgstr "`mutable` 数值 API 现在使用共享的 `Luna-Flow/arithmetic.Sqrt` 能力；整数嵌入遵循 `Luna-Flow/luna-generic.IntegralHomomorphism`。在当前版本中， `Tolerance` 仍保留在 `mutable` 包内。凡是可能在运行时失败的矩阵操作，现在都使用带检查的 `Result[..., LinearAlgebraError]` API；旧的 abort 行为和 `Option` 返回语义则通过显式的 `unchecked_*` 方法保留。"
+
+#: manual/index.md:12
+msgid "The `0.4.7` baseline adds the storage-independent `container` capability layer, generic vector and matrix algorithms, adapters for the concrete storage representations, and documented algebra integration levels for external types."
+msgstr "`0.4.7` 这一基线新增了与存储无关的 `container` 能力层、通用向量与矩阵算法、面向具体存储表示的适配器，以及供外部类型采用的 algebra 集成层级。"
+
+#: manual/index.md:16
+msgid "For earlier release notes and repository history, see [CHANGELOG.md](../../CHANGELOG.md)."
+msgstr "更早的版本说明和仓库历史请参见 [CHANGELOG.md](../../CHANGELOG.md)。"
+
+#: manual/index.md:19
+msgid "Layered architecture"
+msgstr "分层架构"
+
+#: manual/index.md:21
+msgid "**Experimental features:** The `algebra` and `container` capability layers are available for integration experiments and ecosystem feedback, but their trait hierarchy, operation dictionaries, error contracts, and function signatures are not yet compatibility-stable. Downstream libraries should not use these packages as stable public boundaries yet. This status does not make the concrete `immut`, `mutable`, or backend APIs experimental merely because they implement or adapt these capabilities."
+msgstr "**实验性功能：** `algebra` 与 `container` 能力层目前用于接入试验和收集生态反馈；它们的 trait 层级、操作字典、错误契约和函数签名尚未承诺兼容性稳定。下游库暂时不应把这两个包作为稳定的公开兼容边界。`immut`、`mutable` 和各后端仅仅因为实现或适配这些能力，并不会因此整体变成实验性 API。"
+
+#: manual/index.md:29
+msgid "**`arithmetic`**: Linear-algebra-facing operation capabilities. It reuses scalar operation traits from `Luna-Flow/luna-generic` and `Luna-Flow/arithmetic`, and adds operation-only traits where needed."
+msgstr "**`arithmetic`**：面向线性代数的操作能力层。它复用 `Luna-Flow/luna-generic` 和 `Luna-Flow/arithmetic` 中的标量操作 trait，并在需要时补充只表达“可进行某类操作”的 trait。"
+
+#: manual/index.md:32
+msgid "**`algebra`**: Semantic mathematical structure capabilities. It defines only the linear-algebra-owned structure traits."
+msgstr "**`algebra`**：数学结构能力层。它只定义线性代数自己拥有的结构 trait。"
+
+#: manual/index.md:34
+msgid "**`backends/default`**: The reference dense backend layer. It exposes mutable dense wrappers `DenseVector` / `DenseMatrix` and immutable dense wrappers `ImmutableDenseVector` / `ImmutableDenseMatrix`."
+msgstr "**`backends/default`**：参考稠密后端层。它公开可变稠密包装类型 `DenseVector` / `DenseMatrix`，以及不可变稠密包装类型 `ImmutableDenseVector` / `ImmutableDenseMatrix`。"
+
+#: manual/index.md:37
+msgid "**`backends/openblas`**: A native-only OpenBLAS backend. It exposes the owned `BlasMatrix[T]` and `BlasVector[T]` wrappers for `Float` and `Double`, uses OpenBLAS GEMM for matrix multiplication, and provides backend methods backed by BLAS vector and matrix-vector kernels."
+msgstr "**`backends/openblas`**：仅支持 `native` 的 OpenBLAS 后端。它公开仓库自有的 `BlasMatrix[T]` 与 `BlasVector[T]` 包装类型，支持 `Float` 与 `Double`，矩阵乘法使用 OpenBLAS GEMM，向量与矩阵-向量交互则使用对应的 BLAS 核心，后端选择通过具体类型表达，而不是通过运行时 selector 表达。"
+
+#: manual/index.md:41
+msgid "**`error`**: Shared error vocabulary for checked linear-algebra APIs, including shape, exponent, empty-matrix, singular-matrix, non-convergence, and arithmetic failures."
+msgstr "**`error`**：带检查线性代数 API 共用的错误词汇层，覆盖形状、指数、空矩阵、奇异矩阵、非收敛以及底层算术错误。"
+
+#: manual/index.md:44
+msgid "**Trait-driven algorithms**: Backend-independent code should depend on the smallest capability it needs, such as `MatrixShape`, `AdditiveVector`, `VecMulVector`, `TransposeMatrix`, or `MatMulMatrix`."
+msgstr "**trait 驱动算法**：后端无关代码应依赖最小必要能力，例如 `MatrixShape`、`AdditiveVector`、`VecMulVector`、`TransposeMatrix` 或 `MatMulMatrix`。"
+
+#: manual/index.md:48
+msgid "Mappings from vector or matrix objects into scalar-like categories, such as inner products or norms, are backend or algorithm details. They are not part of the core structure trait layer."
+msgstr "把向量或矩阵映射为标量范畴的能力，例如内积或范数，属于具体后端或算法细节；它们不属于核心结构 trait 层。"
+
+#: manual/index.md:52
+msgid "The default dense implementation is a backend, not the center of the ecosystem. Algorithms should depend on minimal linear algebra traits, not concrete dense matrix/vector types."
+msgstr "默认稠密实现只是一个后端，不是整个生态的中心。算法应依赖最小的线性代数 trait，而不是依赖具体的稠密矩阵或向量类型。"
+
+#: manual/index.md:56
+msgid "This repository is intended to be the linear-algebra substrate for higher-level math, geometry, and solver-style libraries. Domain-specific solve, regression, or optimization workflows should live in downstream packages built on these traits, backend wrappers, and concrete matrix/vector types."
+msgstr "这个仓库的定位，是给更上层的数学库、几何库和 solver 风格库提供线性代数基础层。领域特定的求解、回归或优化工作流，应放在基于这些 trait、后端包装类型和具体矩阵/向量类型构建的下游包中。"
+
+#: manual/index.md:61
+msgid "The concrete `immut` / `mutable` matrix and vector types are the implementations wrapped by `backends/default`. `DenseVector` and `DenseMatrix` wrap `@mutable.Vector` and `@mutable.Matrix`, while `ImmutableDenseVector` and `ImmutableDenseMatrix` wrap `@immut.Vector` and `@immut.Matrix`. For OpenBLAS-backed native matrix multiplication and vector kernels, choose [`backends/openblas`](./api/backends/openblas.md) explicitly. It is a separate concrete backend, not a runtime backend option inside `@immut.Matrix`."
+msgstr "具体的 `immut` / `mutable` 矩阵与向量类型，就是 `backends/default` 包装层所使用的底层实现。`DenseVector` 和 `DenseMatrix` 包装 `@mutable.Vector` 与 `@mutable.Matrix`；`ImmutableDenseVector` 和 `ImmutableDenseMatrix` 包装 `@immut.Vector` 与 `@immut.Matrix`。如果需要 OpenBLAS 支持的 native 矩阵乘法与向量 BLAS 核心，请显式选择 [`backends/openblas`](./api/backends/openblas.md)。它是独立的具体后端，不是 `@immut.Matrix` 内部的运行时后端选项。"
+
+#: manual/index.md:70
+msgid "Reader guide"
+msgstr "导览指南"
+
+#: manual/index.md:72
+msgid "**General application developers**: start with [mutable](./api/mutable/matrix.md) and [immut](./api/immut/matrix.md). These are the concrete APIs for application code such as business tools, utilities, numeric processing, small games, and visualization logic."
+msgstr "**一般应用开发者**：从 [mutable](./api/mutable/matrix.md) 和 [immut](./api/immut/matrix.md) 开始。它们是面向应用代码的具体 API，适合业务工具、实用程序、数值处理、小型游戏和可视化逻辑等场景。"
+
+#: manual/index.md:77
+msgid "**Math library / general algorithm developers**: read in this order: [arithmetic](./api/arithmetic.md) -> [algebra](./integration/algebra.md) -> [container](./integration/container.md) -> [backends/default](./api/backends/default.md) -> [backends/openblas](./api/backends/openblas.md) -> [immut / mutable](./api/immut/matrix.md). Start from operation capabilities, then structure capabilities, then the default backend wrappers, then the optional OpenBLAS native wrapper, and finally the concrete implementations. This is the intended entry path if you are building a higher-level application library or solver-oriented package on top of this repository."
+msgstr "**数学库 / 通用算法开发者**：建议按这个顺序阅读： [arithmetic](./api/arithmetic.md) -> [algebra](./integration/algebra.md) -> [container](./integration/container.md) -> [backends/default](./api/backends/default.md) -> [backends/openblas](./api/backends/openblas.md) -> [immut / mutable](./api/immut/matrix.md)。先看操作能力，再看结构能力，再看默认后端包装层，再看可选的 OpenBLAS native 包装层，最后落到具体实现。如果你准备在这个仓库之上构建更高层的应用库、几何包或 solver 风格包，这就是推荐的入口路径。"
+
+#: manual/index.md:91
+msgid "Used in"
+msgstr "下游使用示例"
+
+#: manual/index.md:93
+msgid "**[`Luna-Flow/geometry3d`](https://github.com/Luna-Flow/geometry3d)**: a compact MoonBit 3D geometry foundation built on `Luna-Flow/linear-algebra`. It adds core geometry, camera/view math, backend-neutral rendering, and TUI / Canvas / GSAP backends on top. Its [documentation](https://luna-flow.github.io/en/geometry3d/) is a good concrete downstream entry point."
+msgstr "**[`Luna-Flow/geometry3d`](https://github.com/Luna-Flow/geometry3d)**：一个建立在 `Luna-Flow/linear-algebra` 之上的 MoonBit 3D 几何基础库。它在此基础上继续提供核心几何、camera/view 数学、后端无关渲染，以及 TUI / Canvas / GSAP 后端。它的[文档](https://luna-flow.github.io/en/geometry3d/)可以作为一个具体的下游示例入口。"
+
+#: manual/index.md:100
+msgid "Trait-oriented project setup"
+msgstr "抽象层项目配置"
+
+#: manual/index.md:102
+msgid "If you want to write backend-independent code with the abstract capability layers, add the shared upstream abstraction packages explicitly:"
+msgstr "如果你想使用抽象能力层来编写后端无关代码，请显式安装它所依赖的上游抽象包："
+
+#: manual/index.md:122
+msgid "Use `@algebra` for linear-algebra structure traits, `@la_arithmetic` for linear-algebra-facing operation traits, `@lf_alg` for shared upstream algebraic abstractions, and `@lf_arith` for shared upstream arithmetic types."
+msgstr "使用 `@algebra` 表示线性代数结构 trait，`@la_arithmetic` 表示面向线性代数的操作 trait，`@lf_alg` 表示共享的上游代数抽象，`@lf_arith` 表示共享的上游算术类型。"
+
+#: manual/index.md:126
+msgid "Repository positioning"
+msgstr "仓库定位"
+
+#: manual/index.md:128
+msgid "Matrix and vector infrastructure with both mutable and immutable execution models."
+msgstr "同时提供可变与不可变执行模型的矩阵/向量基础设施。"
+
+#: manual/index.md:131
+msgid "Module overview"
+msgstr "模块概览"
+
+#: manual/index.md:133
+msgid "**`immut/matrix`**: Implemented around `src/immut`."
+msgstr "**`immut/matrix`**：实现位于 `src/immut`"
+
+#: manual/index.md:134
+msgid "**`immut/vector`**: Implemented around `src/immut`."
+msgstr "**`immut/vector`**：实现位于 `src/immut`"
+
+#: manual/index.md:135
+msgid "**`mutable/matrix`**: Implemented around `src/mutable`."
+msgstr "**`mutable/matrix`**：实现位于 `src/mutable`"
+
+#: manual/index.md:136
+msgid "**`mutable/vector`**: Implemented around `src/mutable`."
+msgstr "**`mutable/vector`**：实现位于 `src/mutable`"
+
+#: manual/index.md:137
+msgid "**`arithmetic`**: Implemented around `src/arithmetic`."
+msgstr "**`arithmetic`**：实现位于 `src/arithmetic`"
+
+#: manual/index.md:138
+msgid "**`algebra`**: Implemented around `src/algebra`."
+msgstr "**`algebra`**：实现位于 `src/algebra`"
+
+#: manual/index.md:139
+msgid "**`container`**: Implemented around `src/container` and `src/container/adapters`."
+msgstr "**`container`**：实现位于 `src/container` 与 `src/container/adapters`"
+
+#: manual/index.md:140
+msgid "**`backends/default`**: Implemented around `src/backends/default`."
+msgstr "**`backends/default`**：实现位于 `src/backends/default`"
+
+#: manual/index.md:141
+msgid "**`backends/openblas`**: Implemented around `src/backends/openblas`."
+msgstr "**`backends/openblas`**：实现位于 `src/backends/openblas`"
+
+#: manual/index.md:142
+msgid "**`error`**: Implemented around `src/error`."
+msgstr "**`error`**：实现位于 `src/error`"
+
+#: manual/integration/algebra.md:1
+msgid "Algebra ecosystem integration"
+msgstr "接入 Algebra 生态"
+
+#: manual/integration/algebra.md:3
+msgid "The `algebra` package is for mathematical capabilities of whole vector and matrix objects. External libraries should implement only the traits whose operation meaning, closure, and ownership behavior match their types."
+msgstr "`algebra` 描述向量和矩阵对象整体的数学能力。外部库只应实现运算含义、封闭性与所有权行为真正符合自身类型的 trait。"
+
+#: manual/integration/algebra.md:7
+msgid "Choose an algebra level"
+msgstr "选择 Algebra 接入级别"
+
+#: manual/integration/algebra.md:9
+msgid "Vector and matrix traits form separate capability paths:"
+msgstr "向量 trait 与矩阵 trait 构成彼此独立的能力路径："
+
+#: manual/integration/algebra.md:11
+msgid "Path"
+msgstr "路径"
+
+#: manual/integration/algebra.md:11
+msgid "Trait"
+msgstr "Trait"
+
+#: manual/integration/algebra.md:11
+msgid "Prerequisites"
+msgstr "前置条件"
+
+#: manual/integration/algebra.md:11
+msgid "Mathematical commitment"
+msgstr "数学承诺"
+
+#: manual/integration/algebra.md:13
+#: manual/integration/algebra.md:16
+msgid "Shape"
+msgstr "形状"
+
+#: manual/integration/algebra.md:13
+#: manual/integration/algebra.md:16
+#: manual/integration/container.md:11
+msgid "None"
+msgstr "无"
+
+#: manual/integration/algebra.md:13
+msgid "Reports a vector length"
+msgstr "返回向量长度"
+
+#: manual/integration/algebra.md:14
+msgid "Vector 1"
+msgstr "向量 1"
+
+#: manual/integration/algebra.md:14
+msgid "Closed vector addition, negation, and subtraction"
+msgstr "在同一类型内完成加法、取负和减法"
+
+#: manual/integration/algebra.md:15
+msgid "Vector 2"
+msgstr "向量 2"
+
+#: manual/integration/algebra.md:15
+msgid "`Mul` means element-wise/Hadamard multiplication"
+msgstr "`Mul` 表示逐元素/Hadamard 乘法"
+
+#: manual/integration/algebra.md:16
+msgid "Reports matrix dimensions"
+msgstr "返回矩阵形状"
+
+#: manual/integration/algebra.md:17
+msgid "Matrix 1"
+msgstr "矩阵 1"
+
+#: manual/integration/algebra.md:17
+msgid "Transpose returns the same matrix type"
+msgstr "转置返回同一矩阵类型"
+
+#: manual/integration/algebra.md:18
+msgid "Matrix 2"
+msgstr "矩阵 2"
+
+#: manual/integration/algebra.md:18
+msgid "Closed matrix addition, negation, and subtraction"
+msgstr "在同一类型内完成矩阵加法、取负和减法"
+
+#: manual/integration/algebra.md:19
+msgid "Matrix 3"
+msgstr "矩阵 3"
+
+#: manual/integration/algebra.md:19
+msgid "`Mul` means matrix multiplication"
+msgstr "`Mul` 表示矩阵乘法"
+
+#: manual/integration/algebra.md:21
+msgid "Stop at the smallest level required by downstream algorithms. Shape traits do not imply element access. `TransposeMatrix` does not imply matrix multiplication. `AdditiveVector` does not imply dot product, norm, scalar action, or element-wise multiplication."
+msgstr "应停在下游算法需要的最小级别。Shape 不代表元素访问；`TransposeMatrix` 不代表矩阵乘法；`AdditiveVector` 不代表内积、范数、标量作用或逐元素乘法。"
+
+#: manual/integration/algebra.md:26
+msgid "Important operator boundary"
+msgstr "运算符边界"
+
+#: manual/integration/algebra.md:28
+msgid "The stronger traits reuse MoonBit operators and return `Self`, not `Result`. Before implementing one, confirm all of the following:"
+msgstr "较强的 trait 复用 MoonBit 运算符并返回 `Self`，而不是 `Result`。实现前需要确认："
+
+#: manual/integration/algebra.md:31
+msgid "The operator already has the documented meaning for the type. In particular, `Mul` must not mean Hadamard multiplication on a `MatMulMatrix`."
+msgstr "运算符已有含义与 trait 一致，尤其 `MatMulMatrix` 的 `Mul` 必须表示矩阵乘法。"
+
+#: manual/integration/algebra.md:33
+msgid "Results remain in the same concrete type."
+msgstr "结果封闭在同一个具体类型中。"
+
+#: manual/integration/algebra.md:34
+msgid "Runtime shape preconditions and failure behavior are clearly documented."
+msgstr "运行时形状前置条件及失败行为已经写入文档。"
+
+#: manual/integration/algebra.md:35
+msgid "The operation does not silently switch storage backends or ownership models."
+msgstr "运算不会静默切换后端或所有权模型。"
+
+#: manual/integration/algebra.md:37
+msgid "Dynamic rectangular matrix multiplication may be invalid for some shape pairs. `MatMulMatrix` does not standardize a checked error channel for that case. A backend that needs a checked public operation should retain its checked method and implement `MatMulMatrix` only when its operator contract is acceptable."
+msgstr "动态长方形矩阵可能因形状不兼容而无法相乘。`MatMulMatrix` 本身不定义受检错误通道。需要 checked API 的后端应保留自己的受检方法，并只在运算符契约合理时实现该 trait。"
+
+#: manual/integration/algebra.md:42
+msgid "Algebra and container are independent"
+msgstr "Algebra 与 Container 相互独立"
+
+#: manual/integration/algebra.md:44
+msgid "Need"
+msgstr "需求"
+
+#: manual/integration/algebra.md:44
+msgid "Use"
+msgstr "使用的层"
+
+#: manual/integration/algebra.md:46
+msgid "Observe elements or convert storage"
+msgstr "观察元素或转换存储"
+
+#: manual/integration/algebra.md:46
+msgid "`container` read/build dictionaries"
+msgstr "`container` read/build 字典"
+
+#: manual/integration/algebra.md:47
+msgid "Express closed whole-object mathematics"
+msgstr "表达封闭的整体数学运算"
+
+#: manual/integration/algebra.md:47
+msgid "`algebra` traits"
+msgstr "`algebra` trait"
+
+#: manual/integration/algebra.md:48
+msgid "Do both"
+msgstr "两者都需要"
+
+#: manual/integration/algebra.md:48
+msgid "Implement the relevant algebra traits and publish container dictionaries"
+msgstr "分别实现对应 trait 并发布 container 字典"
+
+#: manual/integration/algebra.md:50
+msgid "`MatrixShape` is a semantic shape capability; it is not checked element access. `MatrixReadOps` includes shape plus checked indexed reads. Algebra transpose is same-type and closed; container transpose may build a different target type."
+msgstr "`MatrixShape` 是语义形状能力，不是受检元素访问。algebra 转置返回同一类型； container 转置可以构造不同目标类型。"
+
+#: manual/integration/algebra.md:54
+msgid "Do not implement broad scalar traits merely to make a container type appear more algebraic. Import `Luna-Flow/luna-generic` and `Luna-Flow/arithmetic` directly only for scalar laws and operations the backend genuinely supports."
+msgstr "不要仅为了容器互操作而实现宽泛的标量 trait。只有后端真正支持相应定律和操作时，才直接使用 `Luna-Flow/luna-generic` 与 `Luna-Flow/arithmetic`。"
+
+#: manual/integration/algebra.md:58
+msgid "Where implementations belong"
+msgstr "实现放在哪里"
+
+#: manual/integration/algebra.md:60
+msgid "Public operator and algebra implementations should normally live in the package that owns the concrete type. This keeps method/trait resolution predictable and lets the type owner define the operation semantics."
+msgstr "公开运算符与 algebra 实现通常应位于拥有该具体类型的包中。这样方法与 trait 的解析更可预测，也让类型作者决定运算语义。"
+
+#: manual/integration/algebra.md:64
+msgid "If a separate interoperability package is necessary, prefer an owned wrapper type in that package and implement the algebra traits for the wrapper. Do not assume a bridge package can safely redefine the meaning of operators on an unowned external type."
+msgstr "如果确实需要独立的互操作包，应在该包中定义自己拥有的 wrapper 类型，再为 wrapper 实现 algebra trait。不要假设 bridge 包可以安全地重新定义一个不归自己所有的外部类型上的运算符含义。"
+
+#: manual/integration/algebra.md:69
+msgid "Complete same-type example"
+msgstr "同类型封闭示例"
+
+#: manual/integration/algebra.md:71
+msgid "This is deliberately a `1x1` matrix type, not a scalar pretending to be an arbitrary dynamic matrix. For `1x1` matrices, transpose is the identity, entry-wise addition is matrix addition, and multiplying the single entries is exactly standard matrix multiplication. The fixed shape makes every operation closed and removes runtime shape failure from the example."
+msgstr "这里刻意定义的是 `1x1` 矩阵，而不是把标量伪装成任意动态矩阵。对 `1x1` 矩阵而言，转置就是恒等操作，元素加法就是矩阵加法，唯一元素之间的乘积也正是标准矩阵乘法。固定形状保证所有运算封闭，并且不存在运行时形状失败。"
+
+#: manual/integration/algebra.md:134
+msgid "An external library may stop after `MatrixShape`, `TransposeMatrix`, or `AdditiveMatrix`; the final two implementations are not mandatory. A dynamic matrix backend must additionally define what its operators do for incompatible shapes rather than copying the fixed-shape assumptions from this example."
+msgstr "外部库可以停在 `MatrixShape`、`TransposeMatrix` 或 `AdditiveMatrix`，后续级别不是强制要求。动态矩阵后端还必须另外定义形状不兼容时的运算符行为，不能照搬这个固定形状示例的假设。"
+
+#: manual/integration/algebra.md:139
+#: manual/integration/container.md:160
+msgid "Integration checklist"
+msgstr "接入检查清单"
+
+#: manual/integration/algebra.md:141
+msgid "Select the smallest trait that matches the algorithm and the type."
+msgstr "选择符合类型与算法需求的最小 trait。"
+
+#: manual/integration/algebra.md:142
+msgid "Confirm the existing `Add`, `Neg`, `Sub`, or `Mul` meaning matches the algebra trait before declaring conformance."
+msgstr "确认 `Add` / `Neg` / `Sub` / `Mul` 的含义与 trait 一致。"
+
+#: manual/integration/algebra.md:144
+msgid "Test closure, shape behavior, transpose shape reversal, and representative algebraic laws supported by the type."
+msgstr "测试封闭性、形状、转置后的形状，以及该类型支持的代表性代数定律。"
+
+#: manual/integration/algebra.md:146
+msgid "Test invalid dynamic shape behavior wherever an operator has runtime preconditions."
+msgstr "对有运行时形状前置条件的运算符测试非法形状行为。"
+
+#: manual/integration/algebra.md:148
+msgid "Document whether operations allocate, share storage, or mutate hidden state."
+msgstr "记录分配、共享存储和隐藏修改行为。"
+
+#: manual/integration/algebra.md:149
+msgid "Keep dot product, norm, scalar action, decomposition, and solvers outside these traits unless a future dedicated capability defines them."
+msgstr "除非将来有专门的能力来定义它们，否则不要把内积、范数、标量作用、分解和求解器放进这些 trait。"
+
+#: manual/integration/algebra.md:151
+msgid "Add container dictionaries separately when element-level interoperability is also required."
+msgstr "如需元素级互操作，单独添加 container 字典。"
+
+#: manual/integration/container.md:1
+msgid "Luna-Flow ecosystem integration"
+msgstr "接入 Luna-Flow 生态"
+
+#: manual/integration/container.md:3
+msgid "External libraries should adopt only the capabilities that match their real semantics. Integration is not an all-or-nothing conformance level, and no library needs to expose its storage representation."
+msgstr "外部库只应提供符合自身真实语义的能力。接入不是一次性实现所有接口，也不需要公开内部存储表示。"
+
+#: manual/integration/container.md:7
+msgid "Choose the structural boundary"
+msgstr "选择结构能力边界"
+
+#: manual/integration/container.md:9
+msgid "Level"
+msgstr "级别"
+
+#: manual/integration/container.md:9
+msgid "Capability supplied"
+msgstr "提供的能力"
+
+#: manual/integration/container.md:9
+msgid "The type can participate as"
+msgstr "可以参与的角色"
+
+#: manual/integration/container.md:11
+msgid "A standalone type using its own API"
+msgstr "使用自身 API 的独立类型"
+
+#: manual/integration/container.md:12
+msgid "`VectorReadOps` or `MatrixReadOps`"
+msgstr "`VectorReadOps` 或 `MatrixReadOps`"
+
+#: manual/integration/container.md:12
+msgid "A source for map, conversion, or transpose"
+msgstr "map、转换或转置的输入"
+
+#: manual/integration/container.md:13
+msgid "`VectorBuildOps` or `MatrixBuildOps`"
+msgstr "`VectorBuildOps` 或 `MatrixBuildOps`"
+
+#: manual/integration/container.md:13
+msgid "A target for map, conversion, or transpose"
+msgstr "map、转换或转置的输出"
+
+#: manual/integration/container.md:14
+msgid "Matching read and build dictionaries"
+msgstr "配套的 read 与 build"
+
+#: manual/integration/container.md:14
+msgid "Both source and target in generic transformations"
+msgstr "泛型变换的输入和输出"
+
+#: manual/integration/container.md:15
+msgid "4P"
+msgstr "4P"
+
+#: manual/integration/container.md:15
+msgid "Persistent edit dictionary"
+msgstr "持久编辑字典"
+
+#: manual/integration/container.md:15
+msgid "A checked copy-on-replacement value"
+msgstr "受检的 copy-on-replacement 值"
+
+#: manual/integration/container.md:16
+msgid "4M"
+msgstr "4M"
+
+#: manual/integration/container.md:16
+msgid "Mutable edit dictionary"
+msgstr "可变编辑字典"
+
+#: manual/integration/container.md:16
+msgid "A checked in-place update target"
+msgstr "受检的原地更新目标"
+
+#: manual/integration/container.md:18
+msgid "Levels 4P and 4M are alternatives determined by ownership semantics, not a progression where every backend should implement both. Views commonly provide read plus mutable edit but no build. An append-only or generated container may provide build without read. A foreign handle may intentionally provide read only."
+msgstr "4P 与 4M 是由所有权模型决定的替代选择，不是要求所有后端逐级实现两者。视图通常只提供 read 与可变编辑，不提供 build；外部句柄可以只提供 read；生成型容器也可以只提供 build。"
+
+#: manual/integration/container.md:24
+msgid "Algorithm requirements"
+msgstr "算法要求的能力"
+
+#: manual/integration/container.md:26
+msgid "Algorithm"
+msgstr "算法"
+
+#: manual/integration/container.md:26
+msgid "Source requirement"
+msgstr "输入要求"
+
+#: manual/integration/container.md:26
+msgid "Target requirement"
+msgstr "输出要求"
+
+#: manual/integration/container.md:26
+msgid "Scalar relationship"
+msgstr "标量关系"
+
+#: manual/integration/container.md:28
+#: manual/integration/container.md:29
+msgid "May change `A` to `B`"
+msgstr "可从 `A` 变为 `B`"
+
+#: manual/integration/container.md:30
+#: manual/integration/container.md:31
+#: manual/integration/container.md:32
+msgid "Preserves `T`"
+msgstr "保持 `T`"
+
+#: manual/integration/container.md:34
+msgid "A read dictionary does not imply construction, editing, arithmetic, contiguous memory, or cheap random access. A build dictionary does not imply that the result can be read back. Edit dictionaries do not imply resizing, insertion, deletion, or sparse-entry removal."
+msgstr "read 不代表支持构造、编辑、算术、连续内存或低成本随机访问。build 不代表结果可以读回。编辑字典也不代表 resize、insert、delete 或删除稀疏存储项。"
+
+#: manual/integration/container.md:39
+msgid "Mathematical capabilities are independent"
+msgstr "数学能力相互独立"
+
+#: manual/integration/container.md:41
+msgid "The `algebra` package describes operations such as addition, transpose, and matrix multiplication. The `container` package describes observation and construction. An external type may choose either axis independently:"
+msgstr "`algebra` 描述加法、转置和矩阵乘法等数学行为；`container` 描述观察与构造。外部类型可以独立选择这两条能力轴："
+
+#: manual/integration/container.md:45
+msgid "Container-only integration supports data movement and structural algorithms without claiming algebraic laws for the scalar or container."
+msgstr "只接入 container，可以支持数据移动和结构算法，而无需声明标量或容器的代数定律。"
+
+#: manual/integration/container.md:47
+msgid "Algebra-only integration supports closed mathematical operations without exposing individual elements."
+msgstr "只接入 algebra，可以在不公开单个元素的情况下提供封闭数学操作。"
+
+#: manual/integration/container.md:49
+msgid "Supplying both enables both families of generic algorithms, but one does not automatically satisfy the other."
+msgstr "同时提供两者时可以参与两类泛型算法，但任何一方都不会自动推出另一方。"
+
+#: manual/integration/container.md:52
+msgid "Do not add broad scalar trait implementations merely to obtain container interoperability. Add mathematical traits only when the type actually provides the documented operation and laws."
+msgstr "不要仅为了容器互操作而给标量添加宽泛的全局 trait。只有类型真正满足对应操作与定律时，才实现数学 trait。"
+
+#: manual/integration/container.md:56
+msgid "Who owns the adapter"
+msgstr "适配器由谁维护"
+
+#: manual/integration/container.md:58
+msgid "Prefer the following ownership order:"
+msgstr "优先采用以下归属顺序："
+
+#: manual/integration/container.md:60
+msgid "The library that owns the container type publishes its operation-dictionary factories when depending on `Luna-Flow/linear-algebra/container` is natural."
+msgstr "如果依赖 `Luna-Flow/linear-algebra/container` 是自然的，由容器类型所属库发布操作字典 factory。"
+
+#: manual/integration/container.md:62
+msgid "A small bridge package owns the adapters when neither project should depend directly on the other."
+msgstr "如果两个项目都不适合直接依赖对方，由一个小型 bridge 包维护适配器。"
+
+#: manual/integration/container.md:64
+msgid "`Luna-Flow/linear-algebra` should contain adapters only for implementations maintained in this repository."
+msgstr "`Luna-Flow/linear-algebra` 本体只维护本仓库实现的适配器。"
+
+#: manual/integration/container.md:67
+msgid "This direction prevents the core package from accumulating optional backend dependencies. Factory names should identify the container and capability, and the factory may carry scalar constraints that are genuinely required by the backend."
+msgstr "这一方向可以避免核心包不断累积可选后端依赖。factory 名称应标明容器与能力，factory 也可以携带后端真正需要的标量约束。"
+
+#: manual/integration/container.md:72
+msgid "Complete external adapter"
+msgstr "完整外部适配器"
+
+#: manual/integration/container.md:74
+msgid "This example owns a row-major array, but only the operation dictionaries expose its semantics. The generic transpose targets Luna's immutable matrix type, so the example exercises a real cross-implementation boundary."
+msgstr "这个示例拥有行优先数组，但只通过操作字典公开语义。转置目标使用 Luna 的 immutable 矩阵，从而实际验证不同实现之间的边界。"
+
+#: manual/integration/container.md:156
+msgid "The backend remains responsible for validating negative dimensions, preserving `0xN` and `Nx0`, reporting invalid coordinates with `LinearAlgebraError`, and honoring its documented ownership behavior."
+msgstr "后端仍负责检查负维度、保留 `0xN` 与 `Nx0`、用 `LinearAlgebraError` 报告非法坐标，并遵守自己声明的所有权行为。"
+
+#: manual/integration/container.md:162
+msgid "Select only the dictionaries supported by the real storage and ownership model."
+msgstr "只选择真实存储和所有权模型支持的字典。"
+
+#: manual/integration/container.md:164
+msgid "Keep checked access and construction panic-free."
+msgstr "受检访问与构造不得 panic。"
+
+#: manual/integration/container.md:165
+msgid "Test first/last and invalid indices, empty and degenerate shapes, and initializer coordinate ordering."
+msgstr "测试首尾和非法索引、空与退化形状、initializer 坐标顺序。"
+
+#: manual/integration/container.md:167
+msgid "For persistent editing, prove that the source remains unchanged."
+msgstr "持久编辑要证明源值保持不变。"
+
+#: manual/integration/container.md:168
+msgid "For mutable editing, prove that failure performs no partial mutation."
+msgstr "可变编辑要证明失败时不会发生部分修改。"
+
+#: manual/integration/container.md:169
+msgid "Test at least one generic map or conversion in both supported directions."
+msgstr "对每个支持的方向至少测试一次泛型 map 或转换。"
+
+#: manual/integration/container.md:170
+msgid "Document performance characteristics such as remote access, decompression, or sparse materialization costs without changing the semantic contract."
+msgstr "记录远程访问、解压或稀疏 materialization 等性能特征，但不要改变语义契约。"
+
+#: manual/integration/container.md:173
+msgid "Future optimized kernel dictionaries should be additional opt-in capabilities. They must not become prerequisites for read/build interoperability."
+msgstr "未来的优化 kernel 字典应是额外的 opt-in 能力，不能成为 read/build 互操作的前提。"
+
+#: manual/tutorial/algebra.md:1
+msgid "algebra tutorial"
+msgstr "algebra 教程"
+
+#: manual/tutorial/algebra.md:5
+msgid "If you want to use the abstract linear-algebra layers directly, install the full dependency set first:"
+msgstr "如果你想直接使用抽象线性代数能力层，先把完整依赖装好："
+
+#: manual/tutorial/algebra.md:25
+msgid "This gives you one clear split: `@algebra` for linear-algebra structure traits, `@la_arithmetic` for linear-algebra-facing operation traits, `@lf_alg` for the shared upstream algebraic abstractions, and `@lf_arith` for upstream arithmetic types."
+msgstr "这样分工会很清楚：`@algebra` 负责线性代数结构 trait，`@la_arithmetic` 负责线性代数操作 trait，`@lf_alg` 负责共享上游代数抽象，`@lf_arith` 负责共享上游算术类型。"
+
+#: manual/tutorial/algebra.md:30
+msgid "Small case: build one backend-independent Gram step"
+msgstr "小案例：构造一个与后端无关的 Gram 步骤"
+
+#: manual/tutorial/algebra.md:54
+msgid "This case shows how to describe a backend-independent linear-algebra step in terms of the structure traits owned by this package:"
+msgstr "这个例子展示了，怎样只用本包拥有的线性代数结构 trait 来表达一个与后端无关的步骤："
+
+#: manual/tutorial/algebra.md:57
+msgid "Require `MatMulMatrix` so the algorithm can multiply one matrix-like value by another."
+msgstr "用 `MatMulMatrix` 说明算法确实需要矩阵式乘法。"
+
+#: manual/tutorial/algebra.md:58
+msgid "Reuse `TransposeMatrix` through the `MatMulMatrix` hierarchy instead of naming a dense backend API directly."
+msgstr "通过 `MatMulMatrix` 继承到的 `TransposeMatrix` 能力调用转置，而不是直接写死某个稠密后端 API。"
+
+#: manual/tutorial/algebra.md:59
+msgid "Ask `MatrixShape` for the result shape without depending on storage layout."
+msgstr "用 `MatrixShape` 读取结果形状，不依赖具体存储形式。"
+
+#: manual/tutorial/algebra.md:60
+msgid "Run the same helper on a real default backend wrapper to confirm the trait contract is practical, not just abstract."
+msgstr "最后拿真实的默认后端包装类型跑一遍，确认这些 trait 不只是抽象命名，而是能直接承载实际能力。"
+
+#: manual/tutorial/algebra.md:62
+msgid "The result stays generic while still expressing a recognizably linear-algebraic operation."
+msgstr "这样写出来的算法既保留了线代语义，也不会被某个具体后端绑定住。"
+
+#: manual/tutorial/algebra.md:65
+#: manual/tutorial/arithmetic.md:46
+#: manual/tutorial/backends/default.md:32
+#: manual/tutorial/error.md:37
+#: manual/tutorial/immut/matrix.md:91
+#: manual/tutorial/immut/vector.md:40
+#: manual/tutorial/mutable/matrix.md:36
+#: manual/tutorial/mutable/vector.md:36
+msgid "Suggested flow"
+msgstr "建议流程"
+
+#: manual/tutorial/algebra.md:67
+msgid "Reach for `algebra` when the mathematical meaning matters more than one backend helper."
+msgstr "当算法更关心“它需要什么数学结构”而不是“它跑在哪个后端上”时，优先从 `algebra` 开始。"
+
+#: manual/tutorial/algebra.md:68
+msgid "Use traits such as `AdditiveVector`, `MatrixShape`, `TransposeMatrix`, and `MatMulMatrix` to state the required structure."
+msgstr "用 `AdditiveVector`、`MatrixShape`、`TransposeMatrix`、`MatMulMatrix` 这类 trait 表达结构需求。"
+
+#: manual/tutorial/algebra.md:69
+msgid "Add narrower arithmetic-only constraints only when the algorithm truly needs a specific computable operation."
+msgstr "只有在算法确实需要某个可计算操作时，再补充更窄的 arithmetic 约束。"
+
+#: manual/tutorial/algebra.md:71
+#: manual/tutorial/arithmetic.md:52
+#: manual/tutorial/backends/default.md:38
+#: manual/tutorial/error.md:43
+#: manual/tutorial/immut/matrix.md:97
+#: manual/tutorial/immut/vector.md:46
+#: manual/tutorial/mutable/matrix.md:42
+#: manual/tutorial/mutable/vector.md:43
+msgid "Practical guidance"
+msgstr "实践建议"
+
+#: manual/tutorial/algebra.md:73
+msgid "Prefer the smallest structure that still matches the algorithm's mathematical meaning."
+msgstr "优先选择能准确表达算法意义的最小结构约束。"
+
+#: manual/tutorial/algebra.md:74
+msgid "Keep backend-specific products, norms, or solve routines out of the core structure layer unless they can be expressed generically."
+msgstr "内积、范数、求解等后端或算法特化行为，不要随便塞进核心结构层。"
+
+#: manual/tutorial/arithmetic.md:1
+msgid "arithmetic tutorial"
+msgstr "arithmetic 教程"
+
+#: manual/tutorial/arithmetic.md:5
+msgid "Install the shared abstraction packages first:"
+msgstr "先把共享抽象层依赖装好："
+
+#: manual/tutorial/arithmetic.md:23
+msgid "Small case: turn a signed residual into a penalty signal"
+msgstr "小案例：把带符号残差转成惩罚值"
+
+#: manual/tutorial/arithmetic.md:37
+msgid "This case is small, but it captures the role of the `arithmetic` layer:"
+msgstr "这个例子很小，但正好体现了 `arithmetic` 层的职责："
+
+#: manual/tutorial/arithmetic.md:39
+msgid "Start from a raw scalar value produced by a linear-algebra routine."
+msgstr "从线性代数流程里拿到一个原始标量值。"
+
+#: manual/tutorial/arithmetic.md:40
+msgid "Ask only for the concrete operation you need, here `Abs`."
+msgstr "只声明当前真正需要的操作，这里是 `Abs`。"
+
+#: manual/tutorial/arithmetic.md:41
+msgid "Convert the signed residual into a penalty value without claiming a richer algebraic structure."
+msgstr "把带符号残差转成惩罚值，而不额外声称它满足更强的代数结构。"
+
+#: manual/tutorial/arithmetic.md:43
+msgid "That is the right fit when the algorithm needs a computable helper, not a full mathematical contract."
+msgstr "当算法需要的是“一个能算的操作”，而不是“完整数学结构”时，这就是最合适的分层。"
+
+#: manual/tutorial/arithmetic.md:48
+msgid "Use `arithmetic` when the algorithm needs an operation such as `abs`, checked division, checked square root, or approximate comparison."
+msgstr "当算法需要 `abs`、带检查除法、带检查平方根、近似比较这类具体操作时，优先看 `arithmetic`。"
+
+#: manual/tutorial/arithmetic.md:49
+msgid "Keep the requirement as narrow as possible so more scalar types can satisfy it."
+msgstr "约束尽量收窄，这样更多标量类型都能复用你的算法。"
+
+#: manual/tutorial/arithmetic.md:50
+msgid "Move up to `algebra` only when the algorithm depends on a stronger structural meaning."
+msgstr "只有当算法依赖更强的结构语义时，再升级到 `algebra`。"
+
+#: manual/tutorial/arithmetic.md:54
+msgid "Prefer existing `Luna-Flow/luna-generic` or `Luna-Flow/arithmetic` traits when they already express the operation."
+msgstr "如果 `Luna-Flow/luna-generic` 或 `Luna-Flow/arithmetic` 已经表达了该能力，优先复用上游 trait。"
+
+#: manual/tutorial/arithmetic.md:55
+msgid "Add local linear-algebra-facing traits only when an upstream capability name is missing."
+msgstr "只有当上游缺少合适名称时，才补本地的线性代数能力 trait。"
+
+#: manual/tutorial/arithmetic.md:56
+msgid "Do not use an arithmetic-only trait as a substitute for a stronger algebraic guarantee."
+msgstr "不要拿 arithmetic-only trait 去替代更强的代数保证。"
+
+#: manual/tutorial/backends/default.md:1
+msgid "backends/default tutorial"
+msgstr "backends/default 教程"
+
+#: manual/tutorial/backends/default.md:3
+msgid "Small case: accept the default dense backend without hard-wiring the algorithm"
+msgstr "小案例：使用默认稠密后端，但不把算法写死在具体实现上"
+
+#: manual/tutorial/backends/default.md:23
+msgid "This case demonstrates the intended role of the default backend layer:"
+msgstr "这个例子体现了默认后端层的正确用法："
+
+#: manual/tutorial/backends/default.md:25
+msgid "Construct a concrete dense matrix with `DenseMatrix`."
+msgstr "用 `DenseMatrix` 构造一个可直接上手的具体稠密矩阵。"
+
+#: manual/tutorial/backends/default.md:26
+msgid "Pass it into a helper that asks only for `MatrixShape`."
+msgstr "把它传给一个只要求 `MatrixShape` 能力的辅助函数。"
+
+#: manual/tutorial/backends/default.md:27
+msgid "Let `@default.shape_of` bridge the concrete wrapper and the public trait-oriented view."
+msgstr "通过 `@default.shape_of` 把具体包装类型和公开 trait 视图连起来。"
+
+#: manual/tutorial/backends/default.md:29
+msgid "That gives users a ready-to-use dense backend while still keeping new algorithms portable."
+msgstr "这样既给用户提供了开箱即用的默认后端，也保留了后续把算法迁移到其他后端的空间。"
+
+#: manual/tutorial/backends/default.md:34
+msgid "Start with `DenseMatrix`, `DenseVector`, `ImmutableDenseMatrix`, or `ImmutableDenseVector` when you want the repository's reference backend immediately."
+msgstr "当你想马上用仓库自带的参考实现时，从 `DenseMatrix`、`DenseVector`、`ImmutableDenseMatrix`、`ImmutableDenseVector` 开始。"
+
+#: manual/tutorial/backends/default.md:35
+msgid "Write new reusable helpers against `algebra` traits such as `MatrixShape`."
+msgstr "当你在写可复用算法时，优先让函数依赖 `MatrixShape` 这类 `algebra` trait。"
+
+#: manual/tutorial/backends/default.md:36
+msgid "Keep the backend wrapper at the boundary where concrete storage is actually chosen."
+msgstr "把具体存储和具体后端的选择，尽量留在最外层边界。"
+
+#: manual/tutorial/backends/default.md:40
+msgid "Use the default backend wrappers when you want a public dense implementation with straightforward constructors."
+msgstr "当你需要一个公开、直接、稠密的默认实现时，使用这些 default backend 包装类型。"
+
+#: manual/tutorial/backends/default.md:41
+msgid "Keep backend-specific products, norms, solve strategies, or decompositions in the backend or a dedicated algorithm layer unless they can be expressed as same-category structural operations."
+msgstr "标量值乘积、范数、求解策略、分解策略这类后端特化行为，除非能表达成同类结构操作，否则应留在后端层或专门算法层。"
+
+#: manual/tutorial/backends/default.md:42
+msgid "Treat `backends/default` as a bridge layer, not as the only place where generic linear algebra code should live."
+msgstr "把 `backends/default` 视作桥接层，而不是所有泛型线性代数代码的归宿。"
+
+#: manual/tutorial/backends/openblas.md:1
+msgid "backends/openblas tutorial"
+msgstr "backends/openblas 教程"
+
+#: manual/tutorial/backends/openblas.md:3
+msgid "Before you start"
+msgstr "开始前"
+
+#: manual/tutorial/backends/openblas.md:5
+msgid "`backends/openblas` is `native` only. The current repository configuration searches OpenBLAS from:"
+msgstr "`backends/openblas` 只支持 `native`。当前仓库配置会搜索以下 OpenBLAS 路径："
+
+#: manual/tutorial/backends/openblas.md:15
+msgid "This covers the default Homebrew layout on macOS and the default Ubuntu OpenBLAS package layout. If OpenBLAS is not installed in one of those places, native build and test commands for this package will fail at compile or link time."
+msgstr "这同时覆盖 macOS 的 Homebrew 安装布局，以及 Ubuntu 默认的 OpenBLAS 包布局。如果系统里没有这些路径，这个包的 `native` 构建或测试会在编译或链接阶段失败。"
+
+#: manual/tutorial/backends/openblas.md:20
+msgid "Construct a `BlasMatrix`"
+msgstr "构造 `BlasMatrix`"
+
+#: manual/tutorial/backends/openblas.md:34
+msgid "Use `Float` or `Double`. Those are the only scalar types that currently implement `BLASInnerType`."
+msgstr "当前只支持 `Float` 与 `Double`，因为只有这两种标量实现了 `BLASInnerType`。"
+
+#: manual/tutorial/backends/openblas.md:37
+msgid "Multiply matrices through OpenBLAS"
+msgstr "通过 OpenBLAS 进行矩阵乘法"
+
+#: manual/tutorial/backends/openblas.md:56
+msgid "`Mul` is the operation that goes through OpenBLAS GEMM. Dimension mismatch keeps the same semantics as the repository's other unchecked matrix multiplication paths: it aborts."
+msgstr "`Mul` 是当前真正走 OpenBLAS GEMM 的操作。维度不兼容时，语义与仓库现有其他 unchecked 矩阵乘法路径一致：直接 abort。"
+
+#: manual/tutorial/backends/openblas.md:60
+msgid "Convert between `BlasMatrix` and the default immutable dense backend"
+msgstr "在 `BlasMatrix` 与默认不可变稠密后端之间互转"
+
+#: manual/tutorial/backends/openblas.md:75
+msgid "Equivalent conversion APIs also exist for the concrete immutable matrix type:"
+msgstr "与具体不可变矩阵类型也提供了等价互转接口："
+
+#: manual/tutorial/backends/openblas.md:80
+msgid "Minimal native test flow"
+msgstr "最小 `native` 测试流程"
+
+#: manual/tutorial/backends/openblas.md:82
+msgid "Use native commands when exercising this backend:"
+msgstr "这个后端必须使用 `native` 目标来运行："
+
+#: manual/tutorial/backends/openblas.md:89
+msgid "If you want to depend on this package from another MoonBit package, keep the same rule in mind: choose `BlasMatrix` explicitly and build for `native`."
+msgstr "如果你要在别的 MoonBit 包里使用它，也遵循同一条规则：显式选择 `BlasMatrix`，并以 `native` 目标编译。"
+
+#: manual/tutorial/container.md:1
+msgid "Container capability tutorial"
+msgstr "容器能力教程"
+
+#: manual/tutorial/container.md:3
+msgid "Convert between existing backends"
+msgstr "在现有后端之间转换"
+
+#: manual/tutorial/container.md:5
+msgid "This example copies a default mutable dense matrix into the default immutable dense representation. Later mutation of the source cannot affect the target."
+msgstr "这个示例把默认的可变稠密矩阵复制为默认的不可变稠密表示。之后修改源矩阵不会影响目标。"
+
+#: manual/tutorial/container.md:22
+msgid "Use `matrix_map` instead when conversion also changes the scalar type."
+msgstr "如果还需要改变标量类型，请使用 `matrix_map`。"
+
+#: manual/tutorial/error.md:1
+msgid "error tutorial"
+msgstr "error 教程"
+
+#: manual/tutorial/error.md:3
+msgid "Small case: classify a failed inverse request"
+msgstr "小案例：给失败的求逆请求分类"
+
+#: manual/tutorial/error.md:28
+msgid "This case models a caller that wants to recover differently from different matrix failures:"
+msgstr "这个例子模拟的是：调用方希望根据不同失败原因采取不同恢复策略。"
+
+#: manual/tutorial/error.md:31
+msgid "Call a checked API that returns `Result[..., LinearAlgebraError]`."
+msgstr "调用一个返回 `Result[..., LinearAlgebraError]` 的带检查 API。"
+
+#: manual/tutorial/error.md:32
+msgid "Branch on the error predicates instead of guessing from a message string."
+msgstr "通过错误谓词分支，而不是去猜测错误消息字符串。"
+
+#: manual/tutorial/error.md:33
+msgid "Return a fallback diagnostic only when the failure does not match a known recovery path."
+msgstr "只有在不属于已知恢复路径时，才退回到通用诊断消息。"
+
+#: manual/tutorial/error.md:35
+msgid "That keeps control flow stable even if the human-readable message changes."
+msgstr "这样即使人类可读的错误文案以后调整，控制流本身仍然稳定。"
+
+#: manual/tutorial/error.md:39
+msgid "Use checked matrix APIs in user-facing or data-dependent code."
+msgstr "面向用户输入或运行时数据的代码，优先使用带检查矩阵 API。"
+
+#: manual/tutorial/error.md:40
+msgid "Match on `Ok` / `Err` as close as possible to the place where recovery decisions are made."
+msgstr "尽量在真正需要恢复决策的地方就地匹配 `Ok` / `Err`。"
+
+#: manual/tutorial/error.md:41
+msgid "Use `is_dimension_mismatch`, `is_negative_exponent`, `is_empty_matrix`, `is_non_square_matrix`, and related predicates to drive control flow."
+msgstr "用 `is_dimension_mismatch`、`is_negative_exponent`、`is_empty_matrix`、`is_non_square_matrix` 等方法驱动控制流。"
+
+#: manual/tutorial/error.md:45
+msgid "Use `message` for diagnostics, logs, or a final fallback error, not for control-flow parsing."
+msgstr "`message` 适合做诊断、日志和兜底提示，不适合做控制流解析。"
+
+#: manual/tutorial/error.md:46
+msgid "Treat `ArithmeticFailure` as a boundary for scalar arithmetic errors coming from lower-level arithmetic packages."
+msgstr "把 `ArithmeticFailure` 当作下层算术包传播出来的边界错误。"
+
+#: manual/tutorial/error.md:47
+msgid "Fall back to `unchecked_*` only when surrounding code has already guaranteed the required preconditions."
+msgstr "只有在外围逻辑已经保证前置条件时，才退回 `unchecked_*`。"
+
+#: manual/tutorial/immut/matrix.md:1
+msgid "immut/matrix tutorial"
+msgstr "immut/matrix 教程"
+
+#: manual/tutorial/immut/matrix.md:3
+msgid "Small case: blur a tiny ASCII sprite with a 3x3 kernel"
+msgstr "小案例：用 `3x3` 卷积核给微型 ASCII 字符画做模糊"
+
+#: manual/tutorial/immut/matrix.md:79
+msgid "This case shows a value-oriented matrix workflow that feels close to a real image-processing toy:"
+msgstr "这个案例展示了一个更接近真实用途的值语义矩阵流程："
+
+#: manual/tutorial/immut/matrix.md:82
+msgid "Store a tiny sprite as an intensity matrix."
+msgstr "先把一张很小的字符画写成亮度矩阵。"
+
+#: manual/tutorial/immut/matrix.md:83
+msgid "Rebuild a new matrix with `Matrix::make`, one blurred output cell at a time."
+msgstr "用 `Matrix::make` 一格一格重建输出矩阵。"
+
+#: manual/tutorial/immut/matrix.md:84
+msgid "Sample a 3x3 neighborhood with index reads such as `source[row][col]`."
+msgstr "用 `source[row][col]` 这样的索引读取 `3x3` 邻域。"
+
+#: manual/tutorial/immut/matrix.md:85
+msgid "Render the result back into visible ASCII output for a quick correctness check."
+msgstr "最后再把结果渲染回字符画，直接检查模糊效果是否符合预期。"
+
+#: manual/tutorial/immut/matrix.md:87
+msgid "Because the blur returns a new matrix, the original sprite stays available for comparison. That is often the nicest property of the immutable path when you want to inspect intermediate transforms."
+msgstr "因为模糊操作会返回一份新矩阵，所以原始字符画仍然保留下来，方便你对照输入和输出。这正是不可变矩阵在调试中间变换时很省心的一点。"
+
+#: manual/tutorial/immut/matrix.md:93
+#: manual/tutorial/mutable/matrix.md:38
+msgid "Build matrices with `Matrix::from_2d_array`, `Matrix::make`, `Matrix::new`, or `Matrix::from_array`."
+msgstr "使用 `Matrix::from_2d_array`、`Matrix::make`、`Matrix::new` 或 `Matrix::from_array` 构造矩阵。"
+
+#: manual/tutorial/immut/matrix.md:94
+msgid "Use `Matrix::make` when every output cell depends on a neighborhood or stencil from the source matrix."
+msgstr "当每个输出单元都依赖源矩阵里的一个邻域或 stencil 时，优先用 `Matrix::make`。"
+
+#: manual/tutorial/immut/matrix.md:95
+msgid "Prefer checked `matmul`, `trace`, `determinant`, and `pow` when shape or domain failures can come from runtime data."
+msgstr "当形状或输入域可能来自运行时数据时，优先使用带检查的 `matmul`、`trace`、`determinant` 和 `pow`。"
+
+#: manual/tutorial/immut/matrix.md:99
+msgid "Use `unchecked_*` only when surrounding code has already enforced the required preconditions."
+msgstr "只有在外层逻辑已经保证前置条件时，才使用 `unchecked_*`。"
+
+#: manual/tutorial/immut/matrix.md:100
+msgid "Use `MatrixFn` when a lazy functional matrix representation is more appropriate than materialized storage."
+msgstr "当惰性的函数式矩阵表示比物化存储更合适时，使用 `MatrixFn`。"
+
+#: manual/tutorial/immut/matrix.md:101
+msgid "Clamp or otherwise define your border policy explicitly when you write kernel-style transforms."
+msgstr "写卷积核风格的变换时，边界处理一定要显式写清楚；这里使用的是 edge clamp。"
+
+#: manual/tutorial/immut/matrix.md:102
+msgid "Prefer the immutable path when updates should remain explicit and old matrix values still need to be preserved for later steps."
+msgstr "当更新需要保持显式、而旧矩阵值还要在后续步骤中保留时，优先采用不可变矩阵路径。"
+
+#: manual/tutorial/immut/vector.md:1
+msgid "immut/vector tutorial"
+msgstr "immut/vector 教程"
+
+#: manual/tutorial/immut/vector.md:3
+msgid "Small case: rebuild a published feature vector"
+msgstr "小案例：重建一份已发布的特征向量"
+
+#: manual/tutorial/immut/vector.md:31
+msgid "This case reads like a tiny release-preparation pipeline:"
+msgstr "这个案例可以看成一个很小的发布前处理流程："
+
+#: manual/tutorial/immut/vector.md:33
+msgid "Start from a published feature vector."
+msgstr "从一份已经发布的基础向量开始。"
+
+#: manual/tutorial/immut/vector.md:34
+msgid "Apply one explicit correction with `set`."
+msgstr "用 `set` 对一个位置做显式修正。"
+
+#: manual/tutorial/immut/vector.md:35
+msgid "Build a new weighted vector with `lin_comb`."
+msgstr "用 `lin_comb` 组合出新的加权结果。"
+
+#: manual/tutorial/immut/vector.md:36
+msgid "Expand it into a matrix-shaped artifact with `tensor_product`."
+msgstr "用 `tensor_product` 把它扩展成矩阵形态的输出。"
+
+#: manual/tutorial/immut/vector.md:38
+msgid "At no point is the original vector mutated, so earlier states remain usable."
+msgstr "整个过程不会修改原始向量，所以旧值仍然可以安全复用。"
+
+#: manual/tutorial/immut/vector.md:42
+#: manual/tutorial/mutable/vector.md:38
+msgid "Create vectors with `Vector::from_array`, `Vector::make`, or `Vector::makei`."
+msgstr "使用 `Vector::from_array`、`Vector::make` 或 `Vector::makei` 创建向量。"
+
+#: manual/tutorial/immut/vector.md:43
+msgid "Use `set`, `map`, `left_scale`, and `right_scale` when you want a new vector."
+msgstr "需要新向量时，使用 `set`、`map`、`left_scale` 和 `right_scale`。"
+
+#: manual/tutorial/immut/vector.md:44
+msgid "Use `tensor_product`, `scaled_matrix`, `to_row_matrix`, and `to_col_matrix` for matrix-facing conversions."
+msgstr "需要矩阵相关转换时，使用 `tensor_product`、`scaled_matrix`、`to_row_matrix` 和 `to_col_matrix`。"
+
+#: manual/tutorial/immut/vector.md:48
+msgid "Choose `@immut.Vector` when downstream code benefits from explicit value semantics."
+msgstr "当下游代码需要明确的值语义时，选择 `@immut.Vector`。"
+
+#: manual/tutorial/immut/vector.md:49
+msgid "Use `@mutable.Vector` instead when repeated in-place updates or a public `dot()` helper are part of the workload."
+msgstr "当工作负载包含大量原地更新，或者需要公开的 `dot()` 辅助函数时，选择 `@mutable.Vector`。"
+
+#: manual/tutorial/immut/vector.md:50
+msgid "Use the immutable path when every structural change should produce a fresh value that can be passed onward safely."
+msgstr "如果你希望每一次结构变化都返回一个新值，并把旧值安全地继续传递下去，优先选择这条不可变路径。"
+
+#: manual/tutorial/mutable/matrix.md:1
+msgid "mutable/matrix tutorial"
+msgstr "mutable/matrix 教程"
+
+#: manual/tutorial/mutable/matrix.md:3
+msgid "Small case: calibrate a dense numeric matrix"
+msgstr "小案例：校准一份稠密数值矩阵"
+
+#: manual/tutorial/mutable/matrix.md:26
+msgid "This pattern works well when a matrix is a live working buffer:"
+msgstr "这类模式很适合把矩阵当作一个活的工作缓冲区："
+
+#: manual/tutorial/mutable/matrix.md:28
+msgid "Build the matrix once."
+msgstr "先构造好具体矩阵。"
+
+#: manual/tutorial/mutable/matrix.md:29
+msgid "Use `row_view` and `col_view` to patch the hot regions directly."
+msgstr "用 `row_view` 和 `col_view` 直接修改热点区域。"
+
+#: manual/tutorial/mutable/matrix.md:30
+msgid "Run checked numeric APIs like `determinant()` and `inverse()` after the edits are complete."
+msgstr "编辑完成后，再调用 `determinant()`、`inverse()` 这样的带检查数值 API。"
+
+#: manual/tutorial/mutable/matrix.md:33
+msgid "That combination is the fastest path when the matrix is a concrete execution object rather than a historical value."
+msgstr "当矩阵是执行对象而不是历史值时，这条路径通常最直接。"
+
+#: manual/tutorial/mutable/matrix.md:39
+msgid "Use `get` and `set` for direct element access, and `row_view` / `col_view` for repeated row or column work."
+msgstr "用 `get` 和 `set` 直接访问元素；需要反复处理某行或某列时，使用 `row_view` / `col_view`。"
+
+#: manual/tutorial/mutable/matrix.md:40
+msgid "Use checked methods such as `trace`, `determinant`, `inverse`, `mul_vec`, and `pow` when inputs may fail at runtime."
+msgstr "当输入可能在运行时失败时，使用带检查的 `trace`、`determinant`、`inverse`、`mul_vec` 和 `pow`。"
+
+#: manual/tutorial/mutable/matrix.md:44
+msgid "Use `to_transpose()` when you need a live transposed view; use `transpose()` when you need a materialized matrix."
+msgstr "需要连接到底层矩阵的转置视图时使用 `to_transpose()`；需要物化矩阵时使用 `transpose()`。"
+
+#: manual/tutorial/mutable/matrix.md:45
+msgid "Use `unchecked_*` only after shape, non-emptiness, and singularity preconditions have already been enforced."
+msgstr "只有在已经保证形状、非空和非奇异等前置条件时，才使用 `unchecked_*`。"
+
+#: manual/tutorial/mutable/matrix.md:46
+msgid "Reach for row/column views when one region of the matrix will be updated or inspected repeatedly."
+msgstr "如果某一行或某一列会被重复读取或更新，优先使用行/列视图而不是反复手写索引。"
+
+#: manual/tutorial/mutable/vector.md:1
+msgid "mutable/vector tutorial"
+msgstr "mutable/vector 教程"
+
+#: manual/tutorial/mutable/vector.md:3
+msgid "Small case: score a candidate with a working copy"
+msgstr "小案例：用工作副本给候选项打分"
+
+#: manual/tutorial/mutable/vector.md:28
+msgid "This is a solid mutation-oriented pattern:"
+msgstr "这是一个很典型的可变向量工作流："
+
+#: manual/tutorial/mutable/vector.md:30
+msgid "Keep the caller-facing vector unchanged."
+msgstr "先保留调用方传进来的原始向量。"
+
+#: manual/tutorial/mutable/vector.md:31
+msgid "Take a `copy()` as a working buffer."
+msgstr "用 `copy()` 拿一个工作副本。"
+
+#: manual/tutorial/mutable/vector.md:32
+msgid "Perform normalization and scaling with `map_inplace` and `left_scale_inplace`."
+msgstr "在副本上用 `map_inplace` 和 `left_scale_inplace` 做归一化与放大。"
+
+#: manual/tutorial/mutable/vector.md:34
+msgid "Finish with `dot` once the vector is ready for scoring."
+msgstr "最后再用 `dot` 算出分数。"
+
+#: manual/tutorial/mutable/vector.md:39
+msgid "Use `v[i]` and `v[i] = x` for direct element access."
+msgstr "使用 `v[i]` 和 `v[i] = x` 直接访问或更新元素。"
+
+#: manual/tutorial/mutable/vector.md:40
+msgid "Use `map_inplace`, `left_scale_inplace`, and `right_scale_inplace` when mutation is intended."
+msgstr "确实需要修改原值时，使用 `map_inplace`、`left_scale_inplace` 和 `right_scale_inplace`。"
+
+#: manual/tutorial/mutable/vector.md:41
+msgid "Use `dot`, `lin_comb`, `tensor_product`, `to_row_matrix`, and `to_col_matrix` when the vector participates in larger algebraic or matrix-building work."
+msgstr "需要做归约、线性组合或矩阵转换时，使用 `dot`、`lin_comb`、`tensor_product`、`to_row_matrix` 和 `to_col_matrix`。"
+
+#: manual/tutorial/mutable/vector.md:45
+msgid "Use non-`inplace` helpers when you need a fresh vector instead of modifying the original."
+msgstr "需要保留原向量时，使用那些不带 `inplace` 后缀的辅助函数。"
+
+#: manual/tutorial/mutable/vector.md:46
+msgid "Call `copy()` before mutating when a caller still needs the previous value."
+msgstr "如果后续还要继续修改同一个值，先调用 `copy()` 再进行原地操作。"
+
+#: manual/tutorial/mutable/vector.md:47
+msgid "Reach for `dot`, `lin_comb`, and matrix-conversion helpers once the vector is participating in a larger numerical workflow."
+msgstr "当向量开始参与更大的数值流程时，可以继续往 `dot`、`lin_comb` 和矩阵转换辅助函数走。"
+
+#~ msgid "Documentation Standard"
+#~ msgstr "文档标准"
+
+#~ msgid "Document Types and Organization"
+#~ msgstr "文档类型与组织"
+
+#~ msgid "Main Document Types"
+#~ msgstr "主要文档类型"
+
+#~ msgid "**API Reference Documentation (api.md)** - Detailed specifications for each public interface"
+#~ msgstr "**API参考文档(api.md)** - 详细描述每个公开接口的规格说明"
+
+#~ msgid "**User Guide (tutorial.md)** - User-oriented tutorials and best practices"
+#~ msgstr "**用户指南(tutorial.md)** - 面向使用者的教程和最佳实践"
+
+#~ msgid "**Design Documentation (design.md)** - Architecture and algorithm descriptions for developers"
+#~ msgstr "**设计文档(design.md)** - 面向开发者的架构和算法说明"
+
+#~ msgid "**Performance Reports** - Reserved for future performance and measurement documentation"
+#~ msgstr "**性能报告** - 预留给未来重建的性能与测量文档"
+
+#~ msgid "`README.md` is the current-baseline document. It should explain the current release baseline, entry points, package positioning, and reader guidance. `CHANGELOG.md` owns the historical release timeline and older release notes."
+#~ msgstr "`README.md` 是当前基线文档，负责说明当前版本基线、阅读入口、包定位和读者路径。 `CHANGELOG.md` 负责承载历史版本时间线和较旧的发布说明。"
+
+#~ msgid "Documentation Organization Principles"
+#~ msgstr "文档组织原则"
+
+#~ msgid "Organized by package/file, for example:"
+#~ msgstr "按照包/文件来组织，例如"
+
+#~ msgid "Further subdivided into `vector`, `matrix`, and similar files under each package"
+#~ msgstr "每个包下再按 `vector`、`matrix` 等主题文件细分"
+
+#~ msgid "Maintain consistency between documentation and code structure"
+#~ msgstr "保持文档与代码结构的一致性"
+
+#~ msgid "Do not document unreleased APIs unless they already exist in the repository implementation"
+#~ msgstr "不要记录仓库实现里还不存在的“计划中 API”"
+
+#~ msgid "Keep the Markdown file set aligned across `en_US`, `zh_CN`, and `ja_JP`"
+#~ msgstr "`en_US`、`zh_CN`、`ja_JP` 三套文档应保持相同的 Markdown 文件集合"
+
+#~ msgid "Keep the same top-level and second-level section order across languages unless a code-oriented reason makes that impossible"
+#~ msgstr "各语言文档的一级、二级小节顺序应尽量保持一致；除非代码事实要求，否则不要单独改写结构"
+
+#~ msgid "Treat the English documentation as the structural source of truth, then localize the same content naturally into Chinese and Japanese"
+#~ msgstr "默认以英文文档作为结构基准，再把同一份信息自然地本地化为中文和日文"
+
+#~ msgid "Treat `doc/*` as the only hand-written prose source. The `src/doc_*` packages are exposure layers and should contain symlinks back to these files rather than independent Markdown bodies."
+#~ msgstr "`doc/*` 是唯一手写正文事实源。`src/doc_*` 包只是文档暴露层，应通过软链接指回这些文件，不应保留独立的 Markdown 正文"
+
+#~ msgid "Keep `README.md` focused on the current baseline and move older release summaries into `CHANGELOG.md`"
+#~ msgstr "`README.md` 应聚焦当前基线；较旧的版本摘要应移动到 `CHANGELOG.md`"
+
+#~ msgid "Do not translate code identifiers, API names, type names, package names, file paths, or version strings"
+#~ msgstr "不要翻译代码标识符、API 名、类型名、包名、文件路径和版本号"
+
+#, fuzzy
+#~ msgid "Documentation Entry Points"
+#~ msgstr "文档入口"
+
+#~ msgid "**`immut` concrete API**: [immut/matrix API](./api/immut/matrix.md), [immut/matrix tutorial](./tutorial/immut/matrix.md), [immut/vector API](./api/immut/vector.md), [immut/vector tutorial](./tutorial/immut/vector.md)"
+#~ msgstr "**`immut` 具体 API**： [immut/matrix API](./api/immut/matrix.md)、 [immut/matrix 教程](./tutorial/immut/matrix.md)、 [immut/vector API](./api/immut/vector.md)、 [immut/vector 教程](./tutorial/immut/vector.md)"
+
+#~ msgid "**`mutable` concrete API**: [mutable/matrix API](./api/mutable/matrix.md), [mutable/matrix tutorial](./tutorial/mutable/matrix.md), [mutable/vector API](./api/mutable/vector.md), [mutable/vector tutorial](./tutorial/mutable/vector.md)"
+#~ msgstr "**`mutable` 具体 API**： [mutable/matrix API](./api/mutable/matrix.md)、 [mutable/matrix 教程](./tutorial/mutable/matrix.md)、 [mutable/vector API](./api/mutable/vector.md)、 [mutable/vector 教程](./tutorial/mutable/vector.md)"
+
+#~ msgid "**Capability and backend layers**: [arithmetic API](./api/arithmetic.md), [algebra API](./api/algebra.md), [backends/default API](./api/backends/default.md), [backends/openblas API](./api/backends/openblas.md), [backends/openblas tutorial](./tutorial/backends/openblas.md), [error API](./api/error.md)"
+#~ msgstr "**能力层与后端层**： [arithmetic API](./api/arithmetic.md)、 [algebra API](./api/algebra.md)、 [algebra 生态接入](./integration/algebra.md)、 [algebra 教程](./tutorial/algebra.md)、 [container API](./api/container.md)、 [container 教程](./tutorial/container.md)、 [container 生态接入](./integration/container.md)、 [backends/default API](./api/backends/default.md)、 [backends/openblas API](./api/backends/openblas.md)、 [backends/openblas 教程](./tutorial/backends/openblas.md)、 [error API](./api/error.md)"
+
+#, fuzzy
+#~ msgid "Documentation Layout"
+#~ msgstr "文档布局"
+
+#~ msgid "`README.md` for the repository narrative and release baseline."
+#~ msgstr "`README.md` 用于说明仓库叙事和当前版本基线。"
+
+#~ msgid "`doc_standard.md` for the documentation contract."
+#~ msgstr "`doc_standard.md` 用于记录文档契约。"
+
+#~ msgid "Module or subsystem folders with `api.md`, `tutorial.md`, and `design.md`."
+#~ msgstr "各模块或子系统目录下包含 `api.md`、`tutorial.md` 和 `design.md`。"
+
+#~ msgid "`doc/*` is the hand-written documentation source. The `src/doc_*` packages expose those files through symlinks for MoonBit package documentation."
+#~ msgstr "`doc/*` 是手写正文事实源；`src/doc_*` 包通过软链接把这些文件暴露给 MoonBit 包文档系统。"

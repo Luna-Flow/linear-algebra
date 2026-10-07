@@ -1,0 +1,10 @@
+name: Docs
+on:
+  pull_request:
+    paths: ['doc/**', '.github/workflows/docs.yml']
+  push:
+    branches: [main]
+    paths: ['doc/**', '.github/workflows/docs.yml']
+jobs:
+  docs:
+    uses: Luna-Flow/Luna-Flow.github.io/.github/workflows/check-docs.yml@main

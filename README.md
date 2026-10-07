@@ -95,9 +95,9 @@ The default backend wrappers are built on top of these concrete types:
 `backends/default.ImmutableDenseVector` and
 `backends/default.ImmutableDenseMatrix` wrap `immut.Vector` and
 `immut.Matrix`. If you want the trait-oriented default backend entry point, see
-[the `backends/default` docs](./doc/en_US/backends/default/api.md).
+[the `backends/default` docs](./doc/manual/api/backends/default.md).
 For OpenBLAS-backed native matrix multiplication and vector kernels, use
-[`backends/openblas`](./doc/en_US/backends/openblas/api.md) explicitly; it is a
+[`backends/openblas`](./doc/manual/api/backends/openblas.md) explicitly; it is a
 separate concrete backend, not a runtime backend option inside `@immut.Matrix`.
 
 ### Trait-Oriented Setup
@@ -200,17 +200,17 @@ test "linear-algebra basic workflow" {
 ### Reader Guide
 
 - **General application developers**: Start with
-  [`mutable`](./doc/en_US/mutable/matrix/api.md) and
-  [`immut`](./doc/en_US/immut/matrix/api.md). These are the concrete APIs for
+  [`mutable`](./doc/manual/api/mutable/matrix.md) and
+  [`immut`](./doc/manual/api/immut/matrix.md). These are the concrete APIs for
   application code such as business tools, utilities, numeric processing,
   small games, and visualization logic.
 - **Math library / general algorithm developers**: Read in this order:
-  [`arithmetic`](./doc/en_US/arithmetic/api.md) ->
-  [`algebra`](./doc/en_US/algebra/integration.md) ->
-  [`container`](./doc/en_US/container/integration.md) ->
-  [`backends/default`](./doc/en_US/backends/default/api.md) ->
-  [`backends/openblas`](./doc/en_US/backends/openblas/api.md) ->
-  [`immut` / `mutable`](./doc/en_US/immut/matrix/api.md). Start from operation
+  [`arithmetic`](./doc/manual/api/arithmetic.md) ->
+  [`algebra`](./doc/manual/integration/algebra.md) ->
+  [`container`](./doc/manual/integration/container.md) ->
+  [`backends/default`](./doc/manual/api/backends/default.md) ->
+  [`backends/openblas`](./doc/manual/api/backends/openblas.md) ->
+  [`immut` / `mutable`](./doc/manual/api/immut/matrix.md). Start from operation
   capabilities, then structure capabilities, then the default backend wrappers,
   then the optional OpenBLAS native wrapper, and finally the concrete
   implementations. This is the intended entry path if
@@ -220,27 +220,27 @@ test "linear-algebra basic workflow" {
 ### Documentation Entry Points
 
 - **`immut` concrete API**:
-  [`immut.Matrix` API](./doc/en_US/immut/matrix/api.md),
-  [`immut.Matrix` tutorial](./doc/en_US/immut/matrix/tutorial.md),
-  [`immut.Vector` API](./doc/en_US/immut/vector/api.md),
-  [`immut.Vector` tutorial](./doc/en_US/immut/vector/tutorial.md)
+  [`immut.Matrix` API](./doc/manual/api/immut/matrix.md),
+  [`immut.Matrix` tutorial](./doc/manual/tutorial/immut/matrix.md),
+  [`immut.Vector` API](./doc/manual/api/immut/vector.md),
+  [`immut.Vector` tutorial](./doc/manual/tutorial/immut/vector.md)
 - **`mutable` concrete API**:
-  [`mutable.Matrix` API](./doc/en_US/mutable/matrix/api.md),
-  [`mutable.Matrix` tutorial](./doc/en_US/mutable/matrix/tutorial.md),
-  [`mutable.Vector` API](./doc/en_US/mutable/vector/api.md),
-  [`mutable.Vector` tutorial](./doc/en_US/mutable/vector/tutorial.md)
+  [`mutable.Matrix` API](./doc/manual/api/mutable/matrix.md),
+  [`mutable.Matrix` tutorial](./doc/manual/tutorial/mutable/matrix.md),
+  [`mutable.Vector` API](./doc/manual/api/mutable/vector.md),
+  [`mutable.Vector` tutorial](./doc/manual/tutorial/mutable/vector.md)
 - **Capability and backend layers**:
-  [`arithmetic` API](./doc/en_US/arithmetic/api.md),
-  [`algebra` API](./doc/en_US/algebra/api.md),
-  [`algebra` ecosystem integration](./doc/en_US/algebra/integration.md),
-  [`algebra` tutorial](./doc/en_US/algebra/tutorial.md),
-  [`container` API](./doc/en_US/container/api.md),
-  [`container` tutorial](./doc/en_US/container/tutorial.md),
-  [`container` ecosystem integration](./doc/en_US/container/integration.md),
-  [`backends/default` API](./doc/en_US/backends/default/api.md),
-  [`backends/openblas` API](./doc/en_US/backends/openblas/api.md),
-  [`backends/openblas` tutorial](./doc/en_US/backends/openblas/tutorial.md),
-  [`error` API](./doc/en_US/error/api.md)
+  [`arithmetic` API](./doc/manual/api/arithmetic.md),
+  [`algebra` API](./doc/manual/api/algebra.md),
+  [`algebra` ecosystem integration](./doc/manual/integration/algebra.md),
+  [`algebra` tutorial](./doc/manual/tutorial/algebra.md),
+  [`container` API](./doc/manual/api/container.md),
+  [`container` tutorial](./doc/manual/tutorial/container.md),
+  [`container` ecosystem integration](./doc/manual/integration/container.md),
+  [`backends/default` API](./doc/manual/api/backends/default.md),
+  [`backends/openblas` API](./doc/manual/api/backends/openblas.md),
+  [`backends/openblas` tutorial](./doc/manual/tutorial/backends/openblas.md),
+  [`error` API](./doc/manual/api/error.md)
 
 ### Used In
 
@@ -248,27 +248,18 @@ test "linear-algebra basic workflow" {
   a compact MoonBit 3D geometry foundation built on
   `Luna-Flow/linear-algebra`, with core geometry, camera/view math,
   backend-neutral frontend rendering, and TUI / Canvas / GSAP backends. See
-  its [English docs](https://github.com/Luna-Flow/geometry3d/blob/main/doc/en_US/README.md)
+  its [documentation](https://luna-flow.github.io/en/geometry3d/)
   for a concrete downstream package layout built on this repository.
 
 ### Documentation
 
 Comprehensive API documentation is available at [mooncakes.io](https://mooncakes.io/docs/Luna-Flow/linear-algebra).
 
-We provide documentation in multiple languages:
-
-- 🇺🇸 **English** (`doc/en_US`)
-- 🇨🇳 **简体中文** (`doc/zh_CN`)
-- 🇯🇵 **日本語** (`doc/ja_JP`)
-
-`doc/*` is the hand-written documentation source. The `src/doc_*` packages are
-MoonBit documentation exposure layers made of symlinks back to `doc/*`.
-
-Localized README files:
-
-- 🇺🇸 [README.md](./README.md)
-- 🇨🇳 [README.md](./doc/zh_CN/README.md)
-- 🇯🇵 [README.md](./doc/ja_JP/README.md)
+The manual is published in English, Chinese and Japanese at
+<https://luna-flow.github.io/en/linear-algebra/>. Its English source is in
+[`doc/manual`](./doc/manual/index.md); the Chinese and Japanese translations
+are gettext catalogs in `doc/locale`, so every language shares one page
+structure.
 
 ## Changelog
 
