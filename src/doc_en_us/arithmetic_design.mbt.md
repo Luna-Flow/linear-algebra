@@ -1,1 +1,1 @@
-../../doc/en_US/arithmetic/design.md
+../../doc/manual/design/arithmetic.md

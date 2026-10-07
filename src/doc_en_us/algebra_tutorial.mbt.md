@@ -1,1 +1,1 @@
-../../doc/en_US/algebra/tutorial.md
+../../doc/manual/tutorial/algebra.md

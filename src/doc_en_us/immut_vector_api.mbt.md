@@ -1,1 +1,1 @@
-../../doc/en_US/immut/vector/api.md
+../../doc/manual/api/immut/vector.md

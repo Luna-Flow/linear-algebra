@@ -1,1 +1,1 @@
-../../doc/en_US/arithmetic/api.md
+../../doc/manual/api/arithmetic.md

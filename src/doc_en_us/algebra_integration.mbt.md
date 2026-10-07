@@ -1,1 +1,1 @@
-../../doc/en_US/algebra/integration.md
+../../doc/manual/integration/algebra.md

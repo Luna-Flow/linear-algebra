@@ -1,1 +1,1 @@
-../../doc/en_US/arithmetic/tutorial.md
+../../doc/manual/tutorial/arithmetic.md

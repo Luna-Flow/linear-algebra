@@ -1,1 +1,1 @@
-../../doc/en_US/mutable/vector/tutorial.md
+../../doc/manual/tutorial/mutable/vector.md

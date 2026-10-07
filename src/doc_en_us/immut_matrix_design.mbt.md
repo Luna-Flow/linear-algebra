@@ -1,1 +1,1 @@
-../../doc/en_US/immut/matrix/design.md
+../../doc/manual/design/immut/matrix.md

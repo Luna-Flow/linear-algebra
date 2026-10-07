@@ -1,1 +1,1 @@
-../../doc/en_US/algebra/design.md
+../../doc/manual/design/algebra.md

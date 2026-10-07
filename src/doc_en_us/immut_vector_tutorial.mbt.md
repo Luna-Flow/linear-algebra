@@ -1,1 +1,1 @@
-../../doc/en_US/immut/vector/tutorial.md
+../../doc/manual/tutorial/immut/vector.md

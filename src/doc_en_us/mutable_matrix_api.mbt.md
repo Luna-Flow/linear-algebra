@@ -1,1 +1,1 @@
-../../doc/en_US/mutable/matrix/api.md
+../../doc/manual/api/mutable/matrix.md

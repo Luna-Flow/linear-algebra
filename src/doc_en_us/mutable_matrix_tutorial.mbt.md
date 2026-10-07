@@ -1,1 +1,1 @@
-../../doc/en_US/mutable/matrix/tutorial.md
+../../doc/manual/tutorial/mutable/matrix.md

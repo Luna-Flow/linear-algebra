@@ -1,1 +1,1 @@
-../../doc/en_US/container/design.md
+../../doc/manual/design/container.md

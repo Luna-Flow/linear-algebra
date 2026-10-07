@@ -1,1 +1,1 @@
-../../doc/en_US/immut/matrix/tutorial.md
+../../doc/manual/tutorial/immut/matrix.md

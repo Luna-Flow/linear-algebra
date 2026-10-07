@@ -1,1 +1,1 @@
-../../doc/en_US/error/design.md
+../../doc/manual/design/error.md

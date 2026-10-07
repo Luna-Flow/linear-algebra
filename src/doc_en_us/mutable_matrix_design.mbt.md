@@ -1,1 +1,1 @@
-../../doc/en_US/mutable/matrix/design.md
+../../doc/manual/design/mutable/matrix.md

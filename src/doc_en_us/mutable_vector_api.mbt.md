@@ -1,1 +1,1 @@
-../../doc/en_US/mutable/vector/api.md
+../../doc/manual/api/mutable/vector.md

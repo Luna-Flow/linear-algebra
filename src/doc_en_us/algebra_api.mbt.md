@@ -1,1 +1,1 @@
-../../doc/en_US/algebra/api.md
+../../doc/manual/api/algebra.md

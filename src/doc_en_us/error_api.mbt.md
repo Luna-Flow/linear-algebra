@@ -1,1 +1,1 @@
-../../doc/en_US/error/api.md
+../../doc/manual/api/error.md

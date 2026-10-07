@@ -1,1 +1,0 @@
-../../doc/en_US/backends/openblas/tutorial.md

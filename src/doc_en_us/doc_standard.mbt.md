@@ -1,1 +1,1 @@
-../../doc/en_US/doc_standard.md
+../../doc/manual/conventions.md

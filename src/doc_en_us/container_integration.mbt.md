@@ -1,1 +1,1 @@
-../../doc/en_US/container/integration.md
+../../doc/manual/integration/container.md

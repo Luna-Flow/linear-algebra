@@ -1,1 +1,1 @@
-../../doc/en_US/immut/matrix/api.md
+../../doc/manual/api/immut/matrix.md
