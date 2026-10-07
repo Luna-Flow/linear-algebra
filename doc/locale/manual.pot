@@ -12,7 +12,7 @@ msgid "Trait-oriented linear algebra foundations for MoonBit, with checked APIs,
 msgstr ""
 
 #: manual/api/algebra.md:3
-msgid "API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.4.7` repository state."
+msgid "API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.5.0` repository state."
 msgstr ""
 
 #: manual/api/algebra.md:6
@@ -27,7 +27,6 @@ msgstr ""
 #: manual/api/algebra.md:15
 #: manual/api/arithmetic.md:6
 #: manual/api/backends/default.md:6
-#: manual/api/backends/openblas.md:6
 #: manual/api/error.md:6
 msgid "Purpose"
 msgstr ""
@@ -53,58 +52,57 @@ msgstr ""
 
 #: manual/api/algebra.md:38
 #: manual/api/arithmetic.md:23
-#: manual/index.md:111
+#: manual/index.md:145
 #: manual/tutorial/algebra.md:14
 #: manual/tutorial/arithmetic.md:13
 msgid "Recommended `moon.pkg` imports:"
 msgstr ""
 
-#: manual/api/algebra.md:49
+#: manual/api/algebra.md:50
 msgid "Use `@algebra` for linear-algebra structure traits. Import `@lf_alg` and `@lf_arith` directly when your code also needs the shared upstream abstractions."
 msgstr ""
 
-#: manual/api/algebra.md:52
+#: manual/api/algebra.md:53
 msgid "Matrix shape traits"
 msgstr ""
 
-#: manual/api/algebra.md:87
+#: manual/api/algebra.md:88
 msgid "`MatrixShape` is for matrix-like or tensor-like objects with observable dimensions. `VectorShape` is for vector-like objects with observable length. These traits do not claim any algebraic operation."
 msgstr ""
 
-#: manual/api/algebra.md:136
+#: manual/api/algebra.md:137
 msgid "Represents vector-like objects with additive linear structure. It does not require element-wise multiplication, dot product, norm, or a global zero."
 msgstr ""
 
-#: manual/api/algebra.md:139
+#: manual/api/algebra.md:140
 msgid "Reach for `VecMulVector` only when an algorithm really needs element-wise multiplication:"
 msgstr ""
 
-#: manual/api/algebra.md:225
+#: manual/api/algebra.md:226
 msgid "Represents matrix-like objects with observable shape and same-category transpose. It does not require matrix multiplication because dynamic rectangular matrix multiplication is only defined for compatible runtime shapes."
 msgstr ""
 
-#: manual/api/algebra.md:229
+#: manual/api/algebra.md:230
 msgid "The trait does not require dense storage, contiguous memory, direct element indexing, or mutation support."
 msgstr ""
 
-#: manual/api/algebra.md:232
+#: manual/api/algebra.md:233
 msgid "Use the stronger traits only when the algorithm actually needs the extra operation:"
 msgstr ""
 
-#: manual/api/algebra.md:291
-#: manual/api/arithmetic.md:153
-#: manual/api/backends/default.md:194
-#: manual/api/backends/openblas.md:148
-#: manual/api/error.md:88
+#: manual/api/algebra.md:292
+#: manual/api/arithmetic.md:154
+#: manual/api/backends/default.md:214
+#: manual/api/error.md:104
 msgid "Boundary"
 msgstr ""
 
-#: manual/api/algebra.md:293
+#: manual/api/algebra.md:294
 msgid "Do not add `dot`, `norm`, or inner-product traits here unless the scalar mapping is modeled explicitly. The core algebra package is for minimal structure and same-category operations."
 msgstr ""
 
 #: manual/api/arithmetic.md:3
-msgid "API baseline for `Luna-Flow/linear-algebra/arithmetic` in the current `0.4.7` repository state."
+msgid "API baseline for `Luna-Flow/linear-algebra/arithmetic` in the current `0.5.0` repository state."
 msgstr ""
 
 #: manual/api/arithmetic.md:8
@@ -115,53 +113,53 @@ msgstr ""
 msgid "If you want to use the linear-algebra operation traits together with the shared upstream abstractions, start with:"
 msgstr ""
 
-#: manual/api/arithmetic.md:33
+#: manual/api/arithmetic.md:34
 msgid "Re-exported types"
 msgstr ""
 
-#: manual/api/arithmetic.md:35
-#: manual/api/arithmetic.md:54
+#: manual/api/arithmetic.md:36
+#: manual/api/arithmetic.md:55
 msgid "From `Luna-Flow/arithmetic`:"
 msgstr ""
 
-#: manual/api/arithmetic.md:43
+#: manual/api/arithmetic.md:44
 msgid "These preserve their upstream behavior and are used by checked operations."
 msgstr ""
 
-#: manual/api/arithmetic.md:45
+#: manual/api/arithmetic.md:46
 msgid "Re-exported operation traits"
 msgstr ""
 
-#: manual/api/arithmetic.md:47
+#: manual/api/arithmetic.md:48
 msgid "From `Luna-Flow/luna-generic`:"
 msgstr ""
 
-#: manual/api/arithmetic.md:75
+#: manual/api/arithmetic.md:76
 msgid "Absolute-value operation. Implemented for:"
 msgstr ""
 
-#: manual/api/arithmetic.md:93
+#: manual/api/arithmetic.md:94
 msgid "Approximate equality operation. It is an operation-level capability, not an equivalence-law claim. Implemented for:"
 msgstr ""
 
-#: manual/api/arithmetic.md:113
+#: manual/api/arithmetic.md:114
 msgid "Checked division operation using `ArithmeticContext`. Implemented for:"
 msgstr ""
 
-#: manual/api/arithmetic.md:131
+#: manual/api/arithmetic.md:132
 msgid "Checked square-root operation using `ArithmeticContext`. Implemented for:"
 msgstr ""
 
-#: manual/api/arithmetic.md:148
+#: manual/api/arithmetic.md:149
 msgid "Checked scalar comparison. Implemented for:"
 msgstr ""
 
-#: manual/api/arithmetic.md:155
+#: manual/api/arithmetic.md:156
 msgid "This package must not import matrix, vector, or backend types. In the dependency graph, it sits below `algebra` and all backend packages."
 msgstr ""
 
 #: manual/api/backends/default.md:3
-msgid "API baseline for `Luna-Flow/linear-algebra/backends/default` in the current `0.4.7` repository state."
+msgid "API baseline for `Luna-Flow/linear-algebra/backends/default` in the current `0.5.0` repository state."
 msgstr ""
 
 #: manual/api/backends/default.md:8
@@ -200,15 +198,13 @@ msgid "`DenseVector::length(self) -> Int` returns vector length."
 msgstr ""
 
 #: manual/api/backends/default.md:40
-msgid "`DenseVector::op_get(self, index : Int) -> T` supports read indexing."
+msgid "`DenseVector::at(self, index : Int) -> T` (`_[_]`) supports read indexing."
 msgstr ""
 
 #: manual/api/backends/default.md:43
 #: manual/api/backends/default.md:91
 #: manual/api/backends/default.md:130
 #: manual/api/backends/default.md:170
-#: manual/api/backends/openblas.md:82
-#: manual/api/backends/openblas.md:125
 msgid "Backend methods"
 msgstr ""
 
@@ -228,7 +224,6 @@ msgstr ""
 #: manual/api/backends/default.md:97
 #: manual/api/backends/default.md:136
 #: manual/api/backends/default.md:176
-#: manual/api/backends/openblas.md:130
 msgid "Trait implementations"
 msgstr ""
 
@@ -332,152 +327,30 @@ msgstr ""
 msgid "`transpose[M : @algebra.TransposeMatrix](matrix : M) -> M` dispatches closed transpose through the algebra trait."
 msgstr ""
 
+#: manual/api/backends/default.md:194
+#: manual/api/error.md:88
+#: manual/api/immut/matrix.md:80
+#: manual/api/immut/vector.md:56
+#: manual/api/mutable/matrix.md:100
+#: manual/api/mutable/vector.md:60
+msgid "Method surface (MoonBit 0.10)"
+msgstr ""
+
 #: manual/api/backends/default.md:196
+#: manual/api/error.md:90
+#: manual/api/immut/matrix.md:82
+#: manual/api/immut/vector.md:58
+#: manual/api/mutable/matrix.md:102
+#: manual/api/mutable/vector.md:62
+msgid "MoonBit 0.10 no longer turns trait implementations into methods implicitly. Each package lists the trait methods it promotes to method-call syntax in its `extends.mbt` (`pub extend T with Trait::{method}`); any other trait method is reached through its operator or a trait-qualified call such as `Trait::method(x)`. Promotions marked deprecated and hidden from the docs (`not_equal`, `output`, `to_repr`, `arbitrary`) exist only for source compatibility; use `!=`, string interpolation, `Repr(x)`, or the quickcheck trait instead. Indexing is provided by ordinary methods annotated with `#alias(\"_[_]\")` / `#alias(\"_[_]=_\")`, so `x[i]` and `x.at(i)` (or `x.get(i)`) are equivalent; the former `op_get` / `op_set` names are gone from the API."
+msgstr ""
+
+#: manual/api/backends/default.md:207
+msgid "All four wrappers promote `add`, `sub`, `mul`, and `neg` so the operators also read as methods. `DenseMatrix` and `ImmutableDenseMatrix` additionally promote `@algebra.MatrixShape::shape` and `@algebra.TransposeMatrix::transpose`. `DenseVector::at` / `ImmutableDenseVector::at` back `v[i]`. In generic code bounded by the `@algebra` traits, keep using the trait-qualified form, e.g. `@algebra.TransposeMatrix::transpose(m)`."
+msgstr ""
+
+#: manual/api/backends/default.md:216
 msgid "This package implements outer `algebra` traits for the default backend wrapper types. It does not define new structure traits. Scalar-valued products and matrix-vector interactions described above remain backend methods rather than new `@algebra` traits, while norms, solves, and decompositions remain backend methods or future dedicated algorithm-layer APIs unless they can be represented as structure traits or closed operations."
-msgstr ""
-
-#: manual/api/backends/openblas.md:3
-msgid "API baseline for `Luna-Flow/linear-algebra/backends/openblas` in the current `0.4.7` repository state."
-msgstr ""
-
-#: manual/api/backends/openblas.md:8
-msgid "`backends/openblas` provides owned native-only matrix and vector backend wrappers. Matrix multiplication delegates to OpenBLAS GEMM, while vector and matrix-vector helpers delegate to the matching BLAS kernels."
-msgstr ""
-
-#: manual/api/backends/openblas.md:12
-msgid "This package is separate from `@immut.Matrix`. There is no runtime backend selector in `immut`; backend choice is now expressed by the concrete matrix type you use and the compilation target you build for."
-msgstr ""
-
-#: manual/api/backends/openblas.md:16
-msgid "Platform constraint"
-msgstr ""
-
-#: manual/api/backends/openblas.md:18
-msgid "Supported target: `native`"
-msgstr ""
-
-#: manual/api/backends/openblas.md:19
-msgid "Unsupported targets: `js`, `wasm`, `wasm-gc`"
-msgstr ""
-
-#: manual/api/backends/openblas.md:20
-msgid "Current repository link configuration searches both `/opt/homebrew/opt/openblas/include` and `/opt/homebrew/opt/openblas/lib` for Homebrew on macOS, and `/usr/include/x86_64-linux-gnu/openblas-pthread`, `/usr/include/openblas`, `/usr/lib/x86_64-linux-gnu/openblas-pthread`, and `/usr/lib/x86_64-linux-gnu` for the default Ubuntu OpenBLAS package layout"
-msgstr ""
-
-#: manual/api/backends/openblas.md:31
-msgid "`BLASInnerType` is a backend-local trait implemented only for `Float` and `Double`."
-msgstr ""
-
-#: manual/api/backends/openblas.md:34
-msgid "It owns the scalar-specific pieces required by the backend:"
-msgstr ""
-
-#: manual/api/backends/openblas.md:36
-msgid "`tolerance()` returns the comparison tolerance used by backend tests and result checks."
-msgstr ""
-
-#: manual/api/backends/openblas.md:38
-msgid "`dot(length, left, right)` dispatches to `cblas_sdot` or `cblas_ddot`."
-msgstr ""
-
-#: manual/api/backends/openblas.md:40
-msgid "`scal(length, alpha, data)` dispatches to `cblas_sscal` or `cblas_dscal`."
-msgstr ""
-
-#: manual/api/backends/openblas.md:42
-msgid "`axpy(length, alpha, x, y)` dispatches to `cblas_saxpy` or `cblas_daxpy`."
-msgstr ""
-
-#: manual/api/backends/openblas.md:44
-msgid "`gemm(m, n, k, left, right)` dispatches matrix multiplication to the matching OpenBLAS kernel: `cblas_sgemm` for `Float` and `cblas_dgemm` for `Double`."
-msgstr ""
-
-#: manual/api/backends/openblas.md:47
-msgid "`gemv(row, col, matrix, vector)` dispatches matrix-vector multiplication to `cblas_sgemv` or `cblas_dgemv`."
-msgstr ""
-
-#: manual/api/backends/openblas.md:50
-msgid "`BlasMatrix[T]` and `BlasVector[T]` public construction and conversion APIs require `T : BLASInnerType`, so the backend does not expose a half-open “constructible for any `T` but only operable for some `T`” surface."
-msgstr ""
-
-#: manual/api/backends/openblas.md:56
-msgid "Owned native vector wrapper for the OpenBLAS backend."
-msgstr ""
-
-#: manual/api/backends/openblas.md:58
-msgid "Constructors, conversions, and accessors"
-msgstr ""
-
-#: manual/api/backends/openblas.md:70
-msgid "Trait coverage"
-msgstr ""
-
-#: manual/api/backends/openblas.md:72
-msgid "`BlasVector[T]` currently implements:"
-msgstr ""
-
-#: manual/api/backends/openblas.md:79
-msgid "It does **not** implement `@algebra.VecMulVector`. BLAS-style `scale`, `dot`, and `axpy` are exposed as backend methods rather than new structure traits."
-msgstr ""
-
-#: manual/api/backends/openblas.md:99
-msgid "`BlasMatrix[T]` is the owned concrete backend matrix type for this package. Internally it stores:"
-msgstr ""
-
-#: manual/api/backends/openblas.md:104
-msgid "a contiguous `FixedArray[T]` buffer"
-msgstr ""
-
-#: manual/api/backends/openblas.md:106
-msgid "The public mental model stays row-major. Layout details needed by OpenBLAS stay inside the backend implementation."
-msgstr ""
-
-#: manual/api/backends/openblas.md:109
-msgid "Constructors and conversions"
-msgstr ""
-
-#: manual/api/backends/openblas.md:119
-msgid "Accessors"
-msgstr ""
-
-#: manual/api/backends/openblas.md:127
-msgid "`BlasMatrix::matvec(self, vector : BlasVector[T]) -> BlasVector[T]` multiplies the matrix by an OpenBLAS backend vector through GEMV."
-msgstr ""
-
-#: manual/api/backends/openblas.md:132
-msgid "`BlasMatrix[T]` currently implements:"
-msgstr ""
-
-#: manual/api/backends/openblas.md:141
-msgid "Behavior is split intentionally:"
-msgstr ""
-
-#: manual/api/backends/openblas.md:143
-msgid "`Mul` uses OpenBLAS GEMM through `BLASInnerType::gemm`."
-msgstr ""
-
-#: manual/api/backends/openblas.md:144
-msgid "`matvec` uses OpenBLAS GEMV through `BLASInnerType::gemv`."
-msgstr ""
-
-#: manual/api/backends/openblas.md:145
-msgid "`shape`, `transpose`, `+`, `-`, and unary `-` are implemented locally in MoonBit inside this backend package."
-msgstr ""
-
-#: manual/api/backends/openblas.md:150
-msgid "This package exposes an owned trait-compatible backend wrapper. It does not:"
-msgstr ""
-
-#: manual/api/backends/openblas.md:152
-msgid "add a runtime backend enum"
-msgstr ""
-
-#: manual/api/backends/openblas.md:153
-msgid "retrofit traits directly onto third-party OpenBLAS binding types"
-msgstr ""
-
-#: manual/api/backends/openblas.md:154
-msgid "expose raw OpenBLAS handle types in the public API"
 msgstr ""
 
 #: manual/api/container.md:1
@@ -557,11 +430,11 @@ msgid "The `container/adapters` package provides factories for `immut.Vector`, `
 msgstr ""
 
 #: manual/api/container.md:52
-msgid "The native-only OpenBLAS package provides `blas_vector_read_ops`, `blas_vector_build_ops`, `blas_matrix_read_ops`, and `blas_matrix_build_ops`. It intentionally does not advertise persistent editing."
+msgid "The native-only OpenBLAS backend, which provided `blas_vector_read_ops`, `blas_vector_build_ops`, `blas_matrix_read_ops`, and `blas_matrix_build_ops` (read/build only, no persistent editing), is temporarily withdrawn. Its adapters are preserved with the backend in `contrib/openblas_backend`."
 msgstr ""
 
 #: manual/api/error.md:3
-msgid "API baseline for `Luna-Flow/linear-algebra/error` in the current `0.4.7` repository state."
+msgid "API baseline for `Luna-Flow/linear-algebra/error` in the current `0.5.0` repository state."
 msgstr ""
 
 #: manual/api/error.md:8
@@ -592,12 +465,16 @@ msgstr ""
 msgid "Usage"
 msgstr ""
 
-#: manual/api/error.md:90
+#: manual/api/error.md:101
+msgid "`LinearAlgebraErrorKind` and `LinearAlgebraError` promote `equal`, so `left == right` and `left.equal(right)` both work."
+msgstr ""
+
+#: manual/api/error.md:106
 msgid "This package defines error values only. It does not implement matrix algorithms, numeric recovery strategies, logging, or formatting policy."
 msgstr ""
 
 #: manual/api/immut/matrix.md:3
-msgid "API baseline for `@immut.Matrix` in the current `0.4.7` repository state."
+msgid "API baseline for `@immut.Matrix` in the current `0.5.0` repository state."
 msgstr ""
 
 #: manual/api/immut/matrix.md:5
@@ -756,27 +633,31 @@ msgstr ""
 msgid "Important methods:"
 msgstr ""
 
-#: manual/api/immut/matrix.md:80
-#: manual/api/immut/vector.md:56
-#: manual/api/mutable/matrix.md:100
-#: manual/api/mutable/vector.md:60
+#: manual/api/immut/matrix.md:93
+msgid "Promoted on `Matrix`: `add`, `sub`, `mul`, `neg` (the `+ - *` and unary `-` operators), `equal`, `shape`, `to_string`. Promoted on `MatrixFn`: `add`, `sub`, `neg`, `equal`, `shape`, `to_string`. Row indexing is `Matrix::at` / `MatrixFn::at` returning `Indexed[T]`, whose own `at` reads the element, so `m[r][c]` is `m.at(r).at(c)`."
+msgstr ""
+
+#: manual/api/immut/matrix.md:99
+#: manual/api/immut/vector.md:72
+#: manual/api/mutable/matrix.md:120
+#: manual/api/mutable/vector.md:88
 msgid "Guidance"
 msgstr ""
 
-#: manual/api/immut/matrix.md:82
+#: manual/api/immut/matrix.md:101
 msgid "For shared algebraic behavior, prefer the capability traits and the `backends/default` wrapper types. `@immut.Matrix` is one dense implementation used by the default backend, not the semantic center of the ecosystem."
 msgstr ""
 
-#: manual/api/immut/matrix.md:85
+#: manual/api/immut/matrix.md:104
 msgid "The mutable package intentionally exposes extra execution-oriented APIs such as views and in-place updates; those should not be projected back onto `immut`."
 msgstr ""
 
-#: manual/api/immut/matrix.md:86
+#: manual/api/immut/matrix.md:105
 msgid "`backends/default.ImmutableDenseMatrix` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
 msgstr ""
 
 #: manual/api/immut/vector.md:3
-msgid "API baseline for `@immut.Vector` in the current `0.4.7` repository state."
+msgid "API baseline for `@immut.Vector` in the current `0.5.0` repository state."
 msgstr ""
 
 #: manual/api/immut/vector.md:7
@@ -881,20 +762,24 @@ msgstr ""
 msgid "`tensor_product(other)` Computes the outer product and returns a matrix."
 msgstr ""
 
-#: manual/api/immut/vector.md:58
+#: manual/api/immut/vector.md:69
+msgid "Promoted on `Vector`: `add`, `mul`, `neg` (`+`, element-wise `*`, unary `-`), `equal`, `to_string`. `v[i]` is `Vector::at(i)`."
+msgstr ""
+
+#: manual/api/immut/vector.md:74
 msgid "Use `@immut.Vector` when downstream code benefits from explicit value semantics."
 msgstr ""
 
-#: manual/api/immut/vector.md:60
+#: manual/api/immut/vector.md:76
 msgid "Use `@mutable.Vector` instead when you need in-place updates or the public `dot()` helper."
 msgstr ""
 
-#: manual/api/immut/vector.md:62
+#: manual/api/immut/vector.md:78
 msgid "`backends/default.ImmutableDenseVector` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
 msgstr ""
 
 #: manual/api/mutable/matrix.md:3
-msgid "API baseline for `@mutable.Matrix` in the current `0.4.7` repository state. Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance` remains defined by `mutable`."
+msgid "API baseline for `@mutable.Matrix` in the current `0.5.0` repository state. Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance` remains defined by `mutable`."
 msgstr ""
 
 #: manual/api/mutable/matrix.md:9
@@ -1057,20 +942,24 @@ msgstr ""
 msgid "`frobenius_norm()` Non-checked aggregate numeric helper for supported element types."
 msgstr ""
 
-#: manual/api/mutable/matrix.md:102
+#: manual/api/mutable/matrix.md:113
+msgid "Promoted on `Matrix` and `Transpose`: `add`, `sub`, `mul`, `neg`, `equal`, `to_string`; `Matrix` also promotes `shape`. `RowView` and `ColView` promote `to_string`. `m[r]` is `Matrix::at(r)` / `Transpose::at(r)` returning a `Lens[T]`, and `Lens::at` / `Lens::set` back `m[r][c]` and `m[r][c] = x`. `RowView::get` / `set` and `ColView::get` / `set` back `view[i]` and `view[i] = x`."
+msgstr ""
+
+#: manual/api/mutable/matrix.md:122
 msgid "Backends are expected to expose the same public semantics. The repository currently keeps separate kernel files for `native`, `js`, `wasm`, and `wasm-gc`, so tests and documentation should be read as backend-invariant unless a note says otherwise."
 msgstr ""
 
-#: manual/api/mutable/matrix.md:103
+#: manual/api/mutable/matrix.md:123
 msgid "For code shared across `immut` and `mutable`, rely on the common algebraic surface and not on identical mutation semantics."
 msgstr ""
 
-#: manual/api/mutable/matrix.md:104
+#: manual/api/mutable/matrix.md:124
 msgid "`backends/default.DenseMatrix` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
 msgstr ""
 
 #: manual/api/mutable/vector.md:3
-msgid "API baseline for `@mutable.Vector` in the current `0.4.7` repository state."
+msgid "API baseline for `@mutable.Vector` in the current `0.5.0` repository state."
 msgstr ""
 
 #: manual/api/mutable/vector.md:7
@@ -1145,15 +1034,19 @@ msgstr ""
 msgid "`to_col_matrix()` / `to_row_matrix()` Convert the vector into matrix form."
 msgstr ""
 
-#: manual/api/mutable/vector.md:62
+#: manual/api/mutable/vector.md:73
+msgid "Promoted on `Vector`: `add`, `mul`, `neg`, `equal`, `to_string`. `v[i]` and `v[i] = x` are `Vector::at(i)` and `Vector::set(i, x)`."
+msgstr ""
+
+#: manual/api/mutable/vector.md:90
 msgid "Use direct indexing or `*_inplace` helpers when the workload is truly mutation-heavy."
 msgstr ""
 
-#: manual/api/mutable/vector.md:64
+#: manual/api/mutable/vector.md:92
 msgid "Use the non-`inplace` helpers when you need a fresh vector or want code that mirrors `@immut.Vector` more closely."
 msgstr ""
 
-#: manual/api/mutable/vector.md:66
+#: manual/api/mutable/vector.md:94
 msgid "`backends/default.DenseVector` is a wrapper around this concrete implementation. If you want the trait-oriented default backend entry point, see [the `backends/default` API](../backends/default.md)."
 msgstr ""
 
@@ -1162,7 +1055,7 @@ msgid "Repository conventions"
 msgstr ""
 
 #: manual/conventions.md:3
-msgid "These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.4.7`**."
+msgid "These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.5.0`**."
 msgstr ""
 
 #: manual/conventions.md:5
@@ -1312,7 +1205,6 @@ msgstr ""
 #: manual/design/algebra.md:7
 #: manual/design/arithmetic.md:3
 #: manual/design/backends/default.md:3
-#: manual/design/backends/openblas.md:3
 #: manual/design/error.md:3
 #: manual/design/immut/matrix.md:3
 #: manual/design/immut/vector.md:3
@@ -1454,110 +1346,6 @@ msgstr ""
 msgid "Future sparse, lazy, static-size, GPU, or external-library backends should implement the same structural traits directly. They should not need to convert into `DenseMatrix` or `DenseVector` before generic algorithms can use them."
 msgstr ""
 
-#: manual/design/backends/openblas.md:1
-msgid "backends/openblas design"
-msgstr ""
-
-#: manual/design/backends/openblas.md:5
-msgid "Provide a concrete native-only matrix backend that can participate in the public `@algebra` trait ecosystem."
-msgstr ""
-
-#: manual/design/backends/openblas.md:7
-msgid "Keep the backend's owned public type local to this repository as `BlasMatrix[T]`."
-msgstr ""
-
-#: manual/design/backends/openblas.md:9
-msgid "Use OpenBLAS GEMM for matrix multiplication while keeping the rest of the first-pass matrix surface implemented locally in MoonBit."
-msgstr ""
-
-#: manual/design/backends/openblas.md:11
-msgid "Hide OpenBLAS layout and binding details behind a repository-owned API."
-msgstr ""
-
-#: manual/design/backends/openblas.md:13
-msgid "Why this is a wrapper backend"
-msgstr ""
-
-#: manual/design/backends/openblas.md:15
-msgid "This package is a trait-compatible backend wrapper."
-msgstr ""
-
-#: manual/design/backends/openblas.md:17
-msgid "It is not:"
-msgstr ""
-
-#: manual/design/backends/openblas.md:19
-msgid "a runtime backend selector"
-msgstr ""
-
-#: manual/design/backends/openblas.md:20
-msgid "a global backend enum"
-msgstr ""
-
-#: manual/design/backends/openblas.md:21
-msgid "a direct trait implementation on the foreign OpenBLAS binding types"
-msgstr ""
-
-#: manual/design/backends/openblas.md:23
-msgid "The wrapper exists so the package owns the concrete matrix type and can attach `@algebra` trait implementations without running into MoonBit's foreign trait / foreign type restriction."
-msgstr ""
-
-#: manual/design/backends/openblas.md:27
-msgid "Type and target decide behavior"
-msgstr ""
-
-#: manual/design/backends/openblas.md:29
-msgid "Backend choice is now determined by two things:"
-msgstr ""
-
-#: manual/design/backends/openblas.md:31
-msgid "type choice `@immut.Matrix[T]` and `@default.ImmutableDenseMatrix[T]` use the repository's existing dense implementations, while `@openblas.BlasMatrix[T]` uses the OpenBLAS-backed multiplication path"
-msgstr ""
-
-#: manual/design/backends/openblas.md:35
-msgid "target choice `backends/openblas` only participates in `native` builds"
-msgstr ""
-
-#: manual/design/backends/openblas.md:38
-msgid "There is no runtime API for asking `@immut.Matrix` to switch to a different backend."
-msgstr ""
-
-#: manual/design/backends/openblas.md:41
-msgid "Scalar strategy"
-msgstr ""
-
-#: manual/design/backends/openblas.md:43
-msgid "`BLASInnerType` is intentionally backend-local. It captures the scalar-specific pieces this wrapper needs:"
-msgstr ""
-
-#: manual/design/backends/openblas.md:46
-msgid "dispatch to the correct GEMM kernel"
-msgstr ""
-
-#: manual/design/backends/openblas.md:47
-msgid "provide a tolerance value for backend validation"
-msgstr ""
-
-#: manual/design/backends/openblas.md:49
-msgid "The repository currently implements this trait only for `Float` and `Double`. That matches the current OpenBLAS-backed matrix surface and avoids exposing a misleading generic type story."
-msgstr ""
-
-#: manual/design/backends/openblas.md:53
-msgid "Operation split"
-msgstr ""
-
-#: manual/design/backends/openblas.md:55
-msgid "`Mul` delegates to OpenBLAS GEMM"
-msgstr ""
-
-#: manual/design/backends/openblas.md:57
-msgid "`shape`, `transpose`, `+`, `-`, `neg` stay as local MoonBit implementations for the first version"
-msgstr ""
-
-#: manual/design/backends/openblas.md:60
-msgid "This split keeps the API complete enough for trait-oriented generic code without pretending that every matrix operation must already be backed by a BLAS routine."
-msgstr ""
-
 #: manual/design/container.md:1
 msgid "Container capability design"
 msgstr ""
@@ -1595,18 +1383,18 @@ msgid "Dependency direction"
 msgstr ""
 
 #: manual/design/container.md:32
-msgid "`container` depends only on `error`. `container/adapters` depends on the core capability package and the dense implementations. OpenBLAS depends on the core package directly and remains native-only. Neither `algebra` nor the concrete dense implementations depend on the adapter package."
+msgid "`container` depends only on `error`. `container/adapters` depends on the core capability package and the dense implementations. The temporarily withdrawn OpenBLAS backend (preserved in `contrib/openblas_backend`) depended on the core package directly and was native-only. Neither `algebra` nor the concrete dense implementations depend on the adapter package."
 msgstr ""
 
-#: manual/design/container.md:37
+#: manual/design/container.md:38
 msgid "Future kernels"
 msgstr ""
 
-#: manual/design/container.md:39
+#: manual/design/container.md:40
 msgid "A future `MatrixKernelOps[M, T]` may group checked read/write, row swap, row scale, and scaled-row addition for elimination algorithms. It should be an optional dictionary layered beside read/build, not a requirement added to them."
 msgstr ""
 
-#: manual/design/container.md:44
+#: manual/design/container.md:45
 msgid "Sparse matrices can provide read/build dictionaries that interpret absent entries according to their own representation. Views can provide read/edit without construction."
 msgstr ""
 
@@ -1790,150 +1578,186 @@ msgid "Luna-Flow/linear-algebra"
 msgstr ""
 
 #: manual/index.md:3
-msgid "This overview matches the current repository baseline for **v0.4.7**."
+msgid "v0.5.0 - MoonBit 0.10 migration"
 msgstr ""
 
 #: manual/index.md:5
-msgid "The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt` capability, while integral embeddings follow `Luna-Flow/luna-generic.IntegralHomomorphism`. `Tolerance` remains local to the `mutable` package in this release. Matrix operations with runtime failure modes now use checked `Result[..., LinearAlgebraError]` APIs; the old aborting or `Option`-returning behavior is exposed through explicit `unchecked_*` methods."
+msgid "This overview matches the current repository baseline for **v0.5.0**. This release migrates the module to MoonBit 0.10, makes the method surface of every public type explicit, and temporarily withdraws the native-only OpenBLAS backend. It is a breaking release in the `0.x` line."
 msgstr ""
 
-#: manual/index.md:12
-msgid "The `0.4.7` baseline adds the storage-independent `container` capability layer, generic vector and matrix algorithms, adapters for the concrete storage representations, and documented algebra integration levels for external types."
+#: manual/index.md:10
+msgid "The `mutable` numerical APIs use the shared `Luna-Flow/arithmetic.Sqrt` capability, while integral embeddings follow `Luna-Flow/luna-generic.IntegralHomomorphism`. `Tolerance` remains local to the `mutable` package in this release. Matrix operations with runtime failure modes use checked `Result[..., LinearAlgebraError]` APIs; the old aborting or `Option`-returning behavior is exposed through explicit `unchecked_*` methods."
 msgstr ""
 
-#: manual/index.md:16
-msgid "For earlier release notes and repository history, see [CHANGELOG.md](../../CHANGELOG.md)."
-msgstr ""
-
-#: manual/index.md:19
-msgid "Layered architecture"
+#: manual/index.md:17
+msgid "The repository provides the storage-independent `container` capability layer, generic vector and matrix algorithms, adapters for the concrete storage representations, and documented algebra integration levels for external types."
 msgstr ""
 
 #: manual/index.md:21
-msgid "**Experimental features:** The `algebra` and `container` capability layers are available for integration experiments and ecosystem feedback, but their trait hierarchy, operation dictionaries, error contracts, and function signatures are not yet compatibility-stable. Downstream libraries should not use these packages as stable public boundaries yet. This status does not make the concrete `immut`, `mutable`, or backend APIs experimental merely because they implement or adapt these capabilities."
+msgid "For earlier release notes and repository history, see [CHANGELOG.md](../../CHANGELOG.md)."
+msgstr ""
+
+#: manual/index.md:24
+msgid "Release notes"
+msgstr ""
+
+#: manual/index.md:26
+msgid "**MoonBit 0.10 toolchain required.** The module uses `moon.mod` / `moon.pkg` manifests and current syntax, and builds with zero warnings under `moon check --target all` with `moonc` `0.10.x` or newer."
 msgstr ""
 
 #: manual/index.md:29
-msgid "**`arithmetic`**: Linear-algebra-facing operation capabilities. It reuses scalar operation traits from `Luna-Flow/luna-generic` and `Luna-Flow/arithmetic`, and adds operation-only traits where needed."
-msgstr ""
-
-#: manual/index.md:32
-msgid "**`algebra`**: Semantic mathematical structure capabilities. It defines only the linear-algebra-owned structure traits."
-msgstr ""
-
-#: manual/index.md:34
-msgid "**`backends/default`**: The reference dense backend layer. It exposes mutable dense wrappers `DenseVector` / `DenseMatrix` and immutable dense wrappers `ImmutableDenseVector` / `ImmutableDenseMatrix`."
+msgid "**Explicit method promotion.** Trait methods that remain callable with method syntax are promoted explicitly in each package's `extends.mbt` (`pub extend T with Trait::{m}`): operators, `equal`, `to_string`, and `shape` on the concrete matrix and vector types, `shape` / `transpose` on the `backends/default` matrix wrappers, and `equal` on the `error` types. The method forms of `not_equal`, `output`, `to_repr`, and `arbitrary` are deprecated; use `!=`, string interpolation, `Repr(x)`, or the trait-qualified call instead."
 msgstr ""
 
 #: manual/index.md:37
-msgid "**`backends/openblas`**: A native-only OpenBLAS backend. It exposes the owned `BlasMatrix[T]` and `BlasVector[T]` wrappers for `Float` and `Double`, uses OpenBLAS GEMM for matrix multiplication, and provides backend methods backed by BLAS vector and matrix-vector kernels."
+msgid "**Indexing via `at` / `set` aliases.** The former `op_get` / `op_set` methods are replaced by `at` / `set` (`get` / `set` on `RowView` / `ColView`) aliased to `_[_]` / `_[_]=_`. `x[i]` and `x[i] = v` are unchanged; explicit `x.op_get(i)` / `x.op_set(i, v)` calls become `x.at(i)` / `x.set(i, v)`."
 msgstr ""
 
-#: manual/index.md:41
-msgid "**`error`**: Shared error vocabulary for checked linear-algebra APIs, including shape, exponent, empty-matrix, singular-matrix, non-convergence, and arithmetic failures."
+#: manual/index.md:42
+msgid "**OpenBLAS backend temporarily withdrawn.** `backends/openblas` is not published in `0.5.0` because its upstream binding (`Kaida-Amethyst/openblas` `0.1.3`) does not compile with MoonBit 0.10. The source, documentation, and re-enable steps are preserved in [`contrib/openblas_backend`](https://github.com/Luna-Flow/linear-algebra/blob/main/contrib/openblas_backend/README.md)."
 msgstr ""
 
-#: manual/index.md:44
-msgid "**Trait-driven algorithms**: Backend-independent code should depend on the smallest capability it needs, such as `MatrixShape`, `AdditiveVector`, `VecMulVector`, `TransposeMatrix`, or `MatMulMatrix`."
+#: manual/index.md:47
+msgid "**Need OpenBLAS today?** Stay on `Luna-Flow/linear-algebra@0.4.7` (with a pre-0.10 MoonBit toolchain), or switch to `backends/default`."
 msgstr ""
 
-#: manual/index.md:48
-msgid "Mappings from vector or matrix objects into scalar-like categories, such as inner products or norms, are backend or algorithm details. They are not part of the core structure trait layer."
+#: manual/index.md:50
+msgid "See [CHANGELOG.md](../../CHANGELOG.md) for the full list of breaking changes."
 msgstr ""
 
 #: manual/index.md:52
-msgid "The default dense implementation is a backend, not the center of the ecosystem. Algorithms should depend on minimal linear algebra traits, not concrete dense matrix/vector types."
+msgid "Layered architecture"
 msgstr ""
 
-#: manual/index.md:56
-msgid "This repository is intended to be the linear-algebra substrate for higher-level math, geometry, and solver-style libraries. Domain-specific solve, regression, or optimization workflows should live in downstream packages built on these traits, backend wrappers, and concrete matrix/vector types."
+#: manual/index.md:54
+msgid "**Experimental features:** The `algebra` and `container` capability layers are available for integration experiments and ecosystem feedback, but their trait hierarchy, operation dictionaries, error contracts, and function signatures are not yet compatibility-stable. Downstream libraries should not use these packages as stable public boundaries yet. This status does not make the concrete `immut`, `mutable`, or backend APIs experimental merely because they implement or adapt these capabilities."
 msgstr ""
 
-#: manual/index.md:61
-msgid "The concrete `immut` / `mutable` matrix and vector types are the implementations wrapped by `backends/default`. `DenseVector` and `DenseMatrix` wrap `@mutable.Vector` and `@mutable.Matrix`, while `ImmutableDenseVector` and `ImmutableDenseMatrix` wrap `@immut.Vector` and `@immut.Matrix`. For OpenBLAS-backed native matrix multiplication and vector kernels, choose [`backends/openblas`](./api/backends/openblas.md) explicitly. It is a separate concrete backend, not a runtime backend option inside `@immut.Matrix`."
+#: manual/index.md:62
+msgid "**`arithmetic`**: Linear-algebra-facing operation capabilities. It reuses scalar operation traits from `Luna-Flow/luna-generic` and `Luna-Flow/arithmetic`, and adds operation-only traits where needed."
+msgstr ""
+
+#: manual/index.md:65
+msgid "**`algebra`**: Semantic mathematical structure capabilities. It defines only the linear-algebra-owned structure traits."
+msgstr ""
+
+#: manual/index.md:67
+msgid "**`container`**: Storage-independent read/build, persistent-edit, and mutable-edit operation dictionaries, plus map, conversion, and transpose algorithms. Concrete adapters live in `container/adapters`."
 msgstr ""
 
 #: manual/index.md:70
-msgid "Reader guide"
+msgid "**`backends/default`**: The reference dense backend layer. It exposes mutable dense wrappers `DenseVector` / `DenseMatrix` and immutable dense wrappers `ImmutableDenseVector` / `ImmutableDenseMatrix`."
 msgstr ""
 
-#: manual/index.md:72
-msgid "**General application developers**: start with [mutable](./api/mutable/matrix.md) and [immut](./api/immut/matrix.md). These are the concrete APIs for application code such as business tools, utilities, numeric processing, small games, and visualization logic."
+#: manual/index.md:73
+msgid "**`backends/openblas`** (temporarily withdrawn): The native-only OpenBLAS backend is not built in the current line because its upstream binding does not compile with MoonBit 0.10. See [`contrib/openblas_backend`](https://github.com/Luna-Flow/linear-algebra/blob/main/contrib/openblas_backend/README.md)."
 msgstr ""
 
 #: manual/index.md:77
-msgid "**Math library / general algorithm developers**: read in this order: [arithmetic](./api/arithmetic.md) -> [algebra](./integration/algebra.md) -> [container](./integration/container.md) -> [backends/default](./api/backends/default.md) -> [backends/openblas](./api/backends/openblas.md) -> [immut / mutable](./api/immut/matrix.md). Start from operation capabilities, then structure capabilities, then the default backend wrappers, then the optional OpenBLAS native wrapper, and finally the concrete implementations. This is the intended entry path if you are building a higher-level application library or solver-oriented package on top of this repository."
+msgid "**`error`**: Shared error vocabulary for checked linear-algebra APIs, including shape, exponent, empty-matrix, singular-matrix, non-convergence, and arithmetic failures."
 msgstr ""
 
-#: manual/index.md:91
+#: manual/index.md:80
+msgid "**Trait-driven algorithms**: Backend-independent code should depend on the smallest capability it needs, such as `MatrixShape`, `AdditiveVector`, `VecMulVector`, `TransposeMatrix`, or `MatMulMatrix`."
+msgstr ""
+
+#: manual/index.md:84
+msgid "Mappings from vector or matrix objects into scalar-like categories, such as inner products or norms, are backend or algorithm details. They are not part of the core structure trait layer."
+msgstr ""
+
+#: manual/index.md:88
+msgid "The default dense implementation is a backend, not the center of the ecosystem. Algorithms should depend on minimal linear algebra traits, not concrete dense matrix/vector types."
+msgstr ""
+
+#: manual/index.md:92
+msgid "This repository is intended to be the linear-algebra substrate for higher-level math, geometry, and solver-style libraries. Domain-specific solve, regression, or optimization workflows should live in downstream packages built on these traits, backend wrappers, and concrete matrix/vector types."
+msgstr ""
+
+#: manual/index.md:97
+msgid "The concrete `immut` / `mutable` matrix and vector types are the implementations wrapped by `backends/default`. `DenseVector` and `DenseMatrix` wrap `@mutable.Vector` and `@mutable.Matrix`, while `ImmutableDenseVector` and `ImmutableDenseMatrix` wrap `@immut.Vector` and `@immut.Matrix`. The OpenBLAS-backed native backend is currently withdrawn. When it returns, it will again be a separate concrete backend, not a runtime backend option inside `@immut.Matrix`."
+msgstr ""
+
+#: manual/index.md:106
+msgid "Reader guide"
+msgstr ""
+
+#: manual/index.md:108
+msgid "**General application developers**: start with [mutable](./api/mutable/matrix.md) and [immut](./api/immut/matrix.md). These are the concrete APIs for application code such as business tools, utilities, numeric processing, small games, and visualization logic."
+msgstr ""
+
+#: manual/index.md:113
+msgid "**Math library / general algorithm developers**: read in this order: [arithmetic](./api/arithmetic.md) -> [algebra](./integration/algebra.md) -> [container](./integration/container.md) -> [backends/default](./api/backends/default.md) -> [immut / mutable](./api/immut/matrix.md). Start from operation capabilities, then structure capabilities, then the default backend wrappers, and finally the concrete implementations. This is the intended entry path if you are building a higher-level application library or solver-oriented package on top of this repository."
+msgstr ""
+
+#: manual/index.md:125
 msgid "Used in"
 msgstr ""
 
-#: manual/index.md:93
+#: manual/index.md:127
 msgid "**[`Luna-Flow/geometry3d`](https://github.com/Luna-Flow/geometry3d)**: a compact MoonBit 3D geometry foundation built on `Luna-Flow/linear-algebra`. It adds core geometry, camera/view math, backend-neutral rendering, and TUI / Canvas / GSAP backends on top. Its [documentation](https://luna-flow.github.io/en/geometry3d/) is a good concrete downstream entry point."
 msgstr ""
 
-#: manual/index.md:100
+#: manual/index.md:134
 msgid "Trait-oriented project setup"
 msgstr ""
 
-#: manual/index.md:102
+#: manual/index.md:136
 msgid "If you want to write backend-independent code with the abstract capability layers, add the shared upstream abstraction packages explicitly:"
 msgstr ""
 
-#: manual/index.md:122
+#: manual/index.md:157
 msgid "Use `@algebra` for linear-algebra structure traits, `@la_arithmetic` for linear-algebra-facing operation traits, `@lf_alg` for shared upstream algebraic abstractions, and `@lf_arith` for shared upstream arithmetic types."
 msgstr ""
 
-#: manual/index.md:126
+#: manual/index.md:161
 msgid "Repository positioning"
 msgstr ""
 
-#: manual/index.md:128
+#: manual/index.md:163
 msgid "Matrix and vector infrastructure with both mutable and immutable execution models."
 msgstr ""
 
-#: manual/index.md:131
+#: manual/index.md:166
 msgid "Module overview"
 msgstr ""
 
-#: manual/index.md:133
+#: manual/index.md:168
 msgid "**`immut/matrix`**: Implemented around `src/immut`."
 msgstr ""
 
-#: manual/index.md:134
+#: manual/index.md:169
 msgid "**`immut/vector`**: Implemented around `src/immut`."
 msgstr ""
 
-#: manual/index.md:135
+#: manual/index.md:170
 msgid "**`mutable/matrix`**: Implemented around `src/mutable`."
 msgstr ""
 
-#: manual/index.md:136
+#: manual/index.md:171
 msgid "**`mutable/vector`**: Implemented around `src/mutable`."
 msgstr ""
 
-#: manual/index.md:137
+#: manual/index.md:172
 msgid "**`arithmetic`**: Implemented around `src/arithmetic`."
 msgstr ""
 
-#: manual/index.md:138
+#: manual/index.md:173
 msgid "**`algebra`**: Implemented around `src/algebra`."
 msgstr ""
 
-#: manual/index.md:139
+#: manual/index.md:174
 msgid "**`container`**: Implemented around `src/container` and `src/container/adapters`."
 msgstr ""
 
-#: manual/index.md:140
+#: manual/index.md:175
 msgid "**`backends/default`**: Implemented around `src/backends/default`."
 msgstr ""
 
-#: manual/index.md:141
-msgid "**`backends/openblas`**: Implemented around `src/backends/openblas`."
+#: manual/index.md:176
+msgid "**`backends/openblas`**: Withdrawn; preserved in `contrib/openblas_backend`."
 msgstr ""
 
-#: manual/index.md:142
+#: manual/index.md:177
 msgid "**`error`**: Implemented around `src/error`."
 msgstr ""
 
@@ -2376,40 +2200,40 @@ msgstr ""
 msgid "If you want to use the abstract linear-algebra layers directly, install the full dependency set first:"
 msgstr ""
 
-#: manual/tutorial/algebra.md:25
+#: manual/tutorial/algebra.md:26
 msgid "This gives you one clear split: `@algebra` for linear-algebra structure traits, `@la_arithmetic` for linear-algebra-facing operation traits, `@lf_alg` for the shared upstream algebraic abstractions, and `@lf_arith` for upstream arithmetic types."
 msgstr ""
 
-#: manual/tutorial/algebra.md:30
+#: manual/tutorial/algebra.md:31
 msgid "Small case: build one backend-independent Gram step"
 msgstr ""
 
-#: manual/tutorial/algebra.md:54
+#: manual/tutorial/algebra.md:55
 msgid "This case shows how to describe a backend-independent linear-algebra step in terms of the structure traits owned by this package:"
 msgstr ""
 
-#: manual/tutorial/algebra.md:57
+#: manual/tutorial/algebra.md:58
 msgid "Require `MatMulMatrix` so the algorithm can multiply one matrix-like value by another."
 msgstr ""
 
-#: manual/tutorial/algebra.md:58
+#: manual/tutorial/algebra.md:59
 msgid "Reuse `TransposeMatrix` through the `MatMulMatrix` hierarchy instead of naming a dense backend API directly."
 msgstr ""
 
-#: manual/tutorial/algebra.md:59
+#: manual/tutorial/algebra.md:60
 msgid "Ask `MatrixShape` for the result shape without depending on storage layout."
 msgstr ""
 
-#: manual/tutorial/algebra.md:60
+#: manual/tutorial/algebra.md:61
 msgid "Run the same helper on a real default backend wrapper to confirm the trait contract is practical, not just abstract."
 msgstr ""
 
-#: manual/tutorial/algebra.md:62
+#: manual/tutorial/algebra.md:63
 msgid "The result stays generic while still expressing a recognizably linear-algebraic operation."
 msgstr ""
 
-#: manual/tutorial/algebra.md:65
-#: manual/tutorial/arithmetic.md:46
+#: manual/tutorial/algebra.md:66
+#: manual/tutorial/arithmetic.md:47
 #: manual/tutorial/backends/default.md:32
 #: manual/tutorial/error.md:37
 #: manual/tutorial/immut/matrix.md:91
@@ -2419,20 +2243,20 @@ msgstr ""
 msgid "Suggested flow"
 msgstr ""
 
-#: manual/tutorial/algebra.md:67
+#: manual/tutorial/algebra.md:68
 msgid "Reach for `algebra` when the mathematical meaning matters more than one backend helper."
 msgstr ""
 
-#: manual/tutorial/algebra.md:68
+#: manual/tutorial/algebra.md:69
 msgid "Use traits such as `AdditiveVector`, `MatrixShape`, `TransposeMatrix`, and `MatMulMatrix` to state the required structure."
 msgstr ""
 
-#: manual/tutorial/algebra.md:69
+#: manual/tutorial/algebra.md:70
 msgid "Add narrower arithmetic-only constraints only when the algorithm truly needs a specific computable operation."
 msgstr ""
 
-#: manual/tutorial/algebra.md:71
-#: manual/tutorial/arithmetic.md:52
+#: manual/tutorial/algebra.md:72
+#: manual/tutorial/arithmetic.md:53
 #: manual/tutorial/backends/default.md:38
 #: manual/tutorial/error.md:43
 #: manual/tutorial/immut/matrix.md:97
@@ -2442,11 +2266,11 @@ msgstr ""
 msgid "Practical guidance"
 msgstr ""
 
-#: manual/tutorial/algebra.md:73
+#: manual/tutorial/algebra.md:74
 msgid "Prefer the smallest structure that still matches the algorithm's mathematical meaning."
 msgstr ""
 
-#: manual/tutorial/algebra.md:74
+#: manual/tutorial/algebra.md:75
 msgid "Keep backend-specific products, norms, or solve routines out of the core structure layer unless they can be expressed generically."
 msgstr ""
 
@@ -2458,51 +2282,51 @@ msgstr ""
 msgid "Install the shared abstraction packages first:"
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:23
+#: manual/tutorial/arithmetic.md:24
 msgid "Small case: turn a signed residual into a penalty signal"
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:37
+#: manual/tutorial/arithmetic.md:38
 msgid "This case is small, but it captures the role of the `arithmetic` layer:"
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:39
+#: manual/tutorial/arithmetic.md:40
 msgid "Start from a raw scalar value produced by a linear-algebra routine."
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:40
+#: manual/tutorial/arithmetic.md:41
 msgid "Ask only for the concrete operation you need, here `Abs`."
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:41
+#: manual/tutorial/arithmetic.md:42
 msgid "Convert the signed residual into a penalty value without claiming a richer algebraic structure."
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:43
+#: manual/tutorial/arithmetic.md:44
 msgid "That is the right fit when the algorithm needs a computable helper, not a full mathematical contract."
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:48
+#: manual/tutorial/arithmetic.md:49
 msgid "Use `arithmetic` when the algorithm needs an operation such as `abs`, checked division, checked square root, or approximate comparison."
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:49
+#: manual/tutorial/arithmetic.md:50
 msgid "Keep the requirement as narrow as possible so more scalar types can satisfy it."
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:50
+#: manual/tutorial/arithmetic.md:51
 msgid "Move up to `algebra` only when the algorithm depends on a stronger structural meaning."
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:54
+#: manual/tutorial/arithmetic.md:55
 msgid "Prefer existing `Luna-Flow/luna-generic` or `Luna-Flow/arithmetic` traits when they already express the operation."
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:55
+#: manual/tutorial/arithmetic.md:56
 msgid "Add local linear-algebra-facing traits only when an upstream capability name is missing."
 msgstr ""
 
-#: manual/tutorial/arithmetic.md:56
+#: manual/tutorial/arithmetic.md:57
 msgid "Do not use an arithmetic-only trait as a substitute for a stronger algebraic guarantee."
 msgstr ""
 
@@ -2556,58 +2380,6 @@ msgstr ""
 
 #: manual/tutorial/backends/default.md:42
 msgid "Treat `backends/default` as a bridge layer, not as the only place where generic linear algebra code should live."
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:1
-msgid "backends/openblas tutorial"
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:3
-msgid "Before you start"
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:5
-msgid "`backends/openblas` is `native` only. The current repository configuration searches OpenBLAS from:"
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:15
-msgid "This covers the default Homebrew layout on macOS and the default Ubuntu OpenBLAS package layout. If OpenBLAS is not installed in one of those places, native build and test commands for this package will fail at compile or link time."
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:20
-msgid "Construct a `BlasMatrix`"
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:34
-msgid "Use `Float` or `Double`. Those are the only scalar types that currently implement `BLASInnerType`."
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:37
-msgid "Multiply matrices through OpenBLAS"
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:56
-msgid "`Mul` is the operation that goes through OpenBLAS GEMM. Dimension mismatch keeps the same semantics as the repository's other unchecked matrix multiplication paths: it aborts."
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:60
-msgid "Convert between `BlasMatrix` and the default immutable dense backend"
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:75
-msgid "Equivalent conversion APIs also exist for the concrete immutable matrix type:"
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:80
-msgid "Minimal native test flow"
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:82
-msgid "Use native commands when exercising this backend:"
-msgstr ""
-
-#: manual/tutorial/backends/openblas.md:89
-msgid "If you want to depend on this package from another MoonBit package, keep the same rule in mind: choose `BlasMatrix` explicitly and build for `native`."
 msgstr ""
 
 #: manual/tutorial/container.md:1

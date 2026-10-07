@@ -30,8 +30,9 @@ different operations and must remain separate optional capabilities.
 ## Dependency direction
 
 `container` depends only on `error`. `container/adapters` depends on the core
-capability package and the dense implementations. OpenBLAS depends on the core
-package directly and remains native-only. Neither `algebra` nor the concrete
+capability package and the dense implementations. The temporarily withdrawn
+OpenBLAS backend (preserved in `contrib/openblas_backend`) depended on the core
+package directly and was native-only. Neither `algebra` nor the concrete
 dense implementations depend on the adapter package.
 
 ## Future kernels

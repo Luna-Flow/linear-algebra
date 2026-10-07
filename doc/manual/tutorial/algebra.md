@@ -6,7 +6,7 @@ If you want to use the abstract linear-algebra layers directly, install the
 full dependency set first:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.7
+moon add Luna-Flow/linear-algebra@0.5.0
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -14,6 +14,7 @@ moon add Luna-Flow/arithmetic@0.2.2
 Recommended `moon.pkg` imports:
 
 ```moonbit nocheck
+///|
 import {
   "Luna-Flow/linear-algebra/algebra",
   "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,
@@ -32,7 +33,7 @@ types.
 ```moonbit check
 ///|
 fn[M : @algebra.MatMulMatrix] gram_step(matrix : M) -> M {
-  matrix.transpose() * matrix
+  @algebra.TransposeMatrix::transpose(matrix) * matrix
 }
 
 ///|

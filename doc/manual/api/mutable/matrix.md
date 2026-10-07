@@ -1,6 +1,6 @@
 # `@mutable.Matrix`
 
-API baseline for `@mutable.Matrix` in the current `0.4.7` repository state.
+API baseline for `@mutable.Matrix` in the current `0.5.0` repository state.
 Square-root-dependent APIs use `Luna-Flow/arithmetic.Sqrt`; `Tolerance`
 remains defined by `mutable`.
 
@@ -96,6 +96,26 @@ remains defined by `mutable`.
   Structural and numeric predicates.
 - `frobenius_norm()`
   Non-checked aggregate numeric helper for supported element types.
+
+## Method surface (MoonBit 0.10)
+
+MoonBit 0.10 no longer turns trait implementations into methods implicitly.
+Each package lists the trait methods it promotes to method-call syntax in its
+`extends.mbt` (`pub extend T with Trait::{method}`); any other trait method is
+reached through its operator or a trait-qualified call such as
+`Trait::method(x)`. Promotions marked deprecated and hidden from the docs
+(`not_equal`, `output`, `to_repr`, `arbitrary`) exist only for source
+compatibility; use `!=`, string interpolation, `Repr(x)`, or the quickcheck
+trait instead. Indexing is provided by ordinary methods annotated with
+`#alias("_[_]")` / `#alias("_[_]=_")`, so `x[i]` and `x.at(i)` (or `x.get(i)`)
+are equivalent; the former `op_get` / `op_set` names are gone from the API.
+
+Promoted on `Matrix` and `Transpose`: `add`, `sub`, `mul`, `neg`, `equal`,
+`to_string`; `Matrix` also promotes `shape`. `RowView` and `ColView` promote
+`to_string`. `m[r]` is `Matrix::at(r)` / `Transpose::at(r)` returning a
+`Lens[T]`, and `Lens::at` / `Lens::set` back `m[r][c]` and `m[r][c] = x`.
+`RowView::get` / `set` and `ColView::get` / `set` back `view[i]` and
+`view[i] = x`.
 
 ## Guidance
 

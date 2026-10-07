@@ -5,7 +5,7 @@
 Install the shared abstraction packages first:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.7
+moon add Luna-Flow/linear-algebra@0.5.0
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -13,6 +13,7 @@ moon add Luna-Flow/arithmetic@0.2.2
 Recommended `moon.pkg` imports:
 
 ```moonbit nocheck
+///|
 import {
   "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,
   "Luna-Flow/luna-generic" @lf_alg,

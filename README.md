@@ -2,43 +2,75 @@
 
 [![img](https://img.shields.io/badge/Maintainer-KCN--judu-violet)](https://github.com/KCN-judu) [![img](https://img.shields.io/badge/Collaborator-CAIMEOX-purple)](https://github.com/CAIMEOX) [![img](https://img.shields.io/badge/License-Apache--2.0-blue)](https://github.com/Luna-Flow/linear-algebra/blob/main/LICENSE) ![img](https://img.shields.io/badge/State-active-success)
 
-## v0.4.7 - Storage-Independent Container Capabilities
+## v0.5.0 - MoonBit 0.10 Migration
 
-This README matches the **v0.4.7** repository state. This release introduces a
-storage-independent `container` layer for vector and matrix capabilities,
-generic algorithms, and adapters across the concrete immutable, mutable,
-default dense, view, and OpenBLAS representations.
+This README matches the **v0.5.0** repository state. This release migrates the
+module to MoonBit 0.10, makes the method surface of every public type explicit,
+and temporarily withdraws the native-only OpenBLAS backend. It is a breaking
+release in the `0.x` line.
 
 For earlier release notes and repository history, see
 [CHANGELOG.md](./CHANGELOG.md).
 
 ### Release Notes
 
-- The new `container` layer exposes read, build, persistent-edit, and
+- **MoonBit 0.10 toolchain required.** The module now uses `moon.mod` /
+  `moon.pkg` manifests and current syntax, and builds with zero warnings under
+  `moon check --target all` with `moonc` `0.10.x` or newer.
+- **Explicit method promotion.** Trait methods that remain callable with
+  method syntax are promoted explicitly in each package's `extends.mbt`
+  (`pub extend T with Trait::{m}`): operators (`add`, `sub`, `mul`, `neg`),
+  `equal`, `to_string`, and `shape` on the `immut` / `mutable` matrix and
+  vector types, `shape` / `transpose` on the `backends/default` matrix
+  wrappers, and `equal` on the `error` types. The method forms of
+  `not_equal`, `output`, `to_repr`, and `arbitrary` are deprecated; use `!=`,
+  string interpolation, `Repr(x)`, or the trait-qualified call instead.
+- **Indexing via `at` / `set` aliases.** The former `op_get` / `op_set`
+  methods are replaced by ordinary `at` / `set` methods (`get` / `set` on
+  `RowView` / `ColView`) aliased to `_[_]` / `_[_]=_`. `x[i]` and
+  `x[i] = v` work exactly as before; only explicit `x.op_get(i)` /
+  `x.op_set(i, v)` calls need to change to `x.at(i)` / `x.set(i, v)`.
+- **OpenBLAS backend temporarily withdrawn.** `backends/openblas`
+  (`BlasMatrix[T]`, `BlasVector[T]`, and the `blas_*_ops` container adapters)
+  is not published in `0.5.0` because its upstream binding
+  (`Kaida-Amethyst/openblas` `0.1.3`) does not compile with MoonBit 0.10. The
+  source, documentation, blocker details, and re-enable steps are preserved in
+  [`contrib/openblas_backend`](./contrib/openblas_backend/README.md).
+- **Need OpenBLAS today?** Stay on the previous release with
+  `moon add Luna-Flow/linear-algebra@0.4.7` (and a pre-0.10 MoonBit
+  toolchain), or switch to `backends/default`.
+- **Documentation compiled on every target.** The `src/doc_*` documentation
+  packages no longer depend on OpenBLAS, so the examples in `doc/*` build and
+  run on `wasm-gc`, `js`, `native`, and `wasm` as part of `./run_test.sh`.
+- `perf_support` fixture-file types (`CaseFixtureFile`, `CaseFixtureInputs`,
+  `CaseFixtureShape`) are now private.
+
+See [CHANGELOG.md](./CHANGELOG.md) for the full list of breaking changes.
+
+### Current Capabilities
+
+- The `container` layer exposes read, build, persistent-edit, and
   mutable-edit operation dictionaries without requiring a concrete storage
   representation.
 - Generic vector/matrix map and conversion algorithms, plus matrix transpose,
-  can now operate through container capabilities and adapters.
-- Algebra integration guidance now documents shape, additive, transpose,
+  operate through container capabilities and adapters for the immutable,
+  mutable, default dense, and view representations.
+- Algebra integration guidance documents shape, additive, transpose,
   Hadamard, and matrix-multiplication capability levels for external types.
-- `immut` no longer exposes runtime backend-selection APIs. Backend choice is
-  now expressed by the concrete type you use, not by a runtime ADT.
-- `backends/default` now provides backend methods `scale`, `dot`, `axpy`, and
+- Backend choice is expressed by the concrete type you use, not by a runtime
+  ADT; `immut` does not expose runtime backend-selection APIs.
+- `backends/default` provides backend methods `scale`, `dot`, `axpy`, and
   `matvec` on its dense vector and matrix wrappers.
-- `backends/openblas` now exposes both `BlasMatrix[T]` and `BlasVector[T]` for
-  `Float` and `Double`, using OpenBLAS GEMM for matrix multiplication plus
-  BLAS-backed `dot`, `scal`, `axpy`, and `gemv` for vector and matrix-vector
-  work.
 - Scalar-valued vector products and BLAS-style linear combinations remain
-  backend methods. They were not promoted into new `@algebra` traits in this
-  release.
-- The default test gate now exercises the container packages and default
-  backend across Wasm GC, JavaScript, native, and Wasm targets.
+  backend methods rather than `@algebra` traits.
+- The default test gate exercises the container packages, default backend,
+  `mutable`, and compiled documentation across Wasm GC, JavaScript, native,
+  and Wasm targets.
 
 ## Layered Architecture
 
-The checked `0.4.x` line keeps runtime matrix failures explicit and exposes the
-first layered capability packages for backend-independent linear algebra code.
+The checked API line (since `0.4.0`) keeps runtime matrix failures explicit and
+exposes the first layered capability packages for backend-independent linear algebra code.
 
 > **Experimental features:** The `algebra` and `container` capability layers
 > are available for integration experiments and ecosystem feedback, but their
@@ -64,11 +96,11 @@ first layered capability packages for backend-independent linear algebra code.
   `ImmutableDenseVector` / `ImmutableDenseMatrix` over `immut`, plus backend
   methods for scaling, dot products, AXPY-style combinations, and matrix-vector
   multiplication.
-- **`backends/openblas`**: A native-only OpenBLAS backend. It exposes the owned
-  `BlasMatrix[T]` and `BlasVector[T]` wrappers for `Float` and `Double`, uses
-  OpenBLAS GEMM for matrix multiplication, BLAS vector kernels for backend
-  methods like `dot` / `axpy`, and keeps backend choice explicit through the
-  concrete type rather than a runtime selector.
+- **`backends/openblas`** (temporarily withdrawn): The native-only OpenBLAS
+  backend is not part of the current build because its upstream binding does
+  not compile with MoonBit 0.10. The preserved source, the blocker, and the
+  re-enable steps live in
+  [`contrib/openblas_backend`](./contrib/openblas_backend/README.md).
 - **Trait-driven algorithms**: New backend-independent algorithms should depend
   on the smallest capability they need, such as `MatrixShape`,
   `AdditiveVector`, `VecMulVector`, `TransposeMatrix`, or `MatMulMatrix`, not
@@ -96,9 +128,10 @@ The default backend wrappers are built on top of these concrete types:
 `backends/default.ImmutableDenseMatrix` wrap `immut.Vector` and
 `immut.Matrix`. If you want the trait-oriented default backend entry point, see
 [the `backends/default` docs](./doc/manual/api/backends/default.md).
-For OpenBLAS-backed native matrix multiplication and vector kernels, use
-[`backends/openblas`](./doc/manual/api/backends/openblas.md) explicitly; it is a
-separate concrete backend, not a runtime backend option inside `@immut.Matrix`.
+An OpenBLAS-backed native backend is currently withdrawn; see
+[`contrib/openblas_backend`](./contrib/openblas_backend/README.md). When it
+returns, it will again be a separate concrete backend, not a runtime backend
+option inside `@immut.Matrix`.
 
 ### Trait-Oriented Setup
 
@@ -107,7 +140,7 @@ layers, install `linear-algebra` together with the upstream scalar abstraction
 packages it builds on:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.7
+moon add Luna-Flow/linear-algebra@0.5.0
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -145,8 +178,8 @@ abstractions, and `@lf_arith` for shared upstream arithmetic types such as
 - **Backend Consistency**: Native, JS, Wasm, and Wasm GC matrix implementations use the same arithmetic capability identity and explicit trait invocation.
 - **Compatibility Boundary**: `Tolerance` remains a `mutable` package trait in this release; it has not yet moved to `arithmetic`.
 - **Backend Choice**: `@immut.Matrix` does not expose a runtime backend
-  selector. Choose `backends/default` for the repository dense wrappers or
-  `backends/openblas` for the native-only OpenBLAS matrix wrapper.
+  selector. Choose `backends/default` for the repository dense wrappers. The
+  native-only `backends/openblas` wrapper is temporarily withdrawn.
 
 ### API Guidance & Performance
 
@@ -209,11 +242,9 @@ test "linear-algebra basic workflow" {
   [`algebra`](./doc/manual/integration/algebra.md) ->
   [`container`](./doc/manual/integration/container.md) ->
   [`backends/default`](./doc/manual/api/backends/default.md) ->
-  [`backends/openblas`](./doc/manual/api/backends/openblas.md) ->
   [`immut` / `mutable`](./doc/manual/api/immut/matrix.md). Start from operation
   capabilities, then structure capabilities, then the default backend wrappers,
-  then the optional OpenBLAS native wrapper, and finally the concrete
-  implementations. This is the intended entry path if
+  and finally the concrete implementations. This is the intended entry path if
   you are building a higher-level linear-algebra application library, geometry
   package, or solver-style library on top of this repository.
 
@@ -238,8 +269,7 @@ test "linear-algebra basic workflow" {
   [`container` tutorial](./doc/manual/tutorial/container.md),
   [`container` ecosystem integration](./doc/manual/integration/container.md),
   [`backends/default` API](./doc/manual/api/backends/default.md),
-  [`backends/openblas` API](./doc/manual/api/backends/openblas.md),
-  [`backends/openblas` tutorial](./doc/manual/tutorial/backends/openblas.md),
+  [`backends/openblas` (withdrawn)](./contrib/openblas_backend/README.md),
   [`error` API](./doc/manual/api/error.md)
 
 ### Used In
@@ -263,7 +293,7 @@ structure.
 
 ## Changelog
 
-Older release notes, historical version summaries, and pre-`0.4.7` repository
+Older release notes, historical version summaries, and pre-`0.5.0` repository
 highlights now live in [CHANGELOG.md](./CHANGELOG.md). This README keeps the
 current baseline and entry points front and center.
 
@@ -283,9 +313,10 @@ LINEAR_ALGEBRA_TEST_BENCH=1 ./run_test.sh
 ```
 
 `run_test.sh` runs the default repository gate: `immut`, `consistency`,
-`container`, `container/adapters`, `backends/default`, and `mutable`, with the
-container, default-backend, and mutable packages covered on `wasm-gc`, `js`,
-`native`, and `wasm`.
+`container`, `container/adapters`, `backends/default`, `mutable`, and the
+compiled documentation packages `doc_en_us` / `doc_zh_cn` / `doc_ja_jp`, with
+the container, default-backend, mutable, and documentation packages covered on
+`wasm-gc`, `js`, `native`, and `wasm`.
 
 `perf_support` and `perf_runner` stay opt-in for local fixture-recovery checks
 and performance diagnostics. Run them explicitly with `moon test -p ...` or use

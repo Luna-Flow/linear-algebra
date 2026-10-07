@@ -1,1 +1,0 @@
-../../doc/zh_CN/doc_standard.md

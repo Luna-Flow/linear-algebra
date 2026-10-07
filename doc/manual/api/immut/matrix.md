@@ -1,6 +1,6 @@
 # `@immut.Matrix`
 
-API baseline for `@immut.Matrix` in the current `0.4.7` repository state.
+API baseline for `@immut.Matrix` in the current `0.5.0` repository state.
 
 ## Overview
 
@@ -76,6 +76,25 @@ Important methods:
 - `transpose`, `horizontal_combine`, `vertical_combine`
 - `swap_rows`, `swap_cols`
 - `identity`, `pow`, `determinant`, `adjoint`
+
+## Method surface (MoonBit 0.10)
+
+MoonBit 0.10 no longer turns trait implementations into methods implicitly.
+Each package lists the trait methods it promotes to method-call syntax in its
+`extends.mbt` (`pub extend T with Trait::{method}`); any other trait method is
+reached through its operator or a trait-qualified call such as
+`Trait::method(x)`. Promotions marked deprecated and hidden from the docs
+(`not_equal`, `output`, `to_repr`, `arbitrary`) exist only for source
+compatibility; use `!=`, string interpolation, `Repr(x)`, or the quickcheck
+trait instead. Indexing is provided by ordinary methods annotated with
+`#alias("_[_]")` / `#alias("_[_]=_")`, so `x[i]` and `x.at(i)` (or `x.get(i)`)
+are equivalent; the former `op_get` / `op_set` names are gone from the API.
+
+Promoted on `Matrix`: `add`, `sub`, `mul`, `neg` (the `+ - *` and unary `-`
+operators), `equal`, `shape`, `to_string`. Promoted on `MatrixFn`: `add`,
+`sub`, `neg`, `equal`, `shape`, `to_string`. Row indexing is `Matrix::at` /
+`MatrixFn::at` returning `Indexed[T]`, whose own `at` reads the element, so
+`m[r][c]` is `m.at(r).at(c)`.
 
 ## Guidance
 

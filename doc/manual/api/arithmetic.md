@@ -1,6 +1,6 @@
 # `linear-algebra/arithmetic`
 
-API baseline for `Luna-Flow/linear-algebra/arithmetic` in the current `0.4.7`
+API baseline for `Luna-Flow/linear-algebra/arithmetic` in the current `0.5.0`
 repository state.
 
 ## Purpose
@@ -15,7 +15,7 @@ If you want to use the linear-algebra operation traits together with the shared
 upstream abstractions, start with:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.7
+moon add Luna-Flow/linear-algebra@0.5.0
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -23,6 +23,7 @@ moon add Luna-Flow/arithmetic@0.2.2
 Recommended `moon.pkg` imports:
 
 ```moonbit nocheck
+///|
 import {
   "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,
   "Luna-Flow/luna-generic" @lf_alg,

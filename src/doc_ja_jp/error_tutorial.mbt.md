@@ -1,1 +1,0 @@
-../../doc/ja_JP/error/tutorial.md

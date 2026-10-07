@@ -49,6 +49,7 @@ The `container/adapters` package provides factories for `immut.Vector`,
 wrappers, mutable row/column views, and mutable transpose views. Views provide
 read and mutable-edit capabilities but no build capability.
 
-The native-only OpenBLAS package provides `blas_vector_read_ops`,
-`blas_vector_build_ops`, `blas_matrix_read_ops`, and `blas_matrix_build_ops`.
-It intentionally does not advertise persistent editing.
+The native-only OpenBLAS backend, which provided `blas_vector_read_ops`,
+`blas_vector_build_ops`, `blas_matrix_read_ops`, and `blas_matrix_build_ops`
+(read/build only, no persistent editing), is temporarily withdrawn. Its
+adapters are preserved with the backend in `contrib/openblas_backend`.

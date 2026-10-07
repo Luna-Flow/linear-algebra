@@ -1,1 +1,0 @@
-../../doc/ja_JP/backends/openblas/api.md

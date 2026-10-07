@@ -92,12 +92,12 @@ impl @algebra.TransposeMatrix for EcosystemScalarMatrix with fn transpose(self) 
 
 ///|
 impl Add for EcosystemScalarMatrix with fn add(left, right) {
-  { value: left.value + right.value }
+  { value: left.value + right.value, }
 }
 
 ///|
 impl Neg for EcosystemScalarMatrix with fn neg(value) {
-  { value: -value.value }
+  { value: -value.value, }
 }
 
 ///|
@@ -107,7 +107,7 @@ impl Sub for EcosystemScalarMatrix with fn sub(left, right) {
 
 ///|
 impl Mul for EcosystemScalarMatrix with fn mul(left, right) {
-  { value: left.value * right.value }
+  { value: left.value * right.value, }
 }
 
 ///|
@@ -118,15 +118,15 @@ impl @algebra.MatMulMatrix for EcosystemScalarMatrix
 
 ///|
 fn[M : @algebra.MatMulMatrix] ecosystem_gram(matrix : M) -> M {
-  matrix.transpose() * matrix
+  @algebra.TransposeMatrix::transpose(matrix) * matrix
 }
 
 ///|
 test "external algebra type participates by capability" {
-  let matrix : EcosystemScalarMatrix = { value: 3 }
-  let other : EcosystemScalarMatrix = { value: 4 }
+  let matrix : EcosystemScalarMatrix = { value: 3, }
+  let other : EcosystemScalarMatrix = { value: 4, }
   inspect((matrix + other).value, content="7")
-  inspect(matrix.transpose().value, content="3")
+  inspect(@algebra.TransposeMatrix::transpose(matrix).value, content="3")
   inspect(ecosystem_gram(matrix).value, content="9")
 }
 ```

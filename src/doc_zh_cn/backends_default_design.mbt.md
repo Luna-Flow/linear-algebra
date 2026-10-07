@@ -1,1 +1,0 @@
-../../doc/zh_CN/backends/default/design.md

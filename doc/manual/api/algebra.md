@@ -1,6 +1,6 @@
 # `linear-algebra/algebra`
 
-API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.4.7`
+API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.5.0`
 repository state.
 
 ## Experimental status
@@ -30,7 +30,7 @@ trait level and understand its operator commitments.
 scalar abstractions, add them explicitly:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.4.7
+moon add Luna-Flow/linear-algebra@0.5.0
 moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
@@ -38,6 +38,7 @@ moon add Luna-Flow/arithmetic@0.2.2
 Recommended `moon.pkg` imports:
 
 ```moonbit nocheck
+///|
 import {
   "Luna-Flow/linear-algebra/algebra",
   "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,
@@ -75,8 +76,8 @@ impl @algebra.VectorShape for ToyVector with fn length(self) {
 
 ///|
 test "shape traits report dimensions" {
-  let matrix : ToyMatrix = { rows: 2, cols: 3 }
-  let vector : ToyVector = { size: 4 }
+  let matrix : ToyMatrix = { rows: 2, cols: 3, }
+  let vector : ToyVector = { size: 4, }
   let (rows, cols) = @algebra.MatrixShape::shape(matrix)
   inspect(rows, content="2")
   inspect(cols, content="3")
@@ -103,12 +104,12 @@ impl @algebra.VectorShape for AddVec with fn length(_) {
 
 ///|
 impl Add for AddVec with fn add(left, right) {
-  { value: left.value + right.value }
+  { value: left.value + right.value, }
 }
 
 ///|
 impl Neg for AddVec with fn neg(value) {
-  { value: -value.value }
+  { value: -value.value, }
 }
 
 ///|
@@ -126,8 +127,8 @@ fn[T : @algebra.AdditiveVector] add_vectors(left : T, right : T) -> T {
 
 ///|
 test "AdditiveVector packages vector addition and subtraction" {
-  let left : AddVec = { value: 7 }
-  let right : AddVec = { value: 2 }
+  let left : AddVec = { value: 7, }
+  let right : AddVec = { value: 2, }
   inspect(add_vectors(left, right).value, content="9")
   inspect(add_vectors(left, -right).value, content="5")
 }
@@ -152,12 +153,12 @@ impl @algebra.VectorShape for MulVec with fn length(_) {
 
 ///|
 impl Add for MulVec with fn add(left, right) {
-  { value: left.value + right.value }
+  { value: left.value + right.value, }
 }
 
 ///|
 impl Neg for MulVec with fn neg(value) {
-  { value: -value.value }
+  { value: -value.value, }
 }
 
 ///|
@@ -167,7 +168,7 @@ impl Sub for MulVec with fn sub(left, right) {
 
 ///|
 impl Mul for MulVec with fn mul(left, right) {
-  { value: left.value * right.value }
+  { value: left.value * right.value, }
 }
 
 ///|
@@ -183,8 +184,8 @@ fn[T : @algebra.VecMulVector] hadamard_product(left : T, right : T) -> T {
 
 ///|
 test "VecMulVector adds element-wise multiplication" {
-  let left : MulVec = { value: 3 }
-  let right : MulVec = { value: 4 }
+  let left : MulVec = { value: 3, }
+  let right : MulVec = { value: 4, }
   inspect(hadamard_product(left, right).value, content="12")
 }
 ```
@@ -207,12 +208,12 @@ impl @algebra.MatrixShape for Flip2x2 with fn shape(_) {
 
 ///|
 impl @algebra.TransposeMatrix for Flip2x2 with fn transpose(self) {
-  { a11: self.a11, a12: self.a21, a21: self.a12, a22: self.a22 }
+  { a11: self.a11, a12: self.a21, a21: self.a12, a22: self.a22, }
 }
 
 ///|
 test "TransposeMatrix keeps shape and swaps off-diagonal entries" {
-  let matrix : Flip2x2 = { a11: 1, a12: 2, a21: 3, a22: 4 }
+  let matrix : Flip2x2 = { a11: 1, a12: 2, a21: 3, a22: 4, }
   let transposed = @algebra.TransposeMatrix::transpose(matrix)
   let (rows, cols) = @algebra.MatrixShape::shape(transposed)
   inspect(rows, content="2")
@@ -250,12 +251,12 @@ impl @algebra.TransposeMatrix for ScalarMatrix with fn transpose(self) {
 
 ///|
 impl Add for ScalarMatrix with fn add(left, right) {
-  { value: left.value + right.value }
+  { value: left.value + right.value, }
 }
 
 ///|
 impl Neg for ScalarMatrix with fn neg(value) {
-  { value: -value.value }
+  { value: -value.value, }
 }
 
 ///|
@@ -265,7 +266,7 @@ impl Sub for ScalarMatrix with fn sub(left, right) {
 
 ///|
 impl Mul for ScalarMatrix with fn mul(left, right) {
-  { value: left.value * right.value }
+  { value: left.value * right.value, }
 }
 
 ///|
@@ -281,8 +282,8 @@ fn[T : @algebra.MatMulMatrix] multiply_matrices(left : T, right : T) -> T {
 
 ///|
 test "matrix additive and multiplicative traits compose cleanly" {
-  let left : ScalarMatrix = { value: 2 }
-  let right : ScalarMatrix = { value: 5 }
+  let left : ScalarMatrix = { value: 2, }
+  let right : ScalarMatrix = { value: 5, }
   inspect((left + right).value, content="7")
   inspect(multiply_matrices(left, right).value, content="10")
 }

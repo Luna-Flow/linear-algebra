@@ -20,7 +20,7 @@ fn glyph_for_intensity(value : Int) -> String {
 
 ///|
 fn render_ascii(matrix : @immut.Matrix[Int]) -> String {
-  let logger = StringBuilder::new()
+  let logger = StringBuilder()
   for row in 0..<matrix.row() {
     for col in 0..<matrix.col() {
       logger.write_string(glyph_for_intensity(matrix[row][col]))

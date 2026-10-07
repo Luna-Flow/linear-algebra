@@ -1,7 +1,7 @@
 # `linear-algebra/backends/default`
 
 API baseline for `Luna-Flow/linear-algebra/backends/default` in the current
-`0.4.7` repository state.
+`0.5.0` repository state.
 
 ## Purpose
 
@@ -37,7 +37,7 @@ Owned wrapper for the default mutable dense vector backend.
   returns the wrapped mutable vector.
 - `DenseVector::length(self) -> Int`
   returns vector length.
-- `DenseVector::op_get(self, index : Int) -> T`
+- `DenseVector::at(self, index : Int) -> T` (`_[_]`)
   supports read indexing.
 
 ### Backend methods
@@ -125,7 +125,7 @@ Owned wrapper for the default immutable dense vector backend.
 - `ImmutableDenseVector::make(length : Int, value : T)`
 - `ImmutableDenseVector::inner(self) -> @immut.Vector[T]`
 - `ImmutableDenseVector::length(self) -> Int`
-- `ImmutableDenseVector::op_get(self, index : Int) -> T`
+- `ImmutableDenseVector::at(self, index : Int) -> T` (`_[_]`)
 
 ### Backend methods
 
@@ -190,6 +190,26 @@ Owned wrapper for the default immutable dense matrix backend.
   capability.
 - `transpose[M : @algebra.TransposeMatrix](matrix : M) -> M`
   dispatches closed transpose through the algebra trait.
+
+## Method surface (MoonBit 0.10)
+
+MoonBit 0.10 no longer turns trait implementations into methods implicitly.
+Each package lists the trait methods it promotes to method-call syntax in its
+`extends.mbt` (`pub extend T with Trait::{method}`); any other trait method is
+reached through its operator or a trait-qualified call such as
+`Trait::method(x)`. Promotions marked deprecated and hidden from the docs
+(`not_equal`, `output`, `to_repr`, `arbitrary`) exist only for source
+compatibility; use `!=`, string interpolation, `Repr(x)`, or the quickcheck
+trait instead. Indexing is provided by ordinary methods annotated with
+`#alias("_[_]")` / `#alias("_[_]=_")`, so `x[i]` and `x.at(i)` (or `x.get(i)`)
+are equivalent; the former `op_get` / `op_set` names are gone from the API.
+
+All four wrappers promote `add`, `sub`, `mul`, and `neg` so the operators
+also read as methods. `DenseMatrix` and `ImmutableDenseMatrix` additionally
+promote `@algebra.MatrixShape::shape` and `@algebra.TransposeMatrix::transpose`.
+`DenseVector::at` / `ImmutableDenseVector::at` back `v[i]`. In generic code
+bounded by the `@algebra` traits, keep using the trait-qualified form, e.g.
+`@algebra.TransposeMatrix::transpose(m)`.
 
 ## Boundary
 
