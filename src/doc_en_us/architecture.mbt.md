@@ -1,0 +1,1 @@
+../../doc/manual/architecture.md

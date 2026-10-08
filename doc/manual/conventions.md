@@ -5,7 +5,9 @@ These rules extend the Luna-Flow documentation standard for linear-algebra. The 
 ## Pages and chapters
 
 - The [overview](index.md) describes the current release baseline: what the release contains, where to start reading, and how the packages are positioned. `CHANGELOG.md` owns the historical release timeline and older release notes.
-- The `immut` and `mutable` packages are documented per type rather than per package: `api/immut/matrix.md` and `api/immut/vector.md`, and the same under `api/mutable/`, `design/` and `tutorial/`.
+- Every package has one page per chapter, named after its path: `api/immut.md` documents `Matrix`, `Vector` and `MatrixFn` together, and `api/container/adapters.md` documents `src/container/adapters`.
+- Internal and tooling packages (`internal`, `consistency`, `perf`, `perf_runner`, `perf_support`) have shorter pages focused on their role and invariants.
+- Runnable examples are fenced `moonbit check` and compile as tests of `src/doc_en_us`, which links every page. Top-level names in examples must be unique across the whole manual; prefix them with the page (for example `mut_tut_`).
 - The `integration/` chapter explains how external types join the `algebra` and `container` capability layers.
 - Keep API references specification-oriented, tutorials usage-oriented, and design docs responsibility- and tradeoff-oriented
 - Backend wrapper packages should document platform constraints, conversion boundaries, and whether behavior is implemented locally or delegated to an external library kernel

@@ -1,6 +1,6 @@
 {
   "title": "linear-algebra",
-  "summary": "Trait-oriented linear algebra foundations for MoonBit, with checked APIs, backend wrappers, and mutable/immutable dense matrix and vector types.",
+  "summary": "Dense matrices and vectors for MoonBit in immutable and in-place forms, with checked numerical routines and capability traits for generic linear algebra.",
   "locales": [
     "zh_CN",
     "ja_JP"
