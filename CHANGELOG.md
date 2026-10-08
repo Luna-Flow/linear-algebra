@@ -16,6 +16,34 @@ points; older release history lives in this file.
   `@lf_alg.lift_to` instead of the deprecated
   `IntegralHomomorphism::from_integral`.
 
+### Documentation
+
+- Brought the manual to the Luna Flow documentation standard: every API page
+  opens with Purpose and Importing sections, every tutorial with an
+  "I want to / Use" table, every design page has a constraints section and
+  the order goal, constraints, decisions, mathematics, invariants,
+  alternatives, boundaries. The overview lists the pages per package, the
+  exported items, numerical caveats, reading paths and validation commands.
+- Reviewed the mathematics against the code. The `mutable` design page now
+  derives `PA = LU`, the growth bound, the closed-form determinant error,
+  Cholesky and Sylvester's criterion, Householder reflectors, the Wilkinson
+  shift and the power-method residual bound; the `immut` design page derives
+  Bareiss elimination from Sylvester's identity. Corrected claims: the LU
+  backward error carries a factor `n^2`, not `n`; the `eigen` backward error
+  includes the absolute thresholds; `power_method` does two matrix-vector
+  products per iteration; `pow` performs `floor(log2 k) + popcount(k)`
+  products; a lazy `MatrixFn` power costs `(2n)^d` reads per entry;
+  `checked_div` reports every zero divisor and `approx_eq` is not reflexive
+  on infinities.
+- Documented known defects with warnings, without changing the code: the
+  `2 x 2` path of `@mutable.Matrix::eigen` merges eigenvalues closer than
+  about `6e-6`, can return a singular eigenvector matrix, and can abort with
+  "complex eigenvalues" on symmetric input with entries near `1e8`; all
+  `mutable` zero tests are absolute, so `eigen` is wrong for matrices whose
+  entries are below about `1e-11`; `@immut.Matrix::determinant` overflows to
+  NaN on `Double` matrices whose determinant is representable.
+- Translated the revised manual into Chinese and Japanese.
+
 ## 0.5.0 - 2026-10-07
 
 Current repository release. MoonBit 0.10 migration and temporary withdrawal of
