@@ -1,0 +1,1 @@
+../../doc/manual/design/container/adapters.md

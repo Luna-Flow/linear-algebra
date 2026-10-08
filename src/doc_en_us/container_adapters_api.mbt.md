@@ -1,0 +1,1 @@
+../../doc/manual/api/container/adapters.md

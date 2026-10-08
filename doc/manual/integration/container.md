@@ -1,4 +1,4 @@
-# Luna-Flow ecosystem integration
+# Container integration
 
 External libraries should adopt only the capabilities that match their real
 semantics. Integration is not an all-or-nothing conformance level, and no

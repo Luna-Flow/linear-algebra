@@ -1,0 +1,1 @@
+../../doc/manual/tutorial/container/adapters.md
