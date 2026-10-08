@@ -195,17 +195,12 @@ functions bounded by the `algebra` traits; `inner()` gets it back.
 - **Forgetting that `reduce_row_elimination` mutates.** It transforms the
   receiver in place and returns it. Call `copy()` first.
 - **Expecting normalized $2 \times 2$ eigenvectors.** For $2 \times 2$ input,
-  the eigenvector columns are not normalized; larger inputs return orthonormal
-  columns.
-- **Close eigenvalues of a $2 \times 2$ matrix.** The $2 \times 2$ formula
-  merges eigenvalues closer than about $6 \times 10^{-6}$ (and then may return
-  two equal eigenvector columns), and can abort on symmetric input with
-  entries near $10^{8}$. See the warning on the
-  [API page](../api/mutable.md#matrixeigen).
-- **Matrices far from order one.** Every zero test uses the absolute threshold
-  $10^{-11}$. A matrix whose entries are all around $10^{-12}$ is singular to
-  `inverse`, not positive definite to `cholesky_decomposition`, and has
-  meaningless `eigen` results. Scale first.
+  each eigenvector column is scaled so that its largest entry is $1$, not to
+  unit length; larger inputs return orthonormal columns.
+- **Matrices far from order one.** The singularity and definiteness tests use
+  the absolute threshold $10^{-11}$. A matrix whose entries are all around
+  $10^{-12}$ is singular to `inverse` and not positive definite to
+  `cholesky_decomposition`; scale first. `eigen` does not depend on the scale.
 - **Numerical routines on integers.** `determinant`, `inverse`, `rank`, `eigen`
   and friends need `Tolerance`, which exists only for `Float` and `Double`. For
   exact integer determinants use `@immut.Matrix::determinant`.

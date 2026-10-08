@@ -79,7 +79,9 @@ does not require distributivity or associativity of `*` on `T`. The product
 laws of the [algebra design](../algebra.md) hold when `T` is a semiring
 (`Int`, `BigInt`, ...), hold up to rounding for `Float` and `Double`, and can
 fail for a scalar type whose `Mul` is not associative or not distributive; the
-instance exists for such a type, but its laws do not.
+instance exists for such a type, but its laws do not. Tightening the bound
+is a public API change, tracked as
+[#94](https://github.com/Luna-Flow/linear-algebra/issues/94).
 
 ### Partiality of the dense product
 

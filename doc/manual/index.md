@@ -126,9 +126,9 @@ Guides and chapters that span packages:
 
 The numerical routines of `mutable` decide "zero" with one absolute threshold,
 `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of
-the input; scale data to order one. The $2 \times 2$ path of `eigen` has known
-accuracy defects, and `@immut.Matrix::determinant` is meant for exact scalars,
-not for floating point. The [mutable design](design/mutable.md) and the
+the input; scale data to order one (`eigen` is the exception: its decisions are
+relative to the entries). `@immut.Matrix::determinant` is meant for exact
+scalars, not for floating point. The [mutable design](design/mutable.md) and the
 [immut design](design/immut.md) derive the algorithms and state these limits
 precisely.
 

@@ -463,7 +463,8 @@ Cost $O(n^3)$ arithmetic operations. See the
 > `@mutable.Matrix::determinant` returns, while this method returns NaN. There
 > is no tolerance either: only an exactly zero pivot column is detected. Use
 > [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for
-> floating-point matrices.
+> floating-point matrices. The issue is tracked as
+> [#93](https://github.com/Luna-Flow/linear-algebra/issues/93).
 
 ### `Matrix::unchecked_determinant`
 

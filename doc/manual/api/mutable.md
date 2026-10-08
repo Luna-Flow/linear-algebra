@@ -609,7 +609,7 @@ pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix
 ```
 
 For $n \le 4$: closed cofactor formulas. For $n \ge 5$: the product of the
-diagonal if the matrix is triangular within tolerance, otherwise LU
+diagonal if the matrix is exactly triangular, otherwise LU
 factorization with partial pivoting, $\det A = (-1)^{s} \prod_i u_{ii}$ for $s$
 row exchanges. If a pivot falls below the tolerance the result is exactly
 zero; otherwise it is a product of pivots of magnitude at least $10^{-11}$,
@@ -638,10 +638,8 @@ directly ($P^{-1} = P^{\mathsf T}$); other matrices are solved column by column
 from an LU factorization with partial pivoting. Cost $\approx \tfrac{8}{3} n^3$
 flops. The inverse of the $0 \times 0$ matrix is the $0 \times 0$ matrix.
 
-The recognition uses the tolerance: a matrix whose entries are within
-$10^{-11}$ of the identity is returned as a copy of itself, one whose
-off-diagonal entries are at most $10^{-11}$ is inverted as if they were zero,
-and one within $10^{-11}$ of a permutation matrix is returned transposed.
+The recognition is exact: only a matrix that has the structure exactly takes
+the shortcut, so the shortcut returns what the LU path would.
 
 ### `Matrix::unchecked_inverse`
 
@@ -709,11 +707,9 @@ diagonal pivot $a_{jj} - \sum_{k<j} l_{jk}^2$ is at most the tolerance (the
 matrix is not positive definite, or nearly singular). Only the lower triangle
 of `a` is read. Cost $\approx n^3/3$ flops.
 
-Two fast paths run first. A matrix within the tolerance of the identity is
-returned as a copy of itself, so its off-diagonal entries of magnitude at most
-$10^{-11}$ survive and the result is then not exactly lower triangular. A
-matrix that is diagonal within the tolerance gives the square roots of its
-diagonal, and its off-diagonal entries are dropped.
+Two fast paths run first: the exact identity is returned as a copy, and an
+exactly diagonal matrix gives the square roots of its diagonal (or `None` if
+one of them is at most the tolerance).
 
 ### `Matrix::is_positive_definite`
 
@@ -766,34 +762,24 @@ pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + @arithmetic.Sqrt 
 
 - Aborts if `a` is not square, not symmetric within tolerance, or if an
   eigenvalue does not converge within 60 iterations.
-- For $2 \times 2$ input the values come from the characteristic polynomial,
-  $\lambda_{1,2} = m \pm \sqrt{m^2 - \det A}$ with $m = \tfrac12 \operatorname{tr} A$,
-  ordered $\lambda_1 \ge \lambda_2$; the eigenvector columns are **not
-  normalized**.
+- For $2 \times 2$ input a closed formula is used on the symmetric part
+  $\begin{pmatrix} a & s \\ s & d \end{pmatrix}$, $s = \tfrac12 (a_{01} + a_{10})$:
+  $\lambda_{1,2} = m \pm \sqrt{\big(\tfrac{a-d}{2}\big)^2 + s^2}$ with
+  $m = \tfrac12 \operatorname{tr} A$, ordered $\lambda_1 \ge \lambda_2$. The
+  eigenvector columns are **not normalized**: each is scaled so that its entry
+  of largest magnitude is $1$. A diagonal matrix returns its diagonal entries
+  exactly.
 - For other sizes the matrix is reduced to tridiagonal form by Householder
   reflections and diagonalized by the implicit QL algorithm with Wilkinson
   shifts. Only the lower triangle is read. The eigenvector columns are
   orthonormal up to rounding. The eigenvalues are not sorted.
 - Cost $O(n^3)$.
 
-> [!WARNING]
-> The $2 \times 2$ formula compares the discriminant $m^2 - \det A$, a
-> *squared* quantity, with the absolute tolerance $10^{-11}$, and computes it
-> with cancellation. Three consequences for symmetric input:
-> eigenvalues closer than about $2\sqrt{10^{-11}} \approx 6 \times 10^{-6}$
-> are returned as equal (for `[[1, 0], [0, 1.000002]]` both values are
-> `1.000001`); for `[[1, 1e-6], [1e-6, 1]]` the two returned eigenvector
-> columns are identical, so the eigenvector matrix is singular; and for
-> entries near $10^{8}$ the rounding error of $m^2 - \det A$ can exceed
-> $10^{-11}$ in the negative direction, so a diagonal matrix such as
-> `[[100000000.74, 0], [0, 99999999.78]]` aborts with "complex eigenvalues".
-> For larger sizes the deflation test and the Householder step also use
-> absolute thresholds, so a matrix whose entries are all below about
-> $10^{-11}$ is treated as already diagonal (for $10^{-12}$ times the
-> tridiagonal matrix with diagonal $2$ and off-diagonal $1$, every returned
-> eigenvalue is $2 \times 10^{-12}$). Scale the input to order one, and
-> embed a $2 \times 2$ problem in a larger one or solve it yourself when
-> these cases matter. See the [design page](../design/mutable.md#symmetric-eigenvalue-problem).
+Every decision inside `eigen` is relative to the entries (a deflated
+off-diagonal entry is negligible next to its diagonal neighbours), so
+`eigen` of $sA$ is $s$ times `eigen` of $A$ up to rounding, for any scale $s$;
+only the symmetry check uses the absolute tolerance. See the
+[design page](../design/mutable.md#symmetric-eigenvalue-problem).
 
 ### `Matrix::power_method`
 
@@ -835,6 +821,10 @@ test "eigenvalues" {
   inspect(x[1], content="1")
   let flip = @mutable.Matrix::from_2d_array([[1.0, 0.0], [0.0, -1.0]])
   inspect(flip.power_method(100) is None, content="true")
+  let close = @mutable.Matrix::from_2d_array([[1.0, 1.0e-6], [1.0e-6, 1.0]])
+  let (cv, cw) = close.eigen()
+  inspect((cv[0] - cv[1] - 2.0e-6).abs() < 1.0e-15, content="true")
+  inspect(cw, content="|1, 1|\n|1, -1|")
 }
 ```
 

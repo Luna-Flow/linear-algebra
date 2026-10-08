@@ -64,13 +64,12 @@ one absolute threshold $\tau$ = `Tolerance::tolerance()` = $10^{-11}$ for
 | `rank` | largest remaining $\lvert a_{ik}\rvert < \tau$ means no pivot; a multiplier $< \tau$ is dropped |
 | `reduce_row_elimination` | pivot candidate $\le \tau$ is set to zero and skipped; column entries $\le \tau$ are set to zero |
 | `cholesky_decomposition` | radicand $\le \tau$ means not positive definite |
-| `is_symmetric`, fast-path detection (identity, diagonal, permutation, triangular) | $\lvert a_{ij} - b_{ij}\rvert \le \tau$ counts as equal |
-| `eigen`, $2 \times 2$ | discriminant $< -\tau$ aborts, $\lvert\text{discriminant}\rvert \le \tau$ counts as zero |
-| `eigen`, Householder step | a row with $\sum_k \lvert a_{ik}\rvert \le \tau$ is not reflected |
-| `eigen` deflation | $\lvert e_m\rvert \le \tau(\lvert d_m\rvert + \lvert d_{m+1}\rvert + 1)$ |
+| `is_symmetric` (also the precondition of `eigen`) | $\lvert a_{ij} - a_{ji}\rvert \le \tau$ counts as equal |
 | `power_method` | residual $\lVert Ax - \lambda x\rVert_\infty \le \tau$ accepts; $\lVert Ax\rVert_\infty \le \tau$ or $x^{\mathsf T}x \le \tau$ gives `None` |
 
-An absolute threshold is simple and predictable, but it is not scale
+The structural fast paths and the internal decisions of `eigen` do not use
+$\tau$: the fast paths require the structure exactly, and `eigen` deflates
+relative to the entries (see below). An absolute threshold is simple and predictable, but it is not scale
 invariant. Scaling $A$ by $10^{-12}$ makes every pivot fall below $\tau$, so a
 perfectly conditioned matrix is reported singular; scaling by $10^{12}$ lets a
 numerically singular matrix pass. Scale data to order one before calling
@@ -89,10 +88,9 @@ $P^{\mathsf T} P = I$ for a matrix whose columns are distinct coordinate
 vectors). `cholesky_decomposition` recognizes the identity and diagonal
 matrices, and `determinant` recognizes triangular matrices for $n \ge 5$ and
 multiplies the diagonal. Each test costs $O(n^2)$ and saves an $O(n^3)$
-factorization. The tests use the tolerance, so a matrix that is diagonal up to
-$\tau$ is treated as exactly diagonal, and a matrix within $\tau$ of the
-identity is returned as it is (by `inverse` and by `cholesky_decomposition`,
-whose result is then not exactly lower triangular).
+factorization. The tests are exact (entries compared with $0$ and $1$), so a
+shortcut is taken only when it returns what the general algorithm would; a
+matrix that is merely close to the structure goes through the general path.
 
 ### Checked forms without changing the kernels
 
@@ -397,8 +395,8 @@ $$
 where $T$ is symmetric tridiagonal with diagonal $d$ and off-diagonal $e$. The
 two-sided update costs $\tfrac43 n^3$ flops and accumulating $Q_1$ explicitly
 another $\tfrac43 n^3$. Before forming each reflector the row is divided by
-$\sum_k |x_k|$, which avoids overflow and underflow in $\lVert x \rVert_2$; a
-row whose sum is at most $\tau$ is left unreflected.
+$\sum_k |x_k|$, which avoids overflow and underflow in $\lVert x \rVert_2$; only
+an exactly zero row is left unreflected.
 
 **Implicit QL with Wilkinson shifts.** The tridiagonal $T$ is diagonalized by
 plane rotations. Before each sweep on the unreduced block starting at $l$, the
@@ -433,13 +431,16 @@ rotation parameters are computed as $c = g/f$, $r = \sqrt{c^2 + 1}$,
 $s = 1/r$, $c = c s$ (or the symmetric form), dividing by the larger of
 $|f|, |g|$ so that no square of a large number is formed.
 
-An off-diagonal entry is treated as zero when
+An off-diagonal entry is treated as zero when it is negligible next to its
+diagonal neighbours in the working precision,
 
 $$
-|e_m| \le \tau\,\big(|d_m| + |d_{m+1}| + 1\big),
+\mathrm{fl}\big((|d_m| + |d_{m+1}|) + |e_m|\big) = |d_m| + |d_{m+1}| ,
 $$
 
-and the block then splits. For symmetric tridiagonal matrices the Wilkinson
+that is, $|e_m| \lesssim u\,(|d_m| + |d_{m+1}|)$, and the block then splits. The
+test needs no knowledge of $u$, so it works for `Float` and `Double` alike, and
+it is invariant under scaling of $A$. For symmetric tridiagonal matrices the Wilkinson
 shift converges for every input in exact arithmetic (Wilkinson, 1968), and
 typically cubically; about two sweeps per eigenvalue is usual. The code
 nevertheless aborts after 60 sweeps for one starting index $l$. With
@@ -449,63 +450,66 @@ the reduction.
 
 **Accuracy.** Every transformation is orthogonal, so in exact arithmetic the
 spectrum never changes, and rounding contributes a backward error of
-$O(n u) \lVert A \rVert_2$. The thresholds contribute more. Setting $e_m$ to
-zero perturbs $T$ by a symmetric matrix of 2-norm at most
-$\tau(|d_m| + |d_{m+1}| + 1) \le \tau(2 \lVert A \rVert_2 + 1)$, and skipping a
-reflection perturbs $A$ by entries whose absolute values sum to at most $\tau$
-per row. Weyl's inequality, $|\lambda_i(A + E) - \lambda_i(A)| \le \lVert E \rVert_2$
+$O(n u) \lVert A \rVert_2$; setting a negligible $e_m$ to zero perturbs $T$ by
+at most $u(|d_m| + |d_{m+1}|) \le 2u \lVert A \rVert_2$, which is of the same
+order. Weyl's inequality, $|\lambda_i(A + E) - \lambda_i(A)| \le \lVert E \rVert_2$
 for symmetric $A$ and $E$, then gives for the computed eigenvalues
 
 $$
-|\hat\lambda_i - \lambda_i| \lesssim O(n u)\,\lVert A \rVert_2 + c_n\, \tau\,\big(\lVert A \rVert_2 + 1\big)
+|\hat\lambda_i - \lambda_i| \le c_n\, u\, \lVert A \rVert_2
 $$
 
-with a small $c_n$. With $\tau = 10^{-11}$ the second term dominates: absolute
-accuracy is about $10^{-11}$ for $\lVert A \rVert$ of order one, and for a matrix
-whose entries are all below $\tau$ the result is meaningless. Eigenvectors are
-accurate in proportion to (backward error)$/\text{gap}$, where the gap is the
-distance to the nearest other eigenvalue (the Davis–Kahan theorem).
+with a modest $c_n$, independent of the scale of $A$. Eigenvectors are
+accurate in proportion to $u \lVert A \rVert_2/\text{gap}$, where the gap is the
+distance to the nearest other eigenvalue (the Davis–Kahan theorem). The only
+absolute test left is the symmetry check $|a_{ij} - a_{ji}| \le \tau$ before
+the computation; the algorithm then reads the lower triangle.
 
-**The $2 \times 2$ case.** For $A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$
-the characteristic polynomial $\lambda^2 - (a + d)\lambda + (ad - bc)$ gives,
-with $m = (a + d)/2$,
-
-$$
-\lambda_{1,2} = m \pm \sqrt{m^2 - (ad - bc)} .
-$$
-
-For $b \ne 0$ the vector $(b, \lambda - a)^{\mathsf T}$ is an eigenvector:
+**The $2 \times 2$ case.** The code works with the symmetric part
+$\begin{pmatrix} a & s \\ s & d \end{pmatrix}$, $s = \tfrac12(a_{01} + a_{10})$.
+Its characteristic polynomial $\lambda^2 - (a + d)\lambda + (ad - s^2)$ has the
+discriminant
 
 $$
-\begin{pmatrix} a - \lambda & b \\ c & d - \lambda \end{pmatrix}
-\begin{pmatrix} b \\ \lambda - a \end{pmatrix}
-= \begin{pmatrix} 0 \\ bc - (\lambda - a)(\lambda - d) \end{pmatrix}
-= 0 ,
+\Big(\frac{a + d}{2}\Big)^2 - (ad - s^2) = \Big(\frac{a - d}{2}\Big)^2 + s^2 = r^2 ,
 $$
 
-since $(\lambda - a)(\lambda - d) = \lambda^2 - (a + d)\lambda + ad = bc$ by the
-characteristic equation. The code returns these vectors without normalizing
-them, and $e_1, e_2$ when $b = c = 0$.
+a sum of squares, so with $m = \tfrac12(a + d)$ and $h = \tfrac12(a - d)$
 
-> [!WARNING]
-> This closed form is less accurate than the general path, for three reasons
-> that the code does not guard against. (1) For symmetric input the
-> discriminant is $m^2 - (ad - b^2) = \big(\tfrac{a-d}{2}\big)^2 + b^2 \ge 0$,
-> but it is computed as a difference of two numbers of size $m^2$, with an
-> absolute error of about $u\, m^2$. For $m \approx 10^8$ that is about $1$,
-> far above $\tau$, so the computed discriminant can be negative enough to
-> trigger the "complex eigenvalues" abort on a symmetric, even diagonal,
-> matrix. (2) A discriminant with $|\cdot| \le \tau$ is replaced by zero. Since
-> $\lambda_1 - \lambda_2 = 2\sqrt{\text{discriminant}}$, every pair of
-> eigenvalues closer than $2\sqrt{\tau} \approx 6.3 \times 10^{-6}$ is returned
-> as a double eigenvalue $m$, an error up to $3 \times 10^{-6}$. (3) When the
-> two eigenvalues are then equal and $b \ne 0$, both columns are
-> $(b, m - a)^{\mathsf T}$, so the eigenvector matrix is singular. In addition,
-> when $|\lambda_2| \ll |\lambda_1|$ the subtraction $m - \sqrt{\cdot}$ cancels
-> and $\lambda_2$ loses relative accuracy. The stable formulation computes the
-> discriminant as $\big(\tfrac{a-d}{2}\big)^2 + bc$, never thresholds it, takes
-> $\lambda_2 = \det A / \lambda_1$, and chooses between the eigenvector forms
-> $(b, \lambda - a)$ and $(\lambda - d, c)$ by size.
+$$
+\lambda_{1,2} = m \pm r, \qquad r = \sqrt{h^2 + s^2} \ge 0 .
+$$
+
+Computing $r^2$ as $m^2 - \det A$ instead would subtract two numbers of size
+$m^2$ and lose about $u\,m^2$ in absolute terms, which for $m \approx 10^8$ is
+about $1$: the computed discriminant could even be negative for a diagonal
+matrix. The code evaluates $r$ as $\beta\sqrt{(h/\beta)^2 + (s/\beta)^2}$ with
+$\beta = \max(|h|, |s|)$, which cannot overflow, and never thresholds it, so
+eigenvalues as close as rounding allows stay distinct. The eigenvalue of
+larger magnitude, $m + \operatorname{sgn}(m)\, r$, is a sum of two numbers of the
+same sign and is computed directly; the other follows from
+$\lambda_1 \lambda_2 = \det A = ad - s^2$, which avoids the cancellation in
+$m - r$ when $|\lambda_2| \ll |\lambda_1|$. When $s = 0$ the matrix is diagonal
+and the code returns $a$ and $d$ exactly, in decreasing order, with the
+coordinate vectors.
+
+For the eigenvector of $\lambda_1$, both
+
+$$
+\begin{pmatrix} \lambda_1 - d \\ s \end{pmatrix} = \begin{pmatrix} h + r \\ s \end{pmatrix}
+\quad\text{and}\quad
+\begin{pmatrix} s \\ \lambda_1 - a \end{pmatrix} = \begin{pmatrix} s \\ r - h \end{pmatrix}
+$$
+
+solve $(A - \lambda_1 I)v = 0$: for the first,
+$(a - \lambda_1)(h + r) + s^2 = (h - r)(h + r) + s^2 = h^2 - r^2 + s^2 = 0$, and
+the second row is $s(h + r) + (d - \lambda_1)s = s(h + r - h - r) = 0$; the
+second vector is checked the same way. The code takes the first when
+$h \ge 0$ and the second when $h < 0$, so that $h + r$ or $r - h$ adds numbers
+of the same sign and cannot cancel. Since $A$ is symmetric, the eigenvector of
+$\lambda_2$ is orthogonal to it, $(v_y, -v_x)$. Each column is scaled so that
+its entry of largest magnitude is $1$; the columns are therefore never zero,
+never parallel, and paired with the right eigenvalues.
 
 ### Power method
 
@@ -597,7 +601,7 @@ product in the wrong order (see the [algebra design](algebra.md)).
   precondition holds; `inverse` returns `Err(SingularMatrix)` exactly when
   `unchecked_inverse` returns `None`.
 - **Determinant consistency.** For $n \ge 5$ and a matrix that is not
-  triangular within $\tau$, `determinant` returns exactly `0` when the LU
+  triangular, `determinant` returns exactly `0` when the LU
   factorization reports a pivot below $\tau$, which is also when
   `is_invertible` returns `false` and `inverse` fails; otherwise it returns a
   product of pivots that are at least $\tau$ in magnitude, which can still
@@ -605,9 +609,9 @@ product in the wrong order (see the [algebra design](algebra.md)).
   while `is_invertible` still uses LU, so a matrix with a tiny non-zero
   determinant can be "not invertible" with a non-zero `determinant`.
 - **Residual guarantees.** `cholesky_decomposition` returns a factor with
-  backward error $O(nu)$ relative to $|\hat L|\,|\hat L^{\mathsf T}|$, except on
-  the identity fast path; `eigen` for $n \ne 2$ returns eigenpairs with
-  backward error $O(nu)\lVert A \rVert + O(\tau)(\lVert A \rVert + 1)$;
+  backward error $O(nu)$ relative to $|\hat L|\,|\hat L^{\mathsf T}|$; `eigen`
+  returns eigenpairs with backward error $O(nu)\lVert A \rVert$, for every
+  scale of $A$;
   `power_method` returns only pairs with residual at most $\tau$.
 - **Complexity.** `*`: $2rcn$ flops; `determinant`: $\tfrac23 n^3$; `inverse`:
   $\tfrac83 n^3$; `rank`, `reduce_row_elimination`: $O(rc\min(r, c))$;
