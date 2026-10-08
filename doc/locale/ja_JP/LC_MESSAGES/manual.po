@@ -357,12 +357,16 @@ msgid "These re-export the types that the checked operations take and return."
 msgstr "これらは検査付き演算が受け取り、返す型を再エクスポートします。"
 
 #: manual/api/arithmetic.md:124
-msgid "precision and rounding settings; build it with `ArithmeticContext::new(precision)`"
-msgstr "精度と丸めの設定。`ArithmeticContext::new(precision)` で作る"
+msgid "precision, rounding and optional exponent limits (`e_min`, `e_max`, `clamp`); build it with `ArithmeticContext::new(precision)`"
+msgstr "精度、丸め、および省略可能な指数範囲（`e_min`、`e_max`、`clamp`）の設定。`ArithmeticContext::new(precision)` で作る"
 
 #: manual/api/arithmetic.md:125
 msgid "structured scalar error with fields `kind` and `message`"
 msgstr "フィールド `kind` と `message` を持つ構造化されたスカラーのエラー"
+
+#: manual/api/arithmetic.md:126
+msgid "`DivisionByZero`, `DomainError`, `UnorderedComparison`, `ParseError`, `FormatError`, `UnsupportedOperation`, and `CertificationFailure(detail)` for proof-backed backends (never produced for `Float` or `Double`); keep a fallback branch when matching"
+msgstr "`DivisionByZero`、`DomainError`、`UnorderedComparison`、`ParseError`、`FormatError`、`UnsupportedOperation`、および証明付きバックエンド向けの `CertificationFailure(detail)`（`Float` と `Double` では生じない）。マッチするときはフォールバックの分岐を残すこと"
 
 #: manual/api/arithmetic.md:150
 msgid "Absolute value"
@@ -5732,8 +5736,8 @@ msgid "Then import the packages you use in your `moon.pkg`:"
 msgstr "次に、使うパッケージを `moon.pkg` でインポートします。"
 
 #: manual/index.md:42
-msgid "Generic code over scalar types also needs the upstream packages `Luna-Flow/luna-generic` (`0.3.3`) and `Luna-Flow/arithmetic` (`0.2.2`). The module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds without warnings with `moon check --target all`. All packages support the `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file per target, and the benchmark packages run on `native`."
-msgstr "スカラー型についての汎用コードには、上流のパッケージ `Luna-Flow/luna-generic`（`0.3.3`）と `Luna-Flow/arithmetic`（`0.2.2`）も必要です。このモジュールには MoonBit 0.10 以降のツールチェーン（`moonc` ≥ 0.10）が必要で、`moon check --target all` で警告なしにビルドできます。すべてのパッケージが `wasm-gc`、`js`、`wasm`、`native` の各ターゲットに対応しています。`mutable` はターゲットごとに調整したカーネルファイルを持ち、ベンチマークのパッケージは `native` で動きます。"
+msgid "Generic code over scalar types also needs the upstream packages `Luna-Flow/luna-generic` (`0.4.0`) and `Luna-Flow/arithmetic` (`0.5.0`). The module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds without warnings with `moon check --target all`. All packages support the `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file per target, and the benchmark packages run on `native`."
+msgstr "スカラー型についての汎用コードには、上流のパッケージ `Luna-Flow/luna-generic`（`0.4.0`）と `Luna-Flow/arithmetic`（`0.5.0`）も必要です。このモジュールには MoonBit 0.10 以降のツールチェーン（`moonc` ≥ 0.10）が必要で、`moon check --target all` で警告なしにビルドできます。すべてのパッケージが `wasm-gc`、`js`、`wasm`、`native` の各ターゲットに対応しています。`mutable` はターゲットごとに調整したカーネルファイルを持ち、ベンチマークのパッケージは `native` で動きます。"
 
 #: manual/index.md:49
 msgid "Pages"

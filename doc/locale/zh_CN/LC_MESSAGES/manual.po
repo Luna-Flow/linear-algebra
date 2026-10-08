@@ -357,12 +357,16 @@ msgid "These re-export the types that the checked operations take and return."
 msgstr "这些名称重新导出受检运算所接收和返回的类型。"
 
 #: manual/api/arithmetic.md:124
-msgid "precision and rounding settings; build it with `ArithmeticContext::new(precision)`"
-msgstr "精度与舍入设置；用 `ArithmeticContext::new(precision)` 构造"
+msgid "precision, rounding and optional exponent limits (`e_min`, `e_max`, `clamp`); build it with `ArithmeticContext::new(precision)`"
+msgstr "精度、舍入方式以及可选的指数范围（`e_min`、`e_max`、`clamp`）；用 `ArithmeticContext::new(precision)` 构造"
 
 #: manual/api/arithmetic.md:125
 msgid "structured scalar error with fields `kind` and `message`"
 msgstr "带有字段 `kind` 和 `message` 的结构化标量错误"
+
+#: manual/api/arithmetic.md:126
+msgid "`DivisionByZero`, `DomainError`, `UnorderedComparison`, `ParseError`, `FormatError`, `UnsupportedOperation`, and `CertificationFailure(detail)` for proof-backed backends (never produced for `Float` or `Double`); keep a fallback branch when matching"
+msgstr "`DivisionByZero`、`DomainError`、`UnorderedComparison`、`ParseError`、`FormatError`、`UnsupportedOperation`，以及供有证明的后端使用的 `CertificationFailure(detail)`（`Float` 和 `Double` 从不产生）；匹配时请保留兜底分支"
 
 #: manual/api/arithmetic.md:150
 msgid "Absolute value"
@@ -5732,8 +5736,8 @@ msgid "Then import the packages you use in your `moon.pkg`:"
 msgstr "然后在 `moon.pkg` 中导入你使用的包："
 
 #: manual/index.md:42
-msgid "Generic code over scalar types also needs the upstream packages `Luna-Flow/luna-generic` (`0.3.3`) and `Luna-Flow/arithmetic` (`0.2.2`). The module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds without warnings with `moon check --target all`. All packages support the `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file per target, and the benchmark packages run on `native`."
-msgstr "针对标量类型的泛型代码还需要上游包 `Luna-Flow/luna-generic`（`0.3.3`）和 `Luna-Flow/arithmetic`（`0.2.2`）。本模块需要 MoonBit 0.10 或更新的工具链（`moonc` ≥ 0.10），并且在 `moon check --target all` 下构建无警告。所有包都支持 `wasm-gc`、`js`、`wasm` 和 `native` 目标；`mutable` 为每个目标提供了一个调优的内核文件，基准测试包在 `native` 上运行。"
+msgid "Generic code over scalar types also needs the upstream packages `Luna-Flow/luna-generic` (`0.4.0`) and `Luna-Flow/arithmetic` (`0.5.0`). The module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds without warnings with `moon check --target all`. All packages support the `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file per target, and the benchmark packages run on `native`."
+msgstr "针对标量类型的泛型代码还需要上游包 `Luna-Flow/luna-generic`（`0.4.0`）和 `Luna-Flow/arithmetic`（`0.5.0`）。本模块需要 MoonBit 0.10 或更新的工具链（`moonc` ≥ 0.10），并且在 `moon check --target all` 下构建无警告。所有包都支持 `wasm-gc`、`js`、`wasm` 和 `native` 目标；`mutable` 为每个目标提供了一个调优的内核文件，基准测试包在 `native` 上运行。"
 
 #: manual/index.md:49
 msgid "Pages"
