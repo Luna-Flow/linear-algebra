@@ -121,9 +121,9 @@ pub using @Luna-Flow/arithmetic {type RoundingMode}
 
 | Name | Meaning |
 | --- | --- |
-| `ArithmeticContext` | precision and rounding settings; build it with `ArithmeticContext::new(precision)` |
+| `ArithmeticContext` | precision, rounding and optional exponent limits (`e_min`, `e_max`, `clamp`); build it with `ArithmeticContext::new(precision)` |
 | `ArithmeticError` | structured scalar error with fields `kind` and `message` |
-| `ArithmeticErrorKind` | `DivisionByZero`, `DomainError`, `UnorderedComparison`, `ParseError`, `FormatError`, `UnsupportedOperation` |
+| `ArithmeticErrorKind` | `DivisionByZero`, `DomainError`, `UnorderedComparison`, `ParseError`, `FormatError`, `UnsupportedOperation`, and `CertificationFailure(detail)` for proof-backed backends (never produced for `Float` or `Double`); keep a fallback branch when matching |
 | `FpClass` | `Finite`, `Infinity`, `NaN` |
 | `RoundingMode` | `ToNearestEven`, `TowardZero`, `TowardPositive`, `TowardNegative`, `AwayFromZero` |
 

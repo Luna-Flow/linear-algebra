@@ -40,7 +40,7 @@ import {
 ```
 
 Generic code over scalar types also needs the upstream packages
-`Luna-Flow/luna-generic` (`0.3.3`) and `Luna-Flow/arithmetic` (`0.2.2`). The
+`Luna-Flow/luna-generic` (`0.4.0`) and `Luna-Flow/arithmetic` (`0.5.0`). The
 module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds
 without warnings with `moon check --target all`. All packages support the
 `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file
