@@ -142,10 +142,8 @@ Problem types:
 | --- | --- | --- | --- | --- |
 | `README.md` | `Correct` | - | Checked against current bounds, fixture recovery flow, and release workflow claims | Release narrative and operational guidance match the `0.4.2` repository state. |
 | `CONTRIBUTING.md` | `Correct` | - | Inspected directly | Contributor workflow text now matches the current `0.4.2` baseline, scripts, and release flow. |
-| `doc/manual/api/immut/matrix.md` | `Correct` | - | Rewritten this pass against current source and exported API | Documents strict bounds and same-index swap no-op correctly. |
-| `doc/manual/api/immut/vector.md` | `Correct` | - | Verified against current vector API and tests | No contract mismatch found. |
-| `doc/manual/api/mutable/matrix.md` | `Correct` | - | Rewritten this pass against current source and `pkg.generated.mbti` | Removed stale duplicates and old signatures. |
-| `doc/manual/api/mutable/vector.md` | `Correct` | - | Verified against current vector API and tests | No contract mismatch found. |
+| `doc/manual/api/immut.md` | `Correct` | - | Rewritten against current source and `pkg.generated.mbti` (Matrix, Vector, MatrixFn merged into one page) | Documents strict bounds, same-index swap no-op and Bareiss determinant. |
+| `doc/manual/api/mutable.md` | `Correct` | - | Rewritten against current source and `pkg.generated.mbti` (Matrix, Vector, views merged into one page) | Documents the missing shape check of `unchecked_matmul` explicitly. |
 | `doc/manual/conventions.md` | `Correct` | - | Contract/process doc only | No runtime behavior. |
 | `doc/locale/ja_JP/LC_MESSAGES/manual.po` | `Correct` | - | README verified; matrix API docs rewritten this pass | Japanese docs are aligned with current English/source semantics. |
 | `doc/locale/zh_CN/LC_MESSAGES/manual.po` | `Correct` | - | README verified; matrix API docs rewritten this pass | Chinese docs are aligned with current English/source semantics. |

@@ -4,9 +4,80 @@ All notable repository-release changes are tracked here. The main
 [`README.md`](./README.md) stays focused on the current baseline and entry
 points; older release history lives in this file.
 
+## 0.5.0 - 2026-10-07
+
+Current repository release. MoonBit 0.10 migration and temporary withdrawal of
+the OpenBLAS backend. This is a breaking release in the `0.x` line.
+
+### Breaking Changes
+
+- **Requires the MoonBit 0.10 toolchain** (`moonc` `0.10.x` or newer). The
+  module uses `moon.mod` / `moon.pkg` manifests and current syntax; older
+  toolchains cannot build it.
+- **`backends/openblas` is temporarily withdrawn.** Its upstream binding,
+  `Kaida-Amethyst/openblas` `0.1.3`, still uses the `typealias` syntax removed
+  in MoonBit 0.10 (`cblas/cblas.mbt`, around lines 86, 97, and 220) and has no
+  fixed release, so it no longer compiles. The `Kaida-Amethyst/openblas`
+  dependency is removed from `moon.mod`, and `BlasMatrix[T]`, `BlasVector[T]`,
+  and the `blas_*_ops` container adapters are no longer published. Users of
+  `Luna-Flow/linear-algebra/backends/openblas` should stay on `0.4.7` or switch
+  to `backends/default`. The migrated source, its documentation, and a patch
+  for the upstream binding are preserved in
+  [`contrib/openblas_backend`](./contrib/openblas_backend/README.md), with
+  re-enable steps. The backend may come back here or be hosted by the
+  `openblas.mbt` project.
+- **`op_get` / `op_set` method names are gone.** Indexing is now provided by
+  ordinary methods `at` / `set` (or `get` / `set` on `RowView` / `ColView`)
+  annotated with `#alias("_[_]")` / `#alias("_[_]=_")`. The `x[i]` and
+  `x[i] = v` syntax is unchanged; call sites that wrote `x.op_get(i)` or
+  `x.op_set(i, v)` should use `x[i]` / `x.at(i)` and `x[i] = v` / `x.set(i, v)`.
+- **Trait methods are promoted explicitly.** Only trait methods listed in each
+  package's `extends.mbt` (`pub extend T with Trait::{m}`) remain callable with
+  method syntax: operators (`add`, `sub`, `mul`, `neg`), `equal`,
+  `to_string`, and `shape` on the `immut` / `mutable` matrix and vector types,
+  `shape` / `transpose` on the `backends/default` matrix wrappers, and `equal`
+  on the `error` types. The method forms of `not_equal`, `output`, `to_repr`,
+  and `arbitrary` are **deprecated** (kept as documentation-hidden
+  promotions); use `!=`, string interpolation or `Show::output`,
+  `Repr(x)` / `@debug.Debug::to_repr`, and the quickcheck
+  `Arbitrary::arbitrary` trait call instead. Other trait methods must be called through
+  the trait (`Trait::method(x)`) or the corresponding operator.
+- **`perf_support` fixture types are private.** `CaseFixtureFile`,
+  `CaseFixtureInputs`, and `CaseFixtureShape` are no longer exported from
+  `Luna-Flow/linear-algebra/perf_support`; use the public `Case` /
+  `PreparedCase` APIs and the fixture loaders instead.
+
+### Changed
+
+- Migrated to MoonBit 0.10 (`moon.mod` / `moon.pkg` manifests, current
+  syntax, zero warnings under `moon check --target all`).
+- Generic code calls trait methods in trait-qualified form (`Zero::zero()`,
+  `One::one()`, `@algebra.TransposeMatrix::transpose(m)`, ...).
+- Contract-breach `guard` statements now abort with explicit
+  `"Type::fn: reason"` messages.
+- The `src/doc_en_us` documentation package no longer depends on OpenBLAS, so
+  the compiled manual examples build and run on `wasm-gc`, `js`, `native`, and
+  `wasm`; `run_test.sh` now includes it on all four targets. CI and publish
+  workflows no longer install `libopenblas-dev`.
+
+### Documentation
+
+- Documentation rewritten (API, tutorial and design pages) with zh_CN/ja_JP
+  translations. Every package now has one page per chapter, including
+  `container/adapters`, `internal`, `consistency`, `perf`, `perf_runner` and
+  `perf_support`; the former per-type pages of `immut` and `mutable` are merged
+  into `api/immut.md`, `api/mutable.md` and their tutorial and design
+  counterparts. The design pages derive the implemented algorithms (Bareiss
+  elimination, LU with partial pivoting, Cholesky, Householder tridiagonalization
+  with implicit QL, the power method) with their stability and complexity, and
+  a Typst attachment proves the exactness of the fraction-free determinant.
+- A new `architecture.md` guide describes the package layers and dependencies.
+- All manual examples use current idioms and compile as tests of
+  `src/doc_en_us`.
+
 ## 0.4.7 - 2026-07-11
 
-Current repository release.
+Previous release baseline. Last release that ships `backends/openblas`.
 
 ### Added
 
@@ -21,6 +92,10 @@ Current repository release.
 - Added algebra integration levels covering shape, additive, transpose,
   Hadamard, and matrix-multiplication traits, including operator and ownership
   boundaries for external type authors.
+- Clarified that scalar-valued vector products and BLAS-style linear
+  combinations (`dot`, `scale` / `scal`, `axpy`, `matvec` / `gemv`) remain
+  backend methods on `backends/default` and `backends/openblas`; they were not
+  promoted into new `@algebra` traits in this release.
 
 ### Changed
 
@@ -29,7 +104,7 @@ Current repository release.
 
 ## 0.4.6 - 2026-07-09
 
-Current repository release.
+Previous release baseline.
 
 ### Highlights
 
