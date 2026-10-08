@@ -1,0 +1,1 @@
+../../doc/manual/api/perf_support.md
