@@ -1,221 +1,548 @@
-# `linear-algebra/backends/default`
+# backends/default API
 
-API baseline for `Luna-Flow/linear-algebra/backends/default` in the current
-`0.5.0` repository state.
+`Luna-Flow/linear-algebra/backends/default` is the reference dense backend. It
+wraps the concrete `@mutable` and `@immut` types in four owned structs and
+implements the [`algebra`](../algebra.md) traits for them, so that generic
+code bounded by those traits runs on real dense data. It also provides three
+trait-bounded helper functions and a few backend methods (`scale`, `dot`,
+`axpy`, `matvec`).
 
-## Purpose
+Source: [`src/backends/default`](../../../../src/backends/default/types.mbt).
+Why the wrappers exist is explained in the
+[backends/default design](../../design/backends/default.md).
 
-`backends/default` provides owned wrapper types around the existing dense
-`mutable` and `immut` implementations. Because these wrappers are owned by the
-default backend package, the package can implement the public `@algebra` traits
-for them without violating MoonBit's foreign trait / foreign type rule.
+## Import
 
-## `DenseVector[T]`
-
-```moonbit check
+```moonbit nocheck
 ///|
-test "DenseVector wraps a mutable vector backend" {
-  let vector : @default.DenseVector[Int] = @default.DenseVector::from_array([
-    1, 2, 3,
-  ])
-  inspect(vector.length(), content="3")
-  inspect(vector[1], content="2")
+import {
+  "Luna-Flow/linear-algebra/algebra",
+  "Luna-Flow/linear-algebra/backends/default",
 }
 ```
 
-Owned wrapper for the default mutable dense vector backend.
+## Overview
 
-### Constructors and accessors
+| Wrapper | Wraps | Semantics |
+| --- | --- | --- |
+| `DenseVector[T]` | `@mutable.Vector[T]` | shares the wrapped vector; results of operators are new vectors |
+| `DenseMatrix[T]` | `@mutable.Matrix[T]` | shares the wrapped matrix; results of operators are new matrices |
+| `ImmutableDenseVector[T]` | `@immut.Vector[T]` | value semantics |
+| `ImmutableDenseMatrix[T]` | `@immut.Matrix[T]` | value semantics |
 
-- `DenseVector::from_backend(inner : @mutable.Vector[T]) -> DenseVector[T]`
-  wraps an existing mutable vector.
-- `DenseVector::from_array(data : Array[T]) -> DenseVector[T]`
-  builds a mutable dense vector from an array.
-- `DenseVector::make(length : Int, value : T) -> DenseVector[T]`
-  builds a vector filled with `value`.
-- `DenseVector::inner(self) -> @mutable.Vector[T]`
-  returns the wrapped mutable vector.
-- `DenseVector::length(self) -> Int`
-  returns vector length.
-- `DenseVector::at(self, index : Int) -> T` (`_[_]`)
-  supports read indexing.
+All operators return a new wrapper around a new inner value; none mutates its
+operands. Shape mismatches in operators abort, as in the wrapped types.
 
-### Backend methods
+## Generic helpers
 
-- `DenseVector::scale(self, scalar : T) -> DenseVector[T]`
-  scales the vector element-wise and returns a new backend value.
-- `DenseVector::dot(self, other : DenseVector[T]) -> T`
-  computes the scalar dot product.
-- `DenseVector::axpy(self, alpha : T, other : DenseVector[T]) -> DenseVector[T]`
-  computes the BLAS-style linear combination `alpha * self + other`.
+### `shape_of`
 
-### Trait implementations
+`shape_of(m)` returns `(rows, cols)` of any `MatrixShape` value.
 
-- `Add`, `Neg`, `Sub`, and `Mul` with the matching element-level operation
-  constraints.
-- `@algebra.VectorShape` for all `T`
-- `@algebra.AdditiveVector` when `T : Add + Neg`
-- `@algebra.VecMulVector` when `T : Add + Neg + Mul`
+```mbti
+pub fn[M : @algebra.MatrixShape] shape_of(M) -> (Int, Int)
+```
 
-## `DenseMatrix[T]`
+### `transpose`
+
+`transpose(m)` returns the transpose of any `TransposeMatrix` value, of the
+same type.
+
+```mbti
+pub fn[M : @algebra.TransposeMatrix] transpose(M) -> M
+```
+
+### `matmul`
+
+`matmul(a, b)` returns `a * b` for any `MatMulMatrix` type.
+
+```mbti
+pub fn[M : @algebra.MatMulMatrix] matmul(M, M) -> M
+```
+
+The precondition $\operatorname{cols}(a) = \operatorname{rows}(b)$ and the
+failure behaviour are those of the type's `*`; for the dense wrappers a
+mismatch aborts.
 
 ```moonbit check
 ///|
-test "DenseMatrix wraps a mutable matrix backend" {
-  let matrix : @default.DenseMatrix[Int] = @default.DenseMatrix::from_2d_array([
-    [1, 2],
-    [3, 4],
-  ])
-  inspect(matrix.row(), content="2")
-  inspect(matrix.col(), content="2")
+test "generic helpers on dense wrappers" {
+  let a = @default.DenseMatrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  debug_inspect(@default.shape_of(a), content="(2, 3)")
+  let at = @default.transpose(a)
+  debug_inspect(@default.shape_of(at), content="(3, 2)")
+  inspect(@default.matmul(a, at).inner(), content="|14, 32|\n|32, 77|")
 }
 ```
 
-Owned wrapper for the default mutable dense matrix backend.
+## `DenseVector`
 
-### Constructors and accessors
+### `DenseVector`
 
-- `DenseMatrix::from_backend(inner : @mutable.Matrix[T]) -> DenseMatrix[T]`
-  wraps an existing mutable matrix.
-- `DenseMatrix::from_2d_array(data : Array[Array[T]]) -> DenseMatrix[T]`
-  builds a matrix from row-major nested arrays.
-- `DenseMatrix::new(row : Int, col : Int, value : T) -> DenseMatrix[T]`
-  builds a matrix filled with `value`.
-- `DenseMatrix::inner(self) -> @mutable.Matrix[T]`
-  returns the wrapped mutable matrix.
-- `DenseMatrix::row(self) -> Int`
-  returns row count.
-- `DenseMatrix::col(self) -> Int`
-  returns column count.
+`DenseVector[T]` is the mutable dense vector wrapper.
 
-### Backend methods
+```mbti
+pub struct DenseVector[T] {
+  inner : @mutable.Vector[T]
+}
+```
 
-- `DenseMatrix::matvec(self, vector : DenseVector[T]) -> DenseVector[T]`
-  multiplies the matrix by a default-backend dense vector and returns a new
-  dense vector wrapper.
+The field is readable from other packages. Implemented traits:
+`Add`, `Neg`, `Sub` and `Mul` (element-wise) under the element constraints of
+the methods below, `@algebra.VectorShape` for all `T`,
+`@algebra.AdditiveVector` when `T : Add + Neg`, and `@algebra.VecMulVector`
+when `T : Add + Neg + Mul`.
 
-### Trait implementations
+### `DenseVector::from_array`
 
-- `Add`, `Neg`, `Sub`, and `Mul` with the matching element-level operation
-  constraints.
-- `@algebra.MatrixShape` and `@algebra.TransposeMatrix` for all `T`
-- `@algebra.AdditiveMatrix` when `T : Add + Neg`
-- `@algebra.MatMulMatrix` when `T : Add + Neg + AddMonoid + Mul`
+`DenseVector::from_array(xs)` wraps a new `@mutable.Vector` built from `xs`.
 
-## `ImmutableDenseVector[T]`
+```mbti
+pub fn[T] DenseVector::from_array(Array[T]) -> Self[T]
+```
+
+The array is not copied: the wrapper and `xs` share storage, as with
+`@mutable.Vector::from_array`.
+
+### `DenseVector::from_backend`
+
+`DenseVector::from_backend(v)` wraps an existing `@mutable.Vector` without
+copying.
+
+```mbti
+pub fn[T] DenseVector::from_backend(@mutable.Vector[T]) -> Self[T]
+```
+
+### `DenseVector::make`
+
+`DenseVector::make(n, x)` builds a vector of length `n` filled with `x`.
+
+```mbti
+pub fn[T] DenseVector::make(Int, T) -> Self[T]
+```
+
+### `DenseVector::inner`
+
+`DenseVector::inner(v)` returns the wrapped `@mutable.Vector`; writes to it are
+visible through the wrapper.
+
+```mbti
+pub fn[T] DenseVector::inner(Self[T]) -> @mutable.Vector[T]
+```
+
+### `DenseVector::length`
+
+`DenseVector::length(v)` returns the number of elements.
+
+```mbti
+pub fn[T] DenseVector::length(Self[T]) -> Int
+```
+
+### `DenseVector::at`
+
+`DenseVector::at(v, i)` returns element `i`; it backs `v[i]`.
+
+```mbti
+#alias("_[_]")
+pub fn[T] DenseVector::at(Self[T], Int) -> T
+```
+
+An index outside `0..<length` aborts.
+
+### `DenseVector::add`, `DenseVector::sub`, `DenseVector::neg`
+
+These are the promoted operator methods behind `u + v`, `u - v` and `-v`.
+
+```mbti
+pub fn[T : Add] DenseVector::add(Self[T], Self[T]) -> Self[T]
+pub fn[T : Add + Neg] DenseVector::sub(Self[T], Self[T]) -> Self[T]
+pub fn[T : Neg] DenseVector::neg(Self[T]) -> Self[T]
+```
+
+Operands of different lengths abort. Subtraction is computed as $u + (-v)$.
+
+### `DenseVector::mul`
+
+`DenseVector::mul(u, v)` is the element-wise (Hadamard) product behind `u * v`.
+
+```mbti
+pub fn[T : Mul] DenseVector::mul(Self[T], Self[T]) -> Self[T]
+```
+
+### `DenseVector::scale`
+
+`DenseVector::scale(v, a)` returns $(v_i \cdot a)_i$, multiplying each element
+on the right by the scalar.
+
+```mbti
+pub fn[T : Mul] DenseVector::scale(Self[T], T) -> Self[T]
+```
+
+### `DenseVector::dot`
+
+`DenseVector::dot(u, v)` returns $\sum_i u_i v_i$, summed left to right from
+`Zero::zero()`.
+
+```mbti
+pub fn[T : @luna-generic.AddMonoid + Mul] DenseVector::dot(Self[T], Self[T]) -> T
+```
+
+Vectors of different lengths abort.
+
+### `DenseVector::axpy`
+
+`DenseVector::axpy(x, a, y)` returns $x a + y$, the BLAS `axpy` combination
+with `self` as $x$.
+
+```mbti
+pub fn[T : Add + Mul] DenseVector::axpy(Self[T], T, Self[T]) -> Self[T]
+```
+
+The result is a new vector; `y` is not updated in place.
 
 ```moonbit check
 ///|
-test "ImmutableDenseVector wraps an immutable vector backend" {
-  let vector : @default.ImmutableDenseVector[Int] = @default.ImmutableDenseVector::from_array([
-      1, 2, 3,
-    ],
-  )
-  inspect(vector.length(), content="3")
-  inspect(vector[2], content="3")
+test "DenseVector backend methods" {
+  let x = @default.DenseVector::from_array([1.0, 2.0, 3.0])
+  let y = @default.DenseVector::make(3, 1.0)
+  inspect(x.dot(y), content="6")
+  inspect(x.axpy(2.0, y).inner(), content="|3, 5, 7|")
+  inspect((x * x - y).inner(), content="|0, 3, 8|")
+  inspect(x[2], content="3")
+  inspect(@algebra.VectorShape::length(x), content="3")
 }
 ```
 
-Owned wrapper for the default immutable dense vector backend.
+## `DenseMatrix`
 
-### Constructors and accessors
+### `DenseMatrix`
 
-- `ImmutableDenseVector::from_backend(inner : @immut.Vector[T])`
-- `ImmutableDenseVector::from_array(data : Array[T])`
-- `ImmutableDenseVector::make(length : Int, value : T)`
-- `ImmutableDenseVector::inner(self) -> @immut.Vector[T]`
-- `ImmutableDenseVector::length(self) -> Int`
-- `ImmutableDenseVector::at(self, index : Int) -> T` (`_[_]`)
+`DenseMatrix[T]` is the mutable dense matrix wrapper.
 
-### Backend methods
+```mbti
+pub struct DenseMatrix[T] {
+  inner : @mutable.Matrix[T]
+}
+```
 
-- `ImmutableDenseVector::scale(self, scalar : T) -> ImmutableDenseVector[T]`
-- `ImmutableDenseVector::dot(self, other : ImmutableDenseVector[T]) -> T`
-- `ImmutableDenseVector::axpy(self, alpha : T, other : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]`
+Implemented traits: `Add`, `Neg`, `Sub`, `Mul` (matrix product),
+`@algebra.MatrixShape` and `@algebra.TransposeMatrix` for all `T`,
+`@algebra.AdditiveMatrix` when `T : Add + Neg`, and `@algebra.MatMulMatrix`
+when `T : Add + Neg + AddMonoid + Mul`.
 
-### Trait implementations
+### `DenseMatrix::from_2d_array`
 
-- `Add`, `Neg`, `Sub`, and `Mul` with the matching element-level operation
-  constraints.
-- `@algebra.VectorShape` for all `T`
-- `@algebra.AdditiveVector` when `T : Add + Neg`
-- `@algebra.VecMulVector` when `T : Add + Neg + Mul`
+`DenseMatrix::from_2d_array(rows)` builds a matrix from nested row arrays.
 
-## `ImmutableDenseMatrix[T]`
+```mbti
+pub fn[T] DenseMatrix::from_2d_array(Array[Array[T]]) -> Self[T]
+```
+
+Ragged input aborts; `[]` gives a $0 \times 0$ matrix.
+
+### `DenseMatrix::from_backend`
+
+`DenseMatrix::from_backend(m)` wraps an existing `@mutable.Matrix` without
+copying.
+
+```mbti
+pub fn[T] DenseMatrix::from_backend(@mutable.Matrix[T]) -> Self[T]
+```
+
+### `DenseMatrix::new`
+
+`DenseMatrix::new(r, c, x)` builds an $r \times c$ matrix filled with `x`.
+
+```mbti
+pub fn[T] DenseMatrix::new(Int, Int, T) -> Self[T]
+```
+
+Negative dimensions abort.
+
+### `DenseMatrix::inner`
+
+`DenseMatrix::inner(m)` returns the wrapped `@mutable.Matrix`, which gives
+access to the full `@mutable` API (views, decompositions, checked methods).
+
+```mbti
+pub fn[T] DenseMatrix::inner(Self[T]) -> @mutable.Matrix[T]
+```
+
+### `DenseMatrix::row`, `DenseMatrix::col`
+
+`row` and `col` return the number of rows and columns.
+
+```mbti
+pub fn[T] DenseMatrix::row(Self[T]) -> Int
+pub fn[T] DenseMatrix::col(Self[T]) -> Int
+```
+
+### `DenseMatrix::shape`
+
+`DenseMatrix::shape(m)` returns `(rows, cols)`; it is the promoted
+`@algebra.MatrixShape::shape`.
+
+```mbti
+pub fn[T] DenseMatrix::shape(Self[T]) -> (Int, Int)
+```
+
+### `DenseMatrix::transpose`
+
+`DenseMatrix::transpose(m)` returns a materialized transpose; it is the
+promoted `@algebra.TransposeMatrix::transpose`.
+
+```mbti
+pub fn[T] DenseMatrix::transpose(Self[T]) -> Self[T]
+```
+
+### `DenseMatrix::add`, `DenseMatrix::sub`, `DenseMatrix::neg`
+
+Entry-wise `+`, `-` and unary `-`.
+
+```mbti
+pub fn[T : Add] DenseMatrix::add(Self[T], Self[T]) -> Self[T]
+pub fn[T : Add + Neg] DenseMatrix::sub(Self[T], Self[T]) -> Self[T]
+pub fn[T : Neg] DenseMatrix::neg(Self[T]) -> Self[T]
+```
+
+Operands of different shapes abort.
+
+### `DenseMatrix::mul`
+
+`DenseMatrix::mul(a, b)` is the matrix product behind `a * b`.
+
+```mbti
+pub fn[T : @luna-generic.AddMonoid + Mul] DenseMatrix::mul(Self[T], Self[T]) -> Self[T]
+```
+
+$\operatorname{cols}(a) \ne \operatorname{rows}(b)$ aborts with
+`Matrix::mul: dimension mismatch`. Cost: $rcn$ multiply-adds.
+
+### `DenseMatrix::matvec`
+
+`DenseMatrix::matvec(a, x)` returns the matrix-vector product $A x$ as a new
+`DenseVector`.
+
+```mbti
+pub fn[T : @luna-generic.AddMonoid + Mul] DenseMatrix::matvec(Self[T], DenseVector[T]) -> DenseVector[T]
+```
+
+A length mismatch aborts; use `a.inner().mul_vec(x.inner())` for a checked
+version.
 
 ```moonbit check
 ///|
-test "ImmutableDenseMatrix wraps an immutable matrix backend" {
-  let matrix : @default.ImmutableDenseMatrix[Int] = @default.ImmutableDenseMatrix::from_2d_array([
-      [1, 2],
-      [3, 4],
-    ],
-  )
-  inspect(matrix.row(), content="2")
-  inspect(matrix.col(), content="2")
+test "DenseMatrix operations" {
+  let a = @default.DenseMatrix::from_2d_array([[2, 0], [1, 3]])
+  let x = @default.DenseVector::from_array([1, 1])
+  inspect(a.matvec(x).inner(), content="|2, 4|")
+  inspect((a * a).inner(), content="|4, 0|\n|5, 9|")
+  inspect(a.transpose().inner(), content="|2, 1|\n|0, 3|")
+  debug_inspect(a.shape(), content="(2, 2)")
+  inspect(a.inner().trace().unwrap(), content="5")
 }
 ```
 
-Owned wrapper for the default immutable dense matrix backend.
+## `ImmutableDenseVector`
 
-### Constructors and accessors
+### `ImmutableDenseVector`
 
-- `ImmutableDenseMatrix::from_backend(inner : @immut.Matrix[T])`
-- `ImmutableDenseMatrix::from_2d_array(data : Array[Array[T]])`
-- `ImmutableDenseMatrix::new(row : Int, col : Int, value : T)`
-- `ImmutableDenseMatrix::inner(self) -> @immut.Matrix[T]`
-- `ImmutableDenseMatrix::row(self) -> Int`
-- `ImmutableDenseMatrix::col(self) -> Int`
+`ImmutableDenseVector[T]` is the immutable dense vector wrapper.
 
-### Backend methods
+```mbti
+pub struct ImmutableDenseVector[T] {
+  inner : @immut.Vector[T]
+}
+```
 
-- `ImmutableDenseMatrix::matvec(self, vector : ImmutableDenseVector[T]) -> ImmutableDenseVector[T]`
-  multiplies the matrix by an immutable dense vector and returns a new
-  immutable dense vector wrapper.
+It implements the same traits as `DenseVector` under the same constraints.
 
-### Trait implementations
+### `ImmutableDenseVector::from_array`
 
-- `Add`, `Neg`, `Sub`, and `Mul` with the matching element-level operation
-  constraints.
-- `@algebra.MatrixShape` and `@algebra.TransposeMatrix` for all `T`
-- `@algebra.AdditiveMatrix` when `T : Add + Neg`
-- `@algebra.MatMulMatrix` when `T : Add + Neg + Zero + Mul`
+`ImmutableDenseVector::from_array(xs)` copies `xs` into a new `@immut.Vector`.
 
-## Generic helper functions
+```mbti
+pub fn[T] ImmutableDenseVector::from_array(Array[T]) -> Self[T]
+```
 
-- `shape_of[M : @algebra.MatrixShape](matrix : M) -> (Int, Int)`
-  returns an object's shape.
-- `matmul[M : @algebra.MatMulMatrix](left : M, right : M) -> M`
-  dispatches matrix multiplication through the explicit multiplication
-  capability.
-- `transpose[M : @algebra.TransposeMatrix](matrix : M) -> M`
-  dispatches closed transpose through the algebra trait.
+### `ImmutableDenseVector::from_backend`
 
-## Method surface (MoonBit 0.10)
+`ImmutableDenseVector::from_backend(v)` wraps an existing `@immut.Vector`.
 
-MoonBit 0.10 no longer turns trait implementations into methods implicitly.
-Each package lists the trait methods it promotes to method-call syntax in its
-`extends.mbt` (`pub extend T with Trait::{method}`); any other trait method is
-reached through its operator or a trait-qualified call such as
-`Trait::method(x)`. Promotions marked deprecated and hidden from the docs
-(`not_equal`, `output`, `to_repr`, `arbitrary`) exist only for source
-compatibility; use `!=`, string interpolation, `Repr(x)`, or the quickcheck
-trait instead. Indexing is provided by ordinary methods annotated with
-`#alias("_[_]")` / `#alias("_[_]=_")`, so `x[i]` and `x.at(i)` (or `x.get(i)`)
-are equivalent; the former `op_get` / `op_set` names are gone from the API.
+```mbti
+pub fn[T] ImmutableDenseVector::from_backend(@immut.Vector[T]) -> Self[T]
+```
 
-All four wrappers promote `add`, `sub`, `mul`, and `neg` so the operators
-also read as methods. `DenseMatrix` and `ImmutableDenseMatrix` additionally
-promote `@algebra.MatrixShape::shape` and `@algebra.TransposeMatrix::transpose`.
-`DenseVector::at` / `ImmutableDenseVector::at` back `v[i]`. In generic code
-bounded by the `@algebra` traits, keep using the trait-qualified form, e.g.
-`@algebra.TransposeMatrix::transpose(m)`.
+### `ImmutableDenseVector::make`
 
-## Boundary
+`ImmutableDenseVector::make(n, x)` builds a vector of length `n` filled with
+`x`.
 
-This package implements outer `algebra` traits for the default backend wrapper
-types. It does not define new structure traits. Scalar-valued products and
-matrix-vector interactions described above remain backend methods rather than
-new `@algebra` traits, while norms, solves, and decompositions remain backend
-methods or future dedicated algorithm-layer APIs unless they can be represented
-as structure traits or closed operations.
+```mbti
+pub fn[T] ImmutableDenseVector::make(Int, T) -> Self[T]
+```
+
+### `ImmutableDenseVector::inner`
+
+`ImmutableDenseVector::inner(v)` returns the wrapped `@immut.Vector`.
+
+```mbti
+pub fn[T] ImmutableDenseVector::inner(Self[T]) -> @immut.Vector[T]
+```
+
+### `ImmutableDenseVector::length`
+
+`ImmutableDenseVector::length(v)` returns the number of elements.
+
+```mbti
+pub fn[T] ImmutableDenseVector::length(Self[T]) -> Int
+```
+
+### `ImmutableDenseVector::at`
+
+`ImmutableDenseVector::at(v, i)` returns element `i`; it backs `v[i]`.
+
+```mbti
+#alias("_[_]")
+pub fn[T] ImmutableDenseVector::at(Self[T], Int) -> T
+```
+
+### `ImmutableDenseVector::add`, `ImmutableDenseVector::sub`, `ImmutableDenseVector::neg`, `ImmutableDenseVector::mul`
+
+Element-wise `+`, `-`, unary `-` and Hadamard `*`.
+
+```mbti
+pub fn[T : Add] ImmutableDenseVector::add(Self[T], Self[T]) -> Self[T]
+pub fn[T : Add + Neg] ImmutableDenseVector::sub(Self[T], Self[T]) -> Self[T]
+pub fn[T : Neg] ImmutableDenseVector::neg(Self[T]) -> Self[T]
+pub fn[T : Mul] ImmutableDenseVector::mul(Self[T], Self[T]) -> Self[T]
+```
+
+### `ImmutableDenseVector::scale`
+
+`ImmutableDenseVector::scale(v, a)` returns $(v_i \cdot a)_i$.
+
+```mbti
+pub fn[T : Mul] ImmutableDenseVector::scale(Self[T], T) -> Self[T]
+```
+
+### `ImmutableDenseVector::dot`
+
+`ImmutableDenseVector::dot(u, v)` returns $\sum_i u_i v_i$.
+
+```mbti
+pub fn[T : @luna-generic.Zero + Add + Mul] ImmutableDenseVector::dot(Self[T], Self[T]) -> T
+```
+
+Vectors of different lengths abort.
+
+### `ImmutableDenseVector::axpy`
+
+`ImmutableDenseVector::axpy(x, a, y)` returns $x a + y$.
+
+```mbti
+pub fn[T : Add + Mul] ImmutableDenseVector::axpy(Self[T], T, Self[T]) -> Self[T]
+```
+
+## `ImmutableDenseMatrix`
+
+### `ImmutableDenseMatrix`
+
+`ImmutableDenseMatrix[T]` is the immutable dense matrix wrapper.
+
+```mbti
+pub struct ImmutableDenseMatrix[T] {
+  inner : @immut.Matrix[T]
+}
+```
+
+It implements the same traits as `DenseMatrix`; `@algebra.MatMulMatrix` needs
+`T : Add + Neg + Zero + Mul`.
+
+### `ImmutableDenseMatrix::from_2d_array`
+
+`ImmutableDenseMatrix::from_2d_array(rows)` builds a matrix from nested rows;
+ragged input aborts.
+
+```mbti
+pub fn[T] ImmutableDenseMatrix::from_2d_array(Array[Array[T]]) -> Self[T]
+```
+
+### `ImmutableDenseMatrix::from_backend`
+
+`ImmutableDenseMatrix::from_backend(m)` wraps an existing `@immut.Matrix`.
+
+```mbti
+pub fn[T] ImmutableDenseMatrix::from_backend(@immut.Matrix[T]) -> Self[T]
+```
+
+### `ImmutableDenseMatrix::new`
+
+`ImmutableDenseMatrix::new(r, c, x)` builds an $r \times c$ matrix filled with
+`x`.
+
+```mbti
+pub fn[T] ImmutableDenseMatrix::new(Int, Int, T) -> Self[T]
+```
+
+### `ImmutableDenseMatrix::inner`
+
+`ImmutableDenseMatrix::inner(m)` returns the wrapped `@immut.Matrix`.
+
+```mbti
+pub fn[T] ImmutableDenseMatrix::inner(Self[T]) -> @immut.Matrix[T]
+```
+
+### `ImmutableDenseMatrix::row`, `ImmutableDenseMatrix::col`, `ImmutableDenseMatrix::shape`
+
+Row count, column count and `(rows, cols)`; `shape` is the promoted
+`@algebra.MatrixShape::shape`.
+
+```mbti
+pub fn[T] ImmutableDenseMatrix::row(Self[T]) -> Int
+pub fn[T] ImmutableDenseMatrix::col(Self[T]) -> Int
+pub fn[T] ImmutableDenseMatrix::shape(Self[T]) -> (Int, Int)
+```
+
+### `ImmutableDenseMatrix::transpose`
+
+`ImmutableDenseMatrix::transpose(m)` returns the transpose; it is the promoted
+`@algebra.TransposeMatrix::transpose`.
+
+```mbti
+pub fn[T] ImmutableDenseMatrix::transpose(Self[T]) -> Self[T]
+```
+
+### `ImmutableDenseMatrix::add`, `ImmutableDenseMatrix::sub`, `ImmutableDenseMatrix::neg`, `ImmutableDenseMatrix::mul`
+
+Entry-wise `+`, `-`, unary `-`, and the matrix product.
+
+```mbti
+pub fn[T : Add] ImmutableDenseMatrix::add(Self[T], Self[T]) -> Self[T]
+pub fn[T : Add + Neg] ImmutableDenseMatrix::sub(Self[T], Self[T]) -> Self[T]
+pub fn[T : Neg] ImmutableDenseMatrix::neg(Self[T]) -> Self[T]
+pub fn[T : Add + @luna-generic.Zero + Mul] ImmutableDenseMatrix::mul(Self[T], Self[T]) -> Self[T]
+```
+
+Shape mismatches abort.
+
+### `ImmutableDenseMatrix::matvec`
+
+`ImmutableDenseMatrix::matvec(a, x)` returns $A x$ as a new
+`ImmutableDenseVector`; a length mismatch aborts.
+
+```mbti
+pub fn[T : Add + @luna-generic.Zero + Mul] ImmutableDenseMatrix::matvec(Self[T], ImmutableDenseVector[T]) -> ImmutableDenseVector[T]
+```
+
+```moonbit check
+///|
+test "immutable wrappers" {
+  let a = @default.ImmutableDenseMatrix::from_2d_array([[1, 2], [3, 4]])
+  let x = @default.ImmutableDenseVector::from_array([1, -1])
+  inspect(a.matvec(x).inner(), content="|-1, -1|")
+  inspect((a - a.transpose()).inner(), content="|0, -1|\n|1, 0|")
+  inspect(x.dot(x), content="2")
+  inspect(x.scale(3).inner(), content="|3, -3|")
+}
+```

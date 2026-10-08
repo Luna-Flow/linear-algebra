@@ -1,20 +1,122 @@
 # backends/default design
 
-## Responsibilities
+## Design goal
 
-- Present `immut` and `mutable` as default dense backends through owned wrapper
-  types.
-- Implement capability traits for the default dense matrix and vector types.
-- Provide small generic helpers that exercise trait-based dispatch.
+The `algebra` traits are only useful if some real dense type implements them.
+`backends/default` provides that reference backend by wrapping the concrete
+`@mutable` and `@immut` types, while keeping those concrete packages free of
+any dependency on the experimental `algebra` layer. It is a backend, not the
+centre of the ecosystem: generic algorithms depend on the traits, and this
+package is one way to satisfy them.
 
-## Non-responsibilities
+## Mathematical background
 
-- Do not redefine scalar algebra or arithmetic laws.
-- Do not require all future backends to become dense or contiguous.
-- Do not make scalar-valued maps part of the core linear algebra trait surface.
+### Instances are evidence of laws
 
-## Extension model
+Implementing `@algebra.MatMulMatrix` for a type claims the laws listed in the
+[algebra design](../algebra.md): associativity and distributivity of `*` over
+`+` wherever defined. For the wrappers these laws are inherited from the
+wrapped types, because every operator is defined as "unwrap, apply the inner
+operator, wrap":
 
-Future sparse, lazy, static-size, GPU, or external-library backends should
-implement the same structural traits directly. They should not need to convert
-into `DenseMatrix` or `DenseVector` before generic algorithms can use them.
+$$
+\mathrm{wrap}(A) \cdot \mathrm{wrap}(B) = \mathrm{wrap}(A \cdot B) .
+$$
+
+So `wrap` is a homomorphism for every operation, and any equation that holds
+for the inner type holds for the wrapper.
+
+### Partiality of the dense product
+
+For runtime-shaped dense matrices the product is defined on
+$\{(A, B) : \operatorname{cols}(A) = \operatorname{rows}(B)\}$. The trait
+method returns `Self`, so outside that set the wrapper must do something; it
+aborts, as the inner type does. This is the documented runtime precondition
+that the `MatMulMatrix` contract asks implementations to state.
+
+### Dot product and its rounding error
+
+`dot` computes $s_n = \sum_{i=1}^{n} u_i v_i$ by the recurrence
+$s_0 = 0$, $s_i = s_{i-1} + u_i v_i$. In floating point each step multiplies
+the error of all earlier terms by another factor $(1 + \delta)$, and the
+standard argument gives
+
+$$
+\big|\mathrm{fl}(s_n) - s_n\big| \le \gamma_n \sum_{i=1}^{n} |u_i v_i|,
+\qquad \gamma_n = \frac{n u}{1 - n u} .
+$$
+
+The relative error is therefore small when the terms have the same sign, and
+can be large when $\sum |u_i v_i| \gg |s_n|$ (cancellation). `matvec` is $m$
+such dot products and inherits the same bound row by row.
+
+## Design decisions
+
+### Owned wrapper types
+
+**Problem.** MoonBit allows `impl Trait for Type` only in the package that owns
+the trait or the type. Implementing `@algebra.MatMulMatrix` for
+`@mutable.Matrix` would have to happen in `algebra` (which must not know
+concrete types) or in `mutable` (which would then depend on the experimental
+`algebra` layer).
+
+**Decision.** Define new types `DenseMatrix[T]`, `DenseVector[T]` and their
+immutable counterparts in this package, each a struct with one public field
+`inner`, and implement the traits for them here.
+
+**Why.** The wrapper is owned by the package that implements the traits, so
+the rule is satisfied, and the dependency direction stays
+`backends/default → algebra, immut, mutable`. The cost is one indirection in
+the type, removed by `inner()` and `from_backend` without copying.
+
+### Backend methods for scalar-valued maps
+
+`dot`, `scale`, `axpy` and `matvec` are methods of the wrappers, not traits:
+they involve the scalar type explicitly, which the `algebra` traits cannot name
+(see the algebra design). Keeping them as methods lets each backend choose its
+own constraints, for example `AddMonoid + Mul` for `dot` on the mutable vector
+and `Zero + Add + Mul` on the immutable one.
+
+### `axpy` returns a new vector
+
+The BLAS routine `axpy` updates $y \leftarrow a x + y$ in place. Here
+`x.axpy(a, y)` returns $x a + y$ as a new vector for both wrappers, so the
+mutable and immutable backends share one value-returning contract. In-place
+updates remain available on the inner `@mutable.Vector`.
+
+### Scalars multiply on the right
+
+`scale` uses `right_scale`, computing $v_i a$. For commutative scalars this is
+the same as $a v_i$; for non-commutative scalars the choice is visible, and it
+is documented rather than hidden.
+
+## Correctness and invariants
+
+- **Homomorphism.** `inner(a op b) == inner(a) op inner(b)` for every operator,
+  so the wrappers satisfy exactly the laws of the wrapped types.
+- **No copies on wrapping.** `from_backend(x).inner()` is physically `x`;
+  writes to a mutable inner value are visible through the wrapper.
+- **Transpose.** `transpose` materializes; it never returns a view, so the
+  `TransposeMatrix` law $(A^{\mathsf T})^{\mathsf T} = A$ holds as values.
+- **Complexity.** `+`, `-`, `scale`: $O(n)$; `dot`: $n$ multiply-adds; `matvec`:
+  $mn$; `*`: $rcn$ multiply-adds; `transpose`: $O(rc)$ copies.
+
+## Alternatives rejected
+
+- **A runtime backend selector** inside one matrix type. It would make every
+  operation branch on the backend and hide which kernel runs. Backends are
+  chosen by type.
+- **Implementing the traits in `immut` and `mutable` directly.** That would tie
+  the stable concrete packages to the experimental `algebra` layer.
+- **In-place `axpy`.** It would give the two wrappers different semantics for
+  the same name.
+
+## Boundaries
+
+`backends/default` defines no new traits and no new numerical algorithms; the
+decompositions, inverses and statistics of [`mutable`](../mutable.md) are
+reached through `inner()`. It does not provide sparse, lazy, static-size or
+GPU backends; those should implement the `algebra` traits for their own types
+rather than convert into these wrappers. The native OpenBLAS backend that once
+sat beside it is withdrawn in this release and preserved in
+`contrib/openblas_backend`.
