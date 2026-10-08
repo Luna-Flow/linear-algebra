@@ -10,7 +10,7 @@ pub fn[V, T] VectorReadOps::new(
   length : (V) -> Int,
   get : (V, Int) -> Result[T, @la_error.LinearAlgebraError],
 ) -> VectorReadOps[V, T] {
-  { length, get }
+  { length, get, }
 }
 
 ///|

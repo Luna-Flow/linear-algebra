@@ -40,4 +40,3 @@ pub fn[M : HasShape] ensure_square_checked(M) -> Result[Unit, @error.LinearAlgeb
 pub(open) trait HasShape {
   fn shape(Self) -> (Int, Int)
 }
-

@@ -4,7 +4,6 @@ import {
 import {
   "Luna-Flow/linear-algebra/immut",
   "Luna-Flow/linear-algebra/mutable",
-  "Luna-Flow/luna-generic",
   "moonbitlang/core/debug",
   "moonbitlang/quickcheck" @qc,
 } for "wbtest"

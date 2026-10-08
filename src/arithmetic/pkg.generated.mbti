@@ -80,4 +80,3 @@ pub(open) trait CheckedSqrt {
 }
 pub impl CheckedSqrt for Float
 pub impl CheckedSqrt for Double
-

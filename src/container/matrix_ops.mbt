@@ -10,7 +10,7 @@ pub fn[M, T] MatrixReadOps::new(
   shape : (M) -> (Int, Int),
   get : (M, Int, Int) -> Result[T, @la_error.LinearAlgebraError],
 ) -> MatrixReadOps[M, T] {
-  { shape, get }
+  { shape, get, }
 }
 
 ///|

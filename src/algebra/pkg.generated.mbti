@@ -33,4 +33,3 @@ pub(open) trait VecMulVector : AdditiveVector + Mul {
 pub(open) trait VectorShape {
   fn length(Self) -> Int
 }
-
