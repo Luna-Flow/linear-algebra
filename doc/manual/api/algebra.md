@@ -1,296 +1,370 @@
-# `linear-algebra/algebra`
+# algebra API
 
-API baseline for `Luna-Flow/linear-algebra/algebra` in the current `0.5.0`
-repository state.
+`Luna-Flow/linear-algebra/algebra` defines the structure traits that whole
+vector and matrix objects implement: shape, closed additive structure,
+Hadamard multiplication, transpose and matrix multiplication. Each trait asks
+for one more capability than the one below it, so a generic algorithm can name
+exactly what it uses. The package has no types and no functions; the
+implementations for the repository's own dense types live in
+[`backends/default`](backends/default.md).
 
-## Experimental status
+Source: [`src/algebra/linear_traits.mbt`](../../../src/algebra/linear_traits.mbt).
+The mathematics behind the hierarchy is in the [algebra design](../design/algebra.md),
+and the [integration guide](../integration/algebra.md) explains how external
+types choose a level.
 
-`algebra` is an experimental feature. It is ready for backend-integration
-experiments and feedback, but its trait hierarchy, supertrait requirements,
-operator commitments, and function signatures may change incompatibly before
-stabilization. Downstream libraries should depend on the smallest capability
-they need and should not re-export this package as a compatibility-stable
-public boundary yet.
+> [!WARNING]
+> `algebra` is experimental. The trait hierarchy, its supertraits and the
+> operator commitments may change incompatibly before the package is declared
+> stable. Depend on the smallest trait you need, and do not re-export these
+> traits as a stable public boundary of your own library yet.
 
-## Purpose
-
-`algebra` owns the linear-algebra structure traits. Backend packages implement
-these traits for their own concrete data types. The traits in this package are
-split by the minimum capability they require so generic algorithms do not
-accidentally depend on Hadamard multiplication, matrix multiplication, or exact
-floating-point field laws.
-
-External type authors should start with the
-[ecosystem integration guide](../integration/algebra.md) to select the smallest valid
-trait level and understand its operator commitments.
-
-## Project setup
-
-`algebra` is the structure layer only. If you also need the shared upstream
-scalar abstractions, add them explicitly:
-
-```sh
-moon add Luna-Flow/linear-algebra@0.5.0
-moon add Luna-Flow/luna-generic@0.3.3
-moon add Luna-Flow/arithmetic@0.2.2
-```
-
-Recommended `moon.pkg` imports:
+## Import
 
 ```moonbit nocheck
 ///|
 import {
   "Luna-Flow/linear-algebra/algebra",
-  "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,
-  "Luna-Flow/luna-generic" @lf_alg,
-  "Luna-Flow/arithmetic" @lf_arith,
 }
 ```
 
-Use `@algebra` for linear-algebra structure traits. Import `@lf_alg` and
-`@lf_arith` directly when your code also needs the shared upstream abstractions.
+## Trait hierarchy
 
-## Matrix shape traits
+| Trait | Supertraits | Adds |
+| --- | --- | --- |
+| `VectorShape` | none | `length` |
+| `AdditiveVector` | `VectorShape + Add + Neg + Sub` | closed `+`, unary `-`, binary `-` |
+| `VecMulVector` | `AdditiveVector + Mul` | element-wise (Hadamard) `*` |
+| `MatrixShape` | none | `shape` |
+| `TransposeMatrix` | `MatrixShape` | same-type `transpose` |
+| `AdditiveMatrix` | `TransposeMatrix + Add + Neg + Sub` | closed `+`, unary `-`, binary `-` |
+| `MatMulMatrix` | `AdditiveMatrix + Mul` | matrix product `*` |
+
+All traits are `pub(open)`: any package may implement them for the types it
+owns. The operator traits `Add`, `Neg`, `Sub` and `Mul` are the builtin MoonBit
+traits, so a type that joins a level keeps using the ordinary operators.
+
+## Shape traits
+
+### `VectorShape`
+
+`VectorShape` marks an object whose length can be observed.
+
+```mbti
+pub(open) trait VectorShape {
+  fn length(Self) -> Int
+}
+```
+
+It claims no operation and no element access. A vector of length $n$ is an
+element of some set that the implementation associates with $\{0, \dots, n-1\}$;
+the trait only exposes $n$.
+
+### `VectorShape::length`
+
+`VectorShape::length` returns the number of components of the vector.
+
+```mbti
+fn VectorShape::length(Self) -> Int
+```
+
+The result is non-negative for every implementation in this repository. Call it
+in the trait-qualified form `@algebra.VectorShape::length(v)` inside generic
+code; concrete types may also expose a `length` method of their own.
+
+### `MatrixShape`
+
+`MatrixShape` marks an object whose row and column counts can be observed.
+
+```mbti
+pub(open) trait MatrixShape {
+  fn shape(Self) -> (Int, Int)
+}
+```
+
+### `MatrixShape::shape`
+
+`MatrixShape::shape` returns `(rows, cols)`.
+
+```mbti
+fn MatrixShape::shape(Self) -> (Int, Int)
+```
+
+Both components are non-negative. Degenerate shapes $0 \times n$ and
+$n \times 0$ are valid matrices and must be reported as such.
+
+The following example implements both shape traits for two small types and
+reads them back in generic form.
 
 ```moonbit check
 ///|
-struct ToyMatrix {
+struct AlgApiToyMatrix {
   rows : Int
   cols : Int
 }
 
 ///|
-struct ToyVector {
+struct AlgApiToyVector {
   size : Int
 }
 
 ///|
-impl @algebra.MatrixShape for ToyMatrix with fn shape(self) {
+impl @algebra.MatrixShape for AlgApiToyMatrix with fn shape(self) {
   (self.rows, self.cols)
 }
 
 ///|
-impl @algebra.VectorShape for ToyVector with fn length(self) {
+impl @algebra.VectorShape for AlgApiToyVector with fn length(self) {
   self.size
 }
 
 ///|
 test "shape traits report dimensions" {
-  let matrix : ToyMatrix = { rows: 2, cols: 3, }
-  let vector : ToyVector = { size: 4, }
-  let (rows, cols) = @algebra.MatrixShape::shape(matrix)
-  inspect(rows, content="2")
-  inspect(cols, content="3")
+  let matrix : AlgApiToyMatrix = { rows: 2, cols: 3, }
+  let vector : AlgApiToyVector = { size: 4, }
+  debug_inspect(@algebra.MatrixShape::shape(matrix), content="(2, 3)")
   inspect(@algebra.VectorShape::length(vector), content="4")
 }
 ```
 
-`MatrixShape` is for matrix-like or tensor-like objects with observable dimensions.
-`VectorShape` is for vector-like objects with observable length. These traits do
-not claim any algebraic operation.
+## Vector traits
 
-## `AdditiveVector`
+### `AdditiveVector`
 
-```moonbit check
-///|
-struct AddVec {
-  value : Int
-}
+`AdditiveVector` marks a vector type whose values form an abelian group under
+`+`.
 
-///|
-impl @algebra.VectorShape for AddVec with fn length(_) {
-  1
-}
-
-///|
-impl Add for AddVec with fn add(left, right) {
-  { value: left.value + right.value, }
-}
-
-///|
-impl Neg for AddVec with fn neg(value) {
-  { value: -value.value, }
-}
-
-///|
-impl Sub for AddVec with fn sub(left, right) {
-  left + -right
-}
-
-///|
-impl @algebra.AdditiveVector for AddVec
-
-///|
-fn[T : @algebra.AdditiveVector] add_vectors(left : T, right : T) -> T {
-  left + right
-}
-
-///|
-test "AdditiveVector packages vector addition and subtraction" {
-  let left : AddVec = { value: 7, }
-  let right : AddVec = { value: 2, }
-  inspect(add_vectors(left, right).value, content="9")
-  inspect(add_vectors(left, -right).value, content="5")
+```mbti
+pub(open) trait AdditiveVector : VectorShape + Add + Neg + Sub {
 }
 ```
 
-Represents vector-like objects with additive linear structure. It does not
-require element-wise multiplication, dot product, norm, or a global zero.
+The trait has no methods of its own. Implementing it is a promise that, for
+values of equal length,
 
-Reach for `VecMulVector` only when an algorithm really needs element-wise
-multiplication:
+$$
+\begin{aligned}
+(u + v) + w &= u + (v + w), & u + v &= v + u, \\
+(u + (-u)) + v &= v, & u - v &= u + (-v),
+\end{aligned}
+$$
+
+and that the results keep the length of the operands. The trait does not ask
+for a global zero, a scalar action, a dot product or a norm; see the
+[design page](../design/algebra.md) for why. Equal lengths are a runtime
+precondition: the implementations in this repository abort on a length
+mismatch.
+
+### `VecMulVector`
+
+`VecMulVector` adds the element-wise (Hadamard) product $(u \odot v)_i = u_i v_i$
+as `*`.
+
+```mbti
+pub(open) trait VecMulVector : AdditiveVector + Mul {
+}
+```
+
+`*` must mean the Hadamard product, not a dot or cross product. With it, the
+vectors of a fixed length $n$ over a ring $R$ form the product ring $R^n$, so
+`*` is associative and distributes over `+`.
+
+The example writes one helper per level and runs it on a one-component toy
+type.
 
 ```moonbit check
 ///|
-struct MulVec {
+struct AlgApiMulVec {
   value : Int
 }
 
 ///|
-impl @algebra.VectorShape for MulVec with fn length(_) {
+impl @algebra.VectorShape for AlgApiMulVec with fn length(_) {
   1
 }
 
 ///|
-impl Add for MulVec with fn add(left, right) {
+impl Add for AlgApiMulVec with fn add(left, right) {
   { value: left.value + right.value, }
 }
 
 ///|
-impl Neg for MulVec with fn neg(value) {
+impl Neg for AlgApiMulVec with fn neg(value) {
   { value: -value.value, }
 }
 
 ///|
-impl Sub for MulVec with fn sub(left, right) {
+impl Sub for AlgApiMulVec with fn sub(left, right) {
   left + -right
 }
 
 ///|
-impl Mul for MulVec with fn mul(left, right) {
+impl Mul for AlgApiMulVec with fn mul(left, right) {
   { value: left.value * right.value, }
 }
 
 ///|
-impl @algebra.AdditiveVector for MulVec
+impl @algebra.AdditiveVector for AlgApiMulVec
 
 ///|
-impl @algebra.VecMulVector for MulVec
+impl @algebra.VecMulVector for AlgApiMulVec
 
 ///|
-fn[T : @algebra.VecMulVector] hadamard_product(left : T, right : T) -> T {
+fn[V : @algebra.AdditiveVector] alg_api_difference(left : V, right : V) -> V {
+  left - right
+}
+
+///|
+fn[V : @algebra.VecMulVector] alg_api_hadamard(left : V, right : V) -> V {
   left * right
 }
 
 ///|
-test "VecMulVector adds element-wise multiplication" {
-  let left : MulVec = { value: 3, }
-  let right : MulVec = { value: 4, }
-  inspect(hadamard_product(left, right).value, content="12")
+test "vector traits expose closed operators" {
+  let left : AlgApiMulVec = { value: 7, }
+  let right : AlgApiMulVec = { value: 3, }
+  inspect(alg_api_difference(left, right).value, content="4")
+  inspect(alg_api_hadamard(left, right).value, content="21")
 }
 ```
 
-## `TransposeMatrix`
+## Matrix traits
 
-```moonbit check
-///|
-struct Flip2x2 {
-  a11 : Int
-  a12 : Int
-  a21 : Int
-  a22 : Int
-}
+### `TransposeMatrix`
 
-///|
-impl @algebra.MatrixShape for Flip2x2 with fn shape(_) {
-  (2, 2)
-}
+`TransposeMatrix` marks a matrix type that is closed under transposition.
 
-///|
-impl @algebra.TransposeMatrix for Flip2x2 with fn transpose(self) {
-  { a11: self.a11, a12: self.a21, a21: self.a12, a22: self.a22, }
-}
-
-///|
-test "TransposeMatrix keeps shape and swaps off-diagonal entries" {
-  let matrix : Flip2x2 = { a11: 1, a12: 2, a21: 3, a22: 4, }
-  let transposed = @algebra.TransposeMatrix::transpose(matrix)
-  let (rows, cols) = @algebra.MatrixShape::shape(transposed)
-  inspect(rows, content="2")
-  inspect(cols, content="2")
-  inspect(transposed.a12, content="3")
-  inspect(transposed.a21, content="2")
+```mbti
+pub(open) trait TransposeMatrix : MatrixShape {
+  fn transpose(Self) -> Self
 }
 ```
 
-Represents matrix-like objects with observable shape and same-category
-transpose. It does not require matrix multiplication because dynamic rectangular
-matrix multiplication is only defined for compatible runtime shapes.
+### `TransposeMatrix::transpose`
 
-The trait does not require dense storage, contiguous memory, direct element
-indexing, or mutation support.
+`TransposeMatrix::transpose` returns the transpose $A^{\mathsf T}$, with
+$(A^{\mathsf T})_{ij} = A_{ji}$, as a value of the same type.
 
-Use the stronger traits only when the algorithm actually needs the extra
-operation:
+```mbti
+fn TransposeMatrix::transpose(Self) -> Self
+```
+
+An implementation must satisfy
+
+$$
+\operatorname{shape}(A^{\mathsf T}) = (n, m) \text{ when } \operatorname{shape}(A) = (m, n),
+\qquad (A^{\mathsf T})^{\mathsf T} = A .
+$$
+
+Transpose is total: it never fails, for any shape. The trait does not require
+dense storage, element access or mutation; it also does not say whether the
+result shares storage with the argument.
+
+### `AdditiveMatrix`
+
+`AdditiveMatrix` adds closed entry-wise `+`, unary `-` and binary `-` to a
+transposable matrix type.
+
+```mbti
+pub(open) trait AdditiveMatrix : TransposeMatrix + Add + Neg + Sub {
+}
+```
+
+The laws are those of `AdditiveVector` for matrices of equal shape, together
+with $(A + B)^{\mathsf T} = A^{\mathsf T} + B^{\mathsf T}$. Equal shapes are a
+runtime precondition.
+
+### `MatMulMatrix`
+
+`MatMulMatrix` adds the matrix product as `*`.
+
+```mbti
+pub(open) trait MatMulMatrix : AdditiveMatrix + Mul {
+}
+```
+
+`*` must be the product $(AB)_{ik} = \sum_j A_{ij} B_{jk}$, never the Hadamard
+product. It is defined only when the column count of the left operand equals
+the row count of the right one, so for runtime-shaped matrices it is a partial
+operation. The trait does not standardize what happens outside that domain:
+every implementation must document it. The dense wrappers of
+[`backends/default`](backends/default.md) abort with a dimension-mismatch
+message. An implementation must satisfy, wherever both sides are defined,
+
+$$
+(AB)C = A(BC), \qquad A(B + C) = AB + AC, \qquad (A + B)C = AC + BC ,
+$$
+
+and, when the scalars commute, $(AB)^{\mathsf T} = B^{\mathsf T} A^{\mathsf T}$.
+
+The example implements every matrix level for a fixed $1 \times 1$ type, where
+all operations are total, and uses a generic Gram-matrix helper.
 
 ```moonbit check
 ///|
-struct ScalarMatrix {
+struct AlgApiScalarMatrix {
   value : Int
 }
 
 ///|
-impl @algebra.MatrixShape for ScalarMatrix with fn shape(_) {
+impl @algebra.MatrixShape for AlgApiScalarMatrix with fn shape(_) {
   (1, 1)
 }
 
 ///|
-impl @algebra.TransposeMatrix for ScalarMatrix with fn transpose(self) {
+impl @algebra.TransposeMatrix for AlgApiScalarMatrix with fn transpose(self) {
   self
 }
 
 ///|
-impl Add for ScalarMatrix with fn add(left, right) {
+impl Add for AlgApiScalarMatrix with fn add(left, right) {
   { value: left.value + right.value, }
 }
 
 ///|
-impl Neg for ScalarMatrix with fn neg(value) {
+impl Neg for AlgApiScalarMatrix with fn neg(value) {
   { value: -value.value, }
 }
 
 ///|
-impl Sub for ScalarMatrix with fn sub(left, right) {
+impl Sub for AlgApiScalarMatrix with fn sub(left, right) {
   left + -right
 }
 
 ///|
-impl Mul for ScalarMatrix with fn mul(left, right) {
+impl Mul for AlgApiScalarMatrix with fn mul(left, right) {
   { value: left.value * right.value, }
 }
 
 ///|
-impl @algebra.AdditiveMatrix for ScalarMatrix
+impl @algebra.AdditiveMatrix for AlgApiScalarMatrix
 
 ///|
-impl @algebra.MatMulMatrix for ScalarMatrix
+impl @algebra.MatMulMatrix for AlgApiScalarMatrix
 
 ///|
-fn[T : @algebra.MatMulMatrix] multiply_matrices(left : T, right : T) -> T {
-  left * right
+fn[M : @algebra.MatMulMatrix] alg_api_gram(matrix : M) -> M {
+  @algebra.TransposeMatrix::transpose(matrix) * matrix
 }
 
 ///|
-test "matrix additive and multiplicative traits compose cleanly" {
-  let left : ScalarMatrix = { value: 2, }
-  let right : ScalarMatrix = { value: 5, }
-  inspect((left + right).value, content="7")
-  inspect(multiply_matrices(left, right).value, content="10")
+test "matrix traits compose" {
+  let a : AlgApiScalarMatrix = { value: 3, }
+  let b : AlgApiScalarMatrix = { value: 5, }
+  inspect((a + b).value, content="8")
+  inspect(alg_api_gram(a).value, content="9")
 }
 ```
 
-## Boundary
+## Implementations in this repository
 
-Do not add `dot`, `norm`, or inner-product traits here unless the scalar mapping
-is modeled explicitly. The core algebra package is for minimal structure and
-same-category operations.
+| Type | Traits |
+| --- | --- |
+| `@default.DenseVector[T]` | `VectorShape`; `AdditiveVector` when `T : Add + Neg`; `VecMulVector` when `T : Add + Neg + Mul` |
+| `@default.ImmutableDenseVector[T]` | the same as `DenseVector` |
+| `@default.DenseMatrix[T]` | `MatrixShape`, `TransposeMatrix`; `AdditiveMatrix` when `T : Add + Neg`; `MatMulMatrix` when `T : Add + Neg + AddMonoid + Mul` |
+| `@default.ImmutableDenseMatrix[T]` | `MatrixShape`, `TransposeMatrix`; `AdditiveMatrix` when `T : Add + Neg`; `MatMulMatrix` when `T : Add + Neg + Zero + Mul` |
+
+The concrete `@immut` and `@mutable` types do not implement these traits
+directly; they are wrapped by `backends/default` so that the packages keep
+their own dependency direction (see the [architecture guide](../architecture.md)).

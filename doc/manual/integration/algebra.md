@@ -1,4 +1,4 @@
-# Algebra ecosystem integration
+# Algebra integration
 
 The `algebra` package is for mathematical capabilities of whole vector and
 matrix objects. External libraries should implement only the traits whose
