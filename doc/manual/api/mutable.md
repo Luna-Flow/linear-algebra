@@ -1,5 +1,7 @@
 # mutable API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/mutable` provides execution-oriented dense linear
 algebra: `Matrix[T]` stores its entries in one row-major `Array[T]` and can be
 updated in place, `Vector[T]` wraps an `Array[T]`, and `RowView`, `ColView`
@@ -12,7 +14,7 @@ Source: [`src/mutable`](../../../src/mutable/matrix.mbt). The algorithms and
 their numerical properties are derived in the [mutable design](../design/mutable.md);
 [`immut`](immut.md) is the value-oriented counterpart with the same core names.
 
-## Import
+## Importing
 
 ```moonbit nocheck
 ///|
@@ -20,6 +22,11 @@ import {
   "Luna-Flow/linear-algebra/mutable",
 }
 ```
+
+The examples on this page write every name with its package prefix, such as
+`@mutable.`, instead of a `using` declaration: all pages of this manual
+compile into one test package, where the declarations of different pages
+would clash.
 
 ## Conventions
 
@@ -605,7 +612,9 @@ For $n \le 4$: closed cofactor formulas. For $n \ge 5$: the product of the
 diagonal if the matrix is triangular within tolerance, otherwise LU
 factorization with partial pivoting, $\det A = (-1)^{s} \prod_i u_{ii}$ for $s$
 row exchanges. If a pivot falls below the tolerance the result is exactly
-zero. $\det$ of the $0 \times 0$ matrix is $1$.
+zero; otherwise it is a product of pivots of magnitude at least $10^{-11}$,
+which can still underflow to zero or overflow to infinity for large $n$.
+$\det$ of the $0 \times 0$ matrix is $1$.
 
 ### `Matrix::unchecked_determinant`
 
@@ -628,6 +637,11 @@ Identity, diagonal and permutation matrices are recognized and inverted
 directly ($P^{-1} = P^{\mathsf T}$); other matrices are solved column by column
 from an LU factorization with partial pivoting. Cost $\approx \tfrac{8}{3} n^3$
 flops. The inverse of the $0 \times 0$ matrix is the $0 \times 0$ matrix.
+
+The recognition uses the tolerance: a matrix whose entries are within
+$10^{-11}$ of the identity is returned as a copy of itself, one whose
+off-diagonal entries are at most $10^{-11}$ is inverted as if they were zero,
+and one within $10^{-11}$ of a permutation matrix is returned transposed.
 
 ### `Matrix::unchecked_inverse`
 
@@ -671,9 +685,15 @@ returns `a` itself.
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::reduce_row_elimination(Self[T]) -> Self[T]
 ```
 
-Pivots become exactly one, other entries of pivot columns exactly zero, and
-entries whose magnitude is at most the tolerance are set to zero along the way.
-Copy first if you need the original.
+Columns are processed left to right. In each column the entry of largest
+magnitude at or below the current row is swapped up; if its magnitude is at
+most the tolerance, that one entry is set to zero and the column is skipped
+(the other entries below it, also at most the tolerance, are left as they
+are). Otherwise the pivot row is divided by the pivot, which makes the pivot
+one, and every other row with an entry of magnitude above the tolerance in the
+pivot column has a multiple of the pivot row subtracted; an entry at or below
+the tolerance is set to zero without touching the rest of its row. Copy first
+if you need the original.
 
 ### `Matrix::cholesky_decomposition`
 
@@ -686,8 +706,14 @@ pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + @arithmetic.Sqrt 
 
 `None` means that `a` is not square, not symmetric within tolerance, or that a
 diagonal pivot $a_{jj} - \sum_{k<j} l_{jk}^2$ is at most the tolerance (the
-matrix is not positive definite, or nearly singular). Cost $\approx n^3/3$
-flops.
+matrix is not positive definite, or nearly singular). Only the lower triangle
+of `a` is read. Cost $\approx n^3/3$ flops.
+
+Two fast paths run first. A matrix within the tolerance of the identity is
+returned as a copy of itself, so its off-diagonal entries of magnitude at most
+$10^{-11}$ survive and the result is then not exactly lower triangular. A
+matrix that is diagonal within the tolerance gives the square roots of its
+diagonal, and its off-diagonal entries are dropped.
 
 ### `Matrix::is_positive_definite`
 
@@ -746,9 +772,28 @@ pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + @arithmetic.Sqrt 
   normalized**.
 - For other sizes the matrix is reduced to tridiagonal form by Householder
   reflections and diagonalized by the implicit QL algorithm with Wilkinson
-  shifts. The eigenvector columns are orthonormal up to rounding. The
-  eigenvalues are not sorted.
+  shifts. Only the lower triangle is read. The eigenvector columns are
+  orthonormal up to rounding. The eigenvalues are not sorted.
 - Cost $O(n^3)$.
+
+> [!WARNING]
+> The $2 \times 2$ formula compares the discriminant $m^2 - \det A$, a
+> *squared* quantity, with the absolute tolerance $10^{-11}$, and computes it
+> with cancellation. Three consequences for symmetric input:
+> eigenvalues closer than about $2\sqrt{10^{-11}} \approx 6 \times 10^{-6}$
+> are returned as equal (for `[[1, 0], [0, 1.000002]]` both values are
+> `1.000001`); for `[[1, 1e-6], [1e-6, 1]]` the two returned eigenvector
+> columns are identical, so the eigenvector matrix is singular; and for
+> entries near $10^{8}$ the rounding error of $m^2 - \det A$ can exceed
+> $10^{-11}$ in the negative direction, so a diagonal matrix such as
+> `[[100000000.74, 0], [0, 99999999.78]]` aborts with "complex eigenvalues".
+> For larger sizes the deflation test and the Householder step also use
+> absolute thresholds, so a matrix whose entries are all below about
+> $10^{-11}$ is treated as already diagonal (for $10^{-12}$ times the
+> tridiagonal matrix with diagonal $2$ and off-diagonal $1$, every returned
+> eigenvalue is $2 \times 10^{-12}$). Scale the input to order one, and
+> embed a $2 \times 2$ problem in a larger one or solve it yourself when
+> these cases matter. See the [design page](../design/mutable.md#symmetric-eigenvalue-problem).
 
 ### `Matrix::power_method`
 
@@ -767,7 +812,15 @@ pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix
   example for a nilpotent matrix). Two dominant eigenvalues of equal magnitude
   and opposite sign, such as $\pm 1$, prevent convergence.
 - Aborts for a non-square or empty matrix.
-- Each iteration costs one matrix-vector product, $O(n^2)$.
+- Each iteration costs two matrix-vector products, $O(n^2)$: one for the
+  Rayleigh quotient and the residual, and one for the next iterate (the code
+  does not reuse the first). The starting vector is $(1, \dots, 1)$, or the
+  first coordinate vector $e_k$ with $A e_k$ above the tolerance if
+  $A (1, \dots, 1)^{\mathsf T}$ is not; it is multiplied by $A$ and scaled
+  once before the first residual test.
+- The residual test is absolute, so the accuracy of $x$ scales with
+  $\lVert A \rVert$: for a matrix of size about $10^{-6}$ the test passes while
+  $x$ is still wrong in the sixth digit.
 
 ```moonbit check
 ///|
@@ -1199,7 +1252,8 @@ pub fn[T : @luna-generic.MulMonoid + Add + Neg] Vector::lerp(Self[T], Self[T], T
 
 ### `Vector::lin_comb`
 
-`Vector::lin_comb(weights, vectors)` returns $\sum_k w_k v_k$ in one pass.
+`Vector::lin_comb(weights, vectors)` returns $\sum_k w_k v_k$, accumulated
+into one new vector.
 
 ```mbti
 pub fn[T : Mul + Add + @luna-generic.Zero] Vector::lin_comb(Array[T], Array[Self[T]]) -> Self[T]

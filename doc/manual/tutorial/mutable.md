@@ -6,6 +6,16 @@ transpose views, and run the numerical routines (inverse, determinant,
 Cholesky, eigenvalues, statistics) with proper error handling. The algorithms
 and their accuracy are explained in the [mutable design](../design/mutable.md).
 
+| I want to | Use |
+| --- | --- |
+| build and edit a matrix in place | `@mutable.Matrix::from_2d_array`, `set`, `m[i][j] = x` |
+| work on one row or column | `row_view`, `col_view` |
+| solve a small linear system | `inverse` and `mul_vec` |
+| test and factor an SPD matrix | `is_positive_definite`, `cholesky_decomposition` |
+| get eigenvalues of a symmetric matrix | `eigen` |
+| get the dominant eigenvalue | `power_method` |
+| summarize the entries | `mean`, `variance`, `std_dev`, `min_element`, `max_element` |
+
 ## Quick start
 
 ```sh
@@ -187,6 +197,15 @@ functions bounded by the `algebra` traits; `inner()` gets it back.
 - **Expecting normalized $2 \times 2$ eigenvectors.** For $2 \times 2$ input,
   the eigenvector columns are not normalized; larger inputs return orthonormal
   columns.
+- **Close eigenvalues of a $2 \times 2$ matrix.** The $2 \times 2$ formula
+  merges eigenvalues closer than about $6 \times 10^{-6}$ (and then may return
+  two equal eigenvector columns), and can abort on symmetric input with
+  entries near $10^{8}$. See the warning on the
+  [API page](../api/mutable.md#matrixeigen).
+- **Matrices far from order one.** Every zero test uses the absolute threshold
+  $10^{-11}$. A matrix whose entries are all around $10^{-12}$ is singular to
+  `inverse`, not positive definite to `cholesky_decomposition`, and has
+  meaningless `eigen` results. Scale first.
 - **Numerical routines on integers.** `determinant`, `inverse`, `rank`, `eigen`
   and friends need `Tolerance`, which exists only for `Float` and `Double`. For
   exact integer determinants use `@immut.Matrix::determinant`.
