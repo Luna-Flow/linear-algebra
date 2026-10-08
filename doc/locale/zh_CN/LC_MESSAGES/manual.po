@@ -1621,20 +1621,20 @@ msgid "The predicates in use, on errors returned by real checked calls:"
 msgstr "在真实受检调用返回的错误上使用这些判断方法："
 
 #: manual/api/error.md:346
-#: manual/api/immut.md:976
-#: manual/api/mutable.md:1311
+#: manual/api/immut.md:977
+#: manual/api/mutable.md:1301
 msgid "Deprecated"
 msgstr "已弃用"
 
 #: manual/api/error.md:348
-#: manual/api/immut.md:981
-#: manual/api/mutable.md:1313
+#: manual/api/immut.md:982
+#: manual/api/mutable.md:1303
 msgid "Item"
 msgstr "项"
 
 #: manual/api/error.md:348
-#: manual/api/immut.md:981
-#: manual/api/mutable.md:1313
+#: manual/api/immut.md:982
+#: manual/api/mutable.md:1303
 msgid "Replacement"
 msgstr "替代方案"
 
@@ -1910,277 +1910,277 @@ msgid "For $n \\le 4$ it evaluates closed cofactor formulas; for $n \\ge 5$ it r
 msgstr "当 $n \\le 4$ 时，它使用封闭的余子式公式求值；当 $n \\ge 5$ 时，它执行无分数（Bareiss）消元，在当前列中选取 `abs` 最大的元素作为主元，其中的除法在整环中都是精确的。因此，对于 `BigInt` 结果是**精确的**；对于 `Int` 和 `Int64`，只要中间乘积不溢出（$n \\le 4$ 时只要行列式本身不溢出），结果也是精确的。如果整个主元列为零，立即返回 `Zero::zero()`。$0 \\times 0$ 矩阵的 $\\det$ 为 `One::one()`。开销为 $O(n^3)$ 次算术运算。推导见 [immut 设计](../design/immut.md)。"
 
 #: manual/api/immut.md:456
-msgid "[!WARNING] For `Double` and `Float` this is not the numerically preferred algorithm. Every intermediate value of Bareiss elimination is a minor of $A$, and the update multiplies two of them, so magnitudes are squared before they are divided back. For $n \\ge 5$ the result overflows to infinity or NaN long before $\\det A$ does: the $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ has $\\det A = 10^{180}$, which `@mutable.Matrix::determinant` returns, while this method returns NaN. There is no tolerance either: only an exactly zero pivot column is detected. Use [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for floating-point matrices."
-msgstr "[!WARNING] 对于 `Double` 和 `Float`，这不是数值上首选的算法。Bareiss 消元的每个中间值都是 $A$ 的一个子式，而每次更新把其中两个相乘，所以数量级先被平方再被除回。当 $n \\ge 5$ 时，结果会远在 $\\det A$ 溢出之前就溢出为无穷或 NaN：对角线为 $1000$、超对角线为 $1$ 的 $60 \\times 60$ 上双对角矩阵有 $\\det A = 10^{180}$，`@mutable.Matrix::determinant` 能返回它，而本方法返回 NaN。它也没有容差：只有恰好为零的主元列才会被识别。浮点矩阵请使用 [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant)。"
+msgid "[!WARNING] For `Double` and `Float` this is not the numerically preferred algorithm. Every intermediate value of Bareiss elimination is a minor of $A$, and the update multiplies two of them, so magnitudes are squared before they are divided back. For $n \\ge 5$ the result overflows to infinity or NaN long before $\\det A$ does: the $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ has $\\det A = 10^{180}$, which `@mutable.Matrix::determinant` returns, while this method returns NaN. There is no tolerance either: only an exactly zero pivot column is detected. Use [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for floating-point matrices. The issue is tracked as [#93](https://github.com/Luna-Flow/linear-algebra/issues/93)."
+msgstr "[!WARNING] 对于 `Double` 和 `Float`，这不是数值上首选的算法。Bareiss 消元的每个中间值都是 $A$ 的一个子式，而每次更新把其中两个相乘，所以数量级先被平方再被除回。当 $n \\ge 5$ 时，结果会远在 $\\det A$ 溢出之前就溢出为无穷或 NaN：对角线为 $1000$、超对角线为 $1$ 的 $60 \\times 60$ 上双对角矩阵有 $\\det A = 10^{180}$，`@mutable.Matrix::determinant` 能返回它，而本方法返回 NaN。它也没有容差：只有恰好为零的主元列才会被识别。浮点矩阵请使用 [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant)。该问题记录在 [#93](https://github.com/Luna-Flow/linear-algebra/issues/93)。"
 
-#: manual/api/immut.md:470
+#: manual/api/immut.md:471
 msgid "`Matrix::unchecked_determinant(a)` returns $\\det A$ and aborts on a non-square matrix."
 msgstr "`Matrix::unchecked_determinant(a)` 返回 $\\det A$，遇到非方阵时中止。"
 
-#: manual/api/immut.md:504
+#: manual/api/immut.md:505
 msgid "The second matrix is a Vandermonde matrix with nodes $2, \\dots, 7$, whose determinant is $\\prod_{i<j}(x_j - x_i) = 1!\\,2!\\,3!\\,4!\\,5! = 34560$."
 msgstr "第二个矩阵是节点为 $2, \\dots, 7$ 的 Vandermonde 矩阵，其行列式为 $\\prod_{i<j}(x_j - x_i) = 1!\\,2!\\,3!\\,4!\\,5! = 34560$。"
 
-#: manual/api/immut.md:507
+#: manual/api/immut.md:508
 msgid "Structural operations"
 msgstr "结构操作"
 
-#: manual/api/immut.md:511
+#: manual/api/immut.md:512
 msgid "`Matrix::transpose(m)` returns the materialized transpose $A^{\\mathsf T}$."
 msgstr "`Matrix::transpose(m)` 返回实化后的转置 $A^{\\mathsf T}$。"
 
-#: manual/api/immut.md:519
+#: manual/api/immut.md:520
 msgid "`Matrix::horizontal_combine(a, b)` places `b` to the right of `a`: the block matrix $[A \\; B]$."
 msgstr "`Matrix::horizontal_combine(a, b)` 将 `b` 放在 `a` 的右侧：得到分块矩阵 $[A \\; B]$。"
 
-#: manual/api/immut.md:526
+#: manual/api/immut.md:527
 msgid "Different row counts abort."
 msgstr "行数不同会导致中止。"
 
-#: manual/api/immut.md:530
+#: manual/api/immut.md:531
 msgid "`Matrix::vertical_combine(a, b)` places `b` below `a`."
 msgstr "`Matrix::vertical_combine(a, b)` 将 `b` 放在 `a` 的下方。"
 
-#: manual/api/immut.md:536
+#: manual/api/immut.md:537
 msgid "Different column counts abort."
 msgstr "列数不同会导致中止。"
 
-#: manual/api/immut.md:540
+#: manual/api/immut.md:541
 msgid "`swap_rows(i, j)` and `swap_cols(i, j)` return a matrix with two rows or two columns exchanged."
 msgstr "`swap_rows(i, j)` 和 `swap_cols(i, j)` 返回交换了两行或两列的矩阵。"
 
-#: manual/api/immut.md:548
+#: manual/api/immut.md:549
 msgid "Out-of-range indices abort. Swapping an index with itself returns `m` itself. Otherwise the whole matrix is rebuilt, $O(rc)$."
 msgstr "越界索引会导致中止。将某个索引与自身交换时直接返回 `m` 本身。否则会重建整个矩阵，开销为 $O(rc)$。"
 
-#: manual/api/immut.md:565
+#: manual/api/immut.md:566
 msgid "Iteration and conversion"
 msgstr "迭代与转换"
 
-#: manual/api/immut.md:569
+#: manual/api/immut.md:570
 msgid "`Matrix::iter(m)` iterates over all entries in row-major order."
 msgstr "`Matrix::iter(m)` 按行主序遍历所有元素。"
 
-#: manual/api/immut.md:577
+#: manual/api/immut.md:578
 msgid "`iter_row(r)` iterates over row `r` left to right; `iter_col(c)` over column `c` top to bottom."
 msgstr "`iter_row(r)` 从左到右遍历第 `r` 行；`iter_col(c)` 从上到下遍历第 `c` 列。"
 
-#: manual/api/immut.md:585
+#: manual/api/immut.md:586
 msgid "Out-of-range indices abort when the iterator is created."
 msgstr "越界索引会在创建迭代器时导致中止。"
 
-#: manual/api/immut.md:589
+#: manual/api/immut.md:590
 msgid "`Matrix::to_array(m)` copies the entries into a flat row-major array."
 msgstr "`Matrix::to_array(m)` 将元素复制到一个按行主序排列的扁平数组中。"
 
-#: manual/api/immut.md:597
+#: manual/api/immut.md:598
 msgid "`Matrix::to_2d_array(m)` copies the entries into nested row arrays."
 msgstr "`Matrix::to_2d_array(m)` 将元素复制到按行组织的嵌套数组中。"
 
-#: manual/api/immut.md:603
+#: manual/api/immut.md:604
 msgid "For an $r \\times 0$ matrix the result has $r$ empty rows."
 msgstr "对于 $r \\times 0$ 矩阵，结果包含 $r$ 个空行。"
 
-#: manual/api/immut.md:615
+#: manual/api/immut.md:616
 msgid "`MatrixFn` operations"
 msgstr "`MatrixFn` 操作"
 
-#: manual/api/immut.md:617
+#: manual/api/immut.md:618
 msgid "All `MatrixFn` operations are lazy: they compose functions and do no work until an entry is read. Shape checks happen eagerly; bounds checks happen on reads."
 msgstr "所有 `MatrixFn` 操作都是惰性的：它们只组合函数，在读取元素之前不做任何计算。形状检查会立即进行；边界检查在读取时进行。"
 
-#: manual/api/immut.md:622
+#: manual/api/immut.md:623
 msgid "`MatrixFn::make(r, c, f)` builds the lazy matrix with entries $f(i, j)$."
 msgstr "`MatrixFn::make(r, c, f)` 构建元素为 $f(i, j)$ 的惰性矩阵。"
 
-#: manual/api/immut.md:628
+#: manual/api/immut.md:629
 msgid "Negative dimensions abort. Reading an entry outside the shape aborts."
 msgstr "负的维度会导致中止。读取形状范围之外的元素会导致中止。"
 
-#: manual/api/immut.md:632
+#: manual/api/immut.md:633
 msgid "`MatrixFn::new(r, c)` builds an $r \\times c$ lazy matrix whose entries are `T::default()`."
 msgstr "`MatrixFn::new(r, c)` 构建一个元素均为 `T::default()` 的 $r \\times c$ 惰性矩阵。"
 
-#: manual/api/immut.md:641
+#: manual/api/immut.md:642
 msgid "`MatrixFn::from_2d_array(rows)` builds a lazy view of nested rows."
 msgstr "`MatrixFn::from_2d_array(rows)` 构建嵌套行数组的惰性视图。"
 
-#: manual/api/immut.md:647
+#: manual/api/immut.md:648
 msgid "Ragged input aborts. The arrays are captured, not copied: later writes to them are visible through the `MatrixFn`."
 msgstr "参差不齐的输入会导致中止。数组会被捕获而不是复制：之后对它们的写入可以通过 `MatrixFn` 观察到。"
 
-#: manual/api/immut.md:652
+#: manual/api/immut.md:653
 msgid "`MatrixFn::identity(n)` is the lazy $n \\times n$ identity."
 msgstr "`MatrixFn::identity(n)` 是惰性的 $n \\times n$ 单位矩阵。"
 
-#: manual/api/immut.md:660
+#: manual/api/immut.md:661
 msgid "`MatrixFn::shape(m)` returns `(rows, cols)`."
 msgstr "`MatrixFn::shape(m)` 返回 `(rows, cols)`。"
 
-#: manual/api/immut.md:668
+#: manual/api/immut.md:669
 msgid "`MatrixFn::at(m, r)` returns the row accessor behind `m[r][c]`."
 msgstr "`MatrixFn::at(m, r)` 返回 `m[r][c]` 背后的行访问器。"
 
-#: manual/api/immut.md:675
+#: manual/api/immut.md:676
 msgid "The row index is checked immediately, the column when it is read."
 msgstr "行索引会立即检查，列索引在读取时检查。"
 
-#: manual/api/immut.md:679
+#: manual/api/immut.md:680
 msgid "`MatrixFn::map(m, f)` composes `f` after every entry."
 msgstr "`MatrixFn::map(m, f)` 在每个元素之后复合 `f`。"
 
-#: manual/api/immut.md:687
+#: manual/api/immut.md:688
 msgid "`map_row(r, f)` and `map_col(c, f)` apply `f` to one row or one column."
 msgstr "`map_row(r, f)` 和 `map_col(c, f)` 对某一行或某一列应用 `f`。"
 
-#: manual/api/immut.md:694
+#: manual/api/immut.md:695
 msgid "Out-of-range indices abort immediately."
 msgstr "越界索引会立即导致中止。"
 
-#: manual/api/immut.md:698
+#: manual/api/immut.md:699
 msgid "`MatrixFn::zip_with(a, b, f)` combines two lazy matrices entry by entry."
 msgstr "`MatrixFn::zip_with(a, b, f)` 逐元素组合两个惰性矩阵。"
 
-#: manual/api/immut.md:704
+#: manual/api/immut.md:705
 msgid "Different shapes abort."
 msgstr "形状不同会导致中止。"
 
-#: manual/api/immut.md:708
+#: manual/api/immut.md:709
 msgid "`MatrixFn::fold(m, init~, f)` reduces all entries in row-major order."
 msgstr "`MatrixFn::fold(m, init~, f)` 按行主序归约所有元素。"
 
-#: manual/api/immut.md:714
+#: manual/api/immut.md:715
 msgid "This forces every entry once."
 msgstr "这会对每个元素求值一次。"
 
-#: manual/api/immut.md:718
+#: manual/api/immut.md:719
 msgid "Lazy entry-wise $A + B$, $A - B$, $-A$ and $A a$."
 msgstr "惰性的按元素 $A + B$、$A - B$、$-A$ 和 $A a$。"
 
-#: manual/api/immut.md:727
+#: manual/api/immut.md:728
 msgid "`MatrixFn` has no public `*` operator; use `pow` or convert to `Matrix`."
 msgstr "`MatrixFn` 没有公开的 `*` 运算符；请使用 `pow` 或转换为 `Matrix`。"
 
-#: manual/api/immut.md:731
+#: manual/api/immut.md:732
 msgid "`MatrixFn::pow(a, k)` returns the lazy power $A^k$ by binary exponentiation."
 msgstr "`MatrixFn::pow(a, k)` 通过二进制求幂返回惰性幂 $A^k$。"
 
-#: manual/api/immut.md:737
+#: manual/api/immut.md:738
 msgid "Non-square input or a negative exponent aborts. Because nothing is cached, reading one entry of $A^{k}$ recomputes the nested products. One entry of the lazy square $B \\cdot B$ reads $2n$ entries of $B$, so one entry of $A^{2^d}$ reads $(2n)^d = k^{1 + \\log_2 n}$ entries of $A$ for $k = 2^d$; read all entries into a `Matrix` with `Matrix::make` if you need more than a few."
 msgstr "非方阵输入或负指数会导致中止。由于不做任何缓存，读取 $A^{k}$ 的一个元素会重新计算嵌套的乘积。惰性平方 $B \\cdot B$ 的一个元素要读取 $B$ 的 $2n$ 个元素，因此对 $k = 2^d$，$A^{2^d}$ 的一个元素要读取 $A$ 的 $(2n)^d = k^{1 + \\log_2 n}$ 个元素；如果需要读取多个元素，请先用 `Matrix::make` 把所有元素读入一个 `Matrix`。"
 
-#: manual/api/immut.md:745
+#: manual/api/immut.md:746
 msgid "`MatrixFn::determinant(a)` materializes the matrix and returns its determinant with the algorithm of `Matrix::determinant`."
 msgstr "`MatrixFn::determinant(a)` 将矩阵实化，并用 `Matrix::determinant` 的算法返回其行列式。"
 
-#: manual/api/immut.md:752
+#: manual/api/immut.md:753
 msgid "A non-square matrix aborts; there is no checked form."
 msgstr "非方阵会导致中止；没有受检形式。"
 
-#: manual/api/immut.md:756
+#: manual/api/immut.md:757
 msgid "Lazy transpose and conjugate transpose."
 msgstr "惰性转置与共轭转置。"
 
-#: manual/api/immut.md:765
+#: manual/api/immut.md:766
 msgid "Lazy row and column exchange; out-of-range indices abort."
 msgstr "惰性的行交换与列交换；越界索引会导致中止。"
 
-#: manual/api/immut.md:774
+#: manual/api/immut.md:775
 msgid "Lazy block concatenation; mismatched row or column counts abort."
 msgstr "惰性分块拼接；行数或列数不匹配会导致中止。"
 
-#: manual/api/immut.md:783
+#: manual/api/immut.md:784
 msgid "`equal` compares shapes and every entry (forcing them); `to_string` renders like `Matrix`."
 msgstr "`equal` 比较形状和每个元素（会对它们求值）；`to_string` 的渲染方式与 `Matrix` 相同。"
 
-#: manual/api/immut.md:807
-#: manual/api/mutable.md:1158
+#: manual/api/immut.md:808
+#: manual/api/mutable.md:1148
 msgid "Vector"
 msgstr "向量"
 
-#: manual/api/immut.md:811
+#: manual/api/immut.md:812
 msgid "`Vector::from_array(xs)` copies an array into a new vector."
 msgstr "`Vector::from_array(xs)` 将数组复制到一个新向量中。"
 
-#: manual/api/immut.md:819
+#: manual/api/immut.md:820
 msgid "`make(n, x)` builds $n$ copies of `x`; `makei(n, f)` builds $(f(0), \\dots, f(n-1))$."
 msgstr "`make(n, x)` 构建 $n$ 个 `x` 的副本；`makei(n, f)` 构建 $(f(0), \\dots, f(n-1))$。"
 
-#: manual/api/immut.md:829
+#: manual/api/immut.md:830
 msgid "`Vector::length(v)` returns the number of elements."
 msgstr "`Vector::length(v)` 返回元素个数。"
 
-#: manual/api/immut.md:837
+#: manual/api/immut.md:838
 msgid "`Vector::at(v, i)` returns element `i`; it backs `v[i]`. An out-of-range index aborts."
 msgstr "`Vector::at(v, i)` 返回第 `i` 个元素；它是 `v[i]` 的底层实现。越界索引会导致中止。"
 
-#: manual/api/immut.md:847
+#: manual/api/immut.md:848
 msgid "`Vector::set(v, i, x)` returns a vector equal to `v` except at `i`, in $O(\\log_{32} n)$; `v` is unchanged."
 msgstr "`Vector::set(v, i, x)` 以 $O(\\log_{32} n)$ 的开销返回一个除 `i` 处外其余都与 `v` 相等的向量；`v` 保持不变。"
 
-#: manual/api/immut.md:856
+#: manual/api/immut.md:857
 msgid "`Vector::iter(v)` iterates over the elements in order."
 msgstr "`Vector::iter(v)` 按顺序遍历元素。"
 
-#: manual/api/immut.md:864
+#: manual/api/immut.md:865
 msgid "`map(f)` applies `f` to every element; `zip_with(w, f)` combines two vectors element by element and aborts on different lengths."
 msgstr "`map(f)` 对每个元素应用 `f`；`zip_with(w, f)` 逐元素组合两个向量，长度不同时中止。"
 
-#: manual/api/immut.md:874
+#: manual/api/immut.md:875
 msgid "Element-wise $u + v$, Hadamard $u \\odot v$ and $-u$; they back the operators. Different lengths abort."
 msgstr "按元素的 $u + v$、Hadamard 积 $u \\odot v$ 以及 $-u$；它们是相应运算符的底层实现。长度不同会导致中止。"
 
-#: manual/api/immut.md:883
+#: manual/api/immut.md:884
 msgid "`Vector` has no `Sub` implementation; write `u + -v`."
 msgstr "`Vector` 没有实现 `Sub`；请写作 `u + -v`。"
 
-#: manual/api/immut.md:887
+#: manual/api/immut.md:888
 msgid "`Vector::add_constant(v, a)` adds `a` to every element."
 msgstr "`Vector::add_constant(v, a)` 给每个元素加上 `a`。"
 
-#: manual/api/immut.md:895
+#: manual/api/immut.md:896
 msgid "`left_scale(a)` returns $(a v_i)_i$; `right_scale(a)` returns $(v_i a)_i$. They differ only for non-commutative scalars."
 msgstr "`left_scale(a)` 返回 $(a v_i)_i$；`right_scale(a)` 返回 $(v_i a)_i$。两者仅在标量不可交换时有所不同。"
 
-#: manual/api/immut.md:905
+#: manual/api/immut.md:906
 msgid "`Vector::lerp(u, v, t)` returns $(1 - t) u + t v$, with scalars on the left."
 msgstr "`Vector::lerp(u, v, t)` 返回 $(1 - t) u + t v$，标量位于左侧。"
 
-#: manual/api/immut.md:911
+#: manual/api/immut.md:912
 msgid "Different lengths abort."
 msgstr "长度不同会导致中止。"
 
-#: manual/api/immut.md:915
+#: manual/api/immut.md:916
 msgid "`lin_comb(a, u, b, v)` returns $a u + b v$, with scalars on the left."
 msgstr "`lin_comb(a, u, b, v)` 返回 $a u + b v$，标量位于左侧。"
 
-#: manual/api/immut.md:923
+#: manual/api/immut.md:924
 msgid "The vector as a $1 \\times n$ or an $n \\times 1$ matrix."
 msgstr "将向量视为 $1 \\times n$ 或 $n \\times 1$ 矩阵。"
 
-#: manual/api/immut.md:932
+#: manual/api/immut.md:933
 msgid "`Vector::scaled_matrix(v)` returns the diagonal matrix $\\operatorname{diag}(v_0, \\dots, v_{n-1})$."
 msgstr "`Vector::scaled_matrix(v)` 返回对角矩阵 $\\operatorname{diag}(v_0, \\dots, v_{n-1})$。"
 
-#: manual/api/immut.md:941
+#: manual/api/immut.md:942
 msgid "`Vector::tensor_product(u, v)` returns the outer product $u v^{\\mathsf T}$, the $m \\times n$ matrix with entries $u_i v_j$."
 msgstr "`Vector::tensor_product(u, v)` 返回外积 $u v^{\\mathsf T}$，即元素为 $u_i v_j$ 的 $m \\times n$ 矩阵。"
 
-#: manual/api/immut.md:950
+#: manual/api/immut.md:951
 msgid "`equal` compares lengths and elements; `to_string` renders `|a, b, c|`."
 msgstr "`equal` 比较长度和元素；`to_string` 渲染为 `|a, b, c|`。"
 
-#: manual/api/immut.md:978
+#: manual/api/immut.md:979
 msgid "These method forms exist only for source compatibility; they are hidden from the interface and warn when used."
 msgstr "这些方法形式仅为源码兼容而保留；它们不出现在接口中，使用时会产生警告。"
 
-#: manual/api/immut.md:984
-#: manual/api/mutable.md:1319
+#: manual/api/immut.md:985
+#: manual/api/mutable.md:1309
 msgid "string interpolation or `Show::output(x, logger)`"
 msgstr "字符串插值或 `Show::output(x, logger)`"
 
-#: manual/api/immut.md:985
-#: manual/api/mutable.md:1320
+#: manual/api/immut.md:986
+#: manual/api/mutable.md:1310
 msgid "`Repr(v)` or `@debug.Debug::to_repr(v)`"
 msgstr "`Repr(v)` 或 `@debug.Debug::to_repr(v)`"
 
@@ -2573,8 +2573,8 @@ msgid "All routines in this section are for `Float` and `Double` matrices. Decis
 msgstr "本节所有例程都面向 `Float` 与 `Double` 矩阵。诸如“该主元为零”之类的判断，是将绝对值与 `Tolerance::tolerance()`（$10^{-11}$）比较；算法、开销与误差界见[设计页面](../design/mutable.md)。"
 
 #: manual/api/mutable.md:611
-msgid "For $n \\le 4$: closed cofactor formulas. For $n \\ge 5$: the product of the diagonal if the matrix is triangular within tolerance, otherwise LU factorization with partial pivoting, $\\det A = (-1)^{s} \\prod_i u_{ii}$ for $s$ row exchanges. If a pivot falls below the tolerance the result is exactly zero; otherwise it is a product of pivots of magnitude at least $10^{-11}$, which can still underflow to zero or overflow to infinity for large $n$. $\\det$ of the $0 \\times 0$ matrix is $1$."
-msgstr "当 $n \\le 4$ 时：使用闭式余子式公式。当 $n \\ge 5$ 时：若矩阵在容差内为三角矩阵，则取对角线乘积；否则做部分选主元的 LU 分解，对 $s$ 次行交换有 $\\det A = (-1)^{s} \\prod_i u_{ii}$。若某个主元低于容差，结果严格为零；否则结果是绝对值至少为 $10^{-11}$ 的主元之积，在 $n$ 较大时仍可能下溢为零或上溢为无穷。$0 \\times 0$ 矩阵的 $\\det$ 为 $1$。"
+msgid "For $n \\le 4$: closed cofactor formulas. For $n \\ge 5$: the product of the diagonal if the matrix is exactly triangular, otherwise LU factorization with partial pivoting, $\\det A = (-1)^{s} \\prod_i u_{ii}$ for $s$ row exchanges. If a pivot falls below the tolerance the result is exactly zero; otherwise it is a product of pivots of magnitude at least $10^{-11}$, which can still underflow to zero or overflow to infinity for large $n$. $\\det$ of the $0 \\times 0$ matrix is $1$."
+msgstr "当 $n \\le 4$ 时：使用闭式余子式公式。当 $n \\ge 5$ 时：若矩阵恰好是三角矩阵，则取对角线乘积；否则做部分选主元的 LU 分解，对 $s$ 次行交换有 $\\det A = (-1)^{s} \\prod_i u_{ii}$。若某个主元低于容差，结果严格为零；否则结果是绝对值至少为 $10^{-11}$ 的主元之积，在 $n$ 较大时仍可能下溢为零或上溢为无穷。$0 \\times 0$ 矩阵的 $\\det$ 为 $1$。"
 
 #: manual/api/mutable.md:621
 msgid "Aborting form of `determinant`."
@@ -2589,330 +2589,330 @@ msgid "Identity, diagonal and permutation matrices are recognized and inverted d
 msgstr "单位矩阵、对角矩阵和置换矩阵会被识别并直接求逆（$P^{-1} = P^{\\mathsf T}$）；其他矩阵则基于部分选主元的 LU 分解逐列求解。开销 $\\approx \\tfrac{8}{3} n^3$ flops。$0 \\times 0$ 矩阵的逆矩阵是 $0 \\times 0$ 矩阵。"
 
 #: manual/api/mutable.md:641
-msgid "The recognition uses the tolerance: a matrix whose entries are within $10^{-11}$ of the identity is returned as a copy of itself, one whose off-diagonal entries are at most $10^{-11}$ is inverted as if they were zero, and one within $10^{-11}$ of a permutation matrix is returned transposed."
-msgstr "识别时使用容差：与单位矩阵的元素差都在 $10^{-11}$ 以内的矩阵会原样返回其副本；非对角元绝对值都不超过 $10^{-11}$ 的矩阵按这些元素为零来求逆；与某个置换矩阵相差在 $10^{-11}$ 以内的矩阵会返回其转置。"
+msgid "The recognition is exact: only a matrix that has the structure exactly takes the shortcut, so the shortcut returns what the LU path would."
+msgstr "识别是精确的：只有恰好具有该结构的矩阵才走快捷路径，因此快捷路径的结果与 LU 路径一致。"
 
-#: manual/api/mutable.md:648
+#: manual/api/mutable.md:646
 msgid "`Matrix::unchecked_inverse(a)` returns `Some(A^{-1})` or `None` for a singular matrix, and aborts on a non-square one."
 msgstr "`Matrix::unchecked_inverse(a)` 返回 `Some(A^{-1})`，对奇异矩阵返回 `None`，对非方阵则中止。"
 
-#: manual/api/mutable.md:657
+#: manual/api/mutable.md:655
 msgid "`is_invertible()` returns `Ok(true)` when LU factorization finds no pivot below the tolerance, `Ok(false)` otherwise, and `NonSquareMatrix` for a non-square matrix; `unchecked_is_invertible` aborts instead."
 msgstr "当 LU 分解没有发现低于容差的主元时，`is_invertible()` 返回 `Ok(true)`，否则返回 `Ok(false)`；对非方阵返回 `NonSquareMatrix`；`unchecked_is_invertible` 则改为中止。"
 
-#: manual/api/mutable.md:668
+#: manual/api/mutable.md:666
 msgid "`Matrix::rank(a)` returns the number of pivots found by Gaussian elimination with partial pivoting on a copy of `a`."
 msgstr "`Matrix::rank(a)` 返回在 `a` 的副本上做部分选主元高斯消元所找到的主元个数。"
 
-#: manual/api/mutable.md:675
+#: manual/api/mutable.md:673
 msgid "A column whose largest remaining entry is below the tolerance contributes no pivot. Works for any shape; `a` is unchanged. Cost $O(\\min(r, c)\\, r c)$."
 msgstr "若某列剩余元素中的最大值低于容差，该列不贡献主元。适用于任意形状；`a` 保持不变。开销 $O(\\min(r, c)\\, r c)$。"
 
-#: manual/api/mutable.md:680
+#: manual/api/mutable.md:678
 msgid "`Matrix::reduce_row_elimination(a)` transforms `a` **in place** into reduced row echelon form by Gauss–Jordan elimination with partial pivoting, and returns `a` itself."
 msgstr "`Matrix::reduce_row_elimination(a)` 通过部分选主元的 Gauss–Jordan 消元把 `a` **原地**变换为简化行阶梯形，并返回 `a` 本身。"
 
-#: manual/api/mutable.md:688
+#: manual/api/mutable.md:686
 msgid "Columns are processed left to right. In each column the entry of largest magnitude at or below the current row is swapped up; if its magnitude is at most the tolerance, that one entry is set to zero and the column is skipped (the other entries below it, also at most the tolerance, are left as they are). Otherwise the pivot row is divided by the pivot, which makes the pivot one, and every other row with an entry of magnitude above the tolerance in the pivot column has a multiple of the pivot row subtracted; an entry at or below the tolerance is set to zero without touching the rest of its row. Copy first if you need the original."
 msgstr "各列按从左到右处理。在每一列中，把当前行及其下方绝对值最大的元素交换上来；若其绝对值不超过容差，就只把这一个元素置零并跳过该列（其下方同样不超过容差的其他元素保持原样）。否则，主元行除以主元使主元变为一；主元列中绝对值超过容差的其他各行都减去主元行的相应倍数；绝对值不超过容差的元素直接置零，而不改动该行的其余部分。如需保留原矩阵，请先复制。"
 
-#: manual/api/mutable.md:700
+#: manual/api/mutable.md:698
 msgid "`Matrix::cholesky_decomposition(a)` returns `Some(L)` with $L$ lower triangular, positive diagonal and $L L^{\\mathsf T} = A$, or `None`."
 msgstr "`Matrix::cholesky_decomposition(a)` 返回 `Some(L)`，其中 $L$ 为下三角矩阵、对角线为正且 $L L^{\\mathsf T} = A$；否则返回 `None`。"
 
-#: manual/api/mutable.md:707
+#: manual/api/mutable.md:705
 msgid "`None` means that `a` is not square, not symmetric within tolerance, or that a diagonal pivot $a_{jj} - \\sum_{k<j} l_{jk}^2$ is at most the tolerance (the matrix is not positive definite, or nearly singular). Only the lower triangle of `a` is read. Cost $\\approx n^3/3$ flops."
 msgstr "`None` 表示 `a` 不是方阵、在容差内不对称，或者某个对角主元 $a_{jj} - \\sum_{k<j} l_{jk}^2$ 不超过容差（矩阵不是正定的，或接近奇异）。只读取 `a` 的下三角部分。开销 $\\approx n^3/3$ flops。"
 
-#: manual/api/mutable.md:712
-msgid "Two fast paths run first. A matrix within the tolerance of the identity is returned as a copy of itself, so its off-diagonal entries of magnitude at most $10^{-11}$ survive and the result is then not exactly lower triangular. A matrix that is diagonal within the tolerance gives the square roots of its diagonal, and its off-diagonal entries are dropped."
-msgstr "先运行两条快速路径。与单位矩阵相差在容差以内的矩阵会原样返回其副本，因此绝对值不超过 $10^{-11}$ 的非对角元会保留下来，结果也就不再是严格的下三角矩阵。在容差内为对角矩阵的矩阵给出其对角元的平方根，非对角元被舍弃。"
+#: manual/api/mutable.md:710
+msgid "Two fast paths run first: the exact identity is returned as a copy, and an exactly diagonal matrix gives the square roots of its diagonal (or `None` if one of them is at most the tolerance)."
+msgstr "先运行两条快速路径：恰好为单位矩阵时返回其副本；恰好为对角矩阵时给出其对角元的平方根（若某个对角元不超过容差则返回 `None`）。"
 
-#: manual/api/mutable.md:720
+#: manual/api/mutable.md:716
 msgid "`Matrix::is_positive_definite(a)` returns whether `cholesky_decomposition` succeeds."
 msgstr "`Matrix::is_positive_definite(a)` 返回 `cholesky_decomposition` 是否成功。"
 
-#: manual/api/mutable.md:729
+#: manual/api/mutable.md:725
 msgid "`Matrix::is_symmetric(a)` returns `true` when `a` is square and $|a_{ij} - a_{ji}| \\le \\mathrm{tol}$ for all $i < j$."
 msgstr "当 `a` 是方阵且对所有 $i < j$ 有 $|a_{ij} - a_{ji}| \\le \\mathrm{tol}$ 时，`Matrix::is_symmetric(a)` 返回 `true`。"
 
-#: manual/api/mutable.md:755
+#: manual/api/mutable.md:751
 msgid "Eigenvalues"
 msgstr "特征值"
 
-#: manual/api/mutable.md:759
+#: manual/api/mutable.md:755
 msgid "`Matrix::eigen(a)` returns the eigenvalues and eigenvectors of a real symmetric matrix as `(values, vectors)`, where column $k$ of `vectors` is an eigenvector for `values[k]`."
 msgstr "`Matrix::eigen(a)` 以 `(values, vectors)` 的形式返回实对称矩阵的特征值与特征向量，其中 `vectors` 的第 $k$ 列是对应 `values[k]` 的特征向量。"
 
-#: manual/api/mutable.md:767
+#: manual/api/mutable.md:763
 msgid "Aborts if `a` is not square, not symmetric within tolerance, or if an eigenvalue does not converge within 60 iterations."
 msgstr "若 `a` 不是方阵、在容差内不对称，或某个特征值在 60 次迭代内未收敛，则中止。"
 
-#: manual/api/mutable.md:769
-msgid "For $2 \\times 2$ input the values come from the characteristic polynomial, $\\lambda_{1,2} = m \\pm \\sqrt{m^2 - \\det A}$ with $m = \\tfrac12 \\operatorname{tr} A$, ordered $\\lambda_1 \\ge \\lambda_2$; the eigenvector columns are **not normalized**."
-msgstr "对 $2 \\times 2$ 输入，特征值由特征多项式给出：$\\lambda_{1,2} = m \\pm \\sqrt{m^2 - \\det A}$，其中 $m = \\tfrac12 \\operatorname{tr} A$，并按 $\\lambda_1 \\ge \\lambda_2$ 排序；特征向量列**未归一化**。"
+#: manual/api/mutable.md:765
+msgid "For $2 \\times 2$ input a closed formula is used on the symmetric part $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$, $s = \\tfrac12 (a_{01} + a_{10})$: $\\lambda_{1,2} = m \\pm \\sqrt{\\big(\\tfrac{a-d}{2}\\big)^2 + s^2}$ with $m = \\tfrac12 \\operatorname{tr} A$, ordered $\\lambda_1 \\ge \\lambda_2$. The eigenvector columns are **not normalized**: each is scaled so that its entry of largest magnitude is $1$. A diagonal matrix returns its diagonal entries exactly."
+msgstr "对 $2 \\times 2$ 输入，在对称部分 $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$（$s = \\tfrac12 (a_{01} + a_{10})$）上使用闭式公式：$\\lambda_{1,2} = m \\pm \\sqrt{\\big(\\tfrac{a-d}{2}\\big)^2 + s^2}$，其中 $m = \\tfrac12 \\operatorname{tr} A$，按 $\\lambda_1 \\ge \\lambda_2$ 排序。特征向量列**未归一化**：每列都被缩放，使其绝对值最大的元素为 $1$。对角矩阵精确地返回其对角元。"
 
-#: manual/api/mutable.md:773
+#: manual/api/mutable.md:772
 msgid "For other sizes the matrix is reduced to tridiagonal form by Householder reflections and diagonalized by the implicit QL algorithm with Wilkinson shifts. Only the lower triangle is read. The eigenvector columns are orthonormal up to rounding. The eigenvalues are not sorted."
 msgstr "对其他规模，矩阵先通过 Householder 反射约化为三对角形式，再用带 Wilkinson 位移的隐式 QL 算法对角化。只读取下三角部分。特征向量列在舍入误差范围内是标准正交的。特征值不排序。"
 
-#: manual/api/mutable.md:777
+#: manual/api/mutable.md:776
 msgid "Cost $O(n^3)$."
 msgstr "开销 $O(n^3)$。"
 
-#: manual/api/mutable.md:779
-msgid "[!WARNING] The $2 \\times 2$ formula compares the discriminant $m^2 - \\det A$, a *squared* quantity, with the absolute tolerance $10^{-11}$, and computes it with cancellation. Three consequences for symmetric input: eigenvalues closer than about $2\\sqrt{10^{-11}} \\approx 6 \\times 10^{-6}$ are returned as equal (for `[[1, 0], [0, 1.000002]]` both values are `1.000001`); for `[[1, 1e-6], [1e-6, 1]]` the two returned eigenvector columns are identical, so the eigenvector matrix is singular; and for entries near $10^{8}$ the rounding error of $m^2 - \\det A$ can exceed $10^{-11}$ in the negative direction, so a diagonal matrix such as `[[100000000.74, 0], [0, 99999999.78]]` aborts with \"complex eigenvalues\". For larger sizes the deflation test and the Householder step also use absolute thresholds, so a matrix whose entries are all below about $10^{-11}$ is treated as already diagonal (for $10^{-12}$ times the tridiagonal matrix with diagonal $2$ and off-diagonal $1$, every returned eigenvalue is $2 \\times 10^{-12}$). Scale the input to order one, and embed a $2 \\times 2$ problem in a larger one or solve it yourself when these cases matter. See the [design page](../design/mutable.md#symmetric-eigenvalue-problem)."
-msgstr "[!WARNING] $2 \\times 2$ 公式把判别式 $m^2 - \\det A$ 这个*平方*量与绝对容差 $10^{-11}$ 比较，而且计算它时存在相消。对于对称输入，这带来三个后果：相距小于约 $2\\sqrt{10^{-11}} \\approx 6 \\times 10^{-6}$ 的特征值会被当作相等返回（对 `[[1, 0], [0, 1.000002]]` 两个值都是 `1.000001`）；对 `[[1, 1e-6], [1e-6, 1]]`，返回的两列特征向量完全相同，特征向量矩阵因此奇异；当元素接近 $10^{8}$ 时，$m^2 - \\det A$ 的舍入误差可能在负方向上超过 $10^{-11}$，于是像 `[[100000000.74, 0], [0, 99999999.78]]` 这样的对角矩阵会以“complex eigenvalues”中止。对于更大的规模，收缩判据和 Householder 步骤同样使用绝对阈值，因此所有元素都小于约 $10^{-11}$ 的矩阵会被当作已经是对角的（对 $10^{-12}$ 乘以对角线为 $2$、次对角线为 $1$ 的三对角矩阵，返回的每个特征值都是 $2 \\times 10^{-12}$）。请把输入缩放到 1 的量级；在这些情形要紧时，把 $2 \\times 2$ 问题嵌入更大的问题，或自行求解。参见[设计页面](../design/mutable.md#symmetric-eigenvalue-problem)。"
+#: manual/api/mutable.md:778
+msgid "Every decision inside `eigen` is relative to the entries (a deflated off-diagonal entry is negligible next to its diagonal neighbours), so `eigen` of $sA$ is $s$ times `eigen` of $A$ up to rounding, for any scale $s$; only the symmetry check uses the absolute tolerance. See the [design page](../design/mutable.md#symmetric-eigenvalue-problem)."
+msgstr "`eigen` 内部的每个判断都是相对于矩阵元素的（被收缩的次对角元相对于其相邻的对角元可以忽略），因此对任意尺度 $s$，$sA$ 的 `eigen` 在舍入误差内等于 $s$ 乘以 $A$ 的 `eigen`；只有对称性检查使用绝对容差。参见[设计页面](../design/mutable.md#symmetric-eigenvalue-problem)。"
 
-#: manual/api/mutable.md:800
+#: manual/api/mutable.md:786
 msgid "`Matrix::power_method(a, max_iterations)` approximates a dominant eigenpair $(\\lambda, x)$ by power iteration and returns `Some((λ, x))` once $\\lVert A x - \\lambda x \\rVert_\\infty \\le \\mathrm{tol}$."
 msgstr "`Matrix::power_method(a, max_iterations)` 通过幂迭代逼近主特征对 $(\\lambda, x)$，一旦 $\\lVert A x - \\lambda x \\rVert_\\infty \\le \\mathrm{tol}$ 即返回 `Some((λ, x))`。"
 
-#: manual/api/mutable.md:808
+#: manual/api/mutable.md:794
 msgid "$x$ is scaled so that $\\lVert x \\rVert_\\infty = 1$; $\\lambda$ is the Rayleigh quotient $x^{\\mathsf T} A x / x^{\\mathsf T} x$."
 msgstr "$x$ 被缩放使得 $\\lVert x \\rVert_\\infty = 1$；$\\lambda$ 是 Rayleigh 商 $x^{\\mathsf T} A x / x^{\\mathsf T} x$。"
 
-#: manual/api/mutable.md:810
+#: manual/api/mutable.md:796
 msgid "Returns `None` when the iteration does not meet the residual test within `max_iterations` steps, or when the iterate becomes numerically zero (for example for a nilpotent matrix). Two dominant eigenvalues of equal magnitude and opposite sign, such as $\\pm 1$, prevent convergence."
 msgstr "若迭代在 `max_iterations` 步内未通过残差检验，或迭代向量在数值上变为零（例如对幂零矩阵），则返回 `None`。两个模相等、符号相反的主特征值（例如 $\\pm 1$）会阻碍收敛。"
 
-#: manual/api/mutable.md:814
+#: manual/api/mutable.md:800
 msgid "Aborts for a non-square or empty matrix."
 msgstr "对非方阵或空矩阵中止。"
 
-#: manual/api/mutable.md:815
+#: manual/api/mutable.md:801
 msgid "Each iteration costs two matrix-vector products, $O(n^2)$: one for the Rayleigh quotient and the residual, and one for the next iterate (the code does not reuse the first). The starting vector is $(1, \\dots, 1)$, or the first coordinate vector $e_k$ with $A e_k$ above the tolerance if $A (1, \\dots, 1)^{\\mathsf T}$ is not; it is multiplied by $A$ and scaled once before the first residual test."
 msgstr "每次迭代花费两次矩阵-向量乘积，$O(n^2)$：一次用于 Rayleigh 商和残差，一次用于下一个迭代向量（代码没有复用第一次的结果）。初始向量为 $(1, \\dots, 1)$；若 $A (1, \\dots, 1)^{\\mathsf T}$ 不超过容差，则取第一个使 $A e_k$ 超过容差的坐标向量 $e_k$；在第一次残差检验之前，它先被 $A$ 乘一次并缩放。"
 
-#: manual/api/mutable.md:821
+#: manual/api/mutable.md:807
 msgid "The residual test is absolute, so the accuracy of $x$ scales with $\\lVert A \\rVert$: for a matrix of size about $10^{-6}$ the test passes while $x$ is still wrong in the sixth digit."
 msgstr "残差检验是绝对的，因此 $x$ 的精度随 $\\lVert A \\rVert$ 缩放：对量级约为 $10^{-6}$ 的矩阵，检验通过时 $x$ 的第六位数字仍可能是错的。"
 
-#: manual/api/mutable.md:841
+#: manual/api/mutable.md:831
 msgid "Statistics and norms"
 msgstr "统计量与范数"
 
-#: manual/api/mutable.md:843
+#: manual/api/mutable.md:833
 msgid "The statistics treat the matrix as a flat list of its $N = rc$ entries."
 msgstr "统计函数把矩阵视为其 $N = rc$ 个元素组成的扁平列表。"
 
-#: manual/api/mutable.md:847
+#: manual/api/mutable.md:837
 msgid "`mean()` returns `Ok(\\bar a)`, $\\bar a = \\tfrac1N \\sum a_{ij}$, or `EmptyMatrix` when $N = 0$; `unchecked_mean` aborts instead."
 msgstr "`mean()` 返回 `Ok(\\bar a)`，其中 $\\bar a = \\tfrac1N \\sum a_{ij}$；当 $N = 0$ 时返回 `EmptyMatrix`；`unchecked_mean` 则改为中止。"
 
-#: manual/api/mutable.md:857
+#: manual/api/mutable.md:847
 msgid "`variance()` returns the population variance $\\tfrac1N \\sum (a_{ij} - \\bar a)^2$ (two-pass), or `EmptyMatrix`."
 msgstr "`variance()` 返回总体方差 $\\tfrac1N \\sum (a_{ij} - \\bar a)^2$（两遍算法），或返回 `EmptyMatrix`。"
 
-#: manual/api/mutable.md:867
+#: manual/api/mutable.md:857
 msgid "`std_dev()` returns the square root of the population variance, or `EmptyMatrix`."
 msgstr "`std_dev()` 返回总体方差的平方根，或返回 `EmptyMatrix`。"
 
-#: manual/api/mutable.md:877
+#: manual/api/mutable.md:867
 msgid "The largest or smallest entry by `Compare`, or `EmptyMatrix`."
 msgstr "按 `Compare` 取最大或最小元素，或返回 `EmptyMatrix`。"
 
-#: manual/api/mutable.md:884
+#: manual/api/mutable.md:874
 msgid "With NaN entries the result depends on their position; filter them first."
 msgstr "若含有 NaN 元素，结果取决于它们的位置；请先将其过滤。"
 
-#: manual/api/mutable.md:888
+#: manual/api/mutable.md:878
 msgid "Aborting forms of `max_element` and `min_element`."
 msgstr "`max_element` 与 `min_element` 的中止形式。"
 
-#: manual/api/mutable.md:897
+#: manual/api/mutable.md:887
 msgid "`Matrix::frobenius_norm(a)` returns $\\lVert A \\rVert_F = \\sqrt{\\sum a_{ij}^2}$."
 msgstr "`Matrix::frobenius_norm(a)` 返回 $\\lVert A \\rVert_F = \\sqrt{\\sum a_{ij}^2}$。"
 
-#: manual/api/mutable.md:903
+#: manual/api/mutable.md:893
 msgid "The sum of squares is not rescaled, so entries above about $10^{154}$ overflow for `Double`. An empty matrix has norm $0$."
 msgstr "平方和不做缩放，因此对 `Double` 而言，大于约 $10^{154}$ 的元素会溢出。空矩阵的范数为 $0$。"
 
-#: manual/api/mutable.md:920
+#: manual/api/mutable.md:910
 msgid "Views"
 msgstr "视图"
 
-#: manual/api/mutable.md:924
+#: manual/api/mutable.md:914
 msgid "Read or write position `i` of the viewed row or column; they back `view[i]` and `view[i] = x`."
 msgstr "读取或写入所视行或列的第 `i` 个位置；它们支撑 `view[i]` 与 `view[i] = x`。"
 
-#: manual/api/mutable.md:940
+#: manual/api/mutable.md:930
 msgid "The number of columns (row view) or rows (column view) of the matrix."
 msgstr "矩阵的列数（行视图）或行数（列视图）。"
 
-#: manual/api/mutable.md:949
+#: manual/api/mutable.md:939
 msgid "Traverse the viewed entries in order."
 msgstr "按顺序遍历视图中的元素。"
 
-#: manual/api/mutable.md:962
+#: manual/api/mutable.md:952
 msgid "Replace every viewed entry by `f(entry)`, in the underlying matrix."
 msgstr "在底层矩阵中把视图中的每个元素替换为 `f(entry)`。"
 
-#: manual/api/mutable.md:971
+#: manual/api/mutable.md:961
 msgid "Copy the viewed entries out."
 msgstr "把视图中的元素复制出来。"
 
-#: manual/api/mutable.md:982
+#: manual/api/mutable.md:972
 msgid "Render the viewed entries as `|a, b, c|`."
 msgstr "把视图中的元素渲染为 `|a, b, c|`。"
 
-#: manual/api/mutable.md:989
+#: manual/api/mutable.md:979
 msgid "Transpose view"
 msgstr "转置视图"
 
-#: manual/api/mutable.md:991
+#: manual/api/mutable.md:981
 msgid "Every `Transpose` method addresses the transposed matrix and works on the shared storage, unless it is documented to return a new value."
 msgstr "除非文档说明返回新值，`Transpose` 的每个方法都寻址转置后的矩阵，并作用于共享存储。"
 
-#: manual/api/mutable.md:996
+#: manual/api/mutable.md:986
 msgid "The shape of the view: `row()` is the column count of the wrapped matrix and `col()` its row count."
 msgstr "视图的形状：`row()` 是被包装矩阵的列数，`col()` 是其行数。"
 
-#: manual/api/mutable.md:1006
+#: manual/api/mutable.md:996
 msgid "`get(i, j)` and `set(i, j, x)` access entry $(i, j)$ of the view, that is $(j, i)$ of the matrix; `at` backs `t[i][j]` and `t[i][j] = x`."
 msgstr "`get(i, j)` 与 `set(i, j, x)` 访问视图的元素 $(i, j)$，即矩阵的元素 $(j, i)$；`at` 支撑 `t[i][j]` 与 `t[i][j] = x`。"
 
-#: manual/api/mutable.md:1018
+#: manual/api/mutable.md:1008
 msgid "`Transpose::transpose(t)` returns the wrapped matrix itself, not a copy."
 msgstr "`Transpose::transpose(t)` 返回被包装的矩阵本身，而不是副本。"
 
-#: manual/api/mutable.md:1026
+#: manual/api/mutable.md:1016
 msgid "`Transpose::materialize(t)` copies the view into a new matrix of the transposed shape."
 msgstr "`Transpose::materialize(t)` 把视图复制到一个具有转置形状的新矩阵中。"
 
-#: manual/api/mutable.md:1035
+#: manual/api/mutable.md:1025
 msgid "`Transpose::copy(t)` returns a view of a deep copy of the wrapped matrix."
 msgstr "`Transpose::copy(t)` 返回被包装矩阵深拷贝的视图。"
 
-#: manual/api/mutable.md:1041
+#: manual/api/mutable.md:1031
 msgid "Traversal: `Transpose::each`, `Transpose::eachi`, `Transpose::each_row_col`, `Transpose::each_row`, `Transpose::eachi_row`, `Transpose::each_col`, `Transpose::eachi_col`"
 msgstr "遍历：`Transpose::each`、`Transpose::eachi`、`Transpose::each_row_col`、`Transpose::each_row`、`Transpose::eachi_row`、`Transpose::each_col`、`Transpose::eachi_col`"
 
-#: manual/api/mutable.md:1043
+#: manual/api/mutable.md:1033
 msgid "Traverse the view."
 msgstr "遍历视图。"
 
-#: manual/api/mutable.md:1055
+#: manual/api/mutable.md:1045
 msgid "`each`, `eachi` and `each_row_col` visit entries in the storage order of the wrapped matrix, which is column-major for the view; `eachi` passes the row-major index *of the view*, and `each_row_col` passes view coordinates. The row and column forms visit a row or column of the view in order."
 msgstr "`each`、`eachi` 和 `each_row_col` 按被包装矩阵的存储顺序访问元素，对视图而言这是列主序；`eachi` 传入的是*视图的*行主序索引，`each_row_col` 传入视图坐标。行和列形式按顺序访问视图的一行或一列。"
 
-#: manual/api/mutable.md:1062
+#: manual/api/mutable.md:1052
 msgid "Copy one row or column of the view."
 msgstr "复制视图的一行或一列。"
 
-#: manual/api/mutable.md:1073
+#: manual/api/mutable.md:1063
 msgid "`map` returns a new view of a new matrix; the `*_inplace` forms change the shared storage."
 msgstr "`map` 返回一个新矩阵的新视图；`*_inplace` 形式修改共享存储。"
 
-#: manual/api/mutable.md:1088
+#: manual/api/mutable.md:1078
 msgid "Exchange two rows or columns of the view in place (columns or rows of the wrapped matrix)."
 msgstr "原地交换视图的两行或两列（即被包装矩阵的两列或两行）。"
 
-#: manual/api/mutable.md:1098
+#: manual/api/mutable.md:1088
 msgid "Block concatenation of views, returning a view of a new matrix."
 msgstr "视图的分块拼接，返回一个新矩阵的视图。"
 
-#: manual/api/mutable.md:1107
+#: manual/api/mutable.md:1097
 msgid "Entry-wise arithmetic, returning a view of a new matrix."
 msgstr "逐元素算术，返回一个新矩阵的视图。"
 
-#: manual/api/mutable.md:1119
+#: manual/api/mutable.md:1109
 msgid "`Transpose::mul(s, t)` returns the product of two views, computed as $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ without moving data."
 msgstr "`Transpose::mul(s, t)` 返回两个视图的乘积，按 $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ 计算，无需移动数据。"
 
-#: manual/api/mutable.md:1126
+#: manual/api/mutable.md:1116
 msgid "[!WARNING] The identity $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ holds only for commuting scalars. For a non-commutative scalar type, materialize the views and multiply the matrices instead."
 msgstr "[!WARNING] 恒等式 $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ 仅对可交换的标量成立。对于非交换标量类型，请先物化视图，再做矩阵乘法。"
 
-#: manual/api/mutable.md:1133
+#: manual/api/mutable.md:1123
 msgid "`equal` compares the wrapped matrices; `to_string` renders the view row by row."
 msgstr "`equal` 比较被包装的矩阵；`to_string` 逐行渲染视图。"
 
-#: manual/api/mutable.md:1162
+#: manual/api/mutable.md:1152
 msgid "`Vector::from_array(xs)` adopts `xs` as the vector's storage without copying."
 msgstr "`Vector::from_array(xs)` 直接将 `xs` 作为向量的存储，不做复制。"
 
-#: manual/api/mutable.md:1170
+#: manual/api/mutable.md:1160
 msgid "$n$ copies of a value, or $(f(0), \\dots, f(n-1))$."
 msgstr "某个值的 $n$ 份拷贝，或 $(f(0), \\dots, f(n-1))$。"
 
-#: manual/api/mutable.md:1179
+#: manual/api/mutable.md:1169
 msgid "Length, deep copy, and iterator."
 msgstr "长度、深拷贝与迭代器。"
 
-#: manual/api/mutable.md:1189
+#: manual/api/mutable.md:1179
 msgid "Read or write element `i` in place; they back `v[i]` and `v[i] = x`. An out-of-range index aborts."
 msgstr "原地读取或写入第 `i` 个元素；它们支撑 `v[i]` 与 `v[i] = x`。索引越界时中止。"
 
-#: manual/api/mutable.md:1201
+#: manual/api/mutable.md:1191
 msgid "`map` and `zip_with` return new vectors (`zip_with` aborts on different lengths); `map_inplace` rewrites every element."
 msgstr "`map` 与 `zip_with` 返回新向量（`zip_with` 在长度不同时中止）；`map_inplace` 改写每个元素。"
 
-#: manual/api/mutable.md:1213
+#: manual/api/mutable.md:1203
 msgid "Element-wise $u + v$, Hadamard $u \\odot v$, $-u$, and $u + a$. Different lengths abort. There is no `Sub`; write `u + -v`."
 msgstr "逐元素的 $u + v$、Hadamard 积 $u \\odot v$、$-u$ 以及 $u + a$。长度不同时中止。没有 `Sub`；请写作 `u + -v`。"
 
-#: manual/api/mutable.md:1225
+#: manual/api/mutable.md:1215
 msgid "$(a v_i)$ and $(v_i a)$, as new vectors or in place."
 msgstr "$(a v_i)$ 与 $(v_i a)$，可得到新向量，也可原地进行。"
 
-#: manual/api/mutable.md:1238
+#: manual/api/mutable.md:1228
 msgid "`Vector::dot(u, v)` returns $\\sum_i u_i v_i$, summed left to right; different lengths abort."
 msgstr "`Vector::dot(u, v)` 返回 $\\sum_i u_i v_i$，从左到右求和；长度不同时中止。"
 
-#: manual/api/mutable.md:1247
+#: manual/api/mutable.md:1237
 msgid "`Vector::lerp(u, v, t)` returns $(1 - t) u + t v$."
 msgstr "`Vector::lerp(u, v, t)` 返回 $(1 - t) u + t v$。"
 
-#: manual/api/mutable.md:1255
+#: manual/api/mutable.md:1245
 msgid "`Vector::lin_comb(weights, vectors)` returns $\\sum_k w_k v_k$, accumulated into one new vector."
 msgstr "`Vector::lin_comb(weights, vectors)` 返回 $\\sum_k w_k v_k$，累加到一个新向量中。"
 
-#: manual/api/mutable.md:1262
+#: manual/api/mutable.md:1252
 msgid "Empty inputs, different counts of weights and vectors, or vectors of different lengths abort."
 msgstr "输入为空、权重与向量个数不同，或向量长度不同时中止。"
 
-#: manual/api/mutable.md:1267
+#: manual/api/mutable.md:1257
 msgid "`lin_comb(a, u, b, v)` returns $a u + b v$; it is a top-level function."
 msgstr "`lin_comb(a, u, b, v)` 返回 $a u + b v$；它是顶层函数。"
 
-#: manual/api/mutable.md:1275
+#: manual/api/mutable.md:1265
 msgid "The vector as a $1 \\times n$ or $n \\times 1$ matrix (copied), the diagonal matrix $\\operatorname{diag}(v)$, and the outer product $u v^{\\mathsf T}$."
 msgstr "把向量作为 $1 \\times n$ 或 $n \\times 1$ 矩阵（复制）、对角矩阵 $\\operatorname{diag}(v)$，以及外积 $u v^{\\mathsf T}$。"
 
-#: manual/api/mutable.md:1287
+#: manual/api/mutable.md:1277
 msgid "`equal` compares elements (backs `==`); `to_string` renders `|a, b, c|`."
 msgstr "`equal` 比较元素（支撑 `==`）；`to_string` 渲染为 `|a, b, c|`。"
 
-#: manual/api/mutable.md:1315
+#: manual/api/mutable.md:1305
 msgid "`Matrix::map_in_place`, `map_row_in_place`, `map_col_in_place` (aliases)"
 msgstr "`Matrix::map_in_place`、`map_row_in_place`、`map_col_in_place`（别名）"
 
-#: manual/api/mutable.md:1316
+#: manual/api/mutable.md:1306
 msgid "`Transpose::map_in_place`, `map_row_in_place`, `map_col_in_place` (aliases)"
 msgstr "`Transpose::map_in_place`、`map_row_in_place`、`map_col_in_place`（别名）"
 
-#: manual/api/mutable.md:1316
+#: manual/api/mutable.md:1306
 msgid "the `*_inplace` names"
 msgstr "`*_inplace` 系列名称"
 
-#: manual/api/mutable.md:1317
+#: manual/api/mutable.md:1307
 msgid "`Vector::map_in_place`, `left_scale_in_place`, `right_scale_in_place` (aliases)"
 msgstr "`Vector::map_in_place`、`left_scale_in_place`、`right_scale_in_place`（别名）"
 
-#: manual/api/mutable.md:1318
+#: manual/api/mutable.md:1308
 msgid "`not_equal` method form on `Matrix`, `Transpose`, `Vector` (hidden)"
 msgstr "`Matrix`、`Transpose`、`Vector` 上的 `not_equal` 方法形式（隐藏）"
 
-#: manual/api/mutable.md:1319
+#: manual/api/mutable.md:1309
 msgid "`output` method form on `Matrix`, `Transpose`, `RowView`, `ColView`, `Vector` (hidden)"
 msgstr "`Matrix`、`Transpose`、`RowView`、`ColView`、`Vector` 上的 `output` 方法形式（隐藏）"
 
-#: manual/api/mutable.md:1320
+#: manual/api/mutable.md:1310
 msgid "`Vector::to_repr` (hidden)"
 msgstr "`Vector::to_repr`（隐藏）"
 
-#: manual/api/mutable.md:1321
+#: manual/api/mutable.md:1311
 msgid "`Vector::arbitrary` (hidden)"
 msgstr "`Vector::arbitrary`（隐藏）"
 
@@ -3606,7 +3606,7 @@ msgstr "`TransposeMatrix::transpose` 返回同一类型。转置对每种形状�
 #: manual/design/error.md:66
 #: manual/design/immut.md:79
 #: manual/design/internal.md:39
-#: manual/design/mutable.md:128
+#: manual/design/mutable.md:126
 #: manual/design/perf.md:31
 #: manual/design/perf_runner.md:35
 #: manual/design/perf_support.md:49
@@ -3683,14 +3683,14 @@ msgstr "对于带有反转乘积的对合 $x \\mapsto \\bar{x}$（即 $\\overlin
 
 #: manual/design/algebra.md:213
 #: manual/design/arithmetic.md:139
-#: manual/design/backends/default.md:108
+#: manual/design/backends/default.md:110
 #: manual/design/consistency.md:66
 #: manual/design/container.md:150
 #: manual/design/container/adapters.md:84
 #: manual/design/error.md:133
 #: manual/design/immut.md:306
 #: manual/design/internal.md:56
-#: manual/design/mutable.md:590
+#: manual/design/mutable.md:594
 #: manual/design/perf.md:43
 #: manual/design/perf_runner.md:46
 #: manual/design/perf_support.md:77
@@ -3752,14 +3752,14 @@ msgstr "N. J. Higham, *Accuracy and Stability of Numerical Algorithms*, 2nd ed.,
 
 #: manual/design/algebra.md:268
 #: manual/design/arithmetic.md:155
-#: manual/design/backends/default.md:121
+#: manual/design/backends/default.md:123
 #: manual/design/consistency.md:73
 #: manual/design/container.md:165
 #: manual/design/container/adapters.md:96
 #: manual/design/error.md:149
 #: manual/design/immut.md:325
 #: manual/design/internal.md:63
-#: manual/design/mutable.md:618
+#: manual/design/mutable.md:622
 #: manual/design/perf.md:48
 #: manual/design/perf_runner.md:52
 #: manual/design/perf_support.md:84
@@ -3784,14 +3784,14 @@ msgstr "**包含所有运算的单个 `Matrix` trait。** 它会把部分乘法�
 
 #: manual/design/algebra.md:281
 #: manual/design/arithmetic.md:165
-#: manual/design/backends/default.md:131
+#: manual/design/backends/default.md:133
 #: manual/design/consistency.md:81
 #: manual/design/container.md:177
 #: manual/design/container/adapters.md:104
 #: manual/design/error.md:158
 #: manual/design/immut.md:335
 #: manual/design/internal.md:69
-#: manual/design/mutable.md:630
+#: manual/design/mutable.md:634
 #: manual/design/perf.md:54
 #: manual/design/perf_runner.md:57
 #: manual/design/perf_support.md:90
@@ -4069,58 +4069,58 @@ msgid "Implementing `@algebra.MatMulMatrix` for a type claims the laws listed in
 msgstr "为某个类型实现 `@algebra.MatMulMatrix`，就是声称它满足 [algebra 设计](../algebra.md)中列出的定律：只要有定义，`*` 满足结合律以及对 `+` 的分配律。对包装类型而言，这些定律继承自被包装的类型，因为每个运算符都定义为“解包、应用内部运算符、再包装”："
 
 #: manual/design/backends/default.md:74
-msgid "So `wrap` is a homomorphism for every operation, and any equation that holds for the inner type holds for the wrapper. The converse matters too: the wrappers satisfy *only* the laws of the inner type. `MatMulMatrix` for `DenseMatrix[T]` is implemented for every `T : AddMonoid + Mul`, a bound that does not require distributivity or associativity of `*` on `T`. The product laws of the [algebra design](../algebra.md) hold when `T` is a semiring (`Int`, `BigInt`, ...), hold up to rounding for `Float` and `Double`, and can fail for a scalar type whose `Mul` is not associative or not distributive; the instance exists for such a type, but its laws do not."
-msgstr "因此 `wrap` 对每个运算都是同态，凡是对内部类型成立的等式，对包装类型也成立。反方向同样重要：包装类型*只*满足内部类型的定律。`DenseMatrix[T]` 的 `MatMulMatrix` 为每个 `T : AddMonoid + Mul` 实现，而这个约束并不要求 `T` 上的 `*` 满足分配律或结合律。[algebra 设计](../algebra.md)中的乘积定律在 `T` 为半环（`Int`、`BigInt` 等）时成立，对 `Float` 和 `Double` 在舍入误差范围内成立；对于 `Mul` 不满足结合律或分配律的标量类型则可能不成立——实例对这样的类型依然存在，但其定律不成立。"
+msgid "So `wrap` is a homomorphism for every operation, and any equation that holds for the inner type holds for the wrapper. The converse matters too: the wrappers satisfy *only* the laws of the inner type. `MatMulMatrix` for `DenseMatrix[T]` is implemented for every `T : AddMonoid + Mul`, a bound that does not require distributivity or associativity of `*` on `T`. The product laws of the [algebra design](../algebra.md) hold when `T` is a semiring (`Int`, `BigInt`, ...), hold up to rounding for `Float` and `Double`, and can fail for a scalar type whose `Mul` is not associative or not distributive; the instance exists for such a type, but its laws do not. Tightening the bound is a public API change, tracked as [#94](https://github.com/Luna-Flow/linear-algebra/issues/94)."
+msgstr "因此 `wrap` 对每个运算都是同态，凡是对内部类型成立的等式，对包装类型也成立。反方向同样重要：包装类型*只*满足内部类型的定律。`DenseMatrix[T]` 的 `MatMulMatrix` 为每个 `T : AddMonoid + Mul` 实现，而这个约束并不要求 `T` 上的 `*` 满足分配律或结合律。[algebra 设计](../algebra.md)中的乘积定律在 `T` 为半环（`Int`、`BigInt` 等）时成立，对 `Float` 和 `Double` 在舍入误差范围内成立；对于 `Mul` 不满足结合律或分配律的标量类型则可能不成立——实例对这样的类型依然存在，但其定律不成立。收紧该约束属于公开 API 变更，记录在 [#94](https://github.com/Luna-Flow/linear-algebra/issues/94)。"
 
-#: manual/design/backends/default.md:84
+#: manual/design/backends/default.md:86
 msgid "Partiality of the dense product"
 msgstr "稠密乘积的部分性"
 
-#: manual/design/backends/default.md:86
+#: manual/design/backends/default.md:88
 msgid "For runtime-shaped dense matrices the product is defined on $\\{(A, B) : \\operatorname{cols}(A) = \\operatorname{rows}(B)\\}$. The trait method returns `Self`, so outside that set the wrapper must do something; it aborts, as the inner type does. This is the documented runtime precondition that the `MatMulMatrix` contract asks implementations to state."
 msgstr "对于运行时确定形状的稠密矩阵，乘积定义在 $\\{(A, B) : \\operatorname{cols}(A) = \\operatorname{rows}(B)\\}$ 上。trait 方法返回 `Self`，因此在该集合之外包装类型必须有所处理；它和内部类型一样中止。这正是 `MatMulMatrix` 契约要求实现说明的运行时前置条件。"
 
-#: manual/design/backends/default.md:92
+#: manual/design/backends/default.md:94
 msgid "Dot product and its rounding error"
 msgstr "点积及其舍入误差"
 
-#: manual/design/backends/default.md:94
+#: manual/design/backends/default.md:96
 msgid "`dot` computes $s_n = \\sum_{i=1}^{n} u_i v_i$ by the recurrence $s_0 = 0$, $s_i = s_{i-1} + u_i v_i$. In floating point each step multiplies the error of all earlier terms by another factor $(1 + \\delta)$, and the standard argument gives"
 msgstr "`dot` 按递推 $s_0 = 0$、$s_i = s_{i-1} + u_i v_i$ 计算 $s_n = \\sum_{i=1}^{n} u_i v_i$。在浮点运算中，每一步都会让此前所有项的误差再乘上一个因子 $(1 + \\delta)$，标准论证给出"
 
-#: manual/design/backends/default.md:104
+#: manual/design/backends/default.md:106
 msgid "The relative error is therefore small when the terms have the same sign, and can be large when $\\sum |u_i v_i| \\gg |s_n|$ (cancellation). `matvec` is $m$ such dot products and inherits the same bound row by row."
 msgstr "因此当各项同号时相对误差很小，而当 $\\sum |u_i v_i| \\gg |s_n|$（相消）时可能很大。`matvec` 由 $m$ 个这样的点积组成，逐行继承同样的界。"
 
-#: manual/design/backends/default.md:110
+#: manual/design/backends/default.md:112
 msgid "**Homomorphism.** `inner(a op b) == inner(a) op inner(b)` for every operator (for `-` the right side is `inner(a) + -inner(b)`, since the inner vector types have no `Sub`), so the wrappers satisfy exactly the laws of the wrapped types."
 msgstr "**同态。** 对每个运算符都有 `inner(a op b) == inner(a) op inner(b)`（对 `-` 而言右边是 `inner(a) + -inner(b)`，因为内部向量类型没有 `Sub`），因此包装类型恰好满足被包装类型的定律。"
 
-#: manual/design/backends/default.md:114
+#: manual/design/backends/default.md:116
 msgid "**No copies on wrapping.** `from_backend(x).inner()` is physically `x`; writes to a mutable inner value are visible through the wrapper."
 msgstr "**包装时不复制。** `from_backend(x).inner()` 在物理上就是 `x`；对可变内部值的写入可以通过包装类型看到。"
 
-#: manual/design/backends/default.md:116
+#: manual/design/backends/default.md:118
 msgid "**Transpose.** `transpose` materializes; it never returns a view, so the `TransposeMatrix` law $(A^{\\mathsf T})^{\\mathsf T} = A$ holds as values."
 msgstr "**转置。** `transpose` 会物化；它从不返回视图，因此 `TransposeMatrix` 定律 $(A^{\\mathsf T})^{\\mathsf T} = A$ 在值层面成立。"
 
-#: manual/design/backends/default.md:118
+#: manual/design/backends/default.md:120
 msgid "**Complexity.** `+`, `-`, `scale`: $O(n)$; `dot`: $n$ multiply-adds; `matvec`: $mn$; `*`: $rcn$ multiply-adds; `transpose`: $O(rc)$ copies."
 msgstr "**复杂度。** `+`、`-`、`scale`：$O(n)$；`dot`：$n$ 次乘加；`matvec`：$mn$；`*`：$rcn$ 次乘加；`transpose`：$O(rc)$ 次复制。"
 
-#: manual/design/backends/default.md:123
+#: manual/design/backends/default.md:125
 msgid "**A runtime backend selector** inside one matrix type. It would make every operation branch on the backend and hide which kernel runs. Backends are chosen by type."
 msgstr "**在单个矩阵类型内部设置运行时后端选择器。** 这会让每个运算都在后端之间分支，并隐藏实际运行的是哪个内核。后端按类型选择。"
 
-#: manual/design/backends/default.md:126
+#: manual/design/backends/default.md:128
 msgid "**Implementing the traits in `immut` and `mutable` directly.** That would tie the stable concrete packages to the experimental `algebra` layer."
 msgstr "**直接在 `immut` 和 `mutable` 中实现这些 trait。** 这会把稳定的具体包与实验性的 `algebra` 层绑在一起。"
 
-#: manual/design/backends/default.md:128
+#: manual/design/backends/default.md:130
 msgid "**In-place `axpy`.** It would give the two wrappers different semantics for the same name."
 msgstr "**原地 `axpy`。** 这会让两个包装类型的同名方法语义不同。"
 
-#: manual/design/backends/default.md:133
+#: manual/design/backends/default.md:135
 msgid "`backends/default` defines no new traits and no new numerical algorithms; the decompositions, inverses and statistics of [`mutable`](../mutable.md) are reached through `inner()`. It does not provide sparse, lazy, static-size or GPU backends; those should implement the `algebra` traits for their own types rather than convert into these wrappers. The native OpenBLAS backend that once sat beside it is withdrawn in this release and preserved in `contrib/openblas_backend`."
 msgstr "`backends/default` 不定义新的 trait，也不定义新的数值算法；[`mutable`](../mutable.md) 的分解、逆矩阵和统计功能通过 `inner()` 获得。它不提供稀疏、惰性、静态尺寸或 GPU 后端；这些后端应当为自己的类型实现 `algebra` trait，而不是转换成这些包装类型。曾与它并列的原生 OpenBLAS 后端在本版本中已撤下，保存在 `contrib/openblas_backend` 中。"
 
@@ -5080,250 +5080,234 @@ msgid "radicand $\\le \\tau$ means not positive definite"
 msgstr "被开方数 $\\le \\tau$ 即非正定"
 
 #: manual/design/mutable.md:67
-msgid "`is_symmetric`, fast-path detection (identity, diagonal, permutation, triangular)"
-msgstr "`is_symmetric`、快速路径检测（单位、对角、置换、三角）"
+msgid "`is_symmetric` (also the precondition of `eigen`)"
+msgstr "`is_symmetric`（也是 `eigen` 的前置条件）"
 
 #: manual/design/mutable.md:67
-msgid "$\\lvert a_{ij} - b_{ij}\\rvert \\le \\tau$ counts as equal"
-msgstr "$\\lvert a_{ij} - b_{ij}\\rvert \\le \\tau$ 视为相等"
+msgid "$\\lvert a_{ij} - a_{ji}\\rvert \\le \\tau$ counts as equal"
+msgstr "$\\lvert a_{ij} - a_{ji}\\rvert \\le \\tau$ 视为相等"
 
 #: manual/design/mutable.md:68
-msgid "discriminant $< -\\tau$ aborts, $\\lvert\\text{discriminant}\\rvert \\le \\tau$ counts as zero"
-msgstr "判别式 $< -\\tau$ 时中止，$\\lvert\\text{discriminant}\\rvert \\le \\tau$ 视为零"
-
-#: manual/design/mutable.md:69
-msgid "`eigen`, Householder step"
-msgstr "`eigen` 的 Householder 步骤"
-
-#: manual/design/mutable.md:69
-msgid "a row with $\\sum_k \\lvert a_{ik}\\rvert \\le \\tau$ is not reflected"
-msgstr "$\\sum_k \\lvert a_{ik}\\rvert \\le \\tau$ 的行不做反射"
-
-#: manual/design/mutable.md:70
-msgid "`eigen` deflation"
-msgstr "`eigen` 收缩"
-
-#: manual/design/mutable.md:71
 msgid "residual $\\lVert Ax - \\lambda x\\rVert_\\infty \\le \\tau$ accepts; $\\lVert Ax\\rVert_\\infty \\le \\tau$ or $x^{\\mathsf T}x \\le \\tau$ gives `None`"
 msgstr "残差 $\\lVert Ax - \\lambda x\\rVert_\\infty \\le \\tau$ 即接受；$\\lVert Ax\\rVert_\\infty \\le \\tau$ 或 $x^{\\mathsf T}x \\le \\tau$ 则返回 `None`"
 
-#: manual/design/mutable.md:73
-msgid "An absolute threshold is simple and predictable, but it is not scale invariant. Scaling $A$ by $10^{-12}$ makes every pivot fall below $\\tau$, so a perfectly conditioned matrix is reported singular; scaling by $10^{12}$ lets a numerically singular matrix pass. Scale data to order one before calling these routines. For `Float`, $\\tau = 10^{-11}$ is far below the unit roundoff $\\approx 6 \\times 10^{-8}$, so for data of order one the tests effectively check for exact zeros, and nearly singular `Float` matrices are not detected. The trait is closed (`pub`, not `pub(open)`), so these two instances are the only ones; a scale-aware tolerance policy is future work and would be a breaking change."
-msgstr "绝对阈值简单且可预测，但不具有尺度不变性。把 $A$ 缩放 $10^{-12}$ 倍会使每个主元都低于 $\\tau$，于是一个条件极好的矩阵会被报告为奇异；缩放 $10^{12}$ 倍则会让数值上奇异的矩阵通过检验。调用这些例程之前，请先把数据缩放到量级为一。对于 `Float`，$\\tau = 10^{-11}$ 远小于其单位舍入误差 $\\approx 6 \\times 10^{-8}$，因此对量级为一的数据，这些检验实际上只是在检查严格的零，接近奇异的 `Float` 矩阵不会被检测出来。该 trait 是封闭的（`pub` 而非 `pub(open)`），因此只有这两个实例；感知尺度的容差策略是未来的工作，并且将是一次破坏性变更。"
+#: manual/design/mutable.md:70
+msgid "The structural fast paths and the internal decisions of `eigen` do not use $\\tau$: the fast paths require the structure exactly, and `eigen` deflates relative to the entries (see below). An absolute threshold is simple and predictable, but it is not scale invariant. Scaling $A$ by $10^{-12}$ makes every pivot fall below $\\tau$, so a perfectly conditioned matrix is reported singular; scaling by $10^{12}$ lets a numerically singular matrix pass. Scale data to order one before calling these routines. For `Float`, $\\tau = 10^{-11}$ is far below the unit roundoff $\\approx 6 \\times 10^{-8}$, so for data of order one the tests effectively check for exact zeros, and nearly singular `Float` matrices are not detected. The trait is closed (`pub`, not `pub(open)`), so these two instances are the only ones; a scale-aware tolerance policy is future work and would be a breaking change."
+msgstr "结构性快速路径和 `eigen` 的内部判断都不使用 $\\tau$：快速路径要求结构严格成立，而 `eigen` 相对于矩阵元素做收缩（见下文）。绝对阈值简单且可预测，但不具有尺度不变性。把 $A$ 缩放 $10^{-12}$ 倍会使每个主元都低于 $\\tau$，于是一个条件极好的矩阵会被报告为奇异；缩放 $10^{12}$ 倍则会让数值上奇异的矩阵通过检验。调用这些例程之前，请先把数据缩放到量级为一。对于 `Float`，$\\tau = 10^{-11}$ 远小于其单位舍入误差 $\\approx 6 \\times 10^{-8}$，因此对量级为一的数据，这些检验实际上只是在检查严格的零，接近奇异的 `Float` 矩阵不会被检测出来。该 trait 是封闭的（`pub` 而非 `pub(open)`），因此只有这两个实例；感知尺度的容差策略是未来的工作，并且将是一次破坏性变更。"
 
-#: manual/design/mutable.md:84
+#: manual/design/mutable.md:83
 msgid "Fast paths"
 msgstr "快速路径"
 
-#: manual/design/mutable.md:86
-msgid "`inverse` recognizes the identity (returns a copy), diagonal matrices (inverts the diagonal) and permutation matrices (returns the transpose, since $P^{\\mathsf T} P = I$ for a matrix whose columns are distinct coordinate vectors). `cholesky_decomposition` recognizes the identity and diagonal matrices, and `determinant` recognizes triangular matrices for $n \\ge 5$ and multiplies the diagonal. Each test costs $O(n^2)$ and saves an $O(n^3)$ factorization. The tests use the tolerance, so a matrix that is diagonal up to $\\tau$ is treated as exactly diagonal, and a matrix within $\\tau$ of the identity is returned as it is (by `inverse` and by `cholesky_decomposition`, whose result is then not exactly lower triangular)."
-msgstr "`inverse` 能识别单位矩阵（返回副本）、对角矩阵（对对角线求逆）和置换矩阵（返回转置，因为对列为互不相同坐标向量的矩阵有 $P^{\\mathsf T} P = I$）。`cholesky_decomposition` 能识别单位矩阵和对角矩阵；当 $n \\ge 5$ 时，`determinant` 能识别三角矩阵并计算对角线乘积。每项检测的开销为 $O(n^2)$，可省去一次 $O(n^3)$ 的分解。这些检测使用容差，因此在 $\\tau$ 范围内为对角的矩阵会被视为严格对角，而与单位矩阵相差在 $\\tau$ 以内的矩阵会被原样返回（`inverse` 和 `cholesky_decomposition` 都如此，后者的结果因而不是严格的下三角矩阵）。"
+#: manual/design/mutable.md:85
+msgid "`inverse` recognizes the identity (returns a copy), diagonal matrices (inverts the diagonal) and permutation matrices (returns the transpose, since $P^{\\mathsf T} P = I$ for a matrix whose columns are distinct coordinate vectors). `cholesky_decomposition` recognizes the identity and diagonal matrices, and `determinant` recognizes triangular matrices for $n \\ge 5$ and multiplies the diagonal. Each test costs $O(n^2)$ and saves an $O(n^3)$ factorization. The tests are exact (entries compared with $0$ and $1$), so a shortcut is taken only when it returns what the general algorithm would; a matrix that is merely close to the structure goes through the general path."
+msgstr "`inverse` 能识别单位矩阵（返回副本）、对角矩阵（对对角线求逆）和置换矩阵（返回转置，因为对列为互不相同坐标向量的矩阵有 $P^{\\mathsf T} P = I$）。`cholesky_decomposition` 能识别单位矩阵和对角矩阵；当 $n \\ge 5$ 时，`determinant` 能识别三角矩阵并计算对角线乘积。每项检测的开销为 $O(n^2)$，可省去一次 $O(n^3)$ 的分解。这些检测是精确的（元素与 $0$ 和 $1$ 精确比较），因此只有当快捷路径的结果与一般算法一致时才会走快捷路径；仅仅接近该结构的矩阵走一般路径。"
 
-#: manual/design/mutable.md:97
+#: manual/design/mutable.md:95
 msgid "Checked forms without changing the kernels"
 msgstr "不改动内核的受检形式"
 
-#: manual/design/mutable.md:99
+#: manual/design/mutable.md:97
 msgid "Every checked method validates (squareness, exponent sign, non-emptiness, lengths) and then calls its unchecked partner, which keeps the original aborting or `Option` behaviour. There is no checked matrix product here: `*` validates and aborts, and `unchecked_matmul` does not validate at all. This asymmetry with `@immut.Matrix::matmul` is known; a checked `matmul` would be an addition, not a change."
 msgstr "每个受检方法都先校验（是否方阵、指数符号、是否非空、长度），再调用其非受检对应版本，后者保留原来的中止或 `Option` 行为。这里没有受检的矩阵乘积：`*` 会校验并中止，`unchecked_matmul` 则完全不校验。与 `@immut.Matrix::matmul` 的这种不对称是已知的；增加受检的 `matmul` 将是一次新增，而不是修改。"
 
-#: manual/design/mutable.md:106
+#: manual/design/mutable.md:104
 msgid "Symmetric eigenvalues only"
 msgstr "仅支持对称特征值"
 
-#: manual/design/mutable.md:108
+#: manual/design/mutable.md:106
 msgid "General real matrices can have complex eigenvalues, which a function returning `Vector[T]` cannot represent for real `T`. `eigen` therefore accepts only symmetric matrices, for which all eigenvalues are real and an orthonormal eigenbasis exists, and aborts otherwise."
 msgstr "一般实矩阵可能有复特征值，而对实数 `T`，返回 `Vector[T]` 的函数无法表示它们。因此 `eigen` 只接受对称矩阵（其特征值全为实数，且存在标准正交特征基），对其他矩阵则中止。"
 
-#: manual/design/mutable.md:113
+#: manual/design/mutable.md:111
 msgid "Which traits the routines require, and why"
 msgstr "各例程需要哪些 trait，以及原因"
 
-#: manual/design/mutable.md:115
+#: manual/design/mutable.md:113
 msgid "Bound"
 msgstr "约束"
 
-#: manual/design/mutable.md:115
+#: manual/design/mutable.md:113
 msgid "Needed for"
 msgstr "用途"
 
-#: manual/design/mutable.md:117
+#: manual/design/mutable.md:115
 msgid "products, `mul_vec`, `dot`, `trace`: sums of products starting from `0`"
 msgstr "乘积、`mul_vec`、`dot`、`trace`：从 `0` 开始的乘积之和"
 
-#: manual/design/mutable.md:118
+#: manual/design/mutable.md:116
 msgid "`pow`: needs `1` for $A^0 = I$ and distributivity for associativity of the product"
 msgstr "`pow`：$A^0 = I$ 需要 `1`，乘积的结合律需要分配律"
 
-#: manual/design/mutable.md:119
+#: manual/design/mutable.md:117
 msgid "elimination divides by pivots; `mean` divides by $N$"
 msgstr "消元要除以主元；`mean` 要除以 $N$"
 
-#: manual/design/mutable.md:120
+#: manual/design/mutable.md:118
 msgid "`abs` for pivot selection and every tolerance test"
 msgstr "选主元和每一次容差检验都要用 `abs`"
 
-#: manual/design/mutable.md:121
+#: manual/design/mutable.md:119
 msgid "comparing magnitudes"
 msgstr "比较大小"
 
-#: manual/design/mutable.md:122
+#: manual/design/mutable.md:120
 msgid "Cholesky diagonal, Householder norms, Givens rotations, $\\lVert\\cdot\\rVert_F$, `std_dev`"
 msgstr "Cholesky 对角元、Householder 范数、Givens 旋转、$\\lVert\\cdot\\rVert_F$、`std_dev`"
 
-#: manual/design/mutable.md:123
+#: manual/design/mutable.md:121
 msgid "the zero decisions above"
 msgstr "上文的判零决策"
 
-#: manual/design/mutable.md:125
+#: manual/design/mutable.md:123
 msgid "`Field` is commutative in `luna-generic`, which the derivations below use (for example $\\det(LU) = \\det L \\det U$ and $(AB)^{\\mathsf T} = B^{\\mathsf T} A^{\\mathsf T}$)."
 msgstr "`luna-generic` 中的 `Field` 是交换的，下文的推导用到了这一点（例如 $\\det(LU) = \\det L \\det U$ 和 $(AB)^{\\mathsf T} = B^{\\mathsf T} A^{\\mathsf T}$）。"
 
-#: manual/design/mutable.md:130
+#: manual/design/mutable.md:128
 msgid "Throughout, $u$ is the unit roundoff ($2^{-53}$ for `Double`, $2^{-24}$ for `Float`), $\\mathrm{fl}(x \\circ y) = (x \\circ y)(1 + \\delta)$ with $|\\delta| \\le u$, and"
 msgstr "本文中，$u$ 表示单位舍入误差（`Double` 为 $2^{-53}$，`Float` 为 $2^{-24}$），$\\mathrm{fl}(x \\circ y) = (x \\circ y)(1 + \\delta)$ 且 $|\\delta| \\le u$，以及"
 
-#: manual/design/mutable.md:140
+#: manual/design/mutable.md:138
 msgid "The second fact[^gamma] is what turns \"each operation is rounded\" into bounds for whole algorithms. Inequalities between matrices hold entry-wise, and $|A|$ is the matrix of absolute values. A flop is one floating-point addition, subtraction, multiplication or division."
 msgstr "第二个事实[^gamma]把“每次运算都被舍入”转化为整个算法的误差界。矩阵之间的不等式按元素成立，$|A|$ 表示由绝对值构成的矩阵。一个 flop 指一次浮点加法、减法、乘法或除法。"
 
-#: manual/design/mutable.md:145
+#: manual/design/mutable.md:143
 msgid "Higham, Lemma 3.1. The proof is an induction on $n$ using $|\\theta_{n+1}| \\le |\\theta_n| + u + u|\\theta_n|$."
 msgstr "Higham，引理 3.1。证明是对 $n$ 归纳，利用 $|\\theta_{n+1}| \\le |\\theta_n| + u + u|\\theta_n|$。"
 
-#: manual/design/mutable.md:148
+#: manual/design/mutable.md:146
 msgid "Matrix product"
 msgstr "矩阵乘积"
 
-#: manual/design/mutable.md:150
+#: manual/design/mutable.md:148
 msgid "$(AB)_{ik} = \\sum_j a_{ij} b_{jk}$ costs $rcn$ multiply-adds, $2rcn$ flops. The kernels sum in different orders (four partial products per step in the unrolled kernels; a packed copy of the columns of $B$ for products of at least $4 \\times 16 \\times 16$), but in any order each product $a_{ij} b_{jk}$ passes through one multiplication and at most $n - 1$ additions, so it carries a factor $1 + \\theta_n$ and"
 msgstr "$(AB)_{ik} = \\sum_j a_{ij} b_{jk}$ 需要 $rcn$ 次乘加，即 $2rcn$ flops。各内核的求和顺序不同（展开的内核每步计算四个部分积；对至少 $4 \\times 16 \\times 16$ 的乘积，会把 $B$ 的列打包复制），但无论哪种顺序，每个乘积 $a_{ij} b_{jk}$ 都经过一次乘法和至多 $n - 1$ 次加法，因此带有因子 $1 + \\theta_n$，并且"
 
-#: manual/design/mutable.md:161
+#: manual/design/mutable.md:159
 msgid "Results on different targets therefore agree to that accuracy, not bit for bit."
 msgstr "因此不同目标上的结果在这一精度内一致，而不是逐位相同。"
 
-#: manual/design/mutable.md:164
+#: manual/design/mutable.md:162
 msgid "LU factorization with partial pivoting"
 msgstr "部分选主元的 LU 分解"
 
-#: manual/design/mutable.md:166
+#: manual/design/mutable.md:164
 msgid "For square $A$, Gaussian elimination with partial pivoting computes a permutation $P$, a unit lower triangular $L$ and an upper triangular $U$ with"
 msgstr "对方阵 $A$，部分选主元的高斯消元计算出置换矩阵 $P$、单位下三角矩阵 $L$ 和上三角矩阵 $U$，使得"
 
-#: manual/design/mutable.md:173
+#: manual/design/mutable.md:171
 msgid "**Derivation.** Write $A^{(0)} = A$. At step $k$ the algorithm chooses the row $p \\ge k$ with the largest $|a^{(k)}_{pk}|$ and swaps it into position $k$ (a transposition $P_k$). It then subtracts multiples of row $k$ from the rows below, which is multiplication by the Gauss transform"
 msgstr "**推导。** 记 $A^{(0)} = A$。在第 $k$ 步，算法选取使 $|a^{(k)}_{pk}|$ 最大的行 $p \\ge k$，并把它交换到第 $k$ 行（一个对换 $P_k$）。然后从下方各行减去第 $k$ 行的倍数，这相当于乘以 Gauss 变换"
 
-#: manual/design/mutable.md:184
+#: manual/design/mutable.md:182
 msgid "so that $a^{(k+1)}_{ij} = a^{(k)}_{ij} - l_{ik} a^{(k)}_{kj}$ and column $k$ below the diagonal becomes zero. After $n - 1$ steps"
 msgstr "使得 $a^{(k+1)}_{ij} = a^{(k)}_{ij} - l_{ik} a^{(k)}_{kj}$，且第 $k$ 列对角线以下变为零。经过 $n - 1$ 步后"
 
-#: manual/design/mutable.md:191
+#: manual/design/mutable.md:189
 msgid "Since $e_k^{\\mathsf T} \\ell_k = 0$, $M_k^{-1} = I + \\ell_k e_k^{\\mathsf T}$, and a later transposition $P_j$ ($j > k$) only exchanges entries of $\\ell_k$: $P_j M_k = \\tilde M_k P_j$ with $\\tilde M_k = I - (P_j \\ell_k) e_k^{\\mathsf T}$. Moving all permutations to the right gives $U = \\tilde M_{n-2} \\cdots \\tilde M_0 P A$ with $P = P_{n-2} \\cdots P_0$, hence $PA = LU$ with"
 msgstr "由于 $e_k^{\\mathsf T} \\ell_k = 0$，有 $M_k^{-1} = I + \\ell_k e_k^{\\mathsf T}$；而后续的对换 $P_j$（$j > k$）只交换 $\\ell_k$ 的元素：$P_j M_k = \\tilde M_k P_j$，其中 $\\tilde M_k = I - (P_j \\ell_k) e_k^{\\mathsf T}$。把所有置换移到右边，得到 $U = \\tilde M_{n-2} \\cdots \\tilde M_0 P A$，其中 $P = P_{n-2} \\cdots P_0$，从而 $PA = LU$，且"
 
-#: manual/design/mutable.md:202
+#: manual/design/mutable.md:200
 msgid "This is why the code can store the multipliers in place of the eliminated entries and swap whole rows, multipliers included: the stored lower triangle is exactly $L$. The pivot choice gives $|l_{ik}| \\le 1$."
 msgstr "这就是代码可以把乘子存放在被消去元素的位置、并连同乘子一起交换整行的原因：存储的下三角部分恰好就是 $L$。选主元方式保证了 $|l_{ik}| \\le 1$。"
 
-#: manual/design/mutable.md:206
+#: manual/design/mutable.md:204
 msgid "**Cost.** Step $k$ updates an $(n-k-1) \\times (n-k-1)$ block with one multiply and one subtract per entry, so"
 msgstr "**开销。** 第 $k$ 步更新一个 $(n-k-1) \\times (n-k-1)$ 的块，每个元素一次乘法和一次减法，因此"
 
-#: manual/design/mutable.md:213
+#: manual/design/mutable.md:211
 msgid "flops."
 msgstr "flops。"
 
-#: manual/design/mutable.md:215
+#: manual/design/mutable.md:213
 msgid "**Determinant.** Taking determinants of $PA = LU$ with $\\det L = 1$ and $\\det P = (-1)^{s}$ for $s$ exchanges,"
 msgstr "**行列式。** 对 $PA = LU$ 两边取行列式，利用 $\\det L = 1$ 以及 $s$ 次交换下的 $\\det P = (-1)^{s}$，"
 
-#: manual/design/mutable.md:222
+#: manual/design/mutable.md:220
 msgid "**Solving and the inverse.** $Ax = b$ becomes $L y = P b$ (forward substitution, $y_i = (Pb)_i - \\sum_{k<i} l_{ik} y_k$) and $U x = y$ (back substitution, $x_i = (y_i - \\sum_{k>i} u_{ik} x_k) / u_{ii}$). Each costs $\\sum_i 2i \\approx n^2$ flops per right-hand side. The inverse is the solution for the $n$ columns of $I$; the code does not exploit the zeros of $e_j$, so the total is $\\tfrac23 n^3 + n \\cdot 2n^2 = \\tfrac83 n^3$ flops."
 msgstr "**求解与求逆。** $Ax = b$ 化为 $L y = P b$（前代，$y_i = (Pb)_i - \\sum_{k<i} l_{ik} y_k$）和 $U x = y$（回代，$x_i = (y_i - \\sum_{k>i} u_{ik} x_k) / u_{ii}$）。每个右端项各需 $\\sum_i 2i \\approx n^2$ flops。逆矩阵就是对 $I$ 的 $n$ 列求解；代码没有利用 $e_j$ 中的零，因此总计 $\\tfrac23 n^3 + n \\cdot 2n^2 = \\tfrac83 n^3$ flops。"
 
-#: manual/design/mutable.md:229
+#: manual/design/mutable.md:227
 msgid "**Stability.** The computed factors satisfy the backward error bound (Wilkinson; Higham, Theorem 9.3)[^higham]"
 msgstr "**稳定性。** 计算得到的因子满足向后误差界（Wilkinson；Higham，定理 9.3）[^higham]"
 
-#: manual/design/mutable.md:236
+#: manual/design/mutable.md:234
 msgid "To turn this into a norm bound, let $\\rho_n = \\max_{i,j,k} |a^{(k)}_{ij}| / \\max_{i,j} |a_{ij}|$ be the growth factor. Every row of $\\hat L$ has at most $n$ entries of magnitude at most $1$, so $\\lVert \\hat L \\rVert_\\infty \\le n$, and every row of $\\hat U$ has at most $n$ entries bounded by $\\rho_n \\max |a_{ij}| \\le \\rho_n \\lVert A \\rVert_\\infty$, so"
 msgstr "为把它化为范数界，令 $\\rho_n = \\max_{i,j,k} |a^{(k)}_{ij}| / \\max_{i,j} |a_{ij}|$ 为增长因子。$\\hat L$ 的每一行至多有 $n$ 个绝对值不超过 $1$ 的元素，所以 $\\lVert \\hat L \\rVert_\\infty \\le n$；$\\hat U$ 的每一行至多有 $n$ 个以 $\\rho_n \\max |a_{ij}| \\le \\rho_n \\lVert A \\rVert_\\infty$ 为界的元素，所以"
 
-#: manual/design/mutable.md:249
+#: manual/design/mutable.md:247
 msgid "Partial pivoting bounds the growth: since $|l_{ik}| \\le 1$, $|a^{(k+1)}_{ij}| \\le |a^{(k)}_{ij}| + |a^{(k)}_{kj}| \\le 2 \\max |a^{(k)}|$, so $\\rho_n \\le 2^{n-1}$. The bound is attained only by contrived matrices; in practice $\\rho_n$ is small and the method is backward stable. Including the two triangular solves, each computed solution satisfies $(A + \\Delta A)\\hat x = b$ with $\\lVert \\Delta A \\rVert_\\infty \\le 2 n^2 \\gamma_n \\rho_n \\lVert A \\rVert_\\infty$ (Higham, Theorem 9.5), and the *forward* error is governed by the condition number $\\kappa_\\infty(A) = \\lVert A \\rVert_\\infty \\lVert A^{-1} \\rVert_\\infty$:"
 msgstr "部分选主元限制了增长：由于 $|l_{ik}| \\le 1$，有 $|a^{(k+1)}_{ij}| \\le |a^{(k)}_{ij}| + |a^{(k)}_{kj}| \\le 2 \\max |a^{(k)}|$，因此 $\\rho_n \\le 2^{n-1}$。只有刻意构造的矩阵才会达到该界；实践中 $\\rho_n$ 很小，该方法是向后稳定的。连同两次三角求解在内，每个计算解都满足 $(A + \\Delta A)\\hat x = b$，其中 $\\lVert \\Delta A \\rVert_\\infty \\le 2 n^2 \\gamma_n \\rho_n \\lVert A \\rVert_\\infty$（Higham，定理 9.5），而*前向*误差由条件数 $\\kappa_\\infty(A) = \\lVert A \\rVert_\\infty \\lVert A^{-1} \\rVert_\\infty$ 决定："
 
-#: manual/design/mutable.md:264
+#: manual/design/mutable.md:262
 msgid "Each column of the computed inverse obeys this bound."
 msgstr "计算出的逆矩阵的每一列都满足这个界。"
 
-#: manual/design/mutable.md:266
+#: manual/design/mutable.md:264
 msgid "N. J. Higham, *Accuracy and Stability of Numerical Algorithms*, 2nd ed., SIAM, 2002, chapters 3 (basics), 8 (triangular systems), 9 (LU) and 10 (Cholesky)."
 msgstr "N. J. Higham, *Accuracy and Stability of Numerical Algorithms*, 2nd ed., SIAM, 2002，第 3 章（基础）、第 8 章（三角方程组）、第 9 章（LU）和第 10 章（Cholesky）。"
 
-#: manual/design/mutable.md:270
+#: manual/design/mutable.md:268
 msgid "Closed forms for small determinants"
 msgstr "小规模行列式的闭式公式"
 
-#: manual/design/mutable.md:272
+#: manual/design/mutable.md:270
 msgid "For $n \\le 4$ the determinant is evaluated by formulas instead of LU: the rule $ad - bc$, cofactor expansion along the first row for $n = 3$, and for $n = 4$ Laplace's expansion along the first two rows into six products of complementary $2 \\times 2$ minors,"
 msgstr "当 $n \\le 4$ 时，行列式用公式而非 LU 计算：$ad - bc$ 规则；$n = 3$ 时沿第一行做余子式展开；$n = 4$ 时沿前两行做 Laplace 展开，得到六个互补 $2 \\times 2$ 子式的乘积，"
 
-#: manual/design/mutable.md:281
+#: manual/design/mutable.md:279
 msgid "where $\\overline{\\{p,q\\}}$ is the complementary pair of columns. The sign is $(-1)^{1+p+q}$: $+$ for $\\{0,1\\}, \\{0,3\\}, \\{1,2\\}, \\{2,3\\}$ and $-$ for $\\{0,2\\}, \\{1,3\\}$, which is the pattern $s_{01} c_{23} - s_{02} c_{13} + s_{03} c_{12} + s_{12} c_{03} - s_{13} c_{02} + s_{23} c_{01}$ in the code."
 msgstr "其中 $\\overline{\\{p,q\\}}$ 是互补的列对。符号为 $(-1)^{1+p+q}$：对 $\\{0,1\\}, \\{0,3\\}, \\{1,2\\}, \\{2,3\\}$ 为 $+$，对 $\\{0,2\\}, \\{1,3\\}$ 为 $-$，这正是代码中的模式 $s_{01} c_{23} - s_{02} c_{13} + s_{03} c_{12} + s_{12} c_{03} - s_{13} c_{02} + s_{23} c_{01}$。"
 
-#: manual/design/mutable.md:287
+#: manual/design/mutable.md:285
 msgid "They use no division and no pivoting decision, which avoids the tolerance test for tiny matrices. Their rounding error is easy to bound: every one of the $n!$ monomials $\\pm a_{0\\sigma(0)} \\cdots a_{n-1,\\sigma(n-1)}$ passes through at most $m$ roundings, with $m = 2, 5, 10$ for $n = 2, 3, 4$ (for $n = 4$: two in each $2 \\times 2$ minor, one for their product, five for the sum of six terms), so"
 msgstr "它们不做除法，也不做选主元判断，从而避免了对极小矩阵进行容差检验。它们的舍入误差很容易估计：$n!$ 个单项式 $\\pm a_{0\\sigma(0)} \\cdots a_{n-1,\\sigma(n-1)}$ 中的每一个至多经过 $m$ 次舍入，对 $n = 2, 3, 4$ 分别有 $m = 2, 5, 10$（对 $n = 4$：每个 $2 \\times 2$ 子式两次，它们的乘积一次，六项求和五次），因此"
 
-#: manual/design/mutable.md:298
+#: manual/design/mutable.md:296
 msgid "The permanent is at least $|\\det A|$, and much larger when the monomials cancel; then the relative accuracy is lost, exactly as the determinant itself is ill-conditioned there. These formulas are not backward stable in the LU sense."
 msgstr "积和式至少为 $|\\det A|$，在单项式相消时会大得多；这时相对精度会丢失，这恰好对应行列式本身在那里是病态的。这些公式在 LU 的意义下不是向后稳定的。"
 
-#: manual/design/mutable.md:303
+#: manual/design/mutable.md:301
 msgid "Rank and reduced row echelon form"
 msgstr "秩与简化行阶梯形"
 
-#: manual/design/mutable.md:305
+#: manual/design/mutable.md:303
 msgid "`rank` runs elimination with partial pivoting on a copy and counts pivots whose magnitude is at least the tolerance, moving to the next column when the largest remaining entry is below it. This is the *numerical rank* with an absolute threshold $\\tau$. It is exact for matrices whose pivots are well separated from $\\tau$ and otherwise depends on scaling. The singular value decomposition gives the reliable numerical rank, $\\#\\{\\sigma_i > \\tau\\}$, because by the Eckart–Young theorem $\\sigma_{k+1}$ is the 2-norm distance to the nearest matrix of rank $k$; elimination pivots have no such meaning, and a matrix with all pivots of order one can be within $2^{-n}$ of a singular one.[^kahan] The SVD is not implemented."
 msgstr "`rank` 在副本上做部分选主元的消元，统计绝对值不小于容差的主元个数；当剩余的最大元素小于容差时转到下一列。这是带绝对阈值 $\\tau$ 的*数值秩*。对于主元与 $\\tau$ 明显分离的矩阵，它是精确的，否则依赖于缩放。奇异值分解给出可靠的数值秩 $\\#\\{\\sigma_i > \\tau\\}$，因为由 Eckart–Young 定理，$\\sigma_{k+1}$ 是到最近的秩为 $k$ 的矩阵的 2-范数距离；消元主元没有这样的含义，所有主元都为一的量级的矩阵，可能与某个奇异矩阵只相差约 $2^{-n}$。[^kahan] 目前没有实现 SVD。"
 
-#: manual/design/mutable.md:316
+#: manual/design/mutable.md:314
 msgid "Kahan's example: the upper triangular matrix with $1$ on the diagonal and $-1$ above it has all pivots equal to $1$, while its smallest singular value decreases like $2^{-n}$."
 msgstr "Kahan 的例子：对角线为 $1$、上方全为 $-1$ 的上三角矩阵，所有主元都等于 $1$，而其最小奇异值像 $2^{-n}$ 一样减小。"
 
-#: manual/design/mutable.md:320
+#: manual/design/mutable.md:318
 msgid "`reduce_row_elimination` is Gauss–Jordan elimination: each pivot row is scaled to make the pivot one, and the pivot column is cleared in every other row. For each of at most $\\min(r, c)$ pivots it updates all $r$ rows over all $c$ columns, about $2 r c \\min(r, c)$ flops, and works in place. Unlike LU it produces the reduced form, in which every pivot column is a coordinate vector, so the non-pivot columns of the result express the dependent columns of $A$ in terms of the pivot columns."
 msgstr "`reduce_row_elimination` 是 Gauss–Jordan 消元：每个主元行都被缩放使主元为一，并在其他每一行中清除主元列。对至多 $\\min(r, c)$ 个主元中的每一个，它都要更新全部 $r$ 行的全部 $c$ 列，约 $2 r c \\min(r, c)$ flops，并原地进行。与 LU 不同，它得到的是简化形式，其中每个主元列都是坐标向量，因此结果中的非主元列用主元列表示了 $A$ 中的相关列。"
 
-#: manual/design/mutable.md:328
+#: manual/design/mutable.md:326
 msgid "Cholesky factorization"
 msgstr "Cholesky 分解"
 
-#: manual/design/mutable.md:330
+#: manual/design/mutable.md:328
 msgid "A symmetric positive definite (SPD) matrix has a unique factorization $A = L L^{\\mathsf T}$ with $L$ lower triangular and $l_{jj} > 0$. Comparing entries of $A = L L^{\\mathsf T}$ for $i \\ge j$,"
 msgstr "对称正定（SPD）矩阵有唯一的分解 $A = L L^{\\mathsf T}$，其中 $L$ 为下三角矩阵且 $l_{jj} > 0$。对 $i \\ge j$ 比较 $A = L L^{\\mathsf T}$ 的元素，"
 
-#: manual/design/mutable.md:341
+#: manual/design/mutable.md:339
 msgid "Each equation determines one new entry from earlier ones, which proves uniqueness once the radicands are positive. The code evaluates them row by row (the Cholesky–Banachiewicz order) and reads only the lower triangle of $A$; the cost is $\\sum_j 2 j (n - j) \\approx \\tfrac13 n^3$ flops, half of LU, because symmetry halves the work."
 msgstr "每个方程都由先前的元素确定一个新元素，这在被开方数为正时证明了唯一性。代码逐行计算它们（Cholesky–Banachiewicz 顺序），只读取 $A$ 的下三角部分；开销为 $\\sum_j 2 j (n - j) \\approx \\tfrac13 n^3$ flops，是 LU 的一半，因为对称性使工作量减半。"
 
-#: manual/design/mutable.md:347
+#: manual/design/mutable.md:345
 msgid "**Why success characterizes SPD.** Write $D = \\operatorname{diag}(l_{jj})$. Then $A = (L D^{-1})(D L^{\\mathsf T})$ is an LU factorization without pivoting, whose pivots are $u_{jj} = l_{jj}^2$, the radicands. The product of the first $j + 1$ pivots is the leading principal minor $\\det M_{j+1}$, so the radicand at step $j$ equals $\\det M_{j+1} / \\det M_j$. By Sylvester's criterion $A$ is SPD exactly when all leading principal minors are positive, so in exact arithmetic the factorization succeeds exactly for SPD matrices. With the tolerance, `cholesky_decomposition` succeeds exactly when every ratio $\\det M_{j+1} / \\det M_j$ exceeds $\\tau$ (up to rounding), and `is_positive_definite` is implemented by attempting it."
 msgstr "**为什么成功刻画了 SPD。** 记 $D = \\operatorname{diag}(l_{jj})$。则 $A = (L D^{-1})(D L^{\\mathsf T})$ 是一个不选主元的 LU 分解，其主元为 $u_{jj} = l_{jj}^2$，即被开方数。前 $j + 1$ 个主元之积是顺序主子式 $\\det M_{j+1}$，因此第 $j$ 步的被开方数等于 $\\det M_{j+1} / \\det M_j$。由 Sylvester 判据，$A$ 是 SPD 当且仅当所有顺序主子式为正，因此在精确算术下，分解恰好对 SPD 矩阵成功。加上容差后，`cholesky_decomposition` 恰好在每个比值 $\\det M_{j+1} / \\det M_j$ 都超过 $\\tau$ 时成功（在舍入误差范围内），而 `is_positive_definite` 就是通过尝试分解来实现的。"
 
-#: manual/design/mutable.md:358
+#: manual/design/mutable.md:356
 msgid "**Stability.** Cholesky needs no pivoting: from $a_{jj} = \\sum_k l_{jk}^2$ every $|l_{jk}| \\le \\sqrt{a_{jj}}$, so entries cannot grow, and the computed factor satisfies $\\hat L \\hat L^{\\mathsf T} = A + \\Delta A$ with $|\\Delta A| \\le \\gamma_{n+1} |\\hat L|\\,|\\hat L^{\\mathsf T}|$ (Higham, Theorem 10.3). Since $(|\\hat L|\\,|\\hat L^{\\mathsf T}|)_{ij} \\le \\sqrt{a_{ii} a_{jj}}$ up to $O(u)$ by the Cauchy–Schwarz inequality, the backward error is small relative to the diagonal of $A$."
 msgstr "**稳定性。** Cholesky 不需要选主元：由 $a_{jj} = \\sum_k l_{jk}^2$ 可知每个 $|l_{jk}| \\le \\sqrt{a_{jj}}$，元素不会增长，计算出的因子满足 $\\hat L \\hat L^{\\mathsf T} = A + \\Delta A$，其中 $|\\Delta A| \\le \\gamma_{n+1} |\\hat L|\\,|\\hat L^{\\mathsf T}|$（Higham，定理 10.3）。由 Cauchy–Schwarz 不等式，在 $O(u)$ 误差内有 $(|\\hat L|\\,|\\hat L^{\\mathsf T}|)_{ij} \\le \\sqrt{a_{ii} a_{jj}}$，因此向后误差相对于 $A$ 的对角元是小的。"
 
-#: manual/design/mutable.md:367
+#: manual/design/mutable.md:365
 msgid "Symmetric eigenvalue problem"
 msgstr "对称特征值问题"
 
-#: manual/design/mutable.md:369
+#: manual/design/mutable.md:367
 msgid ""
 "For real symmetric $A$ the spectral theorem gives $A = Q \\Lambda Q^{\\mathsf T}$ with $Q$ orthogonal and $\\Lambda$ real diagonal. `eigen` computes it in two phases for $n \\n"
 "e 2$, and by a closed formula for $n = 2$."
@@ -5331,7 +5315,7 @@ msgstr ""
 "对实对称矩阵 $A$，谱定理给出 $A = Q \\Lambda Q^{\\mathsf T}$，其中 $Q$ 正交，$\\Lambda$ 为实对角矩阵。当 $n \\n"
 "e 2$ 时 `eigen` 分两个阶段计算它，当 $n = 2$ 时用闭式公式计算。"
 
-#: manual/design/mutable.md:373
+#: manual/design/mutable.md:371
 msgid ""
 "**Householder tridiagonalization.** For $x \\in \\mathbb{R}^m$, $x \\n"
 "e 0$, let $\\alpha = -\\operatorname{sgn}(x_{m-1}) \\lVert x \\rVert_2$ and $v = x - \\alpha e_{m-1}$. The reflector $H = I - 2 v v^{\\mathsf T} / v^{\\mathsf T} v$ is symmetric and orthogonal, and it maps $x$ to $\\alpha e_{m-1}$:"
@@ -5339,79 +5323,75 @@ msgstr ""
 "**Householder 三对角化。** 对 $x \\in \\mathbb{R}^m$，$x \\n"
 "e 0$，令 $\\alpha = -\\operatorname{sgn}(x_{m-1}) \\lVert x \\rVert_2$，$v = x - \\alpha e_{m-1}$。反射子 $H = I - 2 v v^{\\mathsf T} / v^{\\mathsf T} v$ 是对称正交的，并把 $x$ 映为 $\\alpha e_{m-1}$："
 
-#: manual/design/mutable.md:386
+#: manual/design/mutable.md:384
 msgid "The sign of $\\alpha$ is opposite to $x_{m-1}$, so $x_{m-1} - \\alpha$ adds two numbers of the same sign and cannot cancel. The code (the `tred2` scheme) works from the last row upwards: for row $i$ it reflects $x = (a_{i0}, \\dots, a_{i,i-1})$ onto its last coordinate, applies $H$ from both sides, and so zeroes row and column $i$ outside the tridiagonal band. After $n - 2$ such steps"
 msgstr "$\\alpha$ 的符号与 $x_{m-1}$ 相反，因此 $x_{m-1} - \\alpha$ 是两个同号数相加，不会相消。代码（`tred2` 方案）从最后一行向上进行：对第 $i$ 行，它把 $x = (a_{i0}, \\dots, a_{i,i-1})$ 反射到最后一个坐标上，从两侧施加 $H$，从而把第 $i$ 行和第 $i$ 列在三对角带之外的部分清零。经过 $n - 2$ 个这样的步骤后"
 
-#: manual/design/mutable.md:397
-msgid "where $T$ is symmetric tridiagonal with diagonal $d$ and off-diagonal $e$. The two-sided update costs $\\tfrac43 n^3$ flops and accumulating $Q_1$ explicitly another $\\tfrac43 n^3$. Before forming each reflector the row is divided by $\\sum_k |x_k|$, which avoids overflow and underflow in $\\lVert x \\rVert_2$; a row whose sum is at most $\\tau$ is left unreflected."
-msgstr "其中 $T$ 是对角线为 $d$、次对角线为 $e$ 的对称三对角矩阵。双侧更新的开销为 $\\tfrac43 n^3$ flops，显式累积 $Q_1$ 另需 $\\tfrac43 n^3$。在构造每个反射子之前，该行先除以 $\\sum_k |x_k|$，以避免 $\\lVert x \\rVert_2$ 的上溢和下溢；和不超过 $\\tau$ 的行不做反射。"
+#: manual/design/mutable.md:395
+msgid "where $T$ is symmetric tridiagonal with diagonal $d$ and off-diagonal $e$. The two-sided update costs $\\tfrac43 n^3$ flops and accumulating $Q_1$ explicitly another $\\tfrac43 n^3$. Before forming each reflector the row is divided by $\\sum_k |x_k|$, which avoids overflow and underflow in $\\lVert x \\rVert_2$; only an exactly zero row is left unreflected."
+msgstr "其中 $T$ 是对角线为 $d$、次对角线为 $e$ 的对称三对角矩阵。双侧更新的开销为 $\\tfrac43 n^3$ flops，显式累积 $Q_1$ 另需 $\\tfrac43 n^3$。在构造每个反射子之前，该行先除以 $\\sum_k |x_k|$，以避免 $\\lVert x \\rVert_2$ 的上溢和下溢；只有恰好为零的行才不做反射。"
 
-#: manual/design/mutable.md:403
+#: manual/design/mutable.md:401
 msgid "**Implicit QL with Wilkinson shifts.** The tridiagonal $T$ is diagonalized by plane rotations. Before each sweep on the unreduced block starting at $l$, the shift $\\sigma$ is the eigenvalue of the leading $2 \\times 2$ block $\\begin{pmatrix} d_l & e_l \\\\ e_l & d_{l+1} \\end{pmatrix}$ closer to $d_l$. With $g = (d_{l+1} - d_l)/(2 e_l)$, its eigenvalues are"
 msgstr "**带 Wilkinson 位移的隐式 QL。** 三对角矩阵 $T$ 通过平面旋转对角化。在从 $l$ 开始的未约化块上进行每轮扫描之前，位移 $\\sigma$ 取前导 $2 \\times 2$ 块 $\\begin{pmatrix} d_l & e_l \\\\ e_l & d_{l+1} \\end{pmatrix}$ 中更接近 $d_l$ 的特征值。令 $g = (d_{l+1} - d_l)/(2 e_l)$，其特征值为"
 
-#: manual/design/mutable.md:414
+#: manual/design/mutable.md:412
 msgid "because $\\tfrac12(d_l + d_{l+1}) = d_l + e_l g$ and the square root equals $|e_l| \\sqrt{g^2 + 1}$ (the sign of $e_l$ is absorbed by $\\pm$). The one closer to $d_l$ makes $|g \\pm \\sqrt{g^2+1}|$ small, that is, takes the sign opposite to $g$:"
 msgstr "因为 $\\tfrac12(d_l + d_{l+1}) = d_l + e_l g$，且平方根等于 $|e_l| \\sqrt{g^2 + 1}$（$e_l$ 的符号被 $\\pm$ 吸收）。更接近 $d_l$ 的那个使 $|g \\pm \\sqrt{g^2+1}|$ 较小，即取与 $g$ 相反的符号："
 
-#: manual/design/mutable.md:424
+#: manual/design/mutable.md:422
 msgid "where the second form follows from $(g - s\\sqrt{g^2+1})(g + s\\sqrt{g^2+1}) = g^2 - (g^2 + 1) = -1$ for $s = \\operatorname{sgn}(g)$, and avoids the cancellation of the first. The code uses it with $\\operatorname{sgn}(0) = 1$. A sweep starts from $d_m - \\sigma$ and applies Givens rotations $\\begin{pmatrix} c & s \\\\ -s & c \\end{pmatrix}$, $c^2 + s^2 = 1$, from the bottom of the block upwards, each one chasing the bulge created by the previous; $Q$ is updated with the same rotations, $6n$ flops each. The rotation parameters are computed as $c = g/f$, $r = \\sqrt{c^2 + 1}$, $s = 1/r$, $c = c s$ (or the symmetric form), dividing by the larger of $|f|, |g|$ so that no square of a large number is formed."
 msgstr "其中第二种形式由 $(g - s\\sqrt{g^2+1})(g + s\\sqrt{g^2+1}) = g^2 - (g^2 + 1) = -1$（$s = \\operatorname{sgn}(g)$）得到，并避免了第一种形式的相消。代码在 $\\operatorname{sgn}(0) = 1$ 的约定下使用它。每轮扫描从 $d_m - \\sigma$ 开始，自块的底部向上施加 Givens 旋转 $\\begin{pmatrix} c & s \\\\ -s & c \\end{pmatrix}$（$c^2 + s^2 = 1$），每一次旋转追赶前一次产生的凸起；$Q$ 也用同样的旋转更新，每次 $6n$ flops。旋转参数按 $c = g/f$、$r = \\sqrt{c^2 + 1}$、$s = 1/r$、$c = c s$（或对称形式）计算，除以 $|f|, |g|$ 中较大者，从而不会形成大数的平方。"
 
-#: manual/design/mutable.md:436
-msgid "An off-diagonal entry is treated as zero when"
-msgstr "当满足下式时，次对角元被视为零："
+#: manual/design/mutable.md:434
+msgid "An off-diagonal entry is treated as zero when it is negligible next to its diagonal neighbours in the working precision,"
+msgstr "当某个次对角元在工作精度下相对于其相邻的对角元可以忽略时，它被视为零："
 
-#: manual/design/mutable.md:442
-msgid "and the block then splits. For symmetric tridiagonal matrices the Wilkinson shift converges for every input in exact arithmetic (Wilkinson, 1968), and typically cubically; about two sweeps per eigenvalue is usual. The code nevertheless aborts after 60 sweeps for one starting index $l$. With accumulation of $Q$ the whole computation takes about $9 n^3$ flops (Golub and Van Loan's estimate for the symmetric QR algorithm), $\\tfrac83 n^3$ of them in the reduction."
-msgstr "此时该块分裂。对于对称三对角矩阵，Wilkinson 位移在精确算术下对任何输入都收敛（Wilkinson，1968），而且通常是三次收敛；通常每个特征值约需两轮扫描。尽管如此，代码在一个起始索引 $l$ 上扫描 60 轮后就会中止。加上 $Q$ 的累积，整个计算约需 $9 n^3$ flops（Golub 和 Van Loan 对对称 QR 算法的估计），其中 $\\tfrac83 n^3$ 用于约化。"
+#: manual/design/mutable.md:441
+msgid "that is, $|e_m| \\lesssim u\\,(|d_m| + |d_{m+1}|)$, and the block then splits. The test needs no knowledge of $u$, so it works for `Float` and `Double` alike, and it is invariant under scaling of $A$. For symmetric tridiagonal matrices the Wilkinson shift converges for every input in exact arithmetic (Wilkinson, 1968), and typically cubically; about two sweeps per eigenvalue is usual. The code nevertheless aborts after 60 sweeps for one starting index $l$. With accumulation of $Q$ the whole computation takes about $9 n^3$ flops (Golub and Van Loan's estimate for the symmetric QR algorithm), $\\tfrac83 n^3$ of them in the reduction."
+msgstr "即 $|e_m| \\lesssim u\\,(|d_m| + |d_{m+1}|)$，此时该块分裂。该检验无需知道 $u$，因此对 `Float` 和 `Double` 同样适用，并且在缩放 $A$ 时保持不变。对于对称三对角矩阵，Wilkinson 位移在精确算术下对任何输入都收敛（Wilkinson，1968），而且通常是三次收敛；通常每个特征值约需两轮扫描。尽管如此，代码在一个起始索引 $l$ 上扫描 60 轮后就会中止。加上 $Q$ 的累积，整个计算约需 $9 n^3$ flops（Golub 和 Van Loan 对对称 QR 算法的估计），其中 $\\tfrac83 n^3$ 用于约化。"
 
-#: manual/design/mutable.md:450
-msgid "**Accuracy.** Every transformation is orthogonal, so in exact arithmetic the spectrum never changes, and rounding contributes a backward error of $O(n u) \\lVert A \\rVert_2$. The thresholds contribute more. Setting $e_m$ to zero perturbs $T$ by a symmetric matrix of 2-norm at most $\\tau(|d_m| + |d_{m+1}| + 1) \\le \\tau(2 \\lVert A \\rVert_2 + 1)$, and skipping a reflection perturbs $A$ by entries whose absolute values sum to at most $\\tau$ per row. Weyl's inequality, $|\\lambda_i(A + E) - \\lambda_i(A)| \\le \\lVert E \\rVert_2$ for symmetric $A$ and $E$, then gives for the computed eigenvalues"
-msgstr "**精度。** 每个变换都是正交的，因此在精确算术下谱从不改变，舍入带来 $O(n u) \\lVert A \\rVert_2$ 的向后误差。阈值的贡献更大。把 $e_m$ 置零相当于用一个 2-范数至多为 $\\tau(|d_m| + |d_{m+1}| + 1) \\le \\tau(2 \\lVert A \\rVert_2 + 1)$ 的对称矩阵扰动 $T$，而跳过一次反射相当于用每行绝对值之和至多为 $\\tau$ 的元素扰动 $A$。对对称矩阵 $A$ 和 $E$，Weyl 不等式 $|\\lambda_i(A + E) - \\lambda_i(A)| \\le \\lVert E \\rVert_2$ 于是给出计算所得特征值的误差"
+#: manual/design/mutable.md:451
+msgid "**Accuracy.** Every transformation is orthogonal, so in exact arithmetic the spectrum never changes, and rounding contributes a backward error of $O(n u) \\lVert A \\rVert_2$; setting a negligible $e_m$ to zero perturbs $T$ by at most $u(|d_m| + |d_{m+1}|) \\le 2u \\lVert A \\rVert_2$, which is of the same order. Weyl's inequality, $|\\lambda_i(A + E) - \\lambda_i(A)| \\le \\lVert E \\rVert_2$ for symmetric $A$ and $E$, then gives for the computed eigenvalues"
+msgstr "**精度。** 每个变换都是正交的，因此在精确算术下谱从不改变，舍入带来 $O(n u) \\lVert A \\rVert_2$ 的向后误差；把一个可忽略的 $e_m$ 置零，对 $T$ 的扰动至多为 $u(|d_m| + |d_{m+1}|) \\le 2u \\lVert A \\rVert_2$，量级相同。对对称矩阵 $A$ 和 $E$，Weyl 不等式 $|\\lambda_i(A + E) - \\lambda_i(A)| \\le \\lVert E \\rVert_2$ 于是给出计算所得特征值的误差"
 
-#: manual/design/mutable.md:463
-msgid "with a small $c_n$. With $\\tau = 10^{-11}$ the second term dominates: absolute accuracy is about $10^{-11}$ for $\\lVert A \\rVert$ of order one, and for a matrix whose entries are all below $\\tau$ the result is meaningless. Eigenvectors are accurate in proportion to (backward error)$/\\text{gap}$, where the gap is the distance to the nearest other eigenvalue (the Davis–Kahan theorem)."
-msgstr "其中 $c_n$ 较小。当 $\\tau = 10^{-11}$ 时第二项占主导：对量级为一的 $\\lVert A \\rVert$，绝对精度约为 $10^{-11}$；对所有元素都小于 $\\tau$ 的矩阵，结果毫无意义。特征向量的精度与（向后误差）$/\\text{gap}$ 成比例，其中 gap 是到最近的另一个特征值的距离（Davis–Kahan 定理）。"
+#: manual/design/mutable.md:462
+msgid "with a modest $c_n$, independent of the scale of $A$. Eigenvectors are accurate in proportion to $u \\lVert A \\rVert_2/\\text{gap}$, where the gap is the distance to the nearest other eigenvalue (the Davis–Kahan theorem). The only absolute test left is the symmetry check $|a_{ij} - a_{ji}| \\le \\tau$ before the computation; the algorithm then reads the lower triangle."
+msgstr "其中 $c_n$ 适中，且与 $A$ 的尺度无关。特征向量的精度与 $u \\lVert A \\rVert_2/\\text{gap}$ 成比例，其中 gap 是到最近的另一个特征值的距离（Davis–Kahan 定理）。唯一剩下的绝对检验是计算之前的对称性检查 $|a_{ij} - a_{ji}| \\le \\tau$；之后算法只读取下三角部分。"
 
-#: manual/design/mutable.md:469
-msgid "**The $2 \\times 2$ case.** For $A = \\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}$ the characteristic polynomial $\\lambda^2 - (a + d)\\lambda + (ad - bc)$ gives, with $m = (a + d)/2$,"
-msgstr "**$2 \\times 2$ 情形。** 对 $A = \\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}$，令 $m = (a + d)/2$，特征多项式 $\\lambda^2 - (a + d)\\lambda + (ad - bc)$ 给出"
+#: manual/design/mutable.md:468
+msgid "**The $2 \\times 2$ case.** The code works with the symmetric part $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$, $s = \\tfrac12(a_{01} + a_{10})$. Its characteristic polynomial $\\lambda^2 - (a + d)\\lambda + (ad - s^2)$ has the discriminant"
+msgstr "**$2 \\times 2$ 情形。** 代码在对称部分 $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$（$s = \\tfrac12(a_{01} + a_{10})$）上计算。其特征多项式 $\\lambda^2 - (a + d)\\lambda + (ad - s^2)$ 的判别式为"
 
 #: manual/design/mutable.md:477
-msgid ""
-"For $b \\n"
-"e 0$ the vector $(b, \\lambda - a)^{\\mathsf T}$ is an eigenvector:"
-msgstr ""
-"当 $b \\n"
-"e 0$ 时，向量 $(b, \\lambda - a)^{\\mathsf T}$ 是特征向量："
+msgid "a sum of squares, so with $m = \\tfrac12(a + d)$ and $h = \\tfrac12(a - d)$"
+msgstr "它是平方和，因此记 $m = \\tfrac12(a + d)$、$h = \\tfrac12(a - d)$，有"
 
-#: manual/design/mutable.md:486
-msgid "since $(\\lambda - a)(\\lambda - d) = \\lambda^2 - (a + d)\\lambda + ad = bc$ by the characteristic equation. The code returns these vectors without normalizing them, and $e_1, e_2$ when $b = c = 0$."
-msgstr "因为由特征方程有 $(\\lambda - a)(\\lambda - d) = \\lambda^2 - (a + d)\\lambda + ad = bc$。代码返回这些向量时不做归一化；当 $b = c = 0$ 时返回 $e_1, e_2$。"
+#: manual/design/mutable.md:483
+msgid "Computing $r^2$ as $m^2 - \\det A$ instead would subtract two numbers of size $m^2$ and lose about $u\\,m^2$ in absolute terms, which for $m \\approx 10^8$ is about $1$: the computed discriminant could even be negative for a diagonal matrix. The code evaluates $r$ as $\\beta\\sqrt{(h/\\beta)^2 + (s/\\beta)^2}$ with $\\beta = \\max(|h|, |s|)$, which cannot overflow, and never thresholds it, so eigenvalues as close as rounding allows stay distinct. The eigenvalue of larger magnitude, $m + \\operatorname{sgn}(m)\\, r$, is a sum of two numbers of the same sign and is computed directly; the other follows from $\\lambda_1 \\lambda_2 = \\det A = ad - s^2$, which avoids the cancellation in $m - r$ when $|\\lambda_2| \\ll |\\lambda_1|$. When $s = 0$ the matrix is diagonal and the code returns $a$ and $d$ exactly, in decreasing order, with the coordinate vectors."
+msgstr "如果改用 $m^2 - \\det A$ 来计算 $r^2$，就要相减两个大小为 $m^2$ 的数，绝对误差约为 $u\\,m^2$，当 $m \\approx 10^8$ 时约为 $1$：对角矩阵算出的判别式甚至可能为负。代码把 $r$ 计算为 $\\beta\\sqrt{(h/\\beta)^2 + (s/\\beta)^2}$，其中 $\\beta = \\max(|h|, |s|)$，这不会溢出，而且从不对它设阈值，因此只要舍入允许，相近的特征值都保持不同。绝对值较大的特征值 $m + \\operatorname{sgn}(m)\\, r$ 是两个同号数之和，直接计算；另一个由 $\\lambda_1 \\lambda_2 = \\det A = ad - s^2$ 得到，从而在 $|\\lambda_2| \\ll |\\lambda_1|$ 时避免 $m - r$ 中的相消。当 $s = 0$ 时矩阵是对角的，代码按降序精确返回 $a$ 和 $d$，以及相应的坐标向量。"
 
-#: manual/design/mutable.md:490
-msgid ""
-"[!WARNING] This closed form is less accurate than the general path, for three reasons that the code does not guard against. (1) For symmetric input the discriminant is $m^2 - (ad - b^2) = \\big(\\tfrac{a-d}{2}\\big)^2 + b^2 \\ge 0$, but it is computed as a difference of two numbers of size $m^2$, with an absolute error of about $u\\, m^2$. For $m \\approx 10^8$ that is about $1$, far above $\\tau$, so the computed discriminant can be negative enough to trigger the \"complex eigenvalues\" abort on a symmetric, even diagonal, matrix. (2) A discriminant with $|\\cdot| \\le \\tau$ is replaced by zero. Since $\\lambda_1 - \\lambda_2 = 2\\sqrt{\\text{discriminant}}$, every pair of eigenvalues closer than $2\\sqrt{\\tau} \\approx 6.3 \\times 10^{-6}$ is returned as a double eigenvalue $m$, an error up to $3 \\times 10^{-6}$. (3) When the two eigenvalues are then equal and $b \\n"
-"e 0$, both columns are $(b, m - a)^{\\mathsf T}$, so the eigenvector matrix is singular. In addition, when $|\\lambda_2| \\ll |\\lambda_1|$ the subtraction $m - \\sqrt{\\cdot}$ cancels and $\\lambda_2$ loses relative accuracy. The stable formulation computes the discriminant as $\\big(\\tfrac{a-d}{2}\\big)^2 + bc$, never thresholds it, takes $\\lambda_2 = \\det A / \\lambda_1$, and chooses between the eigenvector forms $(b, \\lambda - a)$ and $(\\lambda - d, c)$ by size."
-msgstr ""
-"[!WARNING] 这个闭式公式不如一般路径精确，原因有三，而代码对此都没有防护。（1）对于对称输入，判别式为 $m^2 - (ad - b^2) = \\big(\\tfrac{a-d}{2}\\big)^2 + b^2 \\ge 0$，但它是作为两个大小为 $m^2$ 的数之差计算的，绝对误差约为 $u\\, m^2$。当 $m \\approx 10^8$ 时这约为 $1$，远大于 $\\tau$，因此计算出的判别式可能负到足以在一个对称（甚至对角）矩阵上触发“complex eigenvalues”中止。（2）$|\\cdot| \\le \\tau$ 的判别式被替换为零。由于 $\\lambda_1 - \\lambda_2 = 2\\sqrt{\\text{discriminant}}$，任何相距小于 $2\\sqrt{\\tau} \\approx 6.3 \\times 10^{-6}$ 的一对特征值都会作为二重特征值 $m$ 返回，误差可达 $3 \\times 10^{-6}$。（3）此时两个特征值相等且 $b \\n"
-"e 0$，两列都是 $(b, m - a)^{\\mathsf T}$，特征向量矩阵因而奇异。此外，当 $|\\lambda_2| \\ll |\\lambda_1|$ 时，减法 $m - \\sqrt{\\cdot}$ 发生相消，$\\lambda_2$ 丢失相对精度。稳定的做法是把判别式算作 $\\big(\\tfrac{a-d}{2}\\big)^2 + bc$、从不对它设阈值、取 $\\lambda_2 = \\det A / \\lambda_1$，并按大小在特征向量形式 $(b, \\lambda - a)$ 与 $(\\lambda - d, c)$ 之间选择。"
+#: manual/design/mutable.md:496
+msgid "For the eigenvector of $\\lambda_1$, both"
+msgstr "对于 $\\lambda_1$ 的特征向量，以下两者"
 
-#: manual/design/mutable.md:510
+#: manual/design/mutable.md:504
+msgid "solve $(A - \\lambda_1 I)v = 0$: for the first, $(a - \\lambda_1)(h + r) + s^2 = (h - r)(h + r) + s^2 = h^2 - r^2 + s^2 = 0$, and the second row is $s(h + r) + (d - \\lambda_1)s = s(h + r - h - r) = 0$; the second vector is checked the same way. The code takes the first when $h \\ge 0$ and the second when $h < 0$, so that $h + r$ or $r - h$ adds numbers of the same sign and cannot cancel. Since $A$ is symmetric, the eigenvector of $\\lambda_2$ is orthogonal to it, $(v_y, -v_x)$. Each column is scaled so that its entry of largest magnitude is $1$; the columns are therefore never zero, never parallel, and paired with the right eigenvalues."
+msgstr "都是 $(A - \\lambda_1 I)v = 0$ 的解：对第一个，$(a - \\lambda_1)(h + r) + s^2 = (h - r)(h + r) + s^2 = h^2 - r^2 + s^2 = 0$，第二行为 $s(h + r) + (d - \\lambda_1)s = s(h + r - h - r) = 0$；第二个向量可同样验证。代码在 $h \\ge 0$ 时取第一个，在 $h < 0$ 时取第二个，这样 $h + r$ 或 $r - h$ 是同号数相加，不会相消。由于 $A$ 对称，$\\lambda_2$ 的特征向量与它正交，即 $(v_y, -v_x)$。每列都被缩放，使其绝对值最大的元素为 $1$；因此各列永不为零、永不平行，并与正确的特征值配对。"
+
+#: manual/design/mutable.md:514
 msgid "Power method"
 msgstr "幂法"
 
-#: manual/design/mutable.md:512
+#: manual/design/mutable.md:516
 msgid "The code starts from $x_0 = (1, \\dots, 1)$, or, if $\\lVert A x_0 \\rVert_\\infty \\le \\tau$, from the first coordinate vector $e_k$ with $\\lVert A e_k \\rVert_\\infty > \\tau$; if there is none it returns `None`. It then iterates"
 msgstr "代码从 $x_0 = (1, \\dots, 1)$ 开始；若 $\\lVert A x_0 \\rVert_\\infty \\le \\tau$，则从第一个满足 $\\lVert A e_k \\rVert_\\infty > \\tau$ 的坐标向量 $e_k$ 开始；若不存在这样的向量则返回 `None`。然后迭代"
 
-#: manual/design/mutable.md:522
+#: manual/design/mutable.md:526
 msgid "and stops when $\\lVert A x_k - \\lambda_k x_k \\rVert_\\infty \\le \\tau$; the normalization makes $\\lVert x_k \\rVert_\\infty = 1$."
 msgstr "并在 $\\lVert A x_k - \\lambda_k x_k \\rVert_\\infty \\le \\tau$ 时停止；归一化使得 $\\lVert x_k \\rVert_\\infty = 1$。"
 
-#: manual/design/mutable.md:525
+#: manual/design/mutable.md:529
 msgid ""
 "**Convergence.** If $A$ is diagonalizable with eigenvalues $|\\lambda_1| > |\\lambda_2| \\ge \\dots$ and eigenvectors $v_i$, and $x_0$ has a component $c_1 \\n"
 "e 0$ along $v_1$, then"
@@ -5419,11 +5399,11 @@ msgstr ""
 "**收敛性。** 若 $A$ 可对角化，特征值满足 $|\\lambda_1| > |\\lambda_2| \\ge \\dots$，特征向量为 $v_i$，且 $x_0$ 在 $v_1$ 方向上有分量 $c_1 \\n"
 "e 0$，则"
 
-#: manual/design/mutable.md:533
+#: manual/design/mutable.md:537
 msgid "so the direction of $x_k$ converges to $v_1$ linearly with ratio $r = |\\lambda_2 / \\lambda_1|$. For negative $\\lambda_1$ the sign of $x_k$ alternates, which the Rayleigh quotient does not notice. For symmetric $A$ with orthonormal $v_i$, $x_k \\propto \\sum_i c_i (\\lambda_i/\\lambda_1)^k v_i$ gives"
 msgstr "因此 $x_k$ 的方向以比率 $r = |\\lambda_2 / \\lambda_1|$ 线性收敛到 $v_1$。当 $\\lambda_1$ 为负时，$x_k$ 的符号交替变化，而 Rayleigh 商察觉不到这一点。对具有标准正交 $v_i$ 的对称矩阵 $A$，由 $x_k \\propto \\sum_i c_i (\\lambda_i/\\lambda_1)^k v_i$ 得"
 
-#: manual/design/mutable.md:544
+#: manual/design/mutable.md:548
 msgid ""
 "so the eigenvalue converges twice as fast as the vector. When $|\\lambda_1| = |\\lambda_2|$ with $\\lambda_1 \\n"
 "e \\lambda_2$ (for example $\\pm 1$) the direction oscillates and the residual test never passes, and when $A$ is nilpotent the iterate reaches zero; both cases return `None`."
@@ -5431,75 +5411,71 @@ msgstr ""
 "因此特征值的收敛速度是向量的两倍。当 $|\\lambda_1| = |\\lambda_2|$ 且 $\\lambda_1 \\n"
 "e \\lambda_2$（例如 $\\pm 1$）时，方向会振荡，残差检验永远无法通过；当 $A$ 幂零时，迭代向量会变为零；这两种情况都返回 `None`。"
 
-#: manual/design/mutable.md:549
+#: manual/design/mutable.md:553
 msgid "**What the stopping test guarantees.** For symmetric $A$, a residual $r = Ax - \\lambda x$ bounds the distance to the spectrum: expanding $x$ in the orthonormal eigenbasis, $\\lVert r \\rVert_2^2 = \\sum_i c_i^2 (\\lambda_i - \\lambda)^2 \\ge \\min_i (\\lambda_i - \\lambda)^2 \\lVert x \\rVert_2^2$. With $\\lVert r \\rVert_\\infty \\le \\tau$ and $\\lVert x \\rVert_\\infty = 1$ we have $\\lVert r \\rVert_2 \\le \\sqrt n\\, \\tau$ and $\\lVert x \\rVert_2 \\ge 1$, so some eigenvalue lies within $\\sqrt n\\, \\tau$ of the returned $\\lambda$. The test is absolute, so for $\\lVert A \\rVert \\gg 1$ it may be unreachable in floating point (the residual cannot drop below about $u \\lVert A \\rVert$), and for $\\lVert A \\rVert \\ll 1$ it passes before $x$ is accurate."
 msgstr "**停止检验保证了什么。** 对对称矩阵 $A$，残差 $r = Ax - \\lambda x$ 给出了到谱的距离的界：在标准正交特征基中展开 $x$，有 $\\lVert r \\rVert_2^2 = \\sum_i c_i^2 (\\lambda_i - \\lambda)^2 \\ge \\min_i (\\lambda_i - \\lambda)^2 \\lVert x \\rVert_2^2$。由 $\\lVert r \\rVert_\\infty \\le \\tau$ 和 $\\lVert x \\rVert_\\infty = 1$ 得 $\\lVert r \\rVert_2 \\le \\sqrt n\\, \\tau$ 且 $\\lVert x \\rVert_2 \\ge 1$，因此某个特征值与返回的 $\\lambda$ 相距不超过 $\\sqrt n\\, \\tau$。该检验是绝对的，因此当 $\\lVert A \\rVert \\gg 1$ 时，在浮点运算中它可能无法达到（残差无法降到约 $u \\lVert A \\rVert$ 以下）；当 $\\lVert A \\rVert \\ll 1$ 时，它会在 $x$ 还不准确时就通过。"
 
-#: manual/design/mutable.md:560
+#: manual/design/mutable.md:564
 msgid "Statistics"
 msgstr "统计量"
 
-#: manual/design/mutable.md:562
+#: manual/design/mutable.md:566
 msgid "`variance` is the population variance computed in two passes: first the mean $\\bar a$, then $\\tfrac1N \\sum (a_i - \\bar a)^2$. The one-pass formula $\\tfrac1N \\sum a_i^2 - \\bar a^2$ subtracts two nearly equal numbers when the data have a large mean and a small spread, and can even return a negative value. With $S = \\sum (a_i - \\bar a)^2$ and the condition number $\\kappa = \\lVert a \\rVert_2 / \\sqrt S$ of the data, Chan, Golub and LeVeque (1983) show that the relative error of $S$ is bounded by about $N \\kappa^2 u$ for the one-pass formula and by about $N u + N^2 \\kappa^2 u^2$ for the two-pass one, which is $O(Nu)$ unless $\\kappa$ is near $u^{-1/2}$. The count $N$ is accumulated as a sum of ones in `T`, exact up to $2^{53}$ entries for `Double` and $2^{24}$ for `Float`; beyond that the count stops growing and the mean is wrong."
 msgstr "`variance` 是用两遍算法计算的总体方差：先求均值 $\\bar a$，再求 $\\tfrac1N \\sum (a_i - \\bar a)^2$。单遍公式 $\\tfrac1N \\sum a_i^2 - \\bar a^2$ 在数据均值大、离散度小时会让两个几乎相等的数相减，甚至可能返回负值。记 $S = \\sum (a_i - \\bar a)^2$，数据的条件数为 $\\kappa = \\lVert a \\rVert_2 / \\sqrt S$，Chan、Golub 和 LeVeque（1983）证明，$S$ 的相对误差对单遍公式约以 $N \\kappa^2 u$ 为界，对两遍公式约以 $N u + N^2 \\kappa^2 u^2$ 为界，除非 $\\kappa$ 接近 $u^{-1/2}$，后者都是 $O(Nu)$。计数 $N$ 以 `T` 中 1 的累加和得到，对 `Double` 在 $2^{53}$ 个元素以内、对 `Float` 在 $2^{24}$ 个元素以内是精确的；超过之后计数不再增长，均值随之出错。"
 
-#: manual/design/mutable.md:575
+#: manual/design/mutable.md:579
 msgid "Transpose views and products"
 msgstr "转置视图与乘积"
 
-#: manual/design/mutable.md:577
+#: manual/design/mutable.md:581
 msgid "`Transpose::mul` computes $A^{\\mathsf T} B^{\\mathsf T}$ as $(BA)^{\\mathsf T}$ by reusing the matrix kernel on the wrapped matrices. Entry by entry,"
 msgstr "`Transpose::mul` 在被包装的矩阵上复用矩阵内核，把 $A^{\\mathsf T} B^{\\mathsf T}$ 计算为 $(BA)^{\\mathsf T}$。逐元素来看，"
 
-#: manual/design/mutable.md:585
+#: manual/design/mutable.md:589
 msgid "which agree when the scalars commute. All scalar types with `Tolerance` (`Float`, `Double`) commute, but `Transpose::mul` only requires `AddMonoid + Mul`; for a non-commutative scalar type the result is the product in the wrong order (see the [algebra design](algebra.md))."
 msgstr "二者在标量可交换时相等。所有实现了 `Tolerance` 的标量类型（`Float`、`Double`）都可交换，但 `Transpose::mul` 只要求 `AddMonoid + Mul`；对非交换标量类型，结果是顺序错误的乘积（见 [algebra 设计](algebra.md)）。"
 
-#: manual/design/mutable.md:592
+#: manual/design/mutable.md:596
 msgid "**Storage.** `data.length() == row * col` at all times; every public accessor checks the row and column separately."
 msgstr "**存储。** 任何时候都有 `data.length() == row * col`；每个公开访问器都分别检查行和列。"
 
-#: manual/design/mutable.md:594
+#: manual/design/mutable.md:598
 msgid "**Value-returning methods do not mutate.** Only `Unit`-returning methods, view writes and `reduce_row_elimination` change a matrix."
 msgstr "**返回值的方法不做修改。** 只有返回 `Unit` 的方法、视图写入和 `reduce_row_elimination` 会改变矩阵。"
 
-#: manual/design/mutable.md:596
+#: manual/design/mutable.md:600
 msgid "**Checked/unchecked law.** `x.f() == Ok(x.unchecked_f())` whenever the precondition holds; `inverse` returns `Err(SingularMatrix)` exactly when `unchecked_inverse` returns `None`."
 msgstr "**受检/非受检定律。** 只要前置条件成立，就有 `x.f() == Ok(x.unchecked_f())`；`inverse` 返回 `Err(SingularMatrix)` 当且仅当 `unchecked_inverse` 返回 `None`。"
 
-#: manual/design/mutable.md:599
-msgid "**Determinant consistency.** For $n \\ge 5$ and a matrix that is not triangular within $\\tau$, `determinant` returns exactly `0` when the LU factorization reports a pivot below $\\tau$, which is also when `is_invertible` returns `false` and `inverse` fails; otherwise it returns a product of pivots that are at least $\\tau$ in magnitude, which can still underflow. For $n \\le 4$ the closed formulas are used for `determinant`, while `is_invertible` still uses LU, so a matrix with a tiny non-zero determinant can be \"not invertible\" with a non-zero `determinant`."
-msgstr "**行列式一致性。** 当 $n \\ge 5$ 且矩阵在 $\\tau$ 范围内不是三角矩阵时，若 LU 分解报告了低于 $\\tau$ 的主元，`determinant` 恰好返回 `0`，这也正是 `is_invertible` 返回 `false`、`inverse` 失败的情形；否则它返回绝对值至少为 $\\tau$ 的主元之积，这个积仍可能下溢。当 $n \\le 4$ 时，`determinant` 使用闭式公式，而 `is_invertible` 仍使用 LU，因此行列式非零但极小的矩阵可能“不可逆”，同时 `determinant` 非零。"
+#: manual/design/mutable.md:603
+msgid "**Determinant consistency.** For $n \\ge 5$ and a matrix that is not triangular, `determinant` returns exactly `0` when the LU factorization reports a pivot below $\\tau$, which is also when `is_invertible` returns `false` and `inverse` fails; otherwise it returns a product of pivots that are at least $\\tau$ in magnitude, which can still underflow. For $n \\le 4$ the closed formulas are used for `determinant`, while `is_invertible` still uses LU, so a matrix with a tiny non-zero determinant can be \"not invertible\" with a non-zero `determinant`."
+msgstr "**行列式一致性。** 当 $n \\ge 5$ 且矩阵不是三角矩阵时，若 LU 分解报告了低于 $\\tau$ 的主元，`determinant` 恰好返回 `0`，这也正是 `is_invertible` 返回 `false`、`inverse` 失败的情形；否则它返回绝对值至少为 $\\tau$ 的主元之积，这个积仍可能下溢。当 $n \\le 4$ 时，`determinant` 使用闭式公式，而 `is_invertible` 仍使用 LU，因此行列式非零但极小的矩阵可能“不可逆”，同时 `determinant` 非零。"
 
-#: manual/design/mutable.md:607
-msgid ""
-"**Residual guarantees.** `cholesky_decomposition` returns a factor with backward error $O(nu)$ relative to $|\\hat L|\\,|\\hat L^{\\mathsf T}|$, except on the identity fast path; `eigen` for $n \\n"
-"e 2$ returns eigenpairs with backward error $O(nu)\\lVert A \\rVert + O(\\tau)(\\lVert A \\rVert + 1)$; `power_method` returns only pairs with residual at most $\\tau$."
-msgstr ""
-"**残差保证。** `cholesky_decomposition` 返回的因子相对于 $|\\hat L|\\,|\\hat L^{\\mathsf T}|$ 的向后误差为 $O(nu)$（单位矩阵快速路径除外）；当 $n \\n"
-"e 2$ 时，`eigen` 返回的特征对的向后误差为 $O(nu)\\lVert A \\rVert + O(\\tau)(\\lVert A \\rVert + 1)$；`power_method` 只返回残差不超过 $\\tau$ 的特征对。"
+#: manual/design/mutable.md:611
+msgid "**Residual guarantees.** `cholesky_decomposition` returns a factor with backward error $O(nu)$ relative to $|\\hat L|\\,|\\hat L^{\\mathsf T}|$; `eigen` returns eigenpairs with backward error $O(nu)\\lVert A \\rVert$, for every scale of $A$; `power_method` returns only pairs with residual at most $\\tau$."
+msgstr "**残差保证。** `cholesky_decomposition` 返回的因子相对于 $|\\hat L|\\,|\\hat L^{\\mathsf T}|$ 的向后误差为 $O(nu)$；`eigen` 返回的特征对的向后误差为 $O(nu)\\lVert A \\rVert$，对 $A$ 的任何尺度都成立；`power_method` 只返回残差不超过 $\\tau$ 的特征对。"
 
-#: manual/design/mutable.md:612
+#: manual/design/mutable.md:616
 msgid "**Complexity.** `*`: $2rcn$ flops; `determinant`: $\\tfrac23 n^3$; `inverse`: $\\tfrac83 n^3$; `rank`, `reduce_row_elimination`: $O(rc\\min(r, c))$; `cholesky_decomposition`: $\\tfrac13 n^3$; `eigen`: about $9n^3$; `power_method`: two matrix-vector products, $4n^2$ flops, per iteration; statistics: $O(rc)$."
 msgstr "**复杂度。** `*`：$2rcn$ flops；`determinant`：$\\tfrac23 n^3$；`inverse`：$\\tfrac83 n^3$；`rank`、`reduce_row_elimination`：$O(rc\\min(r, c))$；`cholesky_decomposition`：$\\tfrac13 n^3$；`eigen`：约 $9n^3$；`power_method`：每次迭代两次矩阵-向量乘积，$4n^2$ flops；统计：$O(rc)$。"
 
-#: manual/design/mutable.md:620
+#: manual/design/mutable.md:624
 msgid "**A relative or norm-scaled tolerance.** More robust, but it would change the results of existing callers; deferred until a tolerance policy can be passed explicitly."
 msgstr "**相对容差或按范数缩放的容差。** 更稳健，但会改变现有调用者的结果；推迟到可以显式传入容差策略时再考虑。"
 
-#: manual/design/mutable.md:623
+#: manual/design/mutable.md:627
 msgid "**Returning complex eigenvalues.** Would make this package depend on a complex number type and change the signature for real symmetric input."
 msgstr "**返回复特征值。** 这会让本包依赖复数类型，并改变实对称输入的签名。"
 
-#: manual/design/mutable.md:625
+#: manual/design/mutable.md:629
 msgid "**Copy-on-write views.** Would hide the cost of writes and break the in-place contract that views exist for."
 msgstr "**写时复制的视图。** 这会隐藏写入的开销，并破坏视图存在的意义——原地契约。"
 
-#: manual/design/mutable.md:627
+#: manual/design/mutable.md:631
 msgid "**A single portable kernel.** Measured to be slower on some targets; the per-target files trade code size for speed while sharing one specification."
 msgstr "**单一的可移植内核。** 实测在某些目标上更慢；按目标拆分的文件以代码体积换取速度，同时共享同一份规范。"
 
-#: manual/design/mutable.md:632
+#: manual/design/mutable.md:636
 msgid "`mutable` does not provide linear solves for a right-hand side as a public method (only the inverse), QR, SVD or least-squares solvers, eigenvalues of non-symmetric matrices, sparse storage, condition number estimates, or scale-aware tolerances. It does not implement the [`algebra`](algebra.md) traits itself; [`backends/default`](backends/default.md) wraps it for that. Domain workflows such as regression or optimization belong in downstream packages."
 msgstr "`mutable` 不提供以公开方法形式针对右端项的线性求解（只有逆矩阵），也不提供 QR、SVD 或最小二乘求解器、非对称矩阵的特征值、稀疏存储、条件数估计或感知尺度的容差。它自身不实现 [`algebra`](algebra.md) trait；[`backends/default`](backends/default.md) 为此对它进行了包装。回归或优化这类领域工作流属于下游包。"
 
@@ -6100,8 +6076,8 @@ msgid "Numerical caveats"
 msgstr "数值注意事项"
 
 #: manual/index.md:127
-msgid "The numerical routines of `mutable` decide \"zero\" with one absolute threshold, `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of the input; scale data to order one. The $2 \\times 2$ path of `eigen` has known accuracy defects, and `@immut.Matrix::determinant` is meant for exact scalars, not for floating point. The [mutable design](design/mutable.md) and the [immut design](design/immut.md) derive the algorithms and state these limits precisely."
-msgstr "`mutable` 的数值例程用一个绝对阈值 `Tolerance::tolerance()` $= 10^{-11}$ 判断“零”，因此结果依赖于输入的尺度；请把数据缩放到 1 的量级。`eigen` 的 $2 \\times 2$ 路径有已知的精度缺陷，而 `@immut.Matrix::determinant` 是为精确标量设计的，不适用于浮点。[mutable 设计](design/mutable.md)和 [immut 设计](design/immut.md)推导了这些算法，并精确说明了这些限制。"
+msgid "The numerical routines of `mutable` decide \"zero\" with one absolute threshold, `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of the input; scale data to order one (`eigen` is the exception: its decisions are relative to the entries). `@immut.Matrix::determinant` is meant for exact scalars, not for floating point. The [mutable design](design/mutable.md) and the [immut design](design/immut.md) derive the algorithms and state these limits precisely."
+msgstr "`mutable` 的数值例程用一个绝对阈值 `Tolerance::tolerance()` $= 10^{-11}$ 判断“零”，因此结果依赖于输入的尺度；请把数据缩放到 1 的量级（`eigen` 例外：它的判断相对于矩阵元素）。`@immut.Matrix::determinant` 是为精确标量设计的，不适用于浮点。[mutable 设计](design/mutable.md)和 [immut 设计](design/immut.md)推导了这些算法，并精确说明了这些限制。"
 
 #: manual/index.md:135
 msgid "Where to read next"
@@ -6808,7 +6784,7 @@ msgstr "**精确比较浮点结果。** `Double` 矩阵的乘积只在舍入误�
 #: manual/tutorial/error.md:210
 #: manual/tutorial/immut.md:187
 #: manual/tutorial/internal.md:103
-#: manual/tutorial/mutable.md:217
+#: manual/tutorial/mutable.md:212
 #: manual/tutorial/perf.md:53
 #: manual/tutorial/perf_runner.md:54
 #: manual/tutorial/perf_support.md:74
@@ -7805,42 +7781,38 @@ msgid "**Forgetting that `reduce_row_elimination` mutates.** It transforms the r
 msgstr "**忘记 `reduce_row_elimination` 会修改矩阵。** 它原地变换接收者并将其返回。请先调用 `copy()`。"
 
 #: manual/tutorial/mutable.md:197
-msgid "**Expecting normalized $2 \\times 2$ eigenvectors.** For $2 \\times 2$ input, the eigenvector columns are not normalized; larger inputs return orthonormal columns."
-msgstr "**期望 $2 \\times 2$ 特征向量已归一化。** 对 $2 \\times 2$ 输入，特征向量列未归一化；更大的输入返回标准正交的列。"
+msgid "**Expecting normalized $2 \\times 2$ eigenvectors.** For $2 \\times 2$ input, each eigenvector column is scaled so that its largest entry is $1$, not to unit length; larger inputs return orthonormal columns."
+msgstr "**期望 $2 \\times 2$ 特征向量已归一化。** 对 $2 \\times 2$ 输入，每个特征向量列被缩放为最大元素为 $1$，而不是单位长度；更大的输入返回标准正交的列。"
 
 #: manual/tutorial/mutable.md:200
-msgid "**Close eigenvalues of a $2 \\times 2$ matrix.** The $2 \\times 2$ formula merges eigenvalues closer than about $6 \\times 10^{-6}$ (and then may return two equal eigenvector columns), and can abort on symmetric input with entries near $10^{8}$. See the warning on the [API page](../api/mutable.md#matrixeigen)."
-msgstr "**$2 \\times 2$ 矩阵的相近特征值。** $2 \\times 2$ 公式会把相距小于约 $6 \\times 10^{-6}$ 的特征值合并（此时可能返回两列相同的特征向量），并可能在元素接近 $10^{8}$ 的对称输入上中止。参见 [API 页面](../api/mutable.md#matrixeigen)上的警告。"
+msgid "**Matrices far from order one.** The singularity and definiteness tests use the absolute threshold $10^{-11}$. A matrix whose entries are all around $10^{-12}$ is singular to `inverse` and not positive definite to `cholesky_decomposition`; scale first. `eigen` does not depend on the scale."
+msgstr "**远离 1 量级的矩阵。** 奇异性和正定性检验使用绝对阈值 $10^{-11}$。元素都在 $10^{-12}$ 左右的矩阵，对 `inverse` 而言是奇异的，对 `cholesky_decomposition` 而言不是正定的；请先缩放。`eigen` 不依赖于尺度。"
 
-#: manual/tutorial/mutable.md:205
-msgid "**Matrices far from order one.** Every zero test uses the absolute threshold $10^{-11}$. A matrix whose entries are all around $10^{-12}$ is singular to `inverse`, not positive definite to `cholesky_decomposition`, and has meaningless `eigen` results. Scale first."
-msgstr "**远离 1 量级的矩阵。** 每个判零检验都使用绝对阈值 $10^{-11}$。元素都在 $10^{-12}$ 左右的矩阵，对 `inverse` 而言是奇异的，对 `cholesky_decomposition` 而言不是正定的，其 `eigen` 结果也毫无意义。请先缩放。"
-
-#: manual/tutorial/mutable.md:209
+#: manual/tutorial/mutable.md:204
 msgid "**Numerical routines on integers.** `determinant`, `inverse`, `rank`, `eigen` and friends need `Tolerance`, which exists only for `Float` and `Double`. For exact integer determinants use `@immut.Matrix::determinant`."
 msgstr "**在整数上使用数值例程。** `determinant`、`inverse`、`rank`、`eigen` 等需要 `Tolerance`，而它只为 `Float` 和 `Double` 提供。要得到精确的整数行列式，请使用 `@immut.Matrix::determinant`。"
 
-#: manual/tutorial/mutable.md:212
+#: manual/tutorial/mutable.md:207
 msgid "**`Float` precision.** The tolerance is far below `Float` precision; nearly singular `Float` matrices are not detected. Prefer `Double`."
 msgstr "**`Float` 精度。** 容差远低于 `Float` 的精度；接近奇异的 `Float` 矩阵不会被检测出来。请优先使用 `Double`。"
 
-#: manual/tutorial/mutable.md:214
+#: manual/tutorial/mutable.md:209
 msgid "**Power method on symmetric spectra.** Eigenvalues $\\pm\\lambda$ of equal magnitude prevent convergence; `power_method` then returns `None`."
 msgstr "**在对称谱上使用幂法。** 模相等的特征值 $\\pm\\lambda$ 会阻碍收敛；此时 `power_method` 返回 `None`。"
 
-#: manual/tutorial/mutable.md:219
+#: manual/tutorial/mutable.md:214
 msgid "[mutable API](../api/mutable.md) for every method, its errors and cost."
 msgstr "[mutable API](../api/mutable.md)：每个方法及其错误与开销。"
 
-#: manual/tutorial/mutable.md:220
+#: manual/tutorial/mutable.md:215
 msgid "[mutable design](../design/mutable.md) for LU, Cholesky, QL and their error bounds."
 msgstr "[mutable 设计](../design/mutable.md)：LU、Cholesky、QL 及其误差界。"
 
-#: manual/tutorial/mutable.md:222
+#: manual/tutorial/mutable.md:217
 msgid "[error tutorial](error.md) for handling checked results."
 msgstr "[错误教程](error.md)：处理受检结果。"
 
-#: manual/tutorial/mutable.md:223
+#: manual/tutorial/mutable.md:218
 msgid "[immut tutorial](immut.md) for exact, value-oriented work."
 msgstr "[immut 教程](immut.md)：精确的、面向值的计算。"
 
@@ -8072,6 +8044,59 @@ msgstr "[perf_runner 教程](perf_runner.md)：计时运行。"
 #: manual/tutorial/perf_support.md:78
 msgid "[mutable design](../design/mutable.md) for the measured algorithms."
 msgstr "[mutable 设计](../design/mutable.md)：被测量的算法。"
+
+#~ msgid "The recognition uses the tolerance: a matrix whose entries are within $10^{-11}$ of the identity is returned as a copy of itself, one whose off-diagonal entries are at most $10^{-11}$ is inverted as if they were zero, and one within $10^{-11}$ of a permutation matrix is returned transposed."
+#~ msgstr "识别时使用容差：与单位矩阵的元素差都在 $10^{-11}$ 以内的矩阵会原样返回其副本；非对角元绝对值都不超过 $10^{-11}$ 的矩阵按这些元素为零来求逆；与某个置换矩阵相差在 $10^{-11}$ 以内的矩阵会返回其转置。"
+
+#~ msgid "Two fast paths run first. A matrix within the tolerance of the identity is returned as a copy of itself, so its off-diagonal entries of magnitude at most $10^{-11}$ survive and the result is then not exactly lower triangular. A matrix that is diagonal within the tolerance gives the square roots of its diagonal, and its off-diagonal entries are dropped."
+#~ msgstr "先运行两条快速路径。与单位矩阵相差在容差以内的矩阵会原样返回其副本，因此绝对值不超过 $10^{-11}$ 的非对角元会保留下来，结果也就不再是严格的下三角矩阵。在容差内为对角矩阵的矩阵给出其对角元的平方根，非对角元被舍弃。"
+
+#~ msgid "For $2 \\times 2$ input the values come from the characteristic polynomial, $\\lambda_{1,2} = m \\pm \\sqrt{m^2 - \\det A}$ with $m = \\tfrac12 \\operatorname{tr} A$, ordered $\\lambda_1 \\ge \\lambda_2$; the eigenvector columns are **not normalized**."
+#~ msgstr "对 $2 \\times 2$ 输入，特征值由特征多项式给出：$\\lambda_{1,2} = m \\pm \\sqrt{m^2 - \\det A}$，其中 $m = \\tfrac12 \\operatorname{tr} A$，并按 $\\lambda_1 \\ge \\lambda_2$ 排序；特征向量列**未归一化**。"
+
+#~ msgid "[!WARNING] The $2 \\times 2$ formula compares the discriminant $m^2 - \\det A$, a *squared* quantity, with the absolute tolerance $10^{-11}$, and computes it with cancellation. Three consequences for symmetric input: eigenvalues closer than about $2\\sqrt{10^{-11}} \\approx 6 \\times 10^{-6}$ are returned as equal (for `[[1, 0], [0, 1.000002]]` both values are `1.000001`); for `[[1, 1e-6], [1e-6, 1]]` the two returned eigenvector columns are identical, so the eigenvector matrix is singular; and for entries near $10^{8}$ the rounding error of $m^2 - \\det A$ can exceed $10^{-11}$ in the negative direction, so a diagonal matrix such as `[[100000000.74, 0], [0, 99999999.78]]` aborts with \"complex eigenvalues\". For larger sizes the deflation test and the Householder step also use absolute thresholds, so a matrix whose entries are all below about $10^{-11}$ is treated as already diagonal (for $10^{-12}$ times the tridiagonal matrix with diagonal $2$ and off-diagonal $1$, every returned eigenvalue is $2 \\times 10^{-12}$). Scale the input to order one, and embed a $2 \\times 2$ problem in a larger one or solve it yourself when these cases matter. See the [design page](../design/mutable.md#symmetric-eigenvalue-problem)."
+#~ msgstr "[!WARNING] $2 \\times 2$ 公式把判别式 $m^2 - \\det A$ 这个*平方*量与绝对容差 $10^{-11}$ 比较，而且计算它时存在相消。对于对称输入，这带来三个后果：相距小于约 $2\\sqrt{10^{-11}} \\approx 6 \\times 10^{-6}$ 的特征值会被当作相等返回（对 `[[1, 0], [0, 1.000002]]` 两个值都是 `1.000001`）；对 `[[1, 1e-6], [1e-6, 1]]`，返回的两列特征向量完全相同，特征向量矩阵因此奇异；当元素接近 $10^{8}$ 时，$m^2 - \\det A$ 的舍入误差可能在负方向上超过 $10^{-11}$，于是像 `[[100000000.74, 0], [0, 99999999.78]]` 这样的对角矩阵会以“complex eigenvalues”中止。对于更大的规模，收缩判据和 Householder 步骤同样使用绝对阈值，因此所有元素都小于约 $10^{-11}$ 的矩阵会被当作已经是对角的（对 $10^{-12}$ 乘以对角线为 $2$、次对角线为 $1$ 的三对角矩阵，返回的每个特征值都是 $2 \\times 10^{-12}$）。请把输入缩放到 1 的量级；在这些情形要紧时，把 $2 \\times 2$ 问题嵌入更大的问题，或自行求解。参见[设计页面](../design/mutable.md#symmetric-eigenvalue-problem)。"
+
+#~ msgid "`is_symmetric`, fast-path detection (identity, diagonal, permutation, triangular)"
+#~ msgstr "`is_symmetric`、快速路径检测（单位、对角、置换、三角）"
+
+#~ msgid "discriminant $< -\\tau$ aborts, $\\lvert\\text{discriminant}\\rvert \\le \\tau$ counts as zero"
+#~ msgstr "判别式 $< -\\tau$ 时中止，$\\lvert\\text{discriminant}\\rvert \\le \\tau$ 视为零"
+
+#~ msgid "`eigen`, Householder step"
+#~ msgstr "`eigen` 的 Householder 步骤"
+
+#~ msgid "a row with $\\sum_k \\lvert a_{ik}\\rvert \\le \\tau$ is not reflected"
+#~ msgstr "$\\sum_k \\lvert a_{ik}\\rvert \\le \\tau$ 的行不做反射"
+
+#~ msgid "`eigen` deflation"
+#~ msgstr "`eigen` 收缩"
+
+#~ msgid "An off-diagonal entry is treated as zero when"
+#~ msgstr "当满足下式时，次对角元被视为零："
+
+#~ msgid "with a small $c_n$. With $\\tau = 10^{-11}$ the second term dominates: absolute accuracy is about $10^{-11}$ for $\\lVert A \\rVert$ of order one, and for a matrix whose entries are all below $\\tau$ the result is meaningless. Eigenvectors are accurate in proportion to (backward error)$/\\text{gap}$, where the gap is the distance to the nearest other eigenvalue (the Davis–Kahan theorem)."
+#~ msgstr "其中 $c_n$ 较小。当 $\\tau = 10^{-11}$ 时第二项占主导：对量级为一的 $\\lVert A \\rVert$，绝对精度约为 $10^{-11}$；对所有元素都小于 $\\tau$ 的矩阵，结果毫无意义。特征向量的精度与（向后误差）$/\\text{gap}$ 成比例，其中 gap 是到最近的另一个特征值的距离（Davis–Kahan 定理）。"
+
+#~ msgid ""
+#~ "For $b \\n"
+#~ "e 0$ the vector $(b, \\lambda - a)^{\\mathsf T}$ is an eigenvector:"
+#~ msgstr ""
+#~ "当 $b \\n"
+#~ "e 0$ 时，向量 $(b, \\lambda - a)^{\\mathsf T}$ 是特征向量："
+
+#~ msgid "since $(\\lambda - a)(\\lambda - d) = \\lambda^2 - (a + d)\\lambda + ad = bc$ by the characteristic equation. The code returns these vectors without normalizing them, and $e_1, e_2$ when $b = c = 0$."
+#~ msgstr "因为由特征方程有 $(\\lambda - a)(\\lambda - d) = \\lambda^2 - (a + d)\\lambda + ad = bc$。代码返回这些向量时不做归一化；当 $b = c = 0$ 时返回 $e_1, e_2$。"
+
+#~ msgid ""
+#~ "[!WARNING] This closed form is less accurate than the general path, for three reasons that the code does not guard against. (1) For symmetric input the discriminant is $m^2 - (ad - b^2) = \\big(\\tfrac{a-d}{2}\\big)^2 + b^2 \\ge 0$, but it is computed as a difference of two numbers of size $m^2$, with an absolute error of about $u\\, m^2$. For $m \\approx 10^8$ that is about $1$, far above $\\tau$, so the computed discriminant can be negative enough to trigger the \"complex eigenvalues\" abort on a symmetric, even diagonal, matrix. (2) A discriminant with $|\\cdot| \\le \\tau$ is replaced by zero. Since $\\lambda_1 - \\lambda_2 = 2\\sqrt{\\text{discriminant}}$, every pair of eigenvalues closer than $2\\sqrt{\\tau} \\approx 6.3 \\times 10^{-6}$ is returned as a double eigenvalue $m$, an error up to $3 \\times 10^{-6}$. (3) When the two eigenvalues are then equal and $b \\n"
+#~ "e 0$, both columns are $(b, m - a)^{\\mathsf T}$, so the eigenvector matrix is singular. In addition, when $|\\lambda_2| \\ll |\\lambda_1|$ the subtraction $m - \\sqrt{\\cdot}$ cancels and $\\lambda_2$ loses relative accuracy. The stable formulation computes the discriminant as $\\big(\\tfrac{a-d}{2}\\big)^2 + bc$, never thresholds it, takes $\\lambda_2 = \\det A / \\lambda_1$, and chooses between the eigenvector forms $(b, \\lambda - a)$ and $(\\lambda - d, c)$ by size."
+#~ msgstr ""
+#~ "[!WARNING] 这个闭式公式不如一般路径精确，原因有三，而代码对此都没有防护。（1）对于对称输入，判别式为 $m^2 - (ad - b^2) = \\big(\\tfrac{a-d}{2}\\big)^2 + b^2 \\ge 0$，但它是作为两个大小为 $m^2$ 的数之差计算的，绝对误差约为 $u\\, m^2$。当 $m \\approx 10^8$ 时这约为 $1$，远大于 $\\tau$，因此计算出的判别式可能负到足以在一个对称（甚至对角）矩阵上触发“complex eigenvalues”中止。（2）$|\\cdot| \\le \\tau$ 的判别式被替换为零。由于 $\\lambda_1 - \\lambda_2 = 2\\sqrt{\\text{discriminant}}$，任何相距小于 $2\\sqrt{\\tau} \\approx 6.3 \\times 10^{-6}$ 的一对特征值都会作为二重特征值 $m$ 返回，误差可达 $3 \\times 10^{-6}$。（3）此时两个特征值相等且 $b \\n"
+#~ "e 0$，两列都是 $(b, m - a)^{\\mathsf T}$，特征向量矩阵因而奇异。此外，当 $|\\lambda_2| \\ll |\\lambda_1|$ 时，减法 $m - \\sqrt{\\cdot}$ 发生相消，$\\lambda_2$ 丢失相对精度。稳定的做法是把判别式算作 $\\big(\\tfrac{a-d}{2}\\big)^2 + bc$、从不对它设阈值、取 $\\lambda_2 = \\det A / \\lambda_1$，并按大小在特征向量形式 $(b, \\lambda - a)$ 与 $(\\lambda - d, c)$ 之间选择。"
+
+#~ msgid "**Close eigenvalues of a $2 \\times 2$ matrix.** The $2 \\times 2$ formula merges eigenvalues closer than about $6 \\times 10^{-6}$ (and then may return two equal eigenvector columns), and can abort on symmetric input with entries near $10^{8}$. See the warning on the [API page](../api/mutable.md#matrixeigen)."
+#~ msgstr "**$2 \\times 2$ 矩阵的相近特征值。** $2 \\times 2$ 公式会把相距小于约 $6 \\times 10^{-6}$ 的特征值合并（此时可能返回两列相同的特征向量），并可能在元素接近 $10^{8}$ 的对称输入上中止。参见 [API 页面](../api/mutable.md#matrixeigen)上的警告。"
 
 #~ msgid "Import"
 #~ msgstr "导入"

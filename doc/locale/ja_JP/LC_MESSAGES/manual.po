@@ -1621,20 +1621,20 @@ msgid "The predicates in use, on errors returned by real checked calls:"
 msgstr "実際の検査付き呼び出しが返したエラーに述語を使う例:"
 
 #: manual/api/error.md:346
-#: manual/api/immut.md:976
-#: manual/api/mutable.md:1311
+#: manual/api/immut.md:977
+#: manual/api/mutable.md:1301
 msgid "Deprecated"
 msgstr "非推奨"
 
 #: manual/api/error.md:348
-#: manual/api/immut.md:981
-#: manual/api/mutable.md:1313
+#: manual/api/immut.md:982
+#: manual/api/mutable.md:1303
 msgid "Item"
 msgstr "項目"
 
 #: manual/api/error.md:348
-#: manual/api/immut.md:981
-#: manual/api/mutable.md:1313
+#: manual/api/immut.md:982
+#: manual/api/mutable.md:1303
 msgid "Replacement"
 msgstr "代替"
 
@@ -1910,277 +1910,277 @@ msgid "For $n \\le 4$ it evaluates closed cofactor formulas; for $n \\ge 5$ it r
 msgstr "$n \\le 4$ では閉じた余因子公式で評価し、$n \\ge 5$ では分数を使わない（Bareiss）消去を行います。ピボットには現在の列で `abs` が最大の要素を選び、除算は整域では常に割り切れます。したがって結果は `BigInt` では**厳密**であり、`Int` と `Int64` でも途中の積がオーバーフローしない限り（$n \\le 4$ では行列式自体が収まる限り）厳密です。ピボット列全体が零なら、ただちに `Zero::zero()` を返します。$0 \\times 0$ 行列の $\\det$ は `One::one()` です。コストは $O(n^3)$ 回の算術演算です。導出は [immut の設計](../design/immut.md) を参照してください。"
 
 #: manual/api/immut.md:456
-msgid "[!WARNING] For `Double` and `Float` this is not the numerically preferred algorithm. Every intermediate value of Bareiss elimination is a minor of $A$, and the update multiplies two of them, so magnitudes are squared before they are divided back. For $n \\ge 5$ the result overflows to infinity or NaN long before $\\det A$ does: the $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ has $\\det A = 10^{180}$, which `@mutable.Matrix::determinant` returns, while this method returns NaN. There is no tolerance either: only an exactly zero pivot column is detected. Use [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for floating-point matrices."
-msgstr "[!WARNING] `Double` と `Float` にとって、これは数値的に望ましいアルゴリズムではありません。Bareiss 消去の途中の値はすべて $A$ の小行列式であり、更新ではそのうち二つを掛けるので、大きさは割り戻される前にいったん二乗されます。$n \\ge 5$ では、$\\det A$ よりはるかに早く結果が無限大や NaN にオーバーフローします。対角が $1000$、上副対角が $1$ の $60 \\times 60$ 上二重対角行列は $\\det A = 10^{180}$ を持ち、`@mutable.Matrix::determinant` はこれを返しますが、このメソッドは NaN を返します。許容誤差もなく、厳密に零のピボット列しか検出しません。浮動小数点の行列には [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) を使ってください。"
+msgid "[!WARNING] For `Double` and `Float` this is not the numerically preferred algorithm. Every intermediate value of Bareiss elimination is a minor of $A$, and the update multiplies two of them, so magnitudes are squared before they are divided back. For $n \\ge 5$ the result overflows to infinity or NaN long before $\\det A$ does: the $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ has $\\det A = 10^{180}$, which `@mutable.Matrix::determinant` returns, while this method returns NaN. There is no tolerance either: only an exactly zero pivot column is detected. Use [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for floating-point matrices. The issue is tracked as [#93](https://github.com/Luna-Flow/linear-algebra/issues/93)."
+msgstr "[!WARNING] `Double` と `Float` にとって、これは数値的に望ましいアルゴリズムではありません。Bareiss 消去の途中の値はすべて $A$ の小行列式であり、更新ではそのうち二つを掛けるので、大きさは割り戻される前にいったん二乗されます。$n \\ge 5$ では、$\\det A$ よりはるかに早く結果が無限大や NaN にオーバーフローします。対角が $1000$、上副対角が $1$ の $60 \\times 60$ 上二重対角行列は $\\det A = 10^{180}$ を持ち、`@mutable.Matrix::determinant` はこれを返しますが、このメソッドは NaN を返します。許容誤差もなく、厳密に零のピボット列しか検出しません。浮動小数点の行列には [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) を使ってください。この問題は [#93](https://github.com/Luna-Flow/linear-algebra/issues/93) で追跡しています。"
 
-#: manual/api/immut.md:470
+#: manual/api/immut.md:471
 msgid "`Matrix::unchecked_determinant(a)` returns $\\det A$ and aborts on a non-square matrix."
 msgstr "`Matrix::unchecked_determinant(a)` は $\\det A$ を返し、正方でない行列では中断します。"
 
-#: manual/api/immut.md:504
+#: manual/api/immut.md:505
 msgid "The second matrix is a Vandermonde matrix with nodes $2, \\dots, 7$, whose determinant is $\\prod_{i<j}(x_j - x_i) = 1!\\,2!\\,3!\\,4!\\,5! = 34560$."
 msgstr "二つ目の行列は節点 $2, \\dots, 7$ の Vandermonde 行列で、その行列式は $\\prod_{i<j}(x_j - x_i) = 1!\\,2!\\,3!\\,4!\\,5! = 34560$ です。"
 
-#: manual/api/immut.md:507
+#: manual/api/immut.md:508
 msgid "Structural operations"
 msgstr "構造的な操作"
 
-#: manual/api/immut.md:511
+#: manual/api/immut.md:512
 msgid "`Matrix::transpose(m)` returns the materialized transpose $A^{\\mathsf T}$."
 msgstr "`Matrix::transpose(m)` は実体化された転置 $A^{\\mathsf T}$ を返します。"
 
-#: manual/api/immut.md:519
+#: manual/api/immut.md:520
 msgid "`Matrix::horizontal_combine(a, b)` places `b` to the right of `a`: the block matrix $[A \\; B]$."
 msgstr "`Matrix::horizontal_combine(a, b)` は `b` を `a` の右に並べたブロック行列 $[A \\; B]$ を作ります。"
 
-#: manual/api/immut.md:526
+#: manual/api/immut.md:527
 msgid "Different row counts abort."
 msgstr "行数が異なると中断します。"
 
-#: manual/api/immut.md:530
+#: manual/api/immut.md:531
 msgid "`Matrix::vertical_combine(a, b)` places `b` below `a`."
 msgstr "`Matrix::vertical_combine(a, b)` は `b` を `a` の下に並べます。"
 
-#: manual/api/immut.md:536
+#: manual/api/immut.md:537
 msgid "Different column counts abort."
 msgstr "列数が異なると中断します。"
 
-#: manual/api/immut.md:540
+#: manual/api/immut.md:541
 msgid "`swap_rows(i, j)` and `swap_cols(i, j)` return a matrix with two rows or two columns exchanged."
 msgstr "`swap_rows(i, j)` と `swap_cols(i, j)` は二つの行または列を入れ替えた行列を返します。"
 
-#: manual/api/immut.md:548
+#: manual/api/immut.md:549
 msgid "Out-of-range indices abort. Swapping an index with itself returns `m` itself. Otherwise the whole matrix is rebuilt, $O(rc)$."
 msgstr "範囲外のインデックスは中断します。同じインデックス同士の入れ替えは `m` 自身を返します。それ以外では行列全体を作り直し、$O(rc)$ かかります。"
 
-#: manual/api/immut.md:565
+#: manual/api/immut.md:566
 msgid "Iteration and conversion"
 msgstr "反復と変換"
 
-#: manual/api/immut.md:569
+#: manual/api/immut.md:570
 msgid "`Matrix::iter(m)` iterates over all entries in row-major order."
 msgstr "`Matrix::iter(m)` はすべての成分を行優先の順にたどります。"
 
-#: manual/api/immut.md:577
+#: manual/api/immut.md:578
 msgid "`iter_row(r)` iterates over row `r` left to right; `iter_col(c)` over column `c` top to bottom."
 msgstr "`iter_row(r)` は行 `r` を左から右へ、`iter_col(c)` は列 `c` を上から下へたどります。"
 
-#: manual/api/immut.md:585
+#: manual/api/immut.md:586
 msgid "Out-of-range indices abort when the iterator is created."
 msgstr "範囲外のインデックスはイテレータを作る時点で中断します。"
 
-#: manual/api/immut.md:589
+#: manual/api/immut.md:590
 msgid "`Matrix::to_array(m)` copies the entries into a flat row-major array."
 msgstr "`Matrix::to_array(m)` は成分を平坦な行優先の配列にコピーします。"
 
-#: manual/api/immut.md:597
+#: manual/api/immut.md:598
 msgid "`Matrix::to_2d_array(m)` copies the entries into nested row arrays."
 msgstr "`Matrix::to_2d_array(m)` は成分を入れ子の行配列にコピーします。"
 
-#: manual/api/immut.md:603
+#: manual/api/immut.md:604
 msgid "For an $r \\times 0$ matrix the result has $r$ empty rows."
 msgstr "$r \\times 0$ 行列では、結果は $r$ 個の空の行になります。"
 
-#: manual/api/immut.md:615
+#: manual/api/immut.md:616
 msgid "`MatrixFn` operations"
 msgstr "`MatrixFn` の操作"
 
-#: manual/api/immut.md:617
+#: manual/api/immut.md:618
 msgid "All `MatrixFn` operations are lazy: they compose functions and do no work until an entry is read. Shape checks happen eagerly; bounds checks happen on reads."
 msgstr "`MatrixFn` の操作はすべて遅延的です。関数を合成するだけで、成分が読まれるまで何も計算しません。形状の検査はすぐに行い、境界の検査は読み取り時に行います。"
 
-#: manual/api/immut.md:622
+#: manual/api/immut.md:623
 msgid "`MatrixFn::make(r, c, f)` builds the lazy matrix with entries $f(i, j)$."
 msgstr "`MatrixFn::make(r, c, f)` は成分が $f(i, j)$ の遅延行列を作ります。"
 
-#: manual/api/immut.md:628
+#: manual/api/immut.md:629
 msgid "Negative dimensions abort. Reading an entry outside the shape aborts."
 msgstr "負の次元は中断します。形状の外の成分を読むと中断します。"
 
-#: manual/api/immut.md:632
+#: manual/api/immut.md:633
 msgid "`MatrixFn::new(r, c)` builds an $r \\times c$ lazy matrix whose entries are `T::default()`."
 msgstr "`MatrixFn::new(r, c)` は成分が `T::default()` の $r \\times c$ 遅延行列を作ります。"
 
-#: manual/api/immut.md:641
+#: manual/api/immut.md:642
 msgid "`MatrixFn::from_2d_array(rows)` builds a lazy view of nested rows."
 msgstr "`MatrixFn::from_2d_array(rows)` は入れ子の行に対する遅延ビューを作ります。"
 
-#: manual/api/immut.md:647
+#: manual/api/immut.md:648
 msgid "Ragged input aborts. The arrays are captured, not copied: later writes to them are visible through the `MatrixFn`."
 msgstr "行の長さがそろっていない入力は中断します。配列はコピーされず捕捉されるので、あとからの書き込みは `MatrixFn` を通して見えます。"
 
-#: manual/api/immut.md:652
+#: manual/api/immut.md:653
 msgid "`MatrixFn::identity(n)` is the lazy $n \\times n$ identity."
 msgstr "`MatrixFn::identity(n)` は遅延的な $n \\times n$ 単位行列です。"
 
-#: manual/api/immut.md:660
+#: manual/api/immut.md:661
 msgid "`MatrixFn::shape(m)` returns `(rows, cols)`."
 msgstr "`MatrixFn::shape(m)` は `(rows, cols)` を返します。"
 
-#: manual/api/immut.md:668
+#: manual/api/immut.md:669
 msgid "`MatrixFn::at(m, r)` returns the row accessor behind `m[r][c]`."
 msgstr "`MatrixFn::at(m, r)` は `m[r][c]` の背後にある行アクセサを返します。"
 
-#: manual/api/immut.md:675
+#: manual/api/immut.md:676
 msgid "The row index is checked immediately, the column when it is read."
 msgstr "行インデックスはすぐに、列インデックスは読み取り時に検査されます。"
 
-#: manual/api/immut.md:679
+#: manual/api/immut.md:680
 msgid "`MatrixFn::map(m, f)` composes `f` after every entry."
 msgstr "`MatrixFn::map(m, f)` は各成分のあとに `f` を合成します。"
 
-#: manual/api/immut.md:687
+#: manual/api/immut.md:688
 msgid "`map_row(r, f)` and `map_col(c, f)` apply `f` to one row or one column."
 msgstr "`map_row(r, f)` と `map_col(c, f)` は一つの行または列に `f` を適用します。"
 
-#: manual/api/immut.md:694
+#: manual/api/immut.md:695
 msgid "Out-of-range indices abort immediately."
 msgstr "範囲外のインデックスはただちに中断します。"
 
-#: manual/api/immut.md:698
+#: manual/api/immut.md:699
 msgid "`MatrixFn::zip_with(a, b, f)` combines two lazy matrices entry by entry."
 msgstr "`MatrixFn::zip_with(a, b, f)` は二つの遅延行列を成分ごとに組み合わせます。"
 
-#: manual/api/immut.md:704
+#: manual/api/immut.md:705
 msgid "Different shapes abort."
 msgstr "形状が異なると中断します。"
 
-#: manual/api/immut.md:708
+#: manual/api/immut.md:709
 msgid "`MatrixFn::fold(m, init~, f)` reduces all entries in row-major order."
 msgstr "`MatrixFn::fold(m, init~, f)` はすべての成分を行優先の順で畳み込みます。"
 
-#: manual/api/immut.md:714
+#: manual/api/immut.md:715
 msgid "This forces every entry once."
 msgstr "これによりすべての成分が一回ずつ評価されます。"
 
-#: manual/api/immut.md:718
+#: manual/api/immut.md:719
 msgid "Lazy entry-wise $A + B$, $A - B$, $-A$ and $A a$."
 msgstr "遅延的な要素ごとの $A + B$、$A - B$、$-A$、$A a$ です。"
 
-#: manual/api/immut.md:727
+#: manual/api/immut.md:728
 msgid "`MatrixFn` has no public `*` operator; use `pow` or convert to `Matrix`."
 msgstr "`MatrixFn` には公開された `*` 演算子がありません。`pow` を使うか `Matrix` に変換してください。"
 
-#: manual/api/immut.md:731
+#: manual/api/immut.md:732
 msgid "`MatrixFn::pow(a, k)` returns the lazy power $A^k$ by binary exponentiation."
 msgstr "`MatrixFn::pow(a, k)` は二進累乗法で遅延的なべき乗 $A^k$ を返します。"
 
-#: manual/api/immut.md:737
+#: manual/api/immut.md:738
 msgid "Non-square input or a negative exponent aborts. Because nothing is cached, reading one entry of $A^{k}$ recomputes the nested products. One entry of the lazy square $B \\cdot B$ reads $2n$ entries of $B$, so one entry of $A^{2^d}$ reads $(2n)^d = k^{1 + \\log_2 n}$ entries of $A$ for $k = 2^d$; read all entries into a `Matrix` with `Matrix::make` if you need more than a few."
 msgstr "正方でない入力や負の指数は中断します。何もキャッシュしないので、$A^{k}$ の要素を一つ読むたびに入れ子の積が再計算されます。遅延平方 $B \\cdot B$ の要素一つは $B$ の要素を $2n$ 個読むので、$k = 2^d$ のとき $A^{2^d}$ の要素一つは $A$ の要素を $(2n)^d = k^{1 + \\log_2 n}$ 個読みます。いくつも読む場合は、先に `Matrix::make` で全要素を `Matrix` に読み込んでください。"
 
-#: manual/api/immut.md:745
+#: manual/api/immut.md:746
 msgid "`MatrixFn::determinant(a)` materializes the matrix and returns its determinant with the algorithm of `Matrix::determinant`."
 msgstr "`MatrixFn::determinant(a)` は行列を実体化し、`Matrix::determinant` のアルゴリズムで行列式を返します。"
 
-#: manual/api/immut.md:752
+#: manual/api/immut.md:753
 msgid "A non-square matrix aborts; there is no checked form."
 msgstr "正方でない行列は中断します。検査付きの形はありません。"
 
-#: manual/api/immut.md:756
+#: manual/api/immut.md:757
 msgid "Lazy transpose and conjugate transpose."
 msgstr "遅延的な転置と共役転置です。"
 
-#: manual/api/immut.md:765
+#: manual/api/immut.md:766
 msgid "Lazy row and column exchange; out-of-range indices abort."
 msgstr "遅延的な行と列の入れ替えです。範囲外のインデックスは中断します。"
 
-#: manual/api/immut.md:774
+#: manual/api/immut.md:775
 msgid "Lazy block concatenation; mismatched row or column counts abort."
 msgstr "遅延的なブロック連結です。行数または列数が合わないと中断します。"
 
-#: manual/api/immut.md:783
+#: manual/api/immut.md:784
 msgid "`equal` compares shapes and every entry (forcing them); `to_string` renders like `Matrix`."
 msgstr "`equal` は形状とすべての成分を（評価して）比較し、`to_string` は `Matrix` と同じ形で表示します。"
 
-#: manual/api/immut.md:807
-#: manual/api/mutable.md:1158
+#: manual/api/immut.md:808
+#: manual/api/mutable.md:1148
 msgid "Vector"
 msgstr "ベクトル"
 
-#: manual/api/immut.md:811
+#: manual/api/immut.md:812
 msgid "`Vector::from_array(xs)` copies an array into a new vector."
 msgstr "`Vector::from_array(xs)` は配列を新しいベクトルにコピーします。"
 
-#: manual/api/immut.md:819
+#: manual/api/immut.md:820
 msgid "`make(n, x)` builds $n$ copies of `x`; `makei(n, f)` builds $(f(0), \\dots, f(n-1))$."
 msgstr "`make(n, x)` は `x` の $n$ 個のコピーを、`makei(n, f)` は $(f(0), \\dots, f(n-1))$ を作ります。"
 
-#: manual/api/immut.md:829
+#: manual/api/immut.md:830
 msgid "`Vector::length(v)` returns the number of elements."
 msgstr "`Vector::length(v)` は要素数を返します。"
 
-#: manual/api/immut.md:837
+#: manual/api/immut.md:838
 msgid "`Vector::at(v, i)` returns element `i`; it backs `v[i]`. An out-of-range index aborts."
 msgstr "`Vector::at(v, i)` は要素 `i` を返し、`v[i]` の実体です。範囲外のインデックスは中断します。"
 
-#: manual/api/immut.md:847
+#: manual/api/immut.md:848
 msgid "`Vector::set(v, i, x)` returns a vector equal to `v` except at `i`, in $O(\\log_{32} n)$; `v` is unchanged."
 msgstr "`Vector::set(v, i, x)` は `i` 以外が `v` と等しいベクトルを $O(\\log_{32} n)$ で返します。`v` は変化しません。"
 
-#: manual/api/immut.md:856
+#: manual/api/immut.md:857
 msgid "`Vector::iter(v)` iterates over the elements in order."
 msgstr "`Vector::iter(v)` は要素を順にたどります。"
 
-#: manual/api/immut.md:864
+#: manual/api/immut.md:865
 msgid "`map(f)` applies `f` to every element; `zip_with(w, f)` combines two vectors element by element and aborts on different lengths."
 msgstr "`map(f)` はすべての要素に `f` を適用し、`zip_with(w, f)` は二つのベクトルを要素ごとに組み合わせます（長さが異なると中断します）。"
 
-#: manual/api/immut.md:874
+#: manual/api/immut.md:875
 msgid "Element-wise $u + v$, Hadamard $u \\odot v$ and $-u$; they back the operators. Different lengths abort."
 msgstr "要素ごとの $u + v$、Hadamard 積 $u \\odot v$、$-u$ で、演算子の実体です。長さが異なると中断します。"
 
-#: manual/api/immut.md:883
+#: manual/api/immut.md:884
 msgid "`Vector` has no `Sub` implementation; write `u + -v`."
 msgstr "`Vector` は `Sub` を実装していません。`u + -v` と書いてください。"
 
-#: manual/api/immut.md:887
+#: manual/api/immut.md:888
 msgid "`Vector::add_constant(v, a)` adds `a` to every element."
 msgstr "`Vector::add_constant(v, a)` はすべての要素に `a` を加えます。"
 
-#: manual/api/immut.md:895
+#: manual/api/immut.md:896
 msgid "`left_scale(a)` returns $(a v_i)_i$; `right_scale(a)` returns $(v_i a)_i$. They differ only for non-commutative scalars."
 msgstr "`left_scale(a)` は $(a v_i)_i$ を、`right_scale(a)` は $(v_i a)_i$ を返します。両者が異なるのは非可換なスカラーの場合だけです。"
 
-#: manual/api/immut.md:905
+#: manual/api/immut.md:906
 msgid "`Vector::lerp(u, v, t)` returns $(1 - t) u + t v$, with scalars on the left."
 msgstr "`Vector::lerp(u, v, t)` は $(1 - t) u + t v$ を返します。スカラーは左から掛けます。"
 
-#: manual/api/immut.md:911
+#: manual/api/immut.md:912
 msgid "Different lengths abort."
 msgstr "長さが異なると中断します。"
 
-#: manual/api/immut.md:915
+#: manual/api/immut.md:916
 msgid "`lin_comb(a, u, b, v)` returns $a u + b v$, with scalars on the left."
 msgstr "`lin_comb(a, u, b, v)` は $a u + b v$ を返します。スカラーは左から掛けます。"
 
-#: manual/api/immut.md:923
+#: manual/api/immut.md:924
 msgid "The vector as a $1 \\times n$ or an $n \\times 1$ matrix."
 msgstr "ベクトルを $1 \\times n$ または $n \\times 1$ の行列として表したものです。"
 
-#: manual/api/immut.md:932
+#: manual/api/immut.md:933
 msgid "`Vector::scaled_matrix(v)` returns the diagonal matrix $\\operatorname{diag}(v_0, \\dots, v_{n-1})$."
 msgstr "`Vector::scaled_matrix(v)` は対角行列 $\\operatorname{diag}(v_0, \\dots, v_{n-1})$ を返します。"
 
-#: manual/api/immut.md:941
+#: manual/api/immut.md:942
 msgid "`Vector::tensor_product(u, v)` returns the outer product $u v^{\\mathsf T}$, the $m \\times n$ matrix with entries $u_i v_j$."
 msgstr "`Vector::tensor_product(u, v)` は外積 $u v^{\\mathsf T}$、つまり成分が $u_i v_j$ の $m \\times n$ 行列を返します。"
 
-#: manual/api/immut.md:950
+#: manual/api/immut.md:951
 msgid "`equal` compares lengths and elements; `to_string` renders `|a, b, c|`."
 msgstr "`equal` は長さと要素を比較し、`to_string` は `|a, b, c|` と表示します。"
 
-#: manual/api/immut.md:978
+#: manual/api/immut.md:979
 msgid "These method forms exist only for source compatibility; they are hidden from the interface and warn when used."
 msgstr "これらのメソッド形式はソース互換性のためだけに存在します。インターフェースからは隠されており、使用すると警告が出ます。"
 
-#: manual/api/immut.md:984
-#: manual/api/mutable.md:1319
+#: manual/api/immut.md:985
+#: manual/api/mutable.md:1309
 msgid "string interpolation or `Show::output(x, logger)`"
 msgstr "文字列補間または `Show::output(x, logger)`"
 
-#: manual/api/immut.md:985
-#: manual/api/mutable.md:1320
+#: manual/api/immut.md:986
+#: manual/api/mutable.md:1310
 msgid "`Repr(v)` or `@debug.Debug::to_repr(v)`"
 msgstr "`Repr(v)` または `@debug.Debug::to_repr(v)`"
 
@@ -2573,8 +2573,8 @@ msgid "All routines in this section are for `Float` and `Double` matrices. Decis
 msgstr "この節のルーチンはすべて `Float` と `Double` の行列向けです。「このピボットはゼロである」といった判定は、絶対値を `Tolerance::tolerance()`（$10^{-11}$）と比較して行います。アルゴリズム、コスト、誤差限界については [設計ページ](../design/mutable.md) を参照してください。"
 
 #: manual/api/mutable.md:611
-msgid "For $n \\le 4$: closed cofactor formulas. For $n \\ge 5$: the product of the diagonal if the matrix is triangular within tolerance, otherwise LU factorization with partial pivoting, $\\det A = (-1)^{s} \\prod_i u_{ii}$ for $s$ row exchanges. If a pivot falls below the tolerance the result is exactly zero; otherwise it is a product of pivots of magnitude at least $10^{-11}$, which can still underflow to zero or overflow to infinity for large $n$. $\\det$ of the $0 \\times 0$ matrix is $1$."
-msgstr "$n \\le 4$ では閉じた余因子公式を使います。$n \\ge 5$ では、許容誤差の範囲で三角行列なら対角成分の積を、そうでなければ部分ピボット選択付き LU 分解を使い、$s$ 回の行交換に対して $\\det A = (-1)^{s} \\prod_i u_{ii}$ とします。ピボットが許容誤差を下回れば結果はちょうど零です。そうでなければ結果は大きさ $10^{-11}$ 以上のピボットの積ですが、$n$ が大きいと零へのアンダーフローや無限大へのオーバーフローは起こりえます。$0 \\times 0$ 行列の $\\det$ は $1$ です。"
+msgid "For $n \\le 4$: closed cofactor formulas. For $n \\ge 5$: the product of the diagonal if the matrix is exactly triangular, otherwise LU factorization with partial pivoting, $\\det A = (-1)^{s} \\prod_i u_{ii}$ for $s$ row exchanges. If a pivot falls below the tolerance the result is exactly zero; otherwise it is a product of pivots of magnitude at least $10^{-11}$, which can still underflow to zero or overflow to infinity for large $n$. $\\det$ of the $0 \\times 0$ matrix is $1$."
+msgstr "$n \\le 4$ では閉じた余因子公式を使います。$n \\ge 5$ では、厳密に三角行列なら対角成分の積を、そうでなければ部分ピボット選択付き LU 分解を使い、$s$ 回の行交換に対して $\\det A = (-1)^{s} \\prod_i u_{ii}$ とします。ピボットが許容誤差を下回れば結果はちょうど零です。そうでなければ結果は大きさ $10^{-11}$ 以上のピボットの積ですが、$n$ が大きいと零へのアンダーフローや無限大へのオーバーフローは起こりえます。$0 \\times 0$ 行列の $\\det$ は $1$ です。"
 
 #: manual/api/mutable.md:621
 msgid "Aborting form of `determinant`."
@@ -2589,330 +2589,330 @@ msgid "Identity, diagonal and permutation matrices are recognized and inverted d
 msgstr "単位行列、対角行列、置換行列は判別されて直接反転されます（$P^{-1} = P^{\\mathsf T}$）。それ以外の行列は、部分ピボット選択付き LU 分解から列ごとに解きます。コストは $\\approx \\tfrac{8}{3} n^3$ flops です。$0 \\times 0$ 行列の逆行列は $0 \\times 0$ 行列です。"
 
 #: manual/api/mutable.md:641
-msgid "The recognition uses the tolerance: a matrix whose entries are within $10^{-11}$ of the identity is returned as a copy of itself, one whose off-diagonal entries are at most $10^{-11}$ is inverted as if they were zero, and one within $10^{-11}$ of a permutation matrix is returned transposed."
-msgstr "この判定には許容誤差が使われます。単位行列との差が各要素で $10^{-11}$ 以内の行列はそれ自身のコピーが返され、非対角要素がすべて $10^{-11}$ 以下の行列はそれらを零とみなして逆行列が計算され、置換行列との差が $10^{-11}$ 以内の行列は転置が返されます。"
+msgid "The recognition is exact: only a matrix that has the structure exactly takes the shortcut, so the shortcut returns what the LU path would."
+msgstr "判定は厳密です。構造をちょうど持つ行列だけが近道を通るので、近道の結果は LU の経路と同じになります。"
 
-#: manual/api/mutable.md:648
+#: manual/api/mutable.md:646
 msgid "`Matrix::unchecked_inverse(a)` returns `Some(A^{-1})` or `None` for a singular matrix, and aborts on a non-square one."
 msgstr "`Matrix::unchecked_inverse(a)` は `Some(A^{-1})` を、特異行列では `None` を返し、非正方行列では中断します。"
 
-#: manual/api/mutable.md:657
+#: manual/api/mutable.md:655
 msgid "`is_invertible()` returns `Ok(true)` when LU factorization finds no pivot below the tolerance, `Ok(false)` otherwise, and `NonSquareMatrix` for a non-square matrix; `unchecked_is_invertible` aborts instead."
 msgstr "`is_invertible()` は、LU 分解で許容誤差を下回るピボットが見つからなければ `Ok(true)` を、見つかれば `Ok(false)` を、非正方行列では `NonSquareMatrix` を返します。`unchecked_is_invertible` は代わりに中断します。"
 
-#: manual/api/mutable.md:668
+#: manual/api/mutable.md:666
 msgid "`Matrix::rank(a)` returns the number of pivots found by Gaussian elimination with partial pivoting on a copy of `a`."
 msgstr "`Matrix::rank(a)` は、`a` のコピーに対して部分ピボット選択付き Gauss 消去を行い、見つかったピボットの数を返します。"
 
-#: manual/api/mutable.md:675
+#: manual/api/mutable.md:673
 msgid "A column whose largest remaining entry is below the tolerance contributes no pivot. Works for any shape; `a` is unchanged. Cost $O(\\min(r, c)\\, r c)$."
 msgstr "残りの要素の最大値が許容誤差を下回る列はピボットに寄与しません。任意の形状で動作し、`a` は変更されません。コストは $O(\\min(r, c)\\, r c)$ です。"
 
-#: manual/api/mutable.md:680
+#: manual/api/mutable.md:678
 msgid "`Matrix::reduce_row_elimination(a)` transforms `a` **in place** into reduced row echelon form by Gauss–Jordan elimination with partial pivoting, and returns `a` itself."
 msgstr "`Matrix::reduce_row_elimination(a)` は、部分ピボット選択付き Gauss–Jordan 消去によって `a` を **インプレースで** 被約行階段形に変換し、`a` 自身を返します。"
 
-#: manual/api/mutable.md:688
+#: manual/api/mutable.md:686
 msgid "Columns are processed left to right. In each column the entry of largest magnitude at or below the current row is swapped up; if its magnitude is at most the tolerance, that one entry is set to zero and the column is skipped (the other entries below it, also at most the tolerance, are left as they are). Otherwise the pivot row is divided by the pivot, which makes the pivot one, and every other row with an entry of magnitude above the tolerance in the pivot column has a multiple of the pivot row subtracted; an entry at or below the tolerance is set to zero without touching the rest of its row. Copy first if you need the original."
 msgstr "列は左から右へ処理します。各列で、現在の行以下にある絶対値最大の要素を上に交換します。その絶対値が許容誤差以下なら、その一つの要素だけを零にしてその列を飛ばします（その下にある、やはり許容誤差以下の他の要素はそのまま残ります）。そうでなければピボット行をピボットで割ってピボットを一にし、ピボット列に許容誤差を超える要素を持つ他の各行からピボット行の倍数を引きます。許容誤差以下の要素は、その行の残りに触れずに零にします。元の行列が必要なら先にコピーしてください。"
 
-#: manual/api/mutable.md:700
+#: manual/api/mutable.md:698
 msgid "`Matrix::cholesky_decomposition(a)` returns `Some(L)` with $L$ lower triangular, positive diagonal and $L L^{\\mathsf T} = A$, or `None`."
 msgstr "`Matrix::cholesky_decomposition(a)` は、$L$ が正の対角要素を持つ下三角行列で $L L^{\\mathsf T} = A$ を満たす `Some(L)`、または `None` を返します。"
 
-#: manual/api/mutable.md:707
+#: manual/api/mutable.md:705
 msgid "`None` means that `a` is not square, not symmetric within tolerance, or that a diagonal pivot $a_{jj} - \\sum_{k<j} l_{jk}^2$ is at most the tolerance (the matrix is not positive definite, or nearly singular). Only the lower triangle of `a` is read. Cost $\\approx n^3/3$ flops."
 msgstr "`None` は、`a` が正方でない、許容誤差の範囲で対称でない、あるいは対角ピボット $a_{jj} - \\sum_{k<j} l_{jk}^2$ が許容誤差以下である（行列が正定値でないか、特異に近い）ことを意味します。読むのは `a` の下三角部分だけです。コストは $\\approx n^3/3$ flops です。"
 
-#: manual/api/mutable.md:712
-msgid "Two fast paths run first. A matrix within the tolerance of the identity is returned as a copy of itself, so its off-diagonal entries of magnitude at most $10^{-11}$ survive and the result is then not exactly lower triangular. A matrix that is diagonal within the tolerance gives the square roots of its diagonal, and its off-diagonal entries are dropped."
-msgstr "先に二つの高速経路が実行されます。単位行列との差が許容誤差以内の行列はそれ自身のコピーとして返されるので、大きさ $10^{-11}$ 以下の非対角要素が残り、結果は厳密には下三角になりません。許容誤差の範囲で対角な行列では対角要素の平方根が返され、非対角要素は捨てられます。"
+#: manual/api/mutable.md:710
+msgid "Two fast paths run first: the exact identity is returned as a copy, and an exactly diagonal matrix gives the square roots of its diagonal (or `None` if one of them is at most the tolerance)."
+msgstr "先に二つの高速経路が実行されます。厳密な単位行列はコピーが返され、厳密に対角な行列では対角要素の平方根が返されます（そのいずれかが許容誤差以下なら `None`）。"
 
-#: manual/api/mutable.md:720
+#: manual/api/mutable.md:716
 msgid "`Matrix::is_positive_definite(a)` returns whether `cholesky_decomposition` succeeds."
 msgstr "`Matrix::is_positive_definite(a)` は `cholesky_decomposition` が成功するかどうかを返します。"
 
-#: manual/api/mutable.md:729
+#: manual/api/mutable.md:725
 msgid "`Matrix::is_symmetric(a)` returns `true` when `a` is square and $|a_{ij} - a_{ji}| \\le \\mathrm{tol}$ for all $i < j$."
 msgstr "`Matrix::is_symmetric(a)` は、`a` が正方で、すべての $i < j$ について $|a_{ij} - a_{ji}| \\le \\mathrm{tol}$ であるときに `true` を返します。"
 
-#: manual/api/mutable.md:755
+#: manual/api/mutable.md:751
 msgid "Eigenvalues"
 msgstr "固有値"
 
-#: manual/api/mutable.md:759
+#: manual/api/mutable.md:755
 msgid "`Matrix::eigen(a)` returns the eigenvalues and eigenvectors of a real symmetric matrix as `(values, vectors)`, where column $k$ of `vectors` is an eigenvector for `values[k]`."
 msgstr "`Matrix::eigen(a)` は実対称行列の固有値と固有ベクトルを `(values, vectors)` として返します。`vectors` の列 $k$ は `values[k]` に対する固有ベクトルです。"
 
-#: manual/api/mutable.md:767
+#: manual/api/mutable.md:763
 msgid "Aborts if `a` is not square, not symmetric within tolerance, or if an eigenvalue does not converge within 60 iterations."
 msgstr "`a` が正方でない場合、許容誤差の範囲で対称でない場合、またはある固有値が 60 回の反復以内に収束しない場合は中断します。"
 
-#: manual/api/mutable.md:769
-msgid "For $2 \\times 2$ input the values come from the characteristic polynomial, $\\lambda_{1,2} = m \\pm \\sqrt{m^2 - \\det A}$ with $m = \\tfrac12 \\operatorname{tr} A$, ordered $\\lambda_1 \\ge \\lambda_2$; the eigenvector columns are **not normalized**."
-msgstr "$2 \\times 2$ の入力では、固有値は特性多項式から $\\lambda_{1,2} = m \\pm \\sqrt{m^2 - \\det A}$（$m = \\tfrac12 \\operatorname{tr} A$）として求め、$\\lambda_1 \\ge \\lambda_2$ の順に並べます。固有ベクトルの列は **正規化されません**。"
+#: manual/api/mutable.md:765
+msgid "For $2 \\times 2$ input a closed formula is used on the symmetric part $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$, $s = \\tfrac12 (a_{01} + a_{10})$: $\\lambda_{1,2} = m \\pm \\sqrt{\\big(\\tfrac{a-d}{2}\\big)^2 + s^2}$ with $m = \\tfrac12 \\operatorname{tr} A$, ordered $\\lambda_1 \\ge \\lambda_2$. The eigenvector columns are **not normalized**: each is scaled so that its entry of largest magnitude is $1$. A diagonal matrix returns its diagonal entries exactly."
+msgstr "$2 \\times 2$ の入力では、対称部分 $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$（$s = \\tfrac12 (a_{01} + a_{10})$）に閉じた公式を使います。$m = \\tfrac12 \\operatorname{tr} A$ として $\\lambda_{1,2} = m \\pm \\sqrt{\\big(\\tfrac{a-d}{2}\\big)^2 + s^2}$ で、$\\lambda_1 \\ge \\lambda_2$ の順に並べます。固有ベクトルの列は**正規化されません**。各列は絶対値最大の要素が $1$ になるようにスケーリングされます。対角行列では対角要素がそのまま厳密に返されます。"
 
-#: manual/api/mutable.md:773
+#: manual/api/mutable.md:772
 msgid "For other sizes the matrix is reduced to tridiagonal form by Householder reflections and diagonalized by the implicit QL algorithm with Wilkinson shifts. Only the lower triangle is read. The eigenvector columns are orthonormal up to rounding. The eigenvalues are not sorted."
 msgstr "それ以外のサイズでは、Householder 反射で三重対角形に縮約し、Wilkinson シフト付きの陰的 QL アルゴリズムで対角化します。読むのは下三角部分だけです。固有ベクトルの列は丸め誤差の範囲で正規直交です。固有値は整列されません。"
 
-#: manual/api/mutable.md:777
+#: manual/api/mutable.md:776
 msgid "Cost $O(n^3)$."
 msgstr "コストは $O(n^3)$ です。"
 
-#: manual/api/mutable.md:779
-msgid "[!WARNING] The $2 \\times 2$ formula compares the discriminant $m^2 - \\det A$, a *squared* quantity, with the absolute tolerance $10^{-11}$, and computes it with cancellation. Three consequences for symmetric input: eigenvalues closer than about $2\\sqrt{10^{-11}} \\approx 6 \\times 10^{-6}$ are returned as equal (for `[[1, 0], [0, 1.000002]]` both values are `1.000001`); for `[[1, 1e-6], [1e-6, 1]]` the two returned eigenvector columns are identical, so the eigenvector matrix is singular; and for entries near $10^{8}$ the rounding error of $m^2 - \\det A$ can exceed $10^{-11}$ in the negative direction, so a diagonal matrix such as `[[100000000.74, 0], [0, 99999999.78]]` aborts with \"complex eigenvalues\". For larger sizes the deflation test and the Householder step also use absolute thresholds, so a matrix whose entries are all below about $10^{-11}$ is treated as already diagonal (for $10^{-12}$ times the tridiagonal matrix with diagonal $2$ and off-diagonal $1$, every returned eigenvalue is $2 \\times 10^{-12}$). Scale the input to order one, and embed a $2 \\times 2$ problem in a larger one or solve it yourself when these cases matter. See the [design page](../design/mutable.md#symmetric-eigenvalue-problem)."
-msgstr "[!WARNING] $2 \\times 2$ の公式は、判別式 $m^2 - \\det A$ という*二乗*の量を絶対許容誤差 $10^{-11}$ と比較し、しかも桁落ちを伴う形で計算します。対称な入力に対して三つの帰結があります。約 $2\\sqrt{10^{-11}} \\approx 6 \\times 10^{-6}$ より近い固有値は等しいものとして返されます（`[[1, 0], [0, 1.000002]]` では二つの値がどちらも `1.000001`）。`[[1, 1e-6], [1e-6, 1]]` では返される二本の固有ベクトル列が同一になり、固有ベクトル行列が特異になります。要素が $10^{8}$ 程度だと $m^2 - \\det A$ の丸め誤差が負の方向に $10^{-11}$ を超えうるため、`[[100000000.74, 0], [0, 99999999.78]]` のような対角行列でも \"complex eigenvalues\" で中断します。より大きなサイズでも減次判定と Householder ステップは絶対的なしきい値を使うので、要素がすべて約 $10^{-11}$ 未満の行列は最初から対角とみなされます（対角 $2$、副対角 $1$ の三重対角行列の $10^{-12}$ 倍では、返る固有値はすべて $2 \\times 10^{-12}$）。入力は 1 程度の大きさにスケーリングし、これらが問題になる場合は $2 \\times 2$ の問題をより大きな問題に埋め込むか、自分で解いてください。[設計ページ](../design/mutable.md#symmetric-eigenvalue-problem) を参照してください。"
+#: manual/api/mutable.md:778
+msgid "Every decision inside `eigen` is relative to the entries (a deflated off-diagonal entry is negligible next to its diagonal neighbours), so `eigen` of $sA$ is $s$ times `eigen` of $A$ up to rounding, for any scale $s$; only the symmetry check uses the absolute tolerance. See the [design page](../design/mutable.md#symmetric-eigenvalue-problem)."
+msgstr "`eigen` の内部の判定はすべて要素に対して相対的です（減次される副対角要素は、隣の対角要素に比べて無視できるもの）。そのため任意のスケール $s$ について、$sA$ の `eigen` は丸め誤差を除いて $A$ の `eigen` の $s$ 倍です。絶対許容誤差を使うのは対称性の判定だけです。[設計ページ](../design/mutable.md#symmetric-eigenvalue-problem) を参照してください。"
 
-#: manual/api/mutable.md:800
+#: manual/api/mutable.md:786
 msgid "`Matrix::power_method(a, max_iterations)` approximates a dominant eigenpair $(\\lambda, x)$ by power iteration and returns `Some((λ, x))` once $\\lVert A x - \\lambda x \\rVert_\\infty \\le \\mathrm{tol}$."
 msgstr "`Matrix::power_method(a, max_iterations)` は、べき乗反復により優勢な固有対 $(\\lambda, x)$ を近似し、$\\lVert A x - \\lambda x \\rVert_\\infty \\le \\mathrm{tol}$ となった時点で `Some((λ, x))` を返します。"
 
-#: manual/api/mutable.md:808
+#: manual/api/mutable.md:794
 msgid "$x$ is scaled so that $\\lVert x \\rVert_\\infty = 1$; $\\lambda$ is the Rayleigh quotient $x^{\\mathsf T} A x / x^{\\mathsf T} x$."
 msgstr "$x$ は $\\lVert x \\rVert_\\infty = 1$ となるようにスケーリングされます。$\\lambda$ は Rayleigh 商 $x^{\\mathsf T} A x / x^{\\mathsf T} x$ です。"
 
-#: manual/api/mutable.md:810
+#: manual/api/mutable.md:796
 msgid "Returns `None` when the iteration does not meet the residual test within `max_iterations` steps, or when the iterate becomes numerically zero (for example for a nilpotent matrix). Two dominant eigenvalues of equal magnitude and opposite sign, such as $\\pm 1$, prevent convergence."
 msgstr "`max_iterations` ステップ以内に反復が残差判定を満たさない場合、または反復ベクトルが数値的にゼロになった場合（たとえば冪零行列）は `None` を返します。$\\pm 1$ のように絶対値が等しく符号が逆の 2 つの優勢固有値があると収束しません。"
 
-#: manual/api/mutable.md:814
+#: manual/api/mutable.md:800
 msgid "Aborts for a non-square or empty matrix."
 msgstr "非正方行列または空行列では中断します。"
 
-#: manual/api/mutable.md:815
+#: manual/api/mutable.md:801
 msgid "Each iteration costs two matrix-vector products, $O(n^2)$: one for the Rayleigh quotient and the residual, and one for the next iterate (the code does not reuse the first). The starting vector is $(1, \\dots, 1)$, or the first coordinate vector $e_k$ with $A e_k$ above the tolerance if $A (1, \\dots, 1)^{\\mathsf T}$ is not; it is multiplied by $A$ and scaled once before the first residual test."
 msgstr "各反復のコストは行列ベクトル積二回、$O(n^2)$ です。一回は Rayleigh 商と残差のため、もう一回は次の反復ベクトルのためです（コードは最初の積を再利用しません）。初期ベクトルは $(1, \\dots, 1)$ で、$A (1, \\dots, 1)^{\\mathsf T}$ が許容誤差以下なら、$A e_k$ が許容誤差を超える最初の座標ベクトル $e_k$ を使います。最初の残差判定の前に、これに一度 $A$ を掛けてスケーリングします。"
 
-#: manual/api/mutable.md:821
+#: manual/api/mutable.md:807
 msgid "The residual test is absolute, so the accuracy of $x$ scales with $\\lVert A \\rVert$: for a matrix of size about $10^{-6}$ the test passes while $x$ is still wrong in the sixth digit."
 msgstr "残差判定は絶対的なので、$x$ の精度は $\\lVert A \\rVert$ に比例して変わります。大きさが $10^{-6}$ 程度の行列では、$x$ の 6 桁目がまだ誤っていても判定に通ります。"
 
-#: manual/api/mutable.md:841
+#: manual/api/mutable.md:831
 msgid "Statistics and norms"
 msgstr "統計量とノルム"
 
-#: manual/api/mutable.md:843
+#: manual/api/mutable.md:833
 msgid "The statistics treat the matrix as a flat list of its $N = rc$ entries."
 msgstr "統計量は、行列を $N = rc$ 個の要素からなる平坦なリストとして扱います。"
 
-#: manual/api/mutable.md:847
+#: manual/api/mutable.md:837
 msgid "`mean()` returns `Ok(\\bar a)`, $\\bar a = \\tfrac1N \\sum a_{ij}$, or `EmptyMatrix` when $N = 0$; `unchecked_mean` aborts instead."
 msgstr "`mean()` は `Ok(\\bar a)`（$\\bar a = \\tfrac1N \\sum a_{ij}$）を返し、$N = 0$ のときは `EmptyMatrix` を返します。`unchecked_mean` は代わりに中断します。"
 
-#: manual/api/mutable.md:857
+#: manual/api/mutable.md:847
 msgid "`variance()` returns the population variance $\\tfrac1N \\sum (a_{ij} - \\bar a)^2$ (two-pass), or `EmptyMatrix`."
 msgstr "`variance()` は母分散 $\\tfrac1N \\sum (a_{ij} - \\bar a)^2$（2 パス）を返すか、`EmptyMatrix` を返します。"
 
-#: manual/api/mutable.md:867
+#: manual/api/mutable.md:857
 msgid "`std_dev()` returns the square root of the population variance, or `EmptyMatrix`."
 msgstr "`std_dev()` は母分散の平方根を返すか、`EmptyMatrix` を返します。"
 
-#: manual/api/mutable.md:877
+#: manual/api/mutable.md:867
 msgid "The largest or smallest entry by `Compare`, or `EmptyMatrix`."
 msgstr "`Compare` による最大または最小の要素を返します。空なら `EmptyMatrix` です。"
 
-#: manual/api/mutable.md:884
+#: manual/api/mutable.md:874
 msgid "With NaN entries the result depends on their position; filter them first."
 msgstr "NaN の要素があると、結果はその位置に依存します。先に取り除いてください。"
 
-#: manual/api/mutable.md:888
+#: manual/api/mutable.md:878
 msgid "Aborting forms of `max_element` and `min_element`."
 msgstr "`max_element` と `min_element` の中断する形式です。"
 
-#: manual/api/mutable.md:897
+#: manual/api/mutable.md:887
 msgid "`Matrix::frobenius_norm(a)` returns $\\lVert A \\rVert_F = \\sqrt{\\sum a_{ij}^2}$."
 msgstr "`Matrix::frobenius_norm(a)` は $\\lVert A \\rVert_F = \\sqrt{\\sum a_{ij}^2}$ を返します。"
 
-#: manual/api/mutable.md:903
+#: manual/api/mutable.md:893
 msgid "The sum of squares is not rescaled, so entries above about $10^{154}$ overflow for `Double`. An empty matrix has norm $0$."
 msgstr "二乗和はスケーリングし直さないため、`Double` ではおよそ $10^{154}$ を超える要素でオーバーフローします。空行列のノルムは $0$ です。"
 
-#: manual/api/mutable.md:920
+#: manual/api/mutable.md:910
 msgid "Views"
 msgstr "ビュー"
 
-#: manual/api/mutable.md:924
+#: manual/api/mutable.md:914
 msgid "Read or write position `i` of the viewed row or column; they back `view[i]` and `view[i] = x`."
 msgstr "ビューが指す行または列の位置 `i` を読み書きします。`view[i]` と `view[i] = x` を支えます。"
 
-#: manual/api/mutable.md:940
+#: manual/api/mutable.md:930
 msgid "The number of columns (row view) or rows (column view) of the matrix."
 msgstr "行列の列数（行ビュー）または行数（列ビュー）です。"
 
-#: manual/api/mutable.md:949
+#: manual/api/mutable.md:939
 msgid "Traverse the viewed entries in order."
 msgstr "ビューが指す要素を順に走査します。"
 
-#: manual/api/mutable.md:962
+#: manual/api/mutable.md:952
 msgid "Replace every viewed entry by `f(entry)`, in the underlying matrix."
 msgstr "ビューが指す各要素を、元の行列の中で `f(entry)` に置き換えます。"
 
-#: manual/api/mutable.md:971
+#: manual/api/mutable.md:961
 msgid "Copy the viewed entries out."
 msgstr "ビューが指す要素をコピーして取り出します。"
 
-#: manual/api/mutable.md:982
+#: manual/api/mutable.md:972
 msgid "Render the viewed entries as `|a, b, c|`."
 msgstr "ビューが指す要素を `|a, b, c|` として出力します。"
 
-#: manual/api/mutable.md:989
+#: manual/api/mutable.md:979
 msgid "Transpose view"
 msgstr "転置ビュー"
 
-#: manual/api/mutable.md:991
+#: manual/api/mutable.md:981
 msgid "Every `Transpose` method addresses the transposed matrix and works on the shared storage, unless it is documented to return a new value."
 msgstr "`Transpose` のメソッドはすべて転置された行列を対象とし、新しい値を返すと明記されていない限り共有ストレージ上で動作します。"
 
-#: manual/api/mutable.md:996
+#: manual/api/mutable.md:986
 msgid "The shape of the view: `row()` is the column count of the wrapped matrix and `col()` its row count."
 msgstr "ビューの形状です。`row()` はラップした行列の列数、`col()` はその行数です。"
 
-#: manual/api/mutable.md:1006
+#: manual/api/mutable.md:996
 msgid "`get(i, j)` and `set(i, j, x)` access entry $(i, j)$ of the view, that is $(j, i)$ of the matrix; `at` backs `t[i][j]` and `t[i][j] = x`."
 msgstr "`get(i, j)` と `set(i, j, x)` はビューの要素 $(i, j)$、すなわち行列の $(j, i)$ にアクセスします。`at` は `t[i][j]` と `t[i][j] = x` を支えます。"
 
-#: manual/api/mutable.md:1018
+#: manual/api/mutable.md:1008
 msgid "`Transpose::transpose(t)` returns the wrapped matrix itself, not a copy."
 msgstr "`Transpose::transpose(t)` はコピーではなく、ラップした行列そのものを返します。"
 
-#: manual/api/mutable.md:1026
+#: manual/api/mutable.md:1016
 msgid "`Transpose::materialize(t)` copies the view into a new matrix of the transposed shape."
 msgstr "`Transpose::materialize(t)` はビューを、転置した形状の新しい行列にコピーします。"
 
-#: manual/api/mutable.md:1035
+#: manual/api/mutable.md:1025
 msgid "`Transpose::copy(t)` returns a view of a deep copy of the wrapped matrix."
 msgstr "`Transpose::copy(t)` は、ラップした行列のディープコピーに対するビューを返します。"
 
-#: manual/api/mutable.md:1041
+#: manual/api/mutable.md:1031
 msgid "Traversal: `Transpose::each`, `Transpose::eachi`, `Transpose::each_row_col`, `Transpose::each_row`, `Transpose::eachi_row`, `Transpose::each_col`, `Transpose::eachi_col`"
 msgstr "走査: `Transpose::each`、`Transpose::eachi`、`Transpose::each_row_col`、`Transpose::each_row`、`Transpose::eachi_row`、`Transpose::each_col`、`Transpose::eachi_col`"
 
-#: manual/api/mutable.md:1043
+#: manual/api/mutable.md:1033
 msgid "Traverse the view."
 msgstr "ビューを走査します。"
 
-#: manual/api/mutable.md:1055
+#: manual/api/mutable.md:1045
 msgid "`each`, `eachi` and `each_row_col` visit entries in the storage order of the wrapped matrix, which is column-major for the view; `eachi` passes the row-major index *of the view*, and `each_row_col` passes view coordinates. The row and column forms visit a row or column of the view in order."
 msgstr "`each`、`eachi`、`each_row_col` は、ラップした行列のストレージ順（ビューにとっては列優先）に要素を訪れます。`eachi` は *ビューの* 行優先インデックスを渡し、`each_row_col` はビューの座標を渡します。行と列の形式は、ビューの 1 つの行または列を順に訪れます。"
 
-#: manual/api/mutable.md:1062
+#: manual/api/mutable.md:1052
 msgid "Copy one row or column of the view."
 msgstr "ビューの 1 つの行または列をコピーします。"
 
-#: manual/api/mutable.md:1073
+#: manual/api/mutable.md:1063
 msgid "`map` returns a new view of a new matrix; the `*_inplace` forms change the shared storage."
 msgstr "`map` は新しい行列に対する新しいビューを返します。`*_inplace` 形式は共有ストレージを変更します。"
 
-#: manual/api/mutable.md:1088
+#: manual/api/mutable.md:1078
 msgid "Exchange two rows or columns of the view in place (columns or rows of the wrapped matrix)."
 msgstr "ビューの 2 つの行または列（ラップした行列にとっては列または行）をインプレースで交換します。"
 
-#: manual/api/mutable.md:1098
+#: manual/api/mutable.md:1088
 msgid "Block concatenation of views, returning a view of a new matrix."
 msgstr "ビューのブロック連結で、新しい行列に対するビューを返します。"
 
-#: manual/api/mutable.md:1107
+#: manual/api/mutable.md:1097
 msgid "Entry-wise arithmetic, returning a view of a new matrix."
 msgstr "要素ごとの算術演算で、新しい行列に対するビューを返します。"
 
-#: manual/api/mutable.md:1119
+#: manual/api/mutable.md:1109
 msgid "`Transpose::mul(s, t)` returns the product of two views, computed as $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ without moving data."
 msgstr "`Transpose::mul(s, t)` は 2 つのビューの積を返します。データを移動せずに $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ として計算します。"
 
-#: manual/api/mutable.md:1126
+#: manual/api/mutable.md:1116
 msgid "[!WARNING] The identity $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ holds only for commuting scalars. For a non-commutative scalar type, materialize the views and multiply the matrices instead."
 msgstr "[!WARNING] 恒等式 $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ は可換なスカラーに対してのみ成り立ちます。非可換なスカラー型では、ビューを実体化してから行列どうしを掛けてください。"
 
-#: manual/api/mutable.md:1133
+#: manual/api/mutable.md:1123
 msgid "`equal` compares the wrapped matrices; `to_string` renders the view row by row."
 msgstr "`equal` はラップした行列どうしを比較し、`to_string` はビューを行ごとに出力します。"
 
-#: manual/api/mutable.md:1162
+#: manual/api/mutable.md:1152
 msgid "`Vector::from_array(xs)` adopts `xs` as the vector's storage without copying."
 msgstr "`Vector::from_array(xs)` は `xs` をコピーせずにベクトルのストレージとして採用します。"
 
-#: manual/api/mutable.md:1170
+#: manual/api/mutable.md:1160
 msgid "$n$ copies of a value, or $(f(0), \\dots, f(n-1))$."
 msgstr "値の $n$ 個のコピー、または $(f(0), \\dots, f(n-1))$ です。"
 
-#: manual/api/mutable.md:1179
+#: manual/api/mutable.md:1169
 msgid "Length, deep copy, and iterator."
 msgstr "長さ、ディープコピー、イテレータです。"
 
-#: manual/api/mutable.md:1189
+#: manual/api/mutable.md:1179
 msgid "Read or write element `i` in place; they back `v[i]` and `v[i] = x`. An out-of-range index aborts."
 msgstr "要素 `i` をインプレースで読み書きします。`v[i]` と `v[i] = x` を支えます。範囲外のインデックスでは中断します。"
 
-#: manual/api/mutable.md:1201
+#: manual/api/mutable.md:1191
 msgid "`map` and `zip_with` return new vectors (`zip_with` aborts on different lengths); `map_inplace` rewrites every element."
 msgstr "`map` と `zip_with` は新しいベクトルを返します（`zip_with` は長さが異なると中断します）。`map_inplace` はすべての要素を書き換えます。"
 
-#: manual/api/mutable.md:1213
+#: manual/api/mutable.md:1203
 msgid "Element-wise $u + v$, Hadamard $u \\odot v$, $-u$, and $u + a$. Different lengths abort. There is no `Sub`; write `u + -v`."
 msgstr "要素ごとの $u + v$、Hadamard 積 $u \\odot v$、$-u$、$u + a$ です。長さが異なる場合は中断します。`Sub` はないので、`u + -v` と書いてください。"
 
-#: manual/api/mutable.md:1225
+#: manual/api/mutable.md:1215
 msgid "$(a v_i)$ and $(v_i a)$, as new vectors or in place."
 msgstr "$(a v_i)$ と $(v_i a)$ を、新しいベクトルとして、またはインプレースで求めます。"
 
-#: manual/api/mutable.md:1238
+#: manual/api/mutable.md:1228
 msgid "`Vector::dot(u, v)` returns $\\sum_i u_i v_i$, summed left to right; different lengths abort."
 msgstr "`Vector::dot(u, v)` は左から右へ足し合わせた $\\sum_i u_i v_i$ を返します。長さが異なる場合は中断します。"
 
-#: manual/api/mutable.md:1247
+#: manual/api/mutable.md:1237
 msgid "`Vector::lerp(u, v, t)` returns $(1 - t) u + t v$."
 msgstr "`Vector::lerp(u, v, t)` は $(1 - t) u + t v$ を返します。"
 
-#: manual/api/mutable.md:1255
+#: manual/api/mutable.md:1245
 msgid "`Vector::lin_comb(weights, vectors)` returns $\\sum_k w_k v_k$, accumulated into one new vector."
 msgstr "`Vector::lin_comb(weights, vectors)` は $\\sum_k w_k v_k$ を返します。結果は一つの新しいベクトルに累積されます。"
 
-#: manual/api/mutable.md:1262
+#: manual/api/mutable.md:1252
 msgid "Empty inputs, different counts of weights and vectors, or vectors of different lengths abort."
 msgstr "入力が空の場合、重みとベクトルの個数が異なる場合、またはベクトルの長さが異なる場合は中断します。"
 
-#: manual/api/mutable.md:1267
+#: manual/api/mutable.md:1257
 msgid "`lin_comb(a, u, b, v)` returns $a u + b v$; it is a top-level function."
 msgstr "`lin_comb(a, u, b, v)` は $a u + b v$ を返します。これはトップレベル関数です。"
 
-#: manual/api/mutable.md:1275
+#: manual/api/mutable.md:1265
 msgid "The vector as a $1 \\times n$ or $n \\times 1$ matrix (copied), the diagonal matrix $\\operatorname{diag}(v)$, and the outer product $u v^{\\mathsf T}$."
 msgstr "ベクトルを $1 \\times n$ または $n \\times 1$ 行列として（コピーして）返すもの、対角行列 $\\operatorname{diag}(v)$、外積 $u v^{\\mathsf T}$ です。"
 
-#: manual/api/mutable.md:1287
+#: manual/api/mutable.md:1277
 msgid "`equal` compares elements (backs `==`); `to_string` renders `|a, b, c|`."
 msgstr "`equal` は要素を比較し（`==` を支えます）、`to_string` は `|a, b, c|` を出力します。"
 
-#: manual/api/mutable.md:1315
+#: manual/api/mutable.md:1305
 msgid "`Matrix::map_in_place`, `map_row_in_place`, `map_col_in_place` (aliases)"
 msgstr "`Matrix::map_in_place`、`map_row_in_place`、`map_col_in_place`（別名）"
 
-#: manual/api/mutable.md:1316
+#: manual/api/mutable.md:1306
 msgid "`Transpose::map_in_place`, `map_row_in_place`, `map_col_in_place` (aliases)"
 msgstr "`Transpose::map_in_place`、`map_row_in_place`、`map_col_in_place`（別名）"
 
-#: manual/api/mutable.md:1316
+#: manual/api/mutable.md:1306
 msgid "the `*_inplace` names"
 msgstr "`*_inplace` の名前"
 
-#: manual/api/mutable.md:1317
+#: manual/api/mutable.md:1307
 msgid "`Vector::map_in_place`, `left_scale_in_place`, `right_scale_in_place` (aliases)"
 msgstr "`Vector::map_in_place`、`left_scale_in_place`、`right_scale_in_place`（別名）"
 
-#: manual/api/mutable.md:1318
+#: manual/api/mutable.md:1308
 msgid "`not_equal` method form on `Matrix`, `Transpose`, `Vector` (hidden)"
 msgstr "`Matrix`、`Transpose`、`Vector` の `not_equal` メソッド形式（非公開）"
 
-#: manual/api/mutable.md:1319
+#: manual/api/mutable.md:1309
 msgid "`output` method form on `Matrix`, `Transpose`, `RowView`, `ColView`, `Vector` (hidden)"
 msgstr "`Matrix`、`Transpose`、`RowView`、`ColView`、`Vector` の `output` メソッド形式（非公開）"
 
-#: manual/api/mutable.md:1320
+#: manual/api/mutable.md:1310
 msgid "`Vector::to_repr` (hidden)"
 msgstr "`Vector::to_repr`（非公開）"
 
-#: manual/api/mutable.md:1321
+#: manual/api/mutable.md:1311
 msgid "`Vector::arbitrary` (hidden)"
 msgstr "`Vector::arbitrary`（非公開）"
 
@@ -3606,7 +3606,7 @@ msgstr "`TransposeMatrix::transpose` は同じ型を返します。転置はあ�
 #: manual/design/error.md:66
 #: manual/design/immut.md:79
 #: manual/design/internal.md:39
-#: manual/design/mutable.md:128
+#: manual/design/mutable.md:126
 #: manual/design/perf.md:31
 #: manual/design/perf_runner.md:35
 #: manual/design/perf_support.md:49
@@ -3683,14 +3683,14 @@ msgstr "積の順序を反転させる対合 $x \\mapsto \\bar{x}$、つまり $
 
 #: manual/design/algebra.md:213
 #: manual/design/arithmetic.md:139
-#: manual/design/backends/default.md:108
+#: manual/design/backends/default.md:110
 #: manual/design/consistency.md:66
 #: manual/design/container.md:150
 #: manual/design/container/adapters.md:84
 #: manual/design/error.md:133
 #: manual/design/immut.md:306
 #: manual/design/internal.md:56
-#: manual/design/mutable.md:590
+#: manual/design/mutable.md:594
 #: manual/design/perf.md:43
 #: manual/design/perf_runner.md:46
 #: manual/design/perf_support.md:77
@@ -3752,14 +3752,14 @@ msgstr "N. J. Higham, *Accuracy and Stability of Numerical Algorithms*, 2nd ed.,
 
 #: manual/design/algebra.md:268
 #: manual/design/arithmetic.md:155
-#: manual/design/backends/default.md:121
+#: manual/design/backends/default.md:123
 #: manual/design/consistency.md:73
 #: manual/design/container.md:165
 #: manual/design/container/adapters.md:96
 #: manual/design/error.md:149
 #: manual/design/immut.md:325
 #: manual/design/internal.md:63
-#: manual/design/mutable.md:618
+#: manual/design/mutable.md:622
 #: manual/design/perf.md:48
 #: manual/design/perf_runner.md:52
 #: manual/design/perf_support.md:84
@@ -3784,14 +3784,14 @@ msgstr "**すべての演算を持つ 1 つの `Matrix` trait。** 部分的な�
 
 #: manual/design/algebra.md:281
 #: manual/design/arithmetic.md:165
-#: manual/design/backends/default.md:131
+#: manual/design/backends/default.md:133
 #: manual/design/consistency.md:81
 #: manual/design/container.md:177
 #: manual/design/container/adapters.md:104
 #: manual/design/error.md:158
 #: manual/design/immut.md:335
 #: manual/design/internal.md:69
-#: manual/design/mutable.md:630
+#: manual/design/mutable.md:634
 #: manual/design/perf.md:54
 #: manual/design/perf_runner.md:57
 #: manual/design/perf_support.md:90
@@ -4069,58 +4069,58 @@ msgid "Implementing `@algebra.MatMulMatrix` for a type claims the laws listed in
 msgstr "ある型に `@algebra.MatMulMatrix` を実装することは、[algebra の設計](../algebra.md) に挙げた法則、つまり定義される範囲での `*` の結合律と `+` に対する分配律を主張することです。ラッパーでは、これらの法則はラップされた型から受け継がれます。どの演算子も「アンラップし、内側の演算子を適用し、ラップする」として定義されているからです。"
 
 #: manual/design/backends/default.md:74
-msgid "So `wrap` is a homomorphism for every operation, and any equation that holds for the inner type holds for the wrapper. The converse matters too: the wrappers satisfy *only* the laws of the inner type. `MatMulMatrix` for `DenseMatrix[T]` is implemented for every `T : AddMonoid + Mul`, a bound that does not require distributivity or associativity of `*` on `T`. The product laws of the [algebra design](../algebra.md) hold when `T` is a semiring (`Int`, `BigInt`, ...), hold up to rounding for `Float` and `Double`, and can fail for a scalar type whose `Mul` is not associative or not distributive; the instance exists for such a type, but its laws do not."
-msgstr "したがって `wrap` はすべての演算について準同型であり、内部の型で成り立つ等式はラッパーでも成り立ちます。逆向きも重要です。ラッパーが満たすのは内部の型の法則*だけ*です。`DenseMatrix[T]` の `MatMulMatrix` はすべての `T : AddMonoid + Mul` について実装されていますが、この制約は `T` 上の `*` の分配性も結合性も要求しません。[algebra の設計](../algebra.md) の積の法則は、`T` が半環（`Int`、`BigInt` など）なら成り立ち、`Float` と `Double` では丸め誤差の範囲で成り立ち、`Mul` が結合的でないか分配的でないスカラー型では成り立たないことがあります。そのような型にもインスタンスは存在しますが、法則は成り立ちません。"
+msgid "So `wrap` is a homomorphism for every operation, and any equation that holds for the inner type holds for the wrapper. The converse matters too: the wrappers satisfy *only* the laws of the inner type. `MatMulMatrix` for `DenseMatrix[T]` is implemented for every `T : AddMonoid + Mul`, a bound that does not require distributivity or associativity of `*` on `T`. The product laws of the [algebra design](../algebra.md) hold when `T` is a semiring (`Int`, `BigInt`, ...), hold up to rounding for `Float` and `Double`, and can fail for a scalar type whose `Mul` is not associative or not distributive; the instance exists for such a type, but its laws do not. Tightening the bound is a public API change, tracked as [#94](https://github.com/Luna-Flow/linear-algebra/issues/94)."
+msgstr "したがって `wrap` はすべての演算について準同型であり、内部の型で成り立つ等式はラッパーでも成り立ちます。逆向きも重要です。ラッパーが満たすのは内部の型の法則*だけ*です。`DenseMatrix[T]` の `MatMulMatrix` はすべての `T : AddMonoid + Mul` について実装されていますが、この制約は `T` 上の `*` の分配性も結合性も要求しません。[algebra の設計](../algebra.md) の積の法則は、`T` が半環（`Int`、`BigInt` など）なら成り立ち、`Float` と `Double` では丸め誤差の範囲で成り立ち、`Mul` が結合的でないか分配的でないスカラー型では成り立たないことがあります。そのような型にもインスタンスは存在しますが、法則は成り立ちません。制約を厳しくするのは公開 API の変更であり、[#94](https://github.com/Luna-Flow/linear-algebra/issues/94) で追跡しています。"
 
-#: manual/design/backends/default.md:84
+#: manual/design/backends/default.md:86
 msgid "Partiality of the dense product"
 msgstr "密行列積の部分性"
 
-#: manual/design/backends/default.md:86
+#: manual/design/backends/default.md:88
 msgid "For runtime-shaped dense matrices the product is defined on $\\{(A, B) : \\operatorname{cols}(A) = \\operatorname{rows}(B)\\}$. The trait method returns `Self`, so outside that set the wrapper must do something; it aborts, as the inner type does. This is the documented runtime precondition that the `MatMulMatrix` contract asks implementations to state."
 msgstr "実行時に形状が決まる密行列では、積は $\\{(A, B) : \\operatorname{cols}(A) = \\operatorname{rows}(B)\\}$ 上で定義されます。trait メソッドは `Self` を返すので、この集合の外ではラッパーは何らかの処理をしなければなりません。内側の型と同様に中断します。これは、`MatMulMatrix` の契約が実装に明示を求めている、ドキュメント化された実行時の前提条件です。"
 
-#: manual/design/backends/default.md:92
+#: manual/design/backends/default.md:94
 msgid "Dot product and its rounding error"
 msgstr "内積とその丸め誤差"
 
-#: manual/design/backends/default.md:94
+#: manual/design/backends/default.md:96
 msgid "`dot` computes $s_n = \\sum_{i=1}^{n} u_i v_i$ by the recurrence $s_0 = 0$, $s_i = s_{i-1} + u_i v_i$. In floating point each step multiplies the error of all earlier terms by another factor $(1 + \\delta)$, and the standard argument gives"
 msgstr "`dot` は $s_n = \\sum_{i=1}^{n} u_i v_i$ を漸化式 $s_0 = 0$, $s_i = s_{i-1} + u_i v_i$ で計算します。浮動小数点では、各ステップがそれまでのすべての項の誤差にさらに因子 $(1 + \\delta)$ を掛けるため、標準的な議論から次が得られます。"
 
-#: manual/design/backends/default.md:104
+#: manual/design/backends/default.md:106
 msgid "The relative error is therefore small when the terms have the same sign, and can be large when $\\sum |u_i v_i| \\gg |s_n|$ (cancellation). `matvec` is $m$ such dot products and inherits the same bound row by row."
 msgstr "したがって相対誤差は、項の符号がそろっているときには小さく、$\\sum |u_i v_i| \\gg |s_n|$ のとき（桁落ち）には大きくなりえます。`matvec` はこのような内積を $m$ 個計算するもので、行ごとに同じ限界を受け継ぎます。"
 
-#: manual/design/backends/default.md:110
+#: manual/design/backends/default.md:112
 msgid "**Homomorphism.** `inner(a op b) == inner(a) op inner(b)` for every operator (for `-` the right side is `inner(a) + -inner(b)`, since the inner vector types have no `Sub`), so the wrappers satisfy exactly the laws of the wrapped types."
 msgstr "**準同型。** すべての演算子について `inner(a op b) == inner(a) op inner(b)` が成り立ちます（`-` では右辺は `inner(a) + -inner(b)` です。内部のベクトル型に `Sub` がないためです）。したがってラッパーはラップされた型の法則をちょうど満たします。"
 
-#: manual/design/backends/default.md:114
+#: manual/design/backends/default.md:116
 msgid "**No copies on wrapping.** `from_backend(x).inner()` is physically `x`; writes to a mutable inner value are visible through the wrapper."
 msgstr "**ラップ時にコピーしない。** `from_backend(x).inner()` は物理的に `x` そのものです。可変な内側の値への書き込みはラッパーを通じても見えます。"
 
-#: manual/design/backends/default.md:116
+#: manual/design/backends/default.md:118
 msgid "**Transpose.** `transpose` materializes; it never returns a view, so the `TransposeMatrix` law $(A^{\\mathsf T})^{\\mathsf T} = A$ holds as values."
 msgstr "**転置。** `transpose` は実体化します。ビューを返すことはないので、`TransposeMatrix` の法則 $(A^{\\mathsf T})^{\\mathsf T} = A$ は値として成り立ちます。"
 
-#: manual/design/backends/default.md:118
+#: manual/design/backends/default.md:120
 msgid "**Complexity.** `+`, `-`, `scale`: $O(n)$; `dot`: $n$ multiply-adds; `matvec`: $mn$; `*`: $rcn$ multiply-adds; `transpose`: $O(rc)$ copies."
 msgstr "**計算量。** `+`、`-`、`scale`: $O(n)$。`dot`: $n$ 回の積和。`matvec`: $mn$。`*`: $rcn$ 回の積和。`transpose`: $O(rc)$ 回のコピー。"
 
-#: manual/design/backends/default.md:123
+#: manual/design/backends/default.md:125
 msgid "**A runtime backend selector** inside one matrix type. It would make every operation branch on the backend and hide which kernel runs. Backends are chosen by type."
 msgstr "**1 つの行列型の内部での実行時バックエンドセレクタ。** すべての演算がバックエンドで分岐することになり、どのカーネルが実行されるかが見えなくなります。バックエンドは型で選びます。"
 
-#: manual/design/backends/default.md:126
+#: manual/design/backends/default.md:128
 msgid "**Implementing the traits in `immut` and `mutable` directly.** That would tie the stable concrete packages to the experimental `algebra` layer."
 msgstr "**`immut` と `mutable` で直接 trait を実装する。** 安定した具体的パッケージを実験的な `algebra` 層に縛り付けることになります。"
 
-#: manual/design/backends/default.md:128
+#: manual/design/backends/default.md:130
 msgid "**In-place `axpy`.** It would give the two wrappers different semantics for the same name."
 msgstr "**インプレースの `axpy`。** 同じ名前に対して 2 つのラッパーで異なる意味論を持たせることになります。"
 
-#: manual/design/backends/default.md:133
+#: manual/design/backends/default.md:135
 msgid "`backends/default` defines no new traits and no new numerical algorithms; the decompositions, inverses and statistics of [`mutable`](../mutable.md) are reached through `inner()`. It does not provide sparse, lazy, static-size or GPU backends; those should implement the `algebra` traits for their own types rather than convert into these wrappers. The native OpenBLAS backend that once sat beside it is withdrawn in this release and preserved in `contrib/openblas_backend`."
 msgstr "`backends/default` は新しい trait も新しい数値アルゴリズムも定義しません。[`mutable`](../mutable.md) の分解、逆行列、統計量には `inner()` を通じてアクセスします。疎、遅延、静的サイズ、GPU のバックエンドは提供しません。そうしたバックエンドは、これらのラッパーに変換するのではなく、自身の型に `algebra` の trait を実装すべきです。かつてこのパッケージの隣にあったネイティブ OpenBLAS バックエンドは本リリースで取り下げられ、`contrib/openblas_backend` に保存されています。"
 
@@ -5080,250 +5080,234 @@ msgid "radicand $\\le \\tau$ means not positive definite"
 msgstr "根号の中身が $\\le \\tau$ なら正定値でない"
 
 #: manual/design/mutable.md:67
-msgid "`is_symmetric`, fast-path detection (identity, diagonal, permutation, triangular)"
-msgstr "`is_symmetric`、高速経路の判別（単位、対角、置換、三角）"
+msgid "`is_symmetric` (also the precondition of `eigen`)"
+msgstr "`is_symmetric`（`eigen` の前提条件でもある）"
 
 #: manual/design/mutable.md:67
-msgid "$\\lvert a_{ij} - b_{ij}\\rvert \\le \\tau$ counts as equal"
-msgstr "$\\lvert a_{ij} - b_{ij}\\rvert \\le \\tau$ なら等しいとみなす"
+msgid "$\\lvert a_{ij} - a_{ji}\\rvert \\le \\tau$ counts as equal"
+msgstr "$\\lvert a_{ij} - a_{ji}\\rvert \\le \\tau$ なら等しいとみなす"
 
 #: manual/design/mutable.md:68
-msgid "discriminant $< -\\tau$ aborts, $\\lvert\\text{discriminant}\\rvert \\le \\tau$ counts as zero"
-msgstr "判別式が $< -\\tau$ なら中断し、$\\lvert\\text{discriminant}\\rvert \\le \\tau$ なら零とみなす"
-
-#: manual/design/mutable.md:69
-msgid "`eigen`, Householder step"
-msgstr "`eigen` の Householder ステップ"
-
-#: manual/design/mutable.md:69
-msgid "a row with $\\sum_k \\lvert a_{ik}\\rvert \\le \\tau$ is not reflected"
-msgstr "$\\sum_k \\lvert a_{ik}\\rvert \\le \\tau$ の行は反射しない"
-
-#: manual/design/mutable.md:70
-msgid "`eigen` deflation"
-msgstr "`eigen` のデフレーション"
-
-#: manual/design/mutable.md:71
 msgid "residual $\\lVert Ax - \\lambda x\\rVert_\\infty \\le \\tau$ accepts; $\\lVert Ax\\rVert_\\infty \\le \\tau$ or $x^{\\mathsf T}x \\le \\tau$ gives `None`"
 msgstr "残差 $\\lVert Ax - \\lambda x\\rVert_\\infty \\le \\tau$ なら受理。$\\lVert Ax\\rVert_\\infty \\le \\tau$ または $x^{\\mathsf T}x \\le \\tau$ なら `None`"
 
-#: manual/design/mutable.md:73
-msgid "An absolute threshold is simple and predictable, but it is not scale invariant. Scaling $A$ by $10^{-12}$ makes every pivot fall below $\\tau$, so a perfectly conditioned matrix is reported singular; scaling by $10^{12}$ lets a numerically singular matrix pass. Scale data to order one before calling these routines. For `Float`, $\\tau = 10^{-11}$ is far below the unit roundoff $\\approx 6 \\times 10^{-8}$, so for data of order one the tests effectively check for exact zeros, and nearly singular `Float` matrices are not detected. The trait is closed (`pub`, not `pub(open)`), so these two instances are the only ones; a scale-aware tolerance policy is future work and would be a breaking change."
-msgstr "絶対しきい値は単純で予測しやすいものの、スケール不変ではありません。$A$ を $10^{-12}$ 倍するとすべてのピボットが $\\tau$ を下回り、条件の極めて良い行列が特異と報告されます。$10^{12}$ 倍すると、数値的に特異な行列が判定を通ってしまいます。これらのルーチンを呼ぶ前に、データを 1 程度の大きさにスケーリングしてください。`Float` では $\\tau = 10^{-11}$ は単位丸め誤差 $\\approx 6 \\times 10^{-8}$ よりはるかに小さいので、1 程度のデータでは判定は実質的に厳密な零を調べているだけで、特異に近い `Float` 行列は検出されません。この trait は閉じている（`pub(open)` ではなく `pub`）ので、インスタンスはこの二つだけです。スケールを考慮した許容誤差の方針は今後の課題であり、破壊的変更になります。"
+#: manual/design/mutable.md:70
+msgid "The structural fast paths and the internal decisions of `eigen` do not use $\\tau$: the fast paths require the structure exactly, and `eigen` deflates relative to the entries (see below). An absolute threshold is simple and predictable, but it is not scale invariant. Scaling $A$ by $10^{-12}$ makes every pivot fall below $\\tau$, so a perfectly conditioned matrix is reported singular; scaling by $10^{12}$ lets a numerically singular matrix pass. Scale data to order one before calling these routines. For `Float`, $\\tau = 10^{-11}$ is far below the unit roundoff $\\approx 6 \\times 10^{-8}$, so for data of order one the tests effectively check for exact zeros, and nearly singular `Float` matrices are not detected. The trait is closed (`pub`, not `pub(open)`), so these two instances are the only ones; a scale-aware tolerance policy is future work and would be a breaking change."
+msgstr "構造による高速経路と `eigen` の内部の判定は $\\tau$ を使いません。高速経路は構造が厳密に成り立つことを要求し、`eigen` は要素に対して相対的に減次します（後述）。絶対しきい値は単純で予測しやすいものの、スケール不変ではありません。$A$ を $10^{-12}$ 倍するとすべてのピボットが $\\tau$ を下回り、条件の極めて良い行列が特異と報告されます。$10^{12}$ 倍すると、数値的に特異な行列が判定を通ってしまいます。これらのルーチンを呼ぶ前に、データを 1 程度の大きさにスケーリングしてください。`Float` では $\\tau = 10^{-11}$ は単位丸め誤差 $\\approx 6 \\times 10^{-8}$ よりはるかに小さいので、1 程度のデータでは判定は実質的に厳密な零を調べているだけで、特異に近い `Float` 行列は検出されません。この trait は閉じている（`pub(open)` ではなく `pub`）ので、インスタンスはこの二つだけです。スケールを考慮した許容誤差の方針は今後の課題であり、破壊的変更になります。"
 
-#: manual/design/mutable.md:84
+#: manual/design/mutable.md:83
 msgid "Fast paths"
 msgstr "高速経路"
 
-#: manual/design/mutable.md:86
-msgid "`inverse` recognizes the identity (returns a copy), diagonal matrices (inverts the diagonal) and permutation matrices (returns the transpose, since $P^{\\mathsf T} P = I$ for a matrix whose columns are distinct coordinate vectors). `cholesky_decomposition` recognizes the identity and diagonal matrices, and `determinant` recognizes triangular matrices for $n \\ge 5$ and multiplies the diagonal. Each test costs $O(n^2)$ and saves an $O(n^3)$ factorization. The tests use the tolerance, so a matrix that is diagonal up to $\\tau$ is treated as exactly diagonal, and a matrix within $\\tau$ of the identity is returned as it is (by `inverse` and by `cholesky_decomposition`, whose result is then not exactly lower triangular)."
-msgstr "`inverse` は単位行列（コピーを返す）、対角行列（対角を逆数にする）、置換行列（転置を返す。列が相異なる座標ベクトルである行列では $P^{\\mathsf T} P = I$ だから）を認識します。`cholesky_decomposition` は単位行列と対角行列を、`determinant` は $n \\ge 5$ で三角行列を認識して対角の積をとります。各判定のコストは $O(n^2)$ で、$O(n^3)$ の分解を一回省きます。判定には許容誤差が使われるので、$\\tau$ の範囲で対角な行列は厳密に対角として扱われ、単位行列との差が $\\tau$ 以内の行列はそのまま返されます（`inverse` でも `cholesky_decomposition` でもそうで、後者の結果は厳密には下三角になりません）。"
+#: manual/design/mutable.md:85
+msgid "`inverse` recognizes the identity (returns a copy), diagonal matrices (inverts the diagonal) and permutation matrices (returns the transpose, since $P^{\\mathsf T} P = I$ for a matrix whose columns are distinct coordinate vectors). `cholesky_decomposition` recognizes the identity and diagonal matrices, and `determinant` recognizes triangular matrices for $n \\ge 5$ and multiplies the diagonal. Each test costs $O(n^2)$ and saves an $O(n^3)$ factorization. The tests are exact (entries compared with $0$ and $1$), so a shortcut is taken only when it returns what the general algorithm would; a matrix that is merely close to the structure goes through the general path."
+msgstr "`inverse` は単位行列（コピーを返す）、対角行列（対角を逆数にする）、置換行列（転置を返す。列が相異なる座標ベクトルである行列では $P^{\\mathsf T} P = I$ だから）を認識します。`cholesky_decomposition` は単位行列と対角行列を、`determinant` は $n \\ge 5$ で三角行列を認識して対角の積をとります。各判定のコストは $O(n^2)$ で、$O(n^3)$ の分解を一回省きます。判定は厳密（要素を $0$ と $1$ にちょうど一致するかで比較）なので、近道をとるのは一般のアルゴリズムと同じ結果を返すときだけで、構造に近いだけの行列は一般の経路を通ります。"
 
-#: manual/design/mutable.md:97
+#: manual/design/mutable.md:95
 msgid "Checked forms without changing the kernels"
 msgstr "カーネルを変えずに検査付き形式を提供する"
 
-#: manual/design/mutable.md:99
+#: manual/design/mutable.md:97
 msgid "Every checked method validates (squareness, exponent sign, non-emptiness, lengths) and then calls its unchecked partner, which keeps the original aborting or `Option` behaviour. There is no checked matrix product here: `*` validates and aborts, and `unchecked_matmul` does not validate at all. This asymmetry with `@immut.Matrix::matmul` is known; a checked `matmul` would be an addition, not a change."
 msgstr "すべての検査付きメソッドは検証（正方性、指数の符号、空でないこと、長さ）を行ってから、元の中断する振る舞いまたは `Option` の振る舞いを保つ検査なしの対を呼び出します。ここには検査付きの行列積はありません。`*` は検証して中断し、`unchecked_matmul` はまったく検証しません。`@immut.Matrix::matmul` とのこの非対称性は認識されています。検査付きの `matmul` は変更ではなく追加になるでしょう。"
 
-#: manual/design/mutable.md:106
+#: manual/design/mutable.md:104
 msgid "Symmetric eigenvalues only"
 msgstr "対称行列の固有値のみ"
 
-#: manual/design/mutable.md:108
+#: manual/design/mutable.md:106
 msgid "General real matrices can have complex eigenvalues, which a function returning `Vector[T]` cannot represent for real `T`. `eigen` therefore accepts only symmetric matrices, for which all eigenvalues are real and an orthonormal eigenbasis exists, and aborts otherwise."
 msgstr "一般の実行列は複素固有値を持ちうるため、実数の `T` に対して `Vector[T]` を返す関数では表現できません。そのため `eigen` は、すべての固有値が実数で正規直交な固有基底が存在する対称行列だけを受け付け、それ以外では中断します。"
 
-#: manual/design/mutable.md:113
+#: manual/design/mutable.md:111
 msgid "Which traits the routines require, and why"
 msgstr "各ルーチンが必要とする trait とその理由"
 
-#: manual/design/mutable.md:115
+#: manual/design/mutable.md:113
 msgid "Bound"
 msgstr "制約"
 
-#: manual/design/mutable.md:115
+#: manual/design/mutable.md:113
 msgid "Needed for"
 msgstr "用途"
 
-#: manual/design/mutable.md:117
+#: manual/design/mutable.md:115
 msgid "products, `mul_vec`, `dot`, `trace`: sums of products starting from `0`"
 msgstr "積、`mul_vec`、`dot`、`trace`：`0` から始める積の和"
 
-#: manual/design/mutable.md:118
+#: manual/design/mutable.md:116
 msgid "`pow`: needs `1` for $A^0 = I$ and distributivity for associativity of the product"
 msgstr "`pow`：$A^0 = I$ に `1` が、積の結合性に分配法則が必要"
 
-#: manual/design/mutable.md:119
+#: manual/design/mutable.md:117
 msgid "elimination divides by pivots; `mean` divides by $N$"
 msgstr "消去はピボットで割り、`mean` は $N$ で割る"
 
-#: manual/design/mutable.md:120
+#: manual/design/mutable.md:118
 msgid "`abs` for pivot selection and every tolerance test"
 msgstr "ピボット選択とすべての許容誤差の判定に使う `abs`"
 
-#: manual/design/mutable.md:121
+#: manual/design/mutable.md:119
 msgid "comparing magnitudes"
 msgstr "大きさの比較"
 
-#: manual/design/mutable.md:122
+#: manual/design/mutable.md:120
 msgid "Cholesky diagonal, Householder norms, Givens rotations, $\\lVert\\cdot\\rVert_F$, `std_dev`"
 msgstr "Cholesky の対角、Householder のノルム、Givens 回転、$\\lVert\\cdot\\rVert_F$、`std_dev`"
 
-#: manual/design/mutable.md:123
+#: manual/design/mutable.md:121
 msgid "the zero decisions above"
 msgstr "前述の零の判定"
 
-#: manual/design/mutable.md:125
+#: manual/design/mutable.md:123
 msgid "`Field` is commutative in `luna-generic`, which the derivations below use (for example $\\det(LU) = \\det L \\det U$ and $(AB)^{\\mathsf T} = B^{\\mathsf T} A^{\\mathsf T}$)."
 msgstr "`luna-generic` の `Field` は可換であり、以下の導出はそれを使います（たとえば $\\det(LU) = \\det L \\det U$ や $(AB)^{\\mathsf T} = B^{\\mathsf T} A^{\\mathsf T}$）。"
 
-#: manual/design/mutable.md:130
+#: manual/design/mutable.md:128
 msgid "Throughout, $u$ is the unit roundoff ($2^{-53}$ for `Double`, $2^{-24}$ for `Float`), $\\mathrm{fl}(x \\circ y) = (x \\circ y)(1 + \\delta)$ with $|\\delta| \\le u$, and"
 msgstr "以下では、$u$ は単位丸め誤差（`Double` では $2^{-53}$、`Float` では $2^{-24}$）、$\\mathrm{fl}(x \\circ y) = (x \\circ y)(1 + \\delta)$、$|\\delta| \\le u$ であり、さらに"
 
-#: manual/design/mutable.md:140
+#: manual/design/mutable.md:138
 msgid "The second fact[^gamma] is what turns \"each operation is rounded\" into bounds for whole algorithms. Inequalities between matrices hold entry-wise, and $|A|$ is the matrix of absolute values. A flop is one floating-point addition, subtraction, multiplication or division."
 msgstr "二つ目の事実[^gamma]によって、「各演算が丸められる」ことがアルゴリズム全体の誤差評価に変わります。行列間の不等式は要素ごとに成り立ち、$|A|$ は絶対値からなる行列です。flop は浮動小数点の加算、減算、乗算、除算のいずれか一回を指します。"
 
-#: manual/design/mutable.md:145
+#: manual/design/mutable.md:143
 msgid "Higham, Lemma 3.1. The proof is an induction on $n$ using $|\\theta_{n+1}| \\le |\\theta_n| + u + u|\\theta_n|$."
 msgstr "Higham、補題 3.1。証明は $|\\theta_{n+1}| \\le |\\theta_n| + u + u|\\theta_n|$ を使った $n$ についての帰納法です。"
 
-#: manual/design/mutable.md:148
+#: manual/design/mutable.md:146
 msgid "Matrix product"
 msgstr "行列積"
 
-#: manual/design/mutable.md:150
+#: manual/design/mutable.md:148
 msgid "$(AB)_{ik} = \\sum_j a_{ij} b_{jk}$ costs $rcn$ multiply-adds, $2rcn$ flops. The kernels sum in different orders (four partial products per step in the unrolled kernels; a packed copy of the columns of $B$ for products of at least $4 \\times 16 \\times 16$), but in any order each product $a_{ij} b_{jk}$ passes through one multiplication and at most $n - 1$ additions, so it carries a factor $1 + \\theta_n$ and"
 msgstr "$(AB)_{ik} = \\sum_j a_{ij} b_{jk}$ のコストは $rcn$ 回の積和、すなわち $2rcn$ flops です。カーネルごとに和をとる順序は異なります（展開したカーネルでは一ステップに四つの部分積、$4 \\times 16 \\times 16$ 以上の積では $B$ の列をパックしたコピー）が、どの順序でも各積 $a_{ij} b_{jk}$ は一回の乗算と高々 $n - 1$ 回の加算を通るので、因子 $1 + \\theta_n$ を持ち、"
 
-#: manual/design/mutable.md:161
+#: manual/design/mutable.md:159
 msgid "Results on different targets therefore agree to that accuracy, not bit for bit."
 msgstr "したがって、ターゲットが異なっても結果はこの精度で一致しますが、ビット単位で一致するわけではありません。"
 
-#: manual/design/mutable.md:164
+#: manual/design/mutable.md:162
 msgid "LU factorization with partial pivoting"
 msgstr "部分ピボット選択付き LU 分解"
 
-#: manual/design/mutable.md:166
+#: manual/design/mutable.md:164
 msgid "For square $A$, Gaussian elimination with partial pivoting computes a permutation $P$, a unit lower triangular $L$ and an upper triangular $U$ with"
 msgstr "正方行列 $A$ について、部分ピボット選択付き Gauss 消去は、置換行列 $P$、単位下三角行列 $L$、上三角行列 $U$ を計算し、次を満たします。"
 
-#: manual/design/mutable.md:173
+#: manual/design/mutable.md:171
 msgid "**Derivation.** Write $A^{(0)} = A$. At step $k$ the algorithm chooses the row $p \\ge k$ with the largest $|a^{(k)}_{pk}|$ and swaps it into position $k$ (a transposition $P_k$). It then subtracts multiples of row $k$ from the rows below, which is multiplication by the Gauss transform"
 msgstr "**導出。** $A^{(0)} = A$ とします。第 $k$ ステップでアルゴリズムは $|a^{(k)}_{pk}|$ が最大となる行 $p \\ge k$ を選び、それを第 $k$ 行へ交換します（互換 $P_k$）。続いて下の各行から第 $k$ 行の倍数を引きます。これは次の Gauss 変換を掛けることにあたります。"
 
-#: manual/design/mutable.md:184
+#: manual/design/mutable.md:182
 msgid "so that $a^{(k+1)}_{ij} = a^{(k)}_{ij} - l_{ik} a^{(k)}_{kj}$ and column $k$ below the diagonal becomes zero. After $n - 1$ steps"
 msgstr "これにより $a^{(k+1)}_{ij} = a^{(k)}_{ij} - l_{ik} a^{(k)}_{kj}$ となり、第 $k$ 列の対角より下が零になります。$n - 1$ ステップの後には"
 
-#: manual/design/mutable.md:191
+#: manual/design/mutable.md:189
 msgid "Since $e_k^{\\mathsf T} \\ell_k = 0$, $M_k^{-1} = I + \\ell_k e_k^{\\mathsf T}$, and a later transposition $P_j$ ($j > k$) only exchanges entries of $\\ell_k$: $P_j M_k = \\tilde M_k P_j$ with $\\tilde M_k = I - (P_j \\ell_k) e_k^{\\mathsf T}$. Moving all permutations to the right gives $U = \\tilde M_{n-2} \\cdots \\tilde M_0 P A$ with $P = P_{n-2} \\cdots P_0$, hence $PA = LU$ with"
 msgstr "$e_k^{\\mathsf T} \\ell_k = 0$ なので $M_k^{-1} = I + \\ell_k e_k^{\\mathsf T}$ であり、後の互換 $P_j$（$j > k$）は $\\ell_k$ の要素を入れ替えるだけです。すなわち $\\tilde M_k = I - (P_j \\ell_k) e_k^{\\mathsf T}$ として $P_j M_k = \\tilde M_k P_j$ です。すべての置換を右へ移すと $P = P_{n-2} \\cdots P_0$ として $U = \\tilde M_{n-2} \\cdots \\tilde M_0 P A$ となり、したがって $PA = LU$ で、"
 
-#: manual/design/mutable.md:202
+#: manual/design/mutable.md:200
 msgid "This is why the code can store the multipliers in place of the eliminated entries and swap whole rows, multipliers included: the stored lower triangle is exactly $L$. The pivot choice gives $|l_{ik}| \\le 1$."
 msgstr "これが、コードが消去した要素の位置に乗数を格納し、乗数ごと行全体を交換してよい理由です。格納された下三角部分はちょうど $L$ です。ピボットの選び方から $|l_{ik}| \\le 1$ が成り立ちます。"
 
-#: manual/design/mutable.md:206
+#: manual/design/mutable.md:204
 msgid "**Cost.** Step $k$ updates an $(n-k-1) \\times (n-k-1)$ block with one multiply and one subtract per entry, so"
 msgstr "**コスト。** 第 $k$ ステップは $(n-k-1) \\times (n-k-1)$ のブロックを、要素ごとに乗算一回と減算一回で更新するので、"
 
-#: manual/design/mutable.md:213
+#: manual/design/mutable.md:211
 msgid "flops."
 msgstr "flops です。"
 
-#: manual/design/mutable.md:215
+#: manual/design/mutable.md:213
 msgid "**Determinant.** Taking determinants of $PA = LU$ with $\\det L = 1$ and $\\det P = (-1)^{s}$ for $s$ exchanges,"
 msgstr "**行列式。** $PA = LU$ の行列式をとり、$\\det L = 1$ と、交換が $s$ 回のときの $\\det P = (-1)^{s}$ を使うと、"
 
-#: manual/design/mutable.md:222
+#: manual/design/mutable.md:220
 msgid "**Solving and the inverse.** $Ax = b$ becomes $L y = P b$ (forward substitution, $y_i = (Pb)_i - \\sum_{k<i} l_{ik} y_k$) and $U x = y$ (back substitution, $x_i = (y_i - \\sum_{k>i} u_{ik} x_k) / u_{ii}$). Each costs $\\sum_i 2i \\approx n^2$ flops per right-hand side. The inverse is the solution for the $n$ columns of $I$; the code does not exploit the zeros of $e_j$, so the total is $\\tfrac23 n^3 + n \\cdot 2n^2 = \\tfrac83 n^3$ flops."
 msgstr "**求解と逆行列。** $Ax = b$ は $L y = P b$（前進代入、$y_i = (Pb)_i - \\sum_{k<i} l_{ik} y_k$）と $U x = y$（後退代入、$x_i = (y_i - \\sum_{k>i} u_{ik} x_k) / u_{ii}$）になります。どちらも右辺一本あたり $\\sum_i 2i \\approx n^2$ flops です。逆行列は $I$ の $n$ 本の列に対する解です。コードは $e_j$ の零を利用しないので、合計は $\\tfrac23 n^3 + n \\cdot 2n^2 = \\tfrac83 n^3$ flops です。"
 
-#: manual/design/mutable.md:229
+#: manual/design/mutable.md:227
 msgid "**Stability.** The computed factors satisfy the backward error bound (Wilkinson; Higham, Theorem 9.3)[^higham]"
 msgstr "**安定性。** 計算された因子は後退誤差の限界（Wilkinson; Higham, Theorem 9.3）を満たします。[^higham]"
 
-#: manual/design/mutable.md:236
+#: manual/design/mutable.md:234
 msgid "To turn this into a norm bound, let $\\rho_n = \\max_{i,j,k} |a^{(k)}_{ij}| / \\max_{i,j} |a_{ij}|$ be the growth factor. Every row of $\\hat L$ has at most $n$ entries of magnitude at most $1$, so $\\lVert \\hat L \\rVert_\\infty \\le n$, and every row of $\\hat U$ has at most $n$ entries bounded by $\\rho_n \\max |a_{ij}| \\le \\rho_n \\lVert A \\rVert_\\infty$, so"
 msgstr "これをノルムの評価にするため、$\\rho_n = \\max_{i,j,k} |a^{(k)}_{ij}| / \\max_{i,j} |a_{ij}|$ を増大因子とします。$\\hat L$ の各行には大きさ $1$ 以下の要素が高々 $n$ 個あるので $\\lVert \\hat L \\rVert_\\infty \\le n$ であり、$\\hat U$ の各行には $\\rho_n \\max |a_{ij}| \\le \\rho_n \\lVert A \\rVert_\\infty$ で抑えられる要素が高々 $n$ 個あるので、"
 
-#: manual/design/mutable.md:249
+#: manual/design/mutable.md:247
 msgid "Partial pivoting bounds the growth: since $|l_{ik}| \\le 1$, $|a^{(k+1)}_{ij}| \\le |a^{(k)}_{ij}| + |a^{(k)}_{kj}| \\le 2 \\max |a^{(k)}|$, so $\\rho_n \\le 2^{n-1}$. The bound is attained only by contrived matrices; in practice $\\rho_n$ is small and the method is backward stable. Including the two triangular solves, each computed solution satisfies $(A + \\Delta A)\\hat x = b$ with $\\lVert \\Delta A \\rVert_\\infty \\le 2 n^2 \\gamma_n \\rho_n \\lVert A \\rVert_\\infty$ (Higham, Theorem 9.5), and the *forward* error is governed by the condition number $\\kappa_\\infty(A) = \\lVert A \\rVert_\\infty \\lVert A^{-1} \\rVert_\\infty$:"
 msgstr "部分ピボット選択は増大を抑えます。$|l_{ik}| \\le 1$ なので $|a^{(k+1)}_{ij}| \\le |a^{(k)}_{ij}| + |a^{(k)}_{kj}| \\le 2 \\max |a^{(k)}|$ となり、$\\rho_n \\le 2^{n-1}$ です。この上界に達するのは作為的な行列だけで、実際には $\\rho_n$ は小さく、この方法は後退安定です。二回の三角系の求解を含めると、計算された各解は $\\lVert \\Delta A \\rVert_\\infty \\le 2 n^2 \\gamma_n \\rho_n \\lVert A \\rVert_\\infty$ なる $(A + \\Delta A)\\hat x = b$ を満たし（Higham、定理 9.5）、*前進*誤差は条件数 $\\kappa_\\infty(A) = \\lVert A \\rVert_\\infty \\lVert A^{-1} \\rVert_\\infty$ で決まります。"
 
-#: manual/design/mutable.md:264
+#: manual/design/mutable.md:262
 msgid "Each column of the computed inverse obeys this bound."
 msgstr "計算された逆行列の各列はこの評価に従います。"
 
-#: manual/design/mutable.md:266
+#: manual/design/mutable.md:264
 msgid "N. J. Higham, *Accuracy and Stability of Numerical Algorithms*, 2nd ed., SIAM, 2002, chapters 3 (basics), 8 (triangular systems), 9 (LU) and 10 (Cholesky)."
 msgstr "N. J. Higham, *Accuracy and Stability of Numerical Algorithms*, 2nd ed., SIAM, 2002、第 3 章（基礎）、第 8 章（三角系）、第 9 章（LU）、第 10 章（Cholesky）。"
 
-#: manual/design/mutable.md:270
+#: manual/design/mutable.md:268
 msgid "Closed forms for small determinants"
 msgstr "小さな行列式の閉じた公式"
 
-#: manual/design/mutable.md:272
+#: manual/design/mutable.md:270
 msgid "For $n \\le 4$ the determinant is evaluated by formulas instead of LU: the rule $ad - bc$, cofactor expansion along the first row for $n = 3$, and for $n = 4$ Laplace's expansion along the first two rows into six products of complementary $2 \\times 2$ minors,"
 msgstr "$n \\le 4$ では、行列式は LU ではなく公式で評価します。規則 $ad - bc$、$n = 3$ では第 1 行に沿った余因子展開、$n = 4$ では最初の 2 行に沿った Laplace 展開による、相補的な $2 \\times 2$ 小行列式の 6 つの積です。"
 
-#: manual/design/mutable.md:281
+#: manual/design/mutable.md:279
 msgid "where $\\overline{\\{p,q\\}}$ is the complementary pair of columns. The sign is $(-1)^{1+p+q}$: $+$ for $\\{0,1\\}, \\{0,3\\}, \\{1,2\\}, \\{2,3\\}$ and $-$ for $\\{0,2\\}, \\{1,3\\}$, which is the pattern $s_{01} c_{23} - s_{02} c_{13} + s_{03} c_{12} + s_{12} c_{03} - s_{13} c_{02} + s_{23} c_{01}$ in the code."
 msgstr "ここで $\\overline{\\{p,q\\}}$ は相補的な列の組です。符号は $(-1)^{1+p+q}$ で、$\\{0,1\\}, \\{0,3\\}, \\{1,2\\}, \\{2,3\\}$ では $+$、$\\{0,2\\}, \\{1,3\\}$ では $-$ となり、これがコード中のパターン $s_{01} c_{23} - s_{02} c_{13} + s_{03} c_{12} + s_{12} c_{03} - s_{13} c_{02} + s_{23} c_{01}$ です。"
 
-#: manual/design/mutable.md:287
+#: manual/design/mutable.md:285
 msgid "They use no division and no pivoting decision, which avoids the tolerance test for tiny matrices. Their rounding error is easy to bound: every one of the $n!$ monomials $\\pm a_{0\\sigma(0)} \\cdots a_{n-1,\\sigma(n-1)}$ passes through at most $m$ roundings, with $m = 2, 5, 10$ for $n = 2, 3, 4$ (for $n = 4$: two in each $2 \\times 2$ minor, one for their product, five for the sum of six terms), so"
 msgstr "除算もピボットの判断もないので、小さな行列で許容誤差の判定を避けられます。丸め誤差は簡単に評価できます。$n!$ 個の単項式 $\\pm a_{0\\sigma(0)} \\cdots a_{n-1,\\sigma(n-1)}$ のどれもが高々 $m$ 回の丸めを通り、$n = 2, 3, 4$ に対して $m = 2, 5, 10$ です（$n = 4$ では各 $2 \\times 2$ 小行列式で二回、その積で一回、六項の和で五回）。したがって"
 
-#: manual/design/mutable.md:298
+#: manual/design/mutable.md:296
 msgid "The permanent is at least $|\\det A|$, and much larger when the monomials cancel; then the relative accuracy is lost, exactly as the determinant itself is ill-conditioned there. These formulas are not backward stable in the LU sense."
 msgstr "パーマネントは $|\\det A|$ 以上で、単項式が打ち消し合うときにははるかに大きくなります。そのときは相対精度が失われますが、それはちょうど行列式そのものがそこで悪条件であることに対応します。これらの公式は LU の意味では後退安定ではありません。"
 
-#: manual/design/mutable.md:303
+#: manual/design/mutable.md:301
 msgid "Rank and reduced row echelon form"
 msgstr "階数（ランク）と被約行階段形"
 
-#: manual/design/mutable.md:305
+#: manual/design/mutable.md:303
 msgid "`rank` runs elimination with partial pivoting on a copy and counts pivots whose magnitude is at least the tolerance, moving to the next column when the largest remaining entry is below it. This is the *numerical rank* with an absolute threshold $\\tau$. It is exact for matrices whose pivots are well separated from $\\tau$ and otherwise depends on scaling. The singular value decomposition gives the reliable numerical rank, $\\#\\{\\sigma_i > \\tau\\}$, because by the Eckart–Young theorem $\\sigma_{k+1}$ is the 2-norm distance to the nearest matrix of rank $k$; elimination pivots have no such meaning, and a matrix with all pivots of order one can be within $2^{-n}$ of a singular one.[^kahan] The SVD is not implemented."
 msgstr "`rank` はコピーに対して部分ピボット選択付きの消去を行い、大きさが許容誤差以上のピボットを数えます。残りの最大要素が許容誤差を下回れば次の列へ進みます。これは絶対しきい値 $\\tau$ による*数値ランク*です。ピボットが $\\tau$ から十分離れている行列では正確ですが、そうでなければスケーリングに依存します。信頼できる数値ランク $\\#\\{\\sigma_i > \\tau\\}$ を与えるのは特異値分解です。Eckart–Young の定理により、$\\sigma_{k+1}$ はランク $k$ の最も近い行列までの 2 ノルム距離だからです。消去のピボットにはそのような意味はなく、ピボットがすべて 1 程度の行列でも、特異な行列から約 $2^{-n}$ しか離れていないことがあります。[^kahan] SVD は実装されていません。"
 
-#: manual/design/mutable.md:316
+#: manual/design/mutable.md:314
 msgid "Kahan's example: the upper triangular matrix with $1$ on the diagonal and $-1$ above it has all pivots equal to $1$, while its smallest singular value decreases like $2^{-n}$."
 msgstr "Kahan の例：対角が $1$ でその上がすべて $-1$ の上三角行列は、ピボットがすべて $1$ なのに、最小特異値は $2^{-n}$ のように小さくなります。"
 
-#: manual/design/mutable.md:320
+#: manual/design/mutable.md:318
 msgid "`reduce_row_elimination` is Gauss–Jordan elimination: each pivot row is scaled to make the pivot one, and the pivot column is cleared in every other row. For each of at most $\\min(r, c)$ pivots it updates all $r$ rows over all $c$ columns, about $2 r c \\min(r, c)$ flops, and works in place. Unlike LU it produces the reduced form, in which every pivot column is a coordinate vector, so the non-pivot columns of the result express the dependent columns of $A$ in terms of the pivot columns."
 msgstr "`reduce_row_elimination` は Gauss–Jordan 消去です。各ピボット行をスケーリングしてピボットを一にし、他のすべての行でピボット列を消します。高々 $\\min(r, c)$ 個のピボットそれぞれについて全 $r$ 行の全 $c$ 列を更新するので、約 $2 r c \\min(r, c)$ flops で、その場で動作します。LU と違い簡約形を作るので、各ピボット列は座標ベクトルになり、結果の非ピボット列は $A$ の従属な列をピボット列で表したものになります。"
 
-#: manual/design/mutable.md:328
+#: manual/design/mutable.md:326
 msgid "Cholesky factorization"
 msgstr "Cholesky 分解"
 
-#: manual/design/mutable.md:330
+#: manual/design/mutable.md:328
 msgid "A symmetric positive definite (SPD) matrix has a unique factorization $A = L L^{\\mathsf T}$ with $L$ lower triangular and $l_{jj} > 0$. Comparing entries of $A = L L^{\\mathsf T}$ for $i \\ge j$,"
 msgstr "対称正定値（SPD）行列は、$L$ が下三角で $l_{jj} > 0$ である一意の分解 $A = L L^{\\mathsf T}$ を持ちます。$i \\ge j$ について $A = L L^{\\mathsf T}$ の要素を比較すると、"
 
-#: manual/design/mutable.md:341
+#: manual/design/mutable.md:339
 msgid "Each equation determines one new entry from earlier ones, which proves uniqueness once the radicands are positive. The code evaluates them row by row (the Cholesky–Banachiewicz order) and reads only the lower triangle of $A$; the cost is $\\sum_j 2 j (n - j) \\approx \\tfrac13 n^3$ flops, half of LU, because symmetry halves the work."
 msgstr "各式はそれまでの要素から新しい要素を一つ決めるので、被開平数が正であれば一意性が示されます。コードはこれを行ごとに評価し（Cholesky–Banachiewicz の順序）、$A$ の下三角部分だけを読みます。コストは $\\sum_j 2 j (n - j) \\approx \\tfrac13 n^3$ flops で、対称性によって仕事が半分になるので LU の半分です。"
 
-#: manual/design/mutable.md:347
+#: manual/design/mutable.md:345
 msgid "**Why success characterizes SPD.** Write $D = \\operatorname{diag}(l_{jj})$. Then $A = (L D^{-1})(D L^{\\mathsf T})$ is an LU factorization without pivoting, whose pivots are $u_{jj} = l_{jj}^2$, the radicands. The product of the first $j + 1$ pivots is the leading principal minor $\\det M_{j+1}$, so the radicand at step $j$ equals $\\det M_{j+1} / \\det M_j$. By Sylvester's criterion $A$ is SPD exactly when all leading principal minors are positive, so in exact arithmetic the factorization succeeds exactly for SPD matrices. With the tolerance, `cholesky_decomposition` succeeds exactly when every ratio $\\det M_{j+1} / \\det M_j$ exceeds $\\tau$ (up to rounding), and `is_positive_definite` is implemented by attempting it."
 msgstr "**成功が SPD を特徴づける理由。** $D = \\operatorname{diag}(l_{jj})$ とすると、$A = (L D^{-1})(D L^{\\mathsf T})$ はピボット選択なしの LU 分解で、そのピボットは $u_{jj} = l_{jj}^2$、つまり被開平数です。最初の $j + 1$ 個のピボットの積は首座小行列式 $\\det M_{j+1}$ なので、第 $j$ ステップの被開平数は $\\det M_{j+1} / \\det M_j$ に等しくなります。Sylvester の判定法により、$A$ が SPD であることとすべての首座小行列式が正であることは同値なので、厳密な算術では分解はちょうど SPD 行列で成功します。許容誤差を入れると、`cholesky_decomposition` が成功するのは各比 $\\det M_{j+1} / \\det M_j$ が $\\tau$ を超えるとき（丸め誤差の範囲で）に限られ、`is_positive_definite` は分解を試みることで実装されています。"
 
-#: manual/design/mutable.md:358
+#: manual/design/mutable.md:356
 msgid "**Stability.** Cholesky needs no pivoting: from $a_{jj} = \\sum_k l_{jk}^2$ every $|l_{jk}| \\le \\sqrt{a_{jj}}$, so entries cannot grow, and the computed factor satisfies $\\hat L \\hat L^{\\mathsf T} = A + \\Delta A$ with $|\\Delta A| \\le \\gamma_{n+1} |\\hat L|\\,|\\hat L^{\\mathsf T}|$ (Higham, Theorem 10.3). Since $(|\\hat L|\\,|\\hat L^{\\mathsf T}|)_{ij} \\le \\sqrt{a_{ii} a_{jj}}$ up to $O(u)$ by the Cauchy–Schwarz inequality, the backward error is small relative to the diagonal of $A$."
 msgstr "**安定性。** Cholesky にはピボット選択が要りません。$a_{jj} = \\sum_k l_{jk}^2$ からどの $|l_{jk}| \\le \\sqrt{a_{jj}}$ も成り立つので要素は増大せず、計算された因子は $|\\Delta A| \\le \\gamma_{n+1} |\\hat L|\\,|\\hat L^{\\mathsf T}|$ なる $\\hat L \\hat L^{\\mathsf T} = A + \\Delta A$ を満たします（Higham、定理 10.3）。Cauchy–Schwarz の不等式により $O(u)$ を除いて $(|\\hat L|\\,|\\hat L^{\\mathsf T}|)_{ij} \\le \\sqrt{a_{ii} a_{jj}}$ なので、後退誤差は $A$ の対角に比べて小さくなります。"
 
-#: manual/design/mutable.md:367
+#: manual/design/mutable.md:365
 msgid "Symmetric eigenvalue problem"
 msgstr "対称固有値問題"
 
-#: manual/design/mutable.md:369
+#: manual/design/mutable.md:367
 msgid ""
 "For real symmetric $A$ the spectral theorem gives $A = Q \\Lambda Q^{\\mathsf T}$ with $Q$ orthogonal and $\\Lambda$ real diagonal. `eigen` computes it in two phases for $n \\n"
 "e 2$, and by a closed formula for $n = 2$."
@@ -5331,7 +5315,7 @@ msgstr ""
 "実対称行列 $A$ に対して、スペクトル定理は $Q$ を直交行列、$\\Lambda$ を実対角行列とする $A = Q \\Lambda Q^{\\mathsf T}$ を与えます。`eigen` はこれを $n \\n"
 "e 2$ では二段階で、$n = 2$ では閉じた公式で計算します。"
 
-#: manual/design/mutable.md:373
+#: manual/design/mutable.md:371
 msgid ""
 "**Householder tridiagonalization.** For $x \\in \\mathbb{R}^m$, $x \\n"
 "e 0$, let $\\alpha = -\\operatorname{sgn}(x_{m-1}) \\lVert x \\rVert_2$ and $v = x - \\alpha e_{m-1}$. The reflector $H = I - 2 v v^{\\mathsf T} / v^{\\mathsf T} v$ is symmetric and orthogonal, and it maps $x$ to $\\alpha e_{m-1}$:"
@@ -5339,79 +5323,75 @@ msgstr ""
 "**Householder 三重対角化。** $x \\in \\mathbb{R}^m$、$x \\n"
 "e 0$ に対して $\\alpha = -\\operatorname{sgn}(x_{m-1}) \\lVert x \\rVert_2$、$v = x - \\alpha e_{m-1}$ とします。反射 $H = I - 2 v v^{\\mathsf T} / v^{\\mathsf T} v$ は対称かつ直交で、$x$ を $\\alpha e_{m-1}$ に写します。"
 
-#: manual/design/mutable.md:386
+#: manual/design/mutable.md:384
 msgid "The sign of $\\alpha$ is opposite to $x_{m-1}$, so $x_{m-1} - \\alpha$ adds two numbers of the same sign and cannot cancel. The code (the `tred2` scheme) works from the last row upwards: for row $i$ it reflects $x = (a_{i0}, \\dots, a_{i,i-1})$ onto its last coordinate, applies $H$ from both sides, and so zeroes row and column $i$ outside the tridiagonal band. After $n - 2$ such steps"
 msgstr "$\\alpha$ の符号は $x_{m-1}$ と逆なので、$x_{m-1} - \\alpha$ は同符号の二数の和となり、桁落ちしません。コード（`tred2` の方式）は最後の行から上へ進みます。第 $i$ 行について $x = (a_{i0}, \\dots, a_{i,i-1})$ を最後の座標へ反射し、$H$ を両側から作用させて、第 $i$ 行と第 $i$ 列の三重対角帯の外側を零にします。このステップを $n - 2$ 回行うと"
 
-#: manual/design/mutable.md:397
-msgid "where $T$ is symmetric tridiagonal with diagonal $d$ and off-diagonal $e$. The two-sided update costs $\\tfrac43 n^3$ flops and accumulating $Q_1$ explicitly another $\\tfrac43 n^3$. Before forming each reflector the row is divided by $\\sum_k |x_k|$, which avoids overflow and underflow in $\\lVert x \\rVert_2$; a row whose sum is at most $\\tau$ is left unreflected."
-msgstr "ここで $T$ は対角 $d$、副対角 $e$ の対称三重対角行列です。両側からの更新のコストは $\\tfrac43 n^3$ flops、$Q_1$ を明示的に累積するのにさらに $\\tfrac43 n^3$ かかります。各反射を作る前に行を $\\sum_k |x_k|$ で割り、$\\lVert x \\rVert_2$ のオーバーフローとアンダーフローを避けます。この和が $\\tau$ 以下の行は反射しません。"
+#: manual/design/mutable.md:395
+msgid "where $T$ is symmetric tridiagonal with diagonal $d$ and off-diagonal $e$. The two-sided update costs $\\tfrac43 n^3$ flops and accumulating $Q_1$ explicitly another $\\tfrac43 n^3$. Before forming each reflector the row is divided by $\\sum_k |x_k|$, which avoids overflow and underflow in $\\lVert x \\rVert_2$; only an exactly zero row is left unreflected."
+msgstr "ここで $T$ は対角 $d$、副対角 $e$ の対称三重対角行列です。両側からの更新のコストは $\\tfrac43 n^3$ flops、$Q_1$ を明示的に累積するのにさらに $\\tfrac43 n^3$ かかります。各反射を作る前に行を $\\sum_k |x_k|$ で割り、$\\lVert x \\rVert_2$ のオーバーフローとアンダーフローを避けます。反射しないのは厳密に零の行だけです。"
 
-#: manual/design/mutable.md:403
+#: manual/design/mutable.md:401
 msgid "**Implicit QL with Wilkinson shifts.** The tridiagonal $T$ is diagonalized by plane rotations. Before each sweep on the unreduced block starting at $l$, the shift $\\sigma$ is the eigenvalue of the leading $2 \\times 2$ block $\\begin{pmatrix} d_l & e_l \\\\ e_l & d_{l+1} \\end{pmatrix}$ closer to $d_l$. With $g = (d_{l+1} - d_l)/(2 e_l)$, its eigenvalues are"
 msgstr "**Wilkinson シフト付き陰的 QL。** 三重対角行列 $T$ は平面回転で対角化します。$l$ から始まる未簡約ブロックの各スイープの前に、シフト $\\sigma$ として先頭の $2 \\times 2$ ブロック $\\begin{pmatrix} d_l & e_l \\\\ e_l & d_{l+1} \\end{pmatrix}$ の固有値のうち $d_l$ に近いほうをとります。$g = (d_{l+1} - d_l)/(2 e_l)$ とすると、その固有値は"
 
-#: manual/design/mutable.md:414
+#: manual/design/mutable.md:412
 msgid "because $\\tfrac12(d_l + d_{l+1}) = d_l + e_l g$ and the square root equals $|e_l| \\sqrt{g^2 + 1}$ (the sign of $e_l$ is absorbed by $\\pm$). The one closer to $d_l$ makes $|g \\pm \\sqrt{g^2+1}|$ small, that is, takes the sign opposite to $g$:"
 msgstr "です。$\\tfrac12(d_l + d_{l+1}) = d_l + e_l g$ であり、平方根は $|e_l| \\sqrt{g^2 + 1}$ に等しい（$e_l$ の符号は $\\pm$ に吸収される）からです。$d_l$ に近いほうは $|g \\pm \\sqrt{g^2+1}|$ を小さくするもの、つまり $g$ と逆の符号をとるものです。"
 
-#: manual/design/mutable.md:424
+#: manual/design/mutable.md:422
 msgid "where the second form follows from $(g - s\\sqrt{g^2+1})(g + s\\sqrt{g^2+1}) = g^2 - (g^2 + 1) = -1$ for $s = \\operatorname{sgn}(g)$, and avoids the cancellation of the first. The code uses it with $\\operatorname{sgn}(0) = 1$. A sweep starts from $d_m - \\sigma$ and applies Givens rotations $\\begin{pmatrix} c & s \\\\ -s & c \\end{pmatrix}$, $c^2 + s^2 = 1$, from the bottom of the block upwards, each one chasing the bulge created by the previous; $Q$ is updated with the same rotations, $6n$ flops each. The rotation parameters are computed as $c = g/f$, $r = \\sqrt{c^2 + 1}$, $s = 1/r$, $c = c s$ (or the symmetric form), dividing by the larger of $|f|, |g|$ so that no square of a large number is formed."
 msgstr "第二の形は $s = \\operatorname{sgn}(g)$ として $(g - s\\sqrt{g^2+1})(g + s\\sqrt{g^2+1}) = g^2 - (g^2 + 1) = -1$ から従い、第一の形の桁落ちを避けます。コードは $\\operatorname{sgn}(0) = 1$ としてこれを使います。スイープは $d_m - \\sigma$ から始まり、Givens 回転 $\\begin{pmatrix} c & s \\\\ -s & c \\end{pmatrix}$（$c^2 + s^2 = 1$）をブロックの下から上へ作用させ、各回転が前の回転で生じたバルジを追い出します。$Q$ も同じ回転で更新し、一回あたり $6n$ flops です。回転のパラメータは $c = g/f$、$r = \\sqrt{c^2 + 1}$、$s = 1/r$、$c = c s$（または対称な形）で計算し、$|f|, |g|$ の大きいほうで割るので、大きな数の二乗は作られません。"
 
-#: manual/design/mutable.md:436
-msgid "An off-diagonal entry is treated as zero when"
-msgstr "副対角要素は次のとき零とみなされます。"
+#: manual/design/mutable.md:434
+msgid "An off-diagonal entry is treated as zero when it is negligible next to its diagonal neighbours in the working precision,"
+msgstr "副対角要素は、作業精度で隣の対角要素に比べて無視できるとき零とみなされます。"
 
-#: manual/design/mutable.md:442
-msgid "and the block then splits. For symmetric tridiagonal matrices the Wilkinson shift converges for every input in exact arithmetic (Wilkinson, 1968), and typically cubically; about two sweeps per eigenvalue is usual. The code nevertheless aborts after 60 sweeps for one starting index $l$. With accumulation of $Q$ the whole computation takes about $9 n^3$ flops (Golub and Van Loan's estimate for the symmetric QR algorithm), $\\tfrac83 n^3$ of them in the reduction."
-msgstr "このときブロックは分割されます。対称三重対角行列では、Wilkinson シフトは厳密な算術ならどんな入力でも収束し（Wilkinson、1968）、通常は三次収束します。固有値一つあたり約二回のスイープが普通です。それでもコードは、一つの開始インデックス $l$ について 60 回スイープすると中断します。$Q$ の累積を含めた全体の計算は約 $9 n^3$ flops（対称 QR アルゴリズムについての Golub と Van Loan の見積もり）で、そのうち $\\tfrac83 n^3$ が縮約です。"
+#: manual/design/mutable.md:441
+msgid "that is, $|e_m| \\lesssim u\\,(|d_m| + |d_{m+1}|)$, and the block then splits. The test needs no knowledge of $u$, so it works for `Float` and `Double` alike, and it is invariant under scaling of $A$. For symmetric tridiagonal matrices the Wilkinson shift converges for every input in exact arithmetic (Wilkinson, 1968), and typically cubically; about two sweeps per eigenvalue is usual. The code nevertheless aborts after 60 sweeps for one starting index $l$. With accumulation of $Q$ the whole computation takes about $9 n^3$ flops (Golub and Van Loan's estimate for the symmetric QR algorithm), $\\tfrac83 n^3$ of them in the reduction."
+msgstr "つまり $|e_m| \\lesssim u\\,(|d_m| + |d_{m+1}|)$ のときで、このときブロックは分割されます。この判定は $u$ を知らなくてよいので `Float` でも `Double` でも同じように働き、$A$ のスケーリングに対して不変です。対称三重対角行列では、Wilkinson シフトは厳密な算術ならどんな入力でも収束し（Wilkinson、1968）、通常は三次収束します。固有値一つあたり約二回のスイープが普通です。それでもコードは、一つの開始インデックス $l$ について 60 回スイープすると中断します。$Q$ の累積を含めた全体の計算は約 $9 n^3$ flops（対称 QR アルゴリズムについての Golub と Van Loan の見積もり）で、そのうち $\\tfrac83 n^3$ が縮約です。"
 
-#: manual/design/mutable.md:450
-msgid "**Accuracy.** Every transformation is orthogonal, so in exact arithmetic the spectrum never changes, and rounding contributes a backward error of $O(n u) \\lVert A \\rVert_2$. The thresholds contribute more. Setting $e_m$ to zero perturbs $T$ by a symmetric matrix of 2-norm at most $\\tau(|d_m| + |d_{m+1}| + 1) \\le \\tau(2 \\lVert A \\rVert_2 + 1)$, and skipping a reflection perturbs $A$ by entries whose absolute values sum to at most $\\tau$ per row. Weyl's inequality, $|\\lambda_i(A + E) - \\lambda_i(A)| \\le \\lVert E \\rVert_2$ for symmetric $A$ and $E$, then gives for the computed eigenvalues"
-msgstr "**精度。** どの変換も直交なので、厳密な算術ではスペクトルは変わらず、丸めは $O(n u) \\lVert A \\rVert_2$ の後退誤差を生みます。しきい値の寄与はそれより大きくなります。$e_m$ を零にすることは 2 ノルムが高々 $\\tau(|d_m| + |d_{m+1}| + 1) \\le \\tau(2 \\lVert A \\rVert_2 + 1)$ の対称行列で $T$ を摂動することであり、反射を飛ばすことは各行の絶対値の和が高々 $\\tau$ の要素で $A$ を摂動することです。対称な $A$ と $E$ に対する Weyl の不等式 $|\\lambda_i(A + E) - \\lambda_i(A)| \\le \\lVert E \\rVert_2$ から、計算された固有値について"
+#: manual/design/mutable.md:451
+msgid "**Accuracy.** Every transformation is orthogonal, so in exact arithmetic the spectrum never changes, and rounding contributes a backward error of $O(n u) \\lVert A \\rVert_2$; setting a negligible $e_m$ to zero perturbs $T$ by at most $u(|d_m| + |d_{m+1}|) \\le 2u \\lVert A \\rVert_2$, which is of the same order. Weyl's inequality, $|\\lambda_i(A + E) - \\lambda_i(A)| \\le \\lVert E \\rVert_2$ for symmetric $A$ and $E$, then gives for the computed eigenvalues"
+msgstr "**精度。** どの変換も直交なので、厳密な算術ではスペクトルは変わらず、丸めは $O(n u) \\lVert A \\rVert_2$ の後退誤差を生みます。無視できる $e_m$ を零にすることによる $T$ の摂動は高々 $u(|d_m| + |d_{m+1}|) \\le 2u \\lVert A \\rVert_2$ で、同じ程度です。対称な $A$ と $E$ に対する Weyl の不等式 $|\\lambda_i(A + E) - \\lambda_i(A)| \\le \\lVert E \\rVert_2$ から、計算された固有値について"
 
-#: manual/design/mutable.md:463
-msgid "with a small $c_n$. With $\\tau = 10^{-11}$ the second term dominates: absolute accuracy is about $10^{-11}$ for $\\lVert A \\rVert$ of order one, and for a matrix whose entries are all below $\\tau$ the result is meaningless. Eigenvectors are accurate in proportion to (backward error)$/\\text{gap}$, where the gap is the distance to the nearest other eigenvalue (the Davis–Kahan theorem)."
-msgstr "が得られます。ここで $c_n$ は小さな定数です。$\\tau = 10^{-11}$ では第二項が支配的で、$\\lVert A \\rVert$ が 1 程度なら絶対精度は約 $10^{-11}$、要素がすべて $\\tau$ 未満の行列では結果は無意味です。固有ベクトルの精度は（後退誤差）$/\\text{gap}$ に比例します。gap は最も近い別の固有値までの距離です（Davis–Kahan の定理）。"
+#: manual/design/mutable.md:462
+msgid "with a modest $c_n$, independent of the scale of $A$. Eigenvectors are accurate in proportion to $u \\lVert A \\rVert_2/\\text{gap}$, where the gap is the distance to the nearest other eigenvalue (the Davis–Kahan theorem). The only absolute test left is the symmetry check $|a_{ij} - a_{ji}| \\le \\tau$ before the computation; the algorithm then reads the lower triangle."
+msgstr "が得られます。ここで $c_n$ はほどほどの定数で、$A$ のスケールに依存しません。固有ベクトルの精度は $u \\lVert A \\rVert_2/\\text{gap}$ に比例します。gap は最も近い別の固有値までの距離です（Davis–Kahan の定理）。残る絶対的な判定は計算前の対称性の判定 $|a_{ij} - a_{ji}| \\le \\tau$ だけで、その後アルゴリズムは下三角部分を読みます。"
 
-#: manual/design/mutable.md:469
-msgid "**The $2 \\times 2$ case.** For $A = \\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}$ the characteristic polynomial $\\lambda^2 - (a + d)\\lambda + (ad - bc)$ gives, with $m = (a + d)/2$,"
-msgstr "**$2 \\times 2$ の場合。** $A = \\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}$ について、特性多項式 $\\lambda^2 - (a + d)\\lambda + (ad - bc)$ から、$m = (a + d)/2$ として次が得られます。"
+#: manual/design/mutable.md:468
+msgid "**The $2 \\times 2$ case.** The code works with the symmetric part $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$, $s = \\tfrac12(a_{01} + a_{10})$. Its characteristic polynomial $\\lambda^2 - (a + d)\\lambda + (ad - s^2)$ has the discriminant"
+msgstr "**$2 \\times 2$ の場合。** コードは対称部分 $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$（$s = \\tfrac12(a_{01} + a_{10})$）で計算します。その特性多項式 $\\lambda^2 - (a + d)\\lambda + (ad - s^2)$ の判別式は"
 
 #: manual/design/mutable.md:477
-msgid ""
-"For $b \\n"
-"e 0$ the vector $(b, \\lambda - a)^{\\mathsf T}$ is an eigenvector:"
-msgstr ""
-"$b \\n"
-"e 0$ のとき、ベクトル $(b, \\lambda - a)^{\\mathsf T}$ は固有ベクトルです。"
+msgid "a sum of squares, so with $m = \\tfrac12(a + d)$ and $h = \\tfrac12(a - d)$"
+msgstr "で、平方和です。したがって $m = \\tfrac12(a + d)$、$h = \\tfrac12(a - d)$ とすると"
 
-#: manual/design/mutable.md:486
-msgid "since $(\\lambda - a)(\\lambda - d) = \\lambda^2 - (a + d)\\lambda + ad = bc$ by the characteristic equation. The code returns these vectors without normalizing them, and $e_1, e_2$ when $b = c = 0$."
-msgstr "特性方程式から $(\\lambda - a)(\\lambda - d) = \\lambda^2 - (a + d)\\lambda + ad = bc$ だからです。コードはこれらのベクトルを正規化せずに返し、$b = c = 0$ のときは $e_1, e_2$ を返します。"
+#: manual/design/mutable.md:483
+msgid "Computing $r^2$ as $m^2 - \\det A$ instead would subtract two numbers of size $m^2$ and lose about $u\\,m^2$ in absolute terms, which for $m \\approx 10^8$ is about $1$: the computed discriminant could even be negative for a diagonal matrix. The code evaluates $r$ as $\\beta\\sqrt{(h/\\beta)^2 + (s/\\beta)^2}$ with $\\beta = \\max(|h|, |s|)$, which cannot overflow, and never thresholds it, so eigenvalues as close as rounding allows stay distinct. The eigenvalue of larger magnitude, $m + \\operatorname{sgn}(m)\\, r$, is a sum of two numbers of the same sign and is computed directly; the other follows from $\\lambda_1 \\lambda_2 = \\det A = ad - s^2$, which avoids the cancellation in $m - r$ when $|\\lambda_2| \\ll |\\lambda_1|$. When $s = 0$ the matrix is diagonal and the code returns $a$ and $d$ exactly, in decreasing order, with the coordinate vectors."
+msgstr "代わりに $r^2$ を $m^2 - \\det A$ として計算すると、大きさ $m^2$ の二数を引くことになり、絶対誤差は約 $u\\,m^2$、$m \\approx 10^8$ では約 $1$ になります。対角行列でさえ計算した判別式が負になりえます。コードは $\\beta = \\max(|h|, |s|)$ として $r$ を $\\beta\\sqrt{(h/\\beta)^2 + (s/\\beta)^2}$ と計算するのでオーバーフローせず、しきい値もかけないので、丸めが許す限り近い固有値も区別されたままです。絶対値の大きいほうの固有値 $m + \\operatorname{sgn}(m)\\, r$ は同符号の二数の和なので直接計算し、もう一方は $\\lambda_1 \\lambda_2 = \\det A = ad - s^2$ から求めます。これで $|\\lambda_2| \\ll |\\lambda_1|$ のときの $m - r$ の桁落ちを避けます。$s = 0$ なら行列は対角で、コードは $a$ と $d$ を降順に厳密に、座標ベクトルとともに返します。"
 
-#: manual/design/mutable.md:490
-msgid ""
-"[!WARNING] This closed form is less accurate than the general path, for three reasons that the code does not guard against. (1) For symmetric input the discriminant is $m^2 - (ad - b^2) = \\big(\\tfrac{a-d}{2}\\big)^2 + b^2 \\ge 0$, but it is computed as a difference of two numbers of size $m^2$, with an absolute error of about $u\\, m^2$. For $m \\approx 10^8$ that is about $1$, far above $\\tau$, so the computed discriminant can be negative enough to trigger the \"complex eigenvalues\" abort on a symmetric, even diagonal, matrix. (2) A discriminant with $|\\cdot| \\le \\tau$ is replaced by zero. Since $\\lambda_1 - \\lambda_2 = 2\\sqrt{\\text{discriminant}}$, every pair of eigenvalues closer than $2\\sqrt{\\tau} \\approx 6.3 \\times 10^{-6}$ is returned as a double eigenvalue $m$, an error up to $3 \\times 10^{-6}$. (3) When the two eigenvalues are then equal and $b \\n"
-"e 0$, both columns are $(b, m - a)^{\\mathsf T}$, so the eigenvector matrix is singular. In addition, when $|\\lambda_2| \\ll |\\lambda_1|$ the subtraction $m - \\sqrt{\\cdot}$ cancels and $\\lambda_2$ loses relative accuracy. The stable formulation computes the discriminant as $\\big(\\tfrac{a-d}{2}\\big)^2 + bc$, never thresholds it, takes $\\lambda_2 = \\det A / \\lambda_1$, and chooses between the eigenvector forms $(b, \\lambda - a)$ and $(\\lambda - d, c)$ by size."
-msgstr ""
-"[!WARNING] この閉じた公式は一般の経路より精度が劣り、コードが防いでいない理由が三つあります。(1) 対称な入力では判別式は $m^2 - (ad - b^2) = \\big(\\tfrac{a-d}{2}\\big)^2 + b^2 \\ge 0$ ですが、大きさ $m^2$ の二数の差として計算されるので、絶対誤差は約 $u\\, m^2$ です。$m \\approx 10^8$ ではこれは約 $1$ で $\\tau$ よりはるかに大きく、計算された判別式は、対称な（対角でさえある）行列で \"complex eigenvalues\" の中断を引き起こすほど負になりえます。(2) $|\\cdot| \\le \\tau$ の判別式は零に置き換えられます。$\\lambda_1 - \\lambda_2 = 2\\sqrt{\\text{discriminant}}$ なので、$2\\sqrt{\\tau} \\approx 6.3 \\times 10^{-6}$ より近い固有値の組はすべて二重固有値 $m$ として返され、誤差は最大 $3 \\times 10^{-6}$ になります。(3) そのとき二つの固有値が等しく $b \\n"
-"e 0$ なら、二本の列はどちらも $(b, m - a)^{\\mathsf T}$ となり、固有ベクトル行列は特異になります。さらに $|\\lambda_2| \\ll |\\lambda_1|$ のときは減算 $m - \\sqrt{\\cdot}$ で桁落ちが起き、$\\lambda_2$ は相対精度を失います。安定な定式化では、判別式を $\\big(\\tfrac{a-d}{2}\\big)^2 + bc$ として計算してしきい値をかけず、$\\lambda_2 = \\det A / \\lambda_1$ とし、固有ベクトルの形 $(b, \\lambda - a)$ と $(\\lambda - d, c)$ を大きさで選び分けます。"
+#: manual/design/mutable.md:496
+msgid "For the eigenvector of $\\lambda_1$, both"
+msgstr "$\\lambda_1$ の固有ベクトルについては、次の二つの"
 
-#: manual/design/mutable.md:510
+#: manual/design/mutable.md:504
+msgid "solve $(A - \\lambda_1 I)v = 0$: for the first, $(a - \\lambda_1)(h + r) + s^2 = (h - r)(h + r) + s^2 = h^2 - r^2 + s^2 = 0$, and the second row is $s(h + r) + (d - \\lambda_1)s = s(h + r - h - r) = 0$; the second vector is checked the same way. The code takes the first when $h \\ge 0$ and the second when $h < 0$, so that $h + r$ or $r - h$ adds numbers of the same sign and cannot cancel. Since $A$ is symmetric, the eigenvector of $\\lambda_2$ is orthogonal to it, $(v_y, -v_x)$. Each column is scaled so that its entry of largest magnitude is $1$; the columns are therefore never zero, never parallel, and paired with the right eigenvalues."
+msgstr "どちらも $(A - \\lambda_1 I)v = 0$ を満たします。一つ目については $(a - \\lambda_1)(h + r) + s^2 = (h - r)(h + r) + s^2 = h^2 - r^2 + s^2 = 0$ で、第二行は $s(h + r) + (d - \\lambda_1)s = s(h + r - h - r) = 0$ です。二つ目も同じように確かめられます。コードは $h \\ge 0$ なら一つ目を、$h < 0$ なら二つ目をとるので、$h + r$ や $r - h$ は同符号の数の和となり桁落ちしません。$A$ は対称なので、$\\lambda_2$ の固有ベクトルはこれと直交する $(v_y, -v_x)$ です。各列は絶対値最大の要素が $1$ になるようにスケーリングされるので、列が零になったり平行になったりすることはなく、正しい固有値と組になります。"
+
+#: manual/design/mutable.md:514
 msgid "Power method"
 msgstr "べき乗法"
 
-#: manual/design/mutable.md:512
+#: manual/design/mutable.md:516
 msgid "The code starts from $x_0 = (1, \\dots, 1)$, or, if $\\lVert A x_0 \\rVert_\\infty \\le \\tau$, from the first coordinate vector $e_k$ with $\\lVert A e_k \\rVert_\\infty > \\tau$; if there is none it returns `None`. It then iterates"
 msgstr "コードは $x_0 = (1, \\dots, 1)$ から始めます。$\\lVert A x_0 \\rVert_\\infty \\le \\tau$ なら $\\lVert A e_k \\rVert_\\infty > \\tau$ となる最初の座標ベクトル $e_k$ から始め、そのようなものがなければ `None` を返します。その後、次を反復します。"
 
-#: manual/design/mutable.md:522
+#: manual/design/mutable.md:526
 msgid "and stops when $\\lVert A x_k - \\lambda_k x_k \\rVert_\\infty \\le \\tau$; the normalization makes $\\lVert x_k \\rVert_\\infty = 1$."
 msgstr "そして $\\lVert A x_k - \\lambda_k x_k \\rVert_\\infty \\le \\tau$ となったら止まります。正規化により $\\lVert x_k \\rVert_\\infty = 1$ です。"
 
-#: manual/design/mutable.md:525
+#: manual/design/mutable.md:529
 msgid ""
 "**Convergence.** If $A$ is diagonalizable with eigenvalues $|\\lambda_1| > |\\lambda_2| \\ge \\dots$ and eigenvectors $v_i$, and $x_0$ has a component $c_1 \\n"
 "e 0$ along $v_1$, then"
@@ -5419,11 +5399,11 @@ msgstr ""
 "**収束。** $A$ が対角化可能で、固有値が $|\\lambda_1| > |\\lambda_2| \\ge \\dots$、固有ベクトルが $v_i$ であり、$x_0$ が $v_1$ 方向の成分 $c_1 \\n"
 "e 0$ を持つなら、"
 
-#: manual/design/mutable.md:533
+#: manual/design/mutable.md:537
 msgid "so the direction of $x_k$ converges to $v_1$ linearly with ratio $r = |\\lambda_2 / \\lambda_1|$. For negative $\\lambda_1$ the sign of $x_k$ alternates, which the Rayleigh quotient does not notice. For symmetric $A$ with orthonormal $v_i$, $x_k \\propto \\sum_i c_i (\\lambda_i/\\lambda_1)^k v_i$ gives"
 msgstr "したがって $x_k$ の方向は比 $r = |\\lambda_2 / \\lambda_1|$ で $v_1$ に一次収束します。$\\lambda_1$ が負なら $x_k$ の符号は交互に変わりますが、Rayleigh 商はそれに影響されません。正規直交な $v_i$ を持つ対称な $A$ では、$x_k \\propto \\sum_i c_i (\\lambda_i/\\lambda_1)^k v_i$ から"
 
-#: manual/design/mutable.md:544
+#: manual/design/mutable.md:548
 msgid ""
 "so the eigenvalue converges twice as fast as the vector. When $|\\lambda_1| = |\\lambda_2|$ with $\\lambda_1 \\n"
 "e \\lambda_2$ (for example $\\pm 1$) the direction oscillates and the residual test never passes, and when $A$ is nilpotent the iterate reaches zero; both cases return `None`."
@@ -5431,75 +5411,71 @@ msgstr ""
 "となり、固有値はベクトルの二倍の速さで収束します。$|\\lambda_1| = |\\lambda_2|$ かつ $\\lambda_1 \\n"
 "e \\lambda_2$（たとえば $\\pm 1$）のときは方向が振動して残差判定は決して通らず、$A$ が冪零なら反復ベクトルは零になります。どちらの場合も `None` を返します。"
 
-#: manual/design/mutable.md:549
+#: manual/design/mutable.md:553
 msgid "**What the stopping test guarantees.** For symmetric $A$, a residual $r = Ax - \\lambda x$ bounds the distance to the spectrum: expanding $x$ in the orthonormal eigenbasis, $\\lVert r \\rVert_2^2 = \\sum_i c_i^2 (\\lambda_i - \\lambda)^2 \\ge \\min_i (\\lambda_i - \\lambda)^2 \\lVert x \\rVert_2^2$. With $\\lVert r \\rVert_\\infty \\le \\tau$ and $\\lVert x \\rVert_\\infty = 1$ we have $\\lVert r \\rVert_2 \\le \\sqrt n\\, \\tau$ and $\\lVert x \\rVert_2 \\ge 1$, so some eigenvalue lies within $\\sqrt n\\, \\tau$ of the returned $\\lambda$. The test is absolute, so for $\\lVert A \\rVert \\gg 1$ it may be unreachable in floating point (the residual cannot drop below about $u \\lVert A \\rVert$), and for $\\lVert A \\rVert \\ll 1$ it passes before $x$ is accurate."
 msgstr "**停止判定が保証すること。** 対称な $A$ では、残差 $r = Ax - \\lambda x$ がスペクトルまでの距離を抑えます。$x$ を正規直交な固有基底で展開すると $\\lVert r \\rVert_2^2 = \\sum_i c_i^2 (\\lambda_i - \\lambda)^2 \\ge \\min_i (\\lambda_i - \\lambda)^2 \\lVert x \\rVert_2^2$ です。$\\lVert r \\rVert_\\infty \\le \\tau$ と $\\lVert x \\rVert_\\infty = 1$ から $\\lVert r \\rVert_2 \\le \\sqrt n\\, \\tau$ かつ $\\lVert x \\rVert_2 \\ge 1$ なので、返された $\\lambda$ から $\\sqrt n\\, \\tau$ 以内にある固有値が存在します。判定は絶対的なので、$\\lVert A \\rVert \\gg 1$ では浮動小数点で到達できないことがあり（残差は約 $u \\lVert A \\rVert$ より下がらない）、$\\lVert A \\rVert \\ll 1$ では $x$ が正確になる前に通ってしまいます。"
 
-#: manual/design/mutable.md:560
+#: manual/design/mutable.md:564
 msgid "Statistics"
 msgstr "統計量"
 
-#: manual/design/mutable.md:562
+#: manual/design/mutable.md:566
 msgid "`variance` is the population variance computed in two passes: first the mean $\\bar a$, then $\\tfrac1N \\sum (a_i - \\bar a)^2$. The one-pass formula $\\tfrac1N \\sum a_i^2 - \\bar a^2$ subtracts two nearly equal numbers when the data have a large mean and a small spread, and can even return a negative value. With $S = \\sum (a_i - \\bar a)^2$ and the condition number $\\kappa = \\lVert a \\rVert_2 / \\sqrt S$ of the data, Chan, Golub and LeVeque (1983) show that the relative error of $S$ is bounded by about $N \\kappa^2 u$ for the one-pass formula and by about $N u + N^2 \\kappa^2 u^2$ for the two-pass one, which is $O(Nu)$ unless $\\kappa$ is near $u^{-1/2}$. The count $N$ is accumulated as a sum of ones in `T`, exact up to $2^{53}$ entries for `Double` and $2^{24}$ for `Float`; beyond that the count stops growing and the mean is wrong."
 msgstr "`variance` は二パスで計算する母分散です。まず平均 $\\bar a$ を、次に $\\tfrac1N \\sum (a_i - \\bar a)^2$ を求めます。一パスの公式 $\\tfrac1N \\sum a_i^2 - \\bar a^2$ は、平均が大きくばらつきが小さいデータでほぼ等しい二数を引くことになり、負の値を返すことさえあります。$S = \\sum (a_i - \\bar a)^2$、データの条件数を $\\kappa = \\lVert a \\rVert_2 / \\sqrt S$ とすると、Chan、Golub、LeVeque（1983）は、$S$ の相対誤差が一パスの公式では約 $N \\kappa^2 u$、二パスの公式では約 $N u + N^2 \\kappa^2 u^2$ で抑えられることを示しました。後者は $\\kappa$ が $u^{-1/2}$ に近くない限り $O(Nu)$ です。個数 $N$ は `T` の 1 の和として数え、`Double` では $2^{53}$ 要素まで、`Float` では $2^{24}$ 要素まで厳密です。それを超えると個数が増えなくなり、平均が誤ります。"
 
-#: manual/design/mutable.md:575
+#: manual/design/mutable.md:579
 msgid "Transpose views and products"
 msgstr "転置ビューと積"
 
-#: manual/design/mutable.md:577
+#: manual/design/mutable.md:581
 msgid "`Transpose::mul` computes $A^{\\mathsf T} B^{\\mathsf T}$ as $(BA)^{\\mathsf T}$ by reusing the matrix kernel on the wrapped matrices. Entry by entry,"
 msgstr "`Transpose::mul` は、ラップした行列に対して行列カーネルを再利用し、$A^{\\mathsf T} B^{\\mathsf T}$ を $(BA)^{\\mathsf T}$ として計算します。要素ごとに見ると、"
 
-#: manual/design/mutable.md:585
+#: manual/design/mutable.md:589
 msgid "which agree when the scalars commute. All scalar types with `Tolerance` (`Float`, `Double`) commute, but `Transpose::mul` only requires `AddMonoid + Mul`; for a non-commutative scalar type the result is the product in the wrong order (see the [algebra design](algebra.md))."
 msgstr "であり、両者はスカラーが可換なときに一致します。`Tolerance` を持つスカラー型（`Float`、`Double`）はすべて可換ですが、`Transpose::mul` が要求するのは `AddMonoid + Mul` だけです。非可換なスカラー型では、結果は逆順の積になります（[algebra の設計](algebra.md) を参照）。"
 
-#: manual/design/mutable.md:592
+#: manual/design/mutable.md:596
 msgid "**Storage.** `data.length() == row * col` at all times; every public accessor checks the row and column separately."
 msgstr "**ストレージ。** 常に `data.length() == row * col` です。すべての公開アクセサは行と列を別々に検査します。"
 
-#: manual/design/mutable.md:594
+#: manual/design/mutable.md:598
 msgid "**Value-returning methods do not mutate.** Only `Unit`-returning methods, view writes and `reduce_row_elimination` change a matrix."
 msgstr "**値を返すメソッドは変更しない。** 行列を変更するのは `Unit` を返すメソッド、ビューへの書き込み、`reduce_row_elimination` だけです。"
 
-#: manual/design/mutable.md:596
+#: manual/design/mutable.md:600
 msgid "**Checked/unchecked law.** `x.f() == Ok(x.unchecked_f())` whenever the precondition holds; `inverse` returns `Err(SingularMatrix)` exactly when `unchecked_inverse` returns `None`."
 msgstr "**検査付き・検査なしの法則。** 前提条件が成り立つときは常に `x.f() == Ok(x.unchecked_f())` です。`inverse` が `Err(SingularMatrix)` を返すのは、`unchecked_inverse` が `None` を返すときに限ります。"
 
-#: manual/design/mutable.md:599
-msgid "**Determinant consistency.** For $n \\ge 5$ and a matrix that is not triangular within $\\tau$, `determinant` returns exactly `0` when the LU factorization reports a pivot below $\\tau$, which is also when `is_invertible` returns `false` and `inverse` fails; otherwise it returns a product of pivots that are at least $\\tau$ in magnitude, which can still underflow. For $n \\le 4$ the closed formulas are used for `determinant`, while `is_invertible` still uses LU, so a matrix with a tiny non-zero determinant can be \"not invertible\" with a non-zero `determinant`."
-msgstr "**行列式の一貫性。** $n \\ge 5$ で、$\\tau$ の範囲で三角でない行列では、LU 分解が $\\tau$ 未満のピボットを報告したときに `determinant` はちょうど `0` を返し、それは `is_invertible` が `false` を返し `inverse` が失敗するときでもあります。そうでなければ大きさ $\\tau$ 以上のピボットの積を返しますが、これもアンダーフローしえます。$n \\le 4$ では `determinant` は閉じた公式を使い、`is_invertible` は LU のままなので、行列式が零でないごく小さな行列が、`determinant` は零でないのに「可逆でない」とされることがあります。"
+#: manual/design/mutable.md:603
+msgid "**Determinant consistency.** For $n \\ge 5$ and a matrix that is not triangular, `determinant` returns exactly `0` when the LU factorization reports a pivot below $\\tau$, which is also when `is_invertible` returns `false` and `inverse` fails; otherwise it returns a product of pivots that are at least $\\tau$ in magnitude, which can still underflow. For $n \\le 4$ the closed formulas are used for `determinant`, while `is_invertible` still uses LU, so a matrix with a tiny non-zero determinant can be \"not invertible\" with a non-zero `determinant`."
+msgstr "**行列式の一貫性。** $n \\ge 5$ で三角でない行列では、LU 分解が $\\tau$ 未満のピボットを報告したときに `determinant` はちょうど `0` を返し、それは `is_invertible` が `false` を返し `inverse` が失敗するときでもあります。そうでなければ大きさ $\\tau$ 以上のピボットの積を返しますが、これもアンダーフローしえます。$n \\le 4$ では `determinant` は閉じた公式を使い、`is_invertible` は LU のままなので、行列式が零でないごく小さな行列が、`determinant` は零でないのに「可逆でない」とされることがあります。"
 
-#: manual/design/mutable.md:607
-msgid ""
-"**Residual guarantees.** `cholesky_decomposition` returns a factor with backward error $O(nu)$ relative to $|\\hat L|\\,|\\hat L^{\\mathsf T}|$, except on the identity fast path; `eigen` for $n \\n"
-"e 2$ returns eigenpairs with backward error $O(nu)\\lVert A \\rVert + O(\\tau)(\\lVert A \\rVert + 1)$; `power_method` returns only pairs with residual at most $\\tau$."
-msgstr ""
-"**残差の保証。** `cholesky_decomposition` が返す因子の後退誤差は $|\\hat L|\\,|\\hat L^{\\mathsf T}|$ に対して $O(nu)$ です（単位行列の高速経路を除く）。$n \\n"
-"e 2$ の `eigen` が返す固有対の後退誤差は $O(nu)\\lVert A \\rVert + O(\\tau)(\\lVert A \\rVert + 1)$ です。`power_method` が返すのは残差が $\\tau$ 以下の組だけです。"
+#: manual/design/mutable.md:611
+msgid "**Residual guarantees.** `cholesky_decomposition` returns a factor with backward error $O(nu)$ relative to $|\\hat L|\\,|\\hat L^{\\mathsf T}|$; `eigen` returns eigenpairs with backward error $O(nu)\\lVert A \\rVert$, for every scale of $A$; `power_method` returns only pairs with residual at most $\\tau$."
+msgstr "**残差の保証。** `cholesky_decomposition` が返す因子の後退誤差は $|\\hat L|\\,|\\hat L^{\\mathsf T}|$ に対して $O(nu)$ です。`eigen` が返す固有対の後退誤差は、$A$ のどのスケールでも $O(nu)\\lVert A \\rVert$ です。`power_method` が返すのは残差が $\\tau$ 以下の組だけです。"
 
-#: manual/design/mutable.md:612
+#: manual/design/mutable.md:616
 msgid "**Complexity.** `*`: $2rcn$ flops; `determinant`: $\\tfrac23 n^3$; `inverse`: $\\tfrac83 n^3$; `rank`, `reduce_row_elimination`: $O(rc\\min(r, c))$; `cholesky_decomposition`: $\\tfrac13 n^3$; `eigen`: about $9n^3$; `power_method`: two matrix-vector products, $4n^2$ flops, per iteration; statistics: $O(rc)$."
 msgstr "**計算量。** `*`：$2rcn$ flops。`determinant`：$\\tfrac23 n^3$。`inverse`：$\\tfrac83 n^3$。`rank`、`reduce_row_elimination`：$O(rc\\min(r, c))$。`cholesky_decomposition`：$\\tfrac13 n^3$。`eigen`：約 $9n^3$。`power_method`：反復ごとに行列ベクトル積二回、$4n^2$ flops。統計：$O(rc)$。"
 
-#: manual/design/mutable.md:620
+#: manual/design/mutable.md:624
 msgid "**A relative or norm-scaled tolerance.** More robust, but it would change the results of existing callers; deferred until a tolerance policy can be passed explicitly."
 msgstr "**相対的な、またはノルムでスケーリングした許容誤差。** より頑健ですが、既存の呼び出し側の結果が変わってしまいます。許容誤差の方針を明示的に渡せるようになるまで見送ります。"
 
-#: manual/design/mutable.md:623
+#: manual/design/mutable.md:627
 msgid "**Returning complex eigenvalues.** Would make this package depend on a complex number type and change the signature for real symmetric input."
 msgstr "**複素固有値を返す。** このパッケージが複素数型に依存することになり、実対称な入力に対するシグネチャも変わります。"
 
-#: manual/design/mutable.md:625
+#: manual/design/mutable.md:629
 msgid "**Copy-on-write views.** Would hide the cost of writes and break the in-place contract that views exist for."
 msgstr "**コピーオンライトのビュー。** 書き込みのコストを隠し、ビューの存在意義であるインプレースの契約を壊します。"
 
-#: manual/design/mutable.md:627
+#: manual/design/mutable.md:631
 msgid "**A single portable kernel.** Measured to be slower on some targets; the per-target files trade code size for speed while sharing one specification."
 msgstr "**単一の移植可能なカーネル。** 計測の結果、一部のターゲットで遅くなりました。ターゲットごとのファイルは、1 つの仕様を共有しながらコードサイズと引き換えに速度を得ています。"
 
-#: manual/design/mutable.md:632
+#: manual/design/mutable.md:636
 msgid "`mutable` does not provide linear solves for a right-hand side as a public method (only the inverse), QR, SVD or least-squares solvers, eigenvalues of non-symmetric matrices, sparse storage, condition number estimates, or scale-aware tolerances. It does not implement the [`algebra`](algebra.md) traits itself; [`backends/default`](backends/default.md) wraps it for that. Domain workflows such as regression or optimization belong in downstream packages."
 msgstr "`mutable` は、右辺に対する連立一次方程式の求解を公開メソッドとして提供せず（逆行列のみ）、QR、SVD、最小二乗ソルバー、非対称行列の固有値、疎なストレージ、条件数の推定、スケールを考慮した許容誤差も提供しません。[`algebra`](algebra.md) の trait も自身では実装しません。そのために [`backends/default`](backends/default.md) がこれをラップしています。回帰や最適化のような分野固有のワークフローは下流のパッケージに属します。"
 
@@ -6100,8 +6076,8 @@ msgid "Numerical caveats"
 msgstr "数値計算上の注意"
 
 #: manual/index.md:127
-msgid "The numerical routines of `mutable` decide \"zero\" with one absolute threshold, `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of the input; scale data to order one. The $2 \\times 2$ path of `eigen` has known accuracy defects, and `@immut.Matrix::determinant` is meant for exact scalars, not for floating point. The [mutable design](design/mutable.md) and the [immut design](design/immut.md) derive the algorithms and state these limits precisely."
-msgstr "`mutable` の数値ルーチンは一つの絶対しきい値 `Tolerance::tolerance()` $= 10^{-11}$ で「零」を判定するので、結果は入力のスケールに依存します。データは 1 程度の大きさにスケーリングしてください。`eigen` の $2 \\times 2$ の経路には既知の精度上の欠陥があり、`@immut.Matrix::determinant` は浮動小数点ではなく厳密なスカラーのためのものです。[mutable の設計](design/mutable.md) と [immut の設計](design/immut.md) がアルゴリズムを導出し、これらの限界を正確に述べています。"
+msgid "The numerical routines of `mutable` decide \"zero\" with one absolute threshold, `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of the input; scale data to order one (`eigen` is the exception: its decisions are relative to the entries). `@immut.Matrix::determinant` is meant for exact scalars, not for floating point. The [mutable design](design/mutable.md) and the [immut design](design/immut.md) derive the algorithms and state these limits precisely."
+msgstr "`mutable` の数値ルーチンは一つの絶対しきい値 `Tolerance::tolerance()` $= 10^{-11}$ で「零」を判定するので、結果は入力のスケールに依存します。データは 1 程度の大きさにスケーリングしてください（例外は `eigen` で、その判定は要素に対して相対的です）。`@immut.Matrix::determinant` は浮動小数点ではなく厳密なスカラーのためのものです。[mutable の設計](design/mutable.md) と [immut の設計](design/immut.md) がアルゴリズムを導出し、これらの限界を正確に述べています。"
 
 #: manual/index.md:135
 msgid "Where to read next"
@@ -6808,7 +6784,7 @@ msgstr "**浮動小数点の結果を厳密に比較する。** `Double` 行列�
 #: manual/tutorial/error.md:210
 #: manual/tutorial/immut.md:187
 #: manual/tutorial/internal.md:103
-#: manual/tutorial/mutable.md:217
+#: manual/tutorial/mutable.md:212
 #: manual/tutorial/perf.md:53
 #: manual/tutorial/perf_runner.md:54
 #: manual/tutorial/perf_support.md:74
@@ -7805,42 +7781,38 @@ msgid "**Forgetting that `reduce_row_elimination` mutates.** It transforms the r
 msgstr "**`reduce_row_elimination` が変更を行うことを忘れる。** レシーバーをインプレースで変換して返します。先に `copy()` を呼んでください。"
 
 #: manual/tutorial/mutable.md:197
-msgid "**Expecting normalized $2 \\times 2$ eigenvectors.** For $2 \\times 2$ input, the eigenvector columns are not normalized; larger inputs return orthonormal columns."
-msgstr "**$2 \\times 2$ の固有ベクトルが正規化されていると期待する。** $2 \\times 2$ の入力では固有ベクトルの列は正規化されません。それより大きな入力では正規直交な列が返ります。"
+msgid "**Expecting normalized $2 \\times 2$ eigenvectors.** For $2 \\times 2$ input, each eigenvector column is scaled so that its largest entry is $1$, not to unit length; larger inputs return orthonormal columns."
+msgstr "**$2 \\times 2$ の固有ベクトルが正規化されていると思い込む。** $2 \\times 2$ の入力では、各固有ベクトルの列は最大の要素が $1$ になるようにスケーリングされ、長さ 1 にはなりません。より大きな入力では正規直交な列が返ります。"
 
 #: manual/tutorial/mutable.md:200
-msgid "**Close eigenvalues of a $2 \\times 2$ matrix.** The $2 \\times 2$ formula merges eigenvalues closer than about $6 \\times 10^{-6}$ (and then may return two equal eigenvector columns), and can abort on symmetric input with entries near $10^{8}$. See the warning on the [API page](../api/mutable.md#matrixeigen)."
-msgstr "**$2 \\times 2$ 行列の近い固有値。** $2 \\times 2$ の公式は約 $6 \\times 10^{-6}$ より近い固有値を一つにまとめ（そのとき同じ固有ベクトル列を二本返すことがあり）、要素が $10^{8}$ 程度の対称な入力で中断することがあります。[API ページ](../api/mutable.md#matrixeigen) の警告を参照してください。"
+msgid "**Matrices far from order one.** The singularity and definiteness tests use the absolute threshold $10^{-11}$. A matrix whose entries are all around $10^{-12}$ is singular to `inverse` and not positive definite to `cholesky_decomposition`; scale first. `eigen` does not depend on the scale."
+msgstr "**1 程度から大きく外れた行列。** 特異性と正定値性の判定は絶対しきい値 $10^{-11}$ を使います。要素がすべて $10^{-12}$ 程度の行列は、`inverse` にとっては特異で、`cholesky_decomposition` にとっては正定値ではありません。先にスケーリングしてください。`eigen` はスケールに依存しません。"
 
-#: manual/tutorial/mutable.md:205
-msgid "**Matrices far from order one.** Every zero test uses the absolute threshold $10^{-11}$. A matrix whose entries are all around $10^{-12}$ is singular to `inverse`, not positive definite to `cholesky_decomposition`, and has meaningless `eigen` results. Scale first."
-msgstr "**1 程度から大きく外れた行列。** 零の判定はすべて絶対しきい値 $10^{-11}$ を使います。要素がすべて $10^{-12}$ 程度の行列は、`inverse` にとっては特異で、`cholesky_decomposition` にとっては正定値でなく、`eigen` の結果は無意味です。先にスケーリングしてください。"
-
-#: manual/tutorial/mutable.md:209
+#: manual/tutorial/mutable.md:204
 msgid "**Numerical routines on integers.** `determinant`, `inverse`, `rank`, `eigen` and friends need `Tolerance`, which exists only for `Float` and `Double`. For exact integer determinants use `@immut.Matrix::determinant`."
 msgstr "**整数に対する数値ルーチン。** `determinant`、`inverse`、`rank`、`eigen` などは `Tolerance` を必要としますが、これは `Float` と `Double` にしかありません。厳密な整数の行列式には `@immut.Matrix::determinant` を使ってください。"
 
-#: manual/tutorial/mutable.md:212
+#: manual/tutorial/mutable.md:207
 msgid "**`Float` precision.** The tolerance is far below `Float` precision; nearly singular `Float` matrices are not detected. Prefer `Double`."
 msgstr "**`Float` の精度。** 許容誤差は `Float` の精度よりはるかに小さいので、ほぼ特異な `Float` 行列は検出されません。`Double` を使ってください。"
 
-#: manual/tutorial/mutable.md:214
+#: manual/tutorial/mutable.md:209
 msgid "**Power method on symmetric spectra.** Eigenvalues $\\pm\\lambda$ of equal magnitude prevent convergence; `power_method` then returns `None`."
 msgstr "**対称なスペクトルに対するべき乗法。** 絶対値の等しい固有値 $\\pm\\lambda$ があると収束しません。その場合 `power_method` は `None` を返します。"
 
-#: manual/tutorial/mutable.md:219
+#: manual/tutorial/mutable.md:214
 msgid "[mutable API](../api/mutable.md) for every method, its errors and cost."
 msgstr "すべてのメソッドとそのエラー、コストについては [mutable API](../api/mutable.md)。"
 
-#: manual/tutorial/mutable.md:220
+#: manual/tutorial/mutable.md:215
 msgid "[mutable design](../design/mutable.md) for LU, Cholesky, QL and their error bounds."
 msgstr "LU、Cholesky、QL とその誤差限界については [mutable の設計](../design/mutable.md)。"
 
-#: manual/tutorial/mutable.md:222
+#: manual/tutorial/mutable.md:217
 msgid "[error tutorial](error.md) for handling checked results."
 msgstr "検査付きの結果の扱いについては [error のチュートリアル](error.md)。"
 
-#: manual/tutorial/mutable.md:223
+#: manual/tutorial/mutable.md:218
 msgid "[immut tutorial](immut.md) for exact, value-oriented work."
 msgstr "厳密で値指向の計算については [immut のチュートリアル](immut.md)。"
 
@@ -8072,6 +8044,59 @@ msgstr "計時付きの実行については [perf_runner のチュートリア�
 #: manual/tutorial/perf_support.md:78
 msgid "[mutable design](../design/mutable.md) for the measured algorithms."
 msgstr "計測対象のアルゴリズムについては [mutable の設計](../design/mutable.md)。"
+
+#~ msgid "The recognition uses the tolerance: a matrix whose entries are within $10^{-11}$ of the identity is returned as a copy of itself, one whose off-diagonal entries are at most $10^{-11}$ is inverted as if they were zero, and one within $10^{-11}$ of a permutation matrix is returned transposed."
+#~ msgstr "この判定には許容誤差が使われます。単位行列との差が各要素で $10^{-11}$ 以内の行列はそれ自身のコピーが返され、非対角要素がすべて $10^{-11}$ 以下の行列はそれらを零とみなして逆行列が計算され、置換行列との差が $10^{-11}$ 以内の行列は転置が返されます。"
+
+#~ msgid "Two fast paths run first. A matrix within the tolerance of the identity is returned as a copy of itself, so its off-diagonal entries of magnitude at most $10^{-11}$ survive and the result is then not exactly lower triangular. A matrix that is diagonal within the tolerance gives the square roots of its diagonal, and its off-diagonal entries are dropped."
+#~ msgstr "先に二つの高速経路が実行されます。単位行列との差が許容誤差以内の行列はそれ自身のコピーとして返されるので、大きさ $10^{-11}$ 以下の非対角要素が残り、結果は厳密には下三角になりません。許容誤差の範囲で対角な行列では対角要素の平方根が返され、非対角要素は捨てられます。"
+
+#~ msgid "For $2 \\times 2$ input the values come from the characteristic polynomial, $\\lambda_{1,2} = m \\pm \\sqrt{m^2 - \\det A}$ with $m = \\tfrac12 \\operatorname{tr} A$, ordered $\\lambda_1 \\ge \\lambda_2$; the eigenvector columns are **not normalized**."
+#~ msgstr "$2 \\times 2$ の入力では、固有値は特性多項式から $\\lambda_{1,2} = m \\pm \\sqrt{m^2 - \\det A}$（$m = \\tfrac12 \\operatorname{tr} A$）として求め、$\\lambda_1 \\ge \\lambda_2$ の順に並べます。固有ベクトルの列は **正規化されません**。"
+
+#~ msgid "[!WARNING] The $2 \\times 2$ formula compares the discriminant $m^2 - \\det A$, a *squared* quantity, with the absolute tolerance $10^{-11}$, and computes it with cancellation. Three consequences for symmetric input: eigenvalues closer than about $2\\sqrt{10^{-11}} \\approx 6 \\times 10^{-6}$ are returned as equal (for `[[1, 0], [0, 1.000002]]` both values are `1.000001`); for `[[1, 1e-6], [1e-6, 1]]` the two returned eigenvector columns are identical, so the eigenvector matrix is singular; and for entries near $10^{8}$ the rounding error of $m^2 - \\det A$ can exceed $10^{-11}$ in the negative direction, so a diagonal matrix such as `[[100000000.74, 0], [0, 99999999.78]]` aborts with \"complex eigenvalues\". For larger sizes the deflation test and the Householder step also use absolute thresholds, so a matrix whose entries are all below about $10^{-11}$ is treated as already diagonal (for $10^{-12}$ times the tridiagonal matrix with diagonal $2$ and off-diagonal $1$, every returned eigenvalue is $2 \\times 10^{-12}$). Scale the input to order one, and embed a $2 \\times 2$ problem in a larger one or solve it yourself when these cases matter. See the [design page](../design/mutable.md#symmetric-eigenvalue-problem)."
+#~ msgstr "[!WARNING] $2 \\times 2$ の公式は、判別式 $m^2 - \\det A$ という*二乗*の量を絶対許容誤差 $10^{-11}$ と比較し、しかも桁落ちを伴う形で計算します。対称な入力に対して三つの帰結があります。約 $2\\sqrt{10^{-11}} \\approx 6 \\times 10^{-6}$ より近い固有値は等しいものとして返されます（`[[1, 0], [0, 1.000002]]` では二つの値がどちらも `1.000001`）。`[[1, 1e-6], [1e-6, 1]]` では返される二本の固有ベクトル列が同一になり、固有ベクトル行列が特異になります。要素が $10^{8}$ 程度だと $m^2 - \\det A$ の丸め誤差が負の方向に $10^{-11}$ を超えうるため、`[[100000000.74, 0], [0, 99999999.78]]` のような対角行列でも \"complex eigenvalues\" で中断します。より大きなサイズでも減次判定と Householder ステップは絶対的なしきい値を使うので、要素がすべて約 $10^{-11}$ 未満の行列は最初から対角とみなされます（対角 $2$、副対角 $1$ の三重対角行列の $10^{-12}$ 倍では、返る固有値はすべて $2 \\times 10^{-12}$）。入力は 1 程度の大きさにスケーリングし、これらが問題になる場合は $2 \\times 2$ の問題をより大きな問題に埋め込むか、自分で解いてください。[設計ページ](../design/mutable.md#symmetric-eigenvalue-problem) を参照してください。"
+
+#~ msgid "`is_symmetric`, fast-path detection (identity, diagonal, permutation, triangular)"
+#~ msgstr "`is_symmetric`、高速経路の判別（単位、対角、置換、三角）"
+
+#~ msgid "discriminant $< -\\tau$ aborts, $\\lvert\\text{discriminant}\\rvert \\le \\tau$ counts as zero"
+#~ msgstr "判別式が $< -\\tau$ なら中断し、$\\lvert\\text{discriminant}\\rvert \\le \\tau$ なら零とみなす"
+
+#~ msgid "`eigen`, Householder step"
+#~ msgstr "`eigen` の Householder ステップ"
+
+#~ msgid "a row with $\\sum_k \\lvert a_{ik}\\rvert \\le \\tau$ is not reflected"
+#~ msgstr "$\\sum_k \\lvert a_{ik}\\rvert \\le \\tau$ の行は反射しない"
+
+#~ msgid "`eigen` deflation"
+#~ msgstr "`eigen` のデフレーション"
+
+#~ msgid "An off-diagonal entry is treated as zero when"
+#~ msgstr "副対角要素は次のとき零とみなされます。"
+
+#~ msgid "with a small $c_n$. With $\\tau = 10^{-11}$ the second term dominates: absolute accuracy is about $10^{-11}$ for $\\lVert A \\rVert$ of order one, and for a matrix whose entries are all below $\\tau$ the result is meaningless. Eigenvectors are accurate in proportion to (backward error)$/\\text{gap}$, where the gap is the distance to the nearest other eigenvalue (the Davis–Kahan theorem)."
+#~ msgstr "が得られます。ここで $c_n$ は小さな定数です。$\\tau = 10^{-11}$ では第二項が支配的で、$\\lVert A \\rVert$ が 1 程度なら絶対精度は約 $10^{-11}$、要素がすべて $\\tau$ 未満の行列では結果は無意味です。固有ベクトルの精度は（後退誤差）$/\\text{gap}$ に比例します。gap は最も近い別の固有値までの距離です（Davis–Kahan の定理）。"
+
+#~ msgid ""
+#~ "For $b \\n"
+#~ "e 0$ the vector $(b, \\lambda - a)^{\\mathsf T}$ is an eigenvector:"
+#~ msgstr ""
+#~ "$b \\n"
+#~ "e 0$ のとき、ベクトル $(b, \\lambda - a)^{\\mathsf T}$ は固有ベクトルです。"
+
+#~ msgid "since $(\\lambda - a)(\\lambda - d) = \\lambda^2 - (a + d)\\lambda + ad = bc$ by the characteristic equation. The code returns these vectors without normalizing them, and $e_1, e_2$ when $b = c = 0$."
+#~ msgstr "特性方程式から $(\\lambda - a)(\\lambda - d) = \\lambda^2 - (a + d)\\lambda + ad = bc$ だからです。コードはこれらのベクトルを正規化せずに返し、$b = c = 0$ のときは $e_1, e_2$ を返します。"
+
+#~ msgid ""
+#~ "[!WARNING] This closed form is less accurate than the general path, for three reasons that the code does not guard against. (1) For symmetric input the discriminant is $m^2 - (ad - b^2) = \\big(\\tfrac{a-d}{2}\\big)^2 + b^2 \\ge 0$, but it is computed as a difference of two numbers of size $m^2$, with an absolute error of about $u\\, m^2$. For $m \\approx 10^8$ that is about $1$, far above $\\tau$, so the computed discriminant can be negative enough to trigger the \"complex eigenvalues\" abort on a symmetric, even diagonal, matrix. (2) A discriminant with $|\\cdot| \\le \\tau$ is replaced by zero. Since $\\lambda_1 - \\lambda_2 = 2\\sqrt{\\text{discriminant}}$, every pair of eigenvalues closer than $2\\sqrt{\\tau} \\approx 6.3 \\times 10^{-6}$ is returned as a double eigenvalue $m$, an error up to $3 \\times 10^{-6}$. (3) When the two eigenvalues are then equal and $b \\n"
+#~ "e 0$, both columns are $(b, m - a)^{\\mathsf T}$, so the eigenvector matrix is singular. In addition, when $|\\lambda_2| \\ll |\\lambda_1|$ the subtraction $m - \\sqrt{\\cdot}$ cancels and $\\lambda_2$ loses relative accuracy. The stable formulation computes the discriminant as $\\big(\\tfrac{a-d}{2}\\big)^2 + bc$, never thresholds it, takes $\\lambda_2 = \\det A / \\lambda_1$, and chooses between the eigenvector forms $(b, \\lambda - a)$ and $(\\lambda - d, c)$ by size."
+#~ msgstr ""
+#~ "[!WARNING] この閉じた公式は一般の経路より精度が劣り、コードが防いでいない理由が三つあります。(1) 対称な入力では判別式は $m^2 - (ad - b^2) = \\big(\\tfrac{a-d}{2}\\big)^2 + b^2 \\ge 0$ ですが、大きさ $m^2$ の二数の差として計算されるので、絶対誤差は約 $u\\, m^2$ です。$m \\approx 10^8$ ではこれは約 $1$ で $\\tau$ よりはるかに大きく、計算された判別式は、対称な（対角でさえある）行列で \"complex eigenvalues\" の中断を引き起こすほど負になりえます。(2) $|\\cdot| \\le \\tau$ の判別式は零に置き換えられます。$\\lambda_1 - \\lambda_2 = 2\\sqrt{\\text{discriminant}}$ なので、$2\\sqrt{\\tau} \\approx 6.3 \\times 10^{-6}$ より近い固有値の組はすべて二重固有値 $m$ として返され、誤差は最大 $3 \\times 10^{-6}$ になります。(3) そのとき二つの固有値が等しく $b \\n"
+#~ "e 0$ なら、二本の列はどちらも $(b, m - a)^{\\mathsf T}$ となり、固有ベクトル行列は特異になります。さらに $|\\lambda_2| \\ll |\\lambda_1|$ のときは減算 $m - \\sqrt{\\cdot}$ で桁落ちが起き、$\\lambda_2$ は相対精度を失います。安定な定式化では、判別式を $\\big(\\tfrac{a-d}{2}\\big)^2 + bc$ として計算してしきい値をかけず、$\\lambda_2 = \\det A / \\lambda_1$ とし、固有ベクトルの形 $(b, \\lambda - a)$ と $(\\lambda - d, c)$ を大きさで選び分けます。"
+
+#~ msgid "**Close eigenvalues of a $2 \\times 2$ matrix.** The $2 \\times 2$ formula merges eigenvalues closer than about $6 \\times 10^{-6}$ (and then may return two equal eigenvector columns), and can abort on symmetric input with entries near $10^{8}$. See the warning on the [API page](../api/mutable.md#matrixeigen)."
+#~ msgstr "**$2 \\times 2$ 行列の近い固有値。** $2 \\times 2$ の公式は約 $6 \\times 10^{-6}$ より近い固有値を一つにまとめ（そのとき同じ固有ベクトル列を二本返すことがあり）、要素が $10^{8}$ 程度の対称な入力で中断することがあります。[API ページ](../api/mutable.md#matrixeigen) の警告を参照してください。"
 
 #~ msgid "Import"
 #~ msgstr "インポート"
