@@ -24,3 +24,14 @@ src/perf_support/generated_*.mbt
 !src/perf_support/generated_registry.mbt
 bench/rust_baseline/src/generated_cases.rs
 NOTE.md
+
+# AI agent / assistant local state (never track)
+.claude/
+.codex/
+.codex-tmp/
+.cursor/
+.gemini/
+.kiro/
+.windsurf/
+.aider*
+CLAUDE.local.md
