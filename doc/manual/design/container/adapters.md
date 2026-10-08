@@ -8,31 +8,13 @@ the repository's own types, and that code needs to see both the capability
 records and every concrete package. `container/adapters` is that place: a leaf
 package that depends on everything it adapts, so that nothing else has to.
 
-## Mathematical background
+## Constraints
 
-An adapter is the evidence that a concrete type *represents* the abstract
-objects of the container model (see the [container design](../container.md)).
-For a type `V` it supplies the denotation $\llbracket\cdot\rrbracket : V \to ([n] \to T)$
-through `length` and `get`, and, where possible, a section of it through
-`tabulate`:
-
-$$
-\llbracket \mathtt{tabulate}(n, f) \rrbracket = f|_{[n]} .
-$$
-
-For a view, the denotation is computed from the underlying matrix $A$ of shape
-$(r, c)$:
-
-$$
-\llbracket \mathrm{row}_i(A) \rrbracket(j) = A_{ij}, \qquad
-\llbracket \mathrm{col}_j(A) \rrbracket(i) = A_{ij}, \qquad
-\llbracket A^{\mathsf T}_{\text{view}} \rrbracket(i, j) = A_{ji} .
-$$
-
-A view has no `tabulate`: building would have to create an underlying matrix,
-and the result would no longer be a view of anything the caller holds. The
-mutable edit of a view writes through to $A$, which is exactly what a view is
-for.
+- The adapter code needs both the capability records and every concrete
+  type, while `container` must stay free of concrete types.
+- `immut` and `mutable` must not depend on the experimental `container` layer.
+- The dictionaries must honour the panic-free contract of `container`, while
+  the concrete methods they call abort on bad indices.
 
 ## Design decisions
 
@@ -72,6 +54,32 @@ is impossible without breaking its value semantics.
 The concrete types abort on bad indices. Each adapter checks the index or
 shape first and returns the error value, so the dictionaries satisfy the
 panic-free contract of `container` even though the methods they call do not.
+
+## Mathematical background
+
+An adapter is the evidence that a concrete type *represents* the abstract
+objects of the container model (see the [container design](../container.md)).
+For a type `V` it supplies the denotation $\llbracket\cdot\rrbracket : V \to ([n] \to T)$
+through `length` and `get`, and, where possible, a section of it through
+`tabulate`:
+
+$$
+\llbracket \mathtt{tabulate}(n, f) \rrbracket = f|_{[n]} .
+$$
+
+For a view, the denotation is computed from the underlying matrix $A$ of shape
+$(r, c)$:
+
+$$
+\llbracket \mathrm{row}_i(A) \rrbracket(j) = A_{ij}, \qquad
+\llbracket \mathrm{col}_j(A) \rrbracket(i) = A_{ij}, \qquad
+\llbracket A^{\mathsf T}_{\text{view}} \rrbracket(i, j) = A_{ji} .
+$$
+
+A view has no `tabulate`: building would have to create an underlying matrix,
+and the result would no longer be a view of anything the caller holds. The
+mutable edit of a view writes through to $A$, which is exactly what a view is
+for.
 
 ## Correctness and invariants
 

@@ -9,6 +9,69 @@ buffers. `container` describes those structural capabilities separately from
 the mathematical ones of [`algebra`](algebra.md), so that a type can take part
 in data movement without claiming algebraic laws, and the other way round.
 
+## Constraints
+
+- MoonBit traits have one `Self` parameter and no associated types, so a
+  trait cannot relate a container type to its element type.
+- The package must not import any concrete type, so that external libraries
+  can publish dictionaries against it alone.
+- Generic algorithms cannot know how a container reacts to a bad index, so the
+  contract must make failure a value.
+
+## Design decisions
+
+### Operation dictionaries instead of traits
+
+**Problem.** A capability such as "read elements of type `T` from container
+`V`" relates two types. MoonBit traits have one `Self` parameter and no
+associated types.
+
+**Options.** (a) A trait on `V` that fixes the element type, for example
+through a generic method. (b) A trait on `V` per element type. (c) A record of
+functions parametrized by both types.
+
+**Decision.** (c): `VectorReadOps[V, T]` and its siblings are plain structs of
+closures, built with `new` and passed explicitly.
+
+**Why.** A record expresses the two-parameter relation directly. It also lets
+one container type publish several dictionaries, for example a checked and a
+clamping read, or dictionaries for different element types of a polymorphic
+foreign handle, which a trait instance (unique per type) could not. The cost is
+explicit passing; the algorithms take the dictionaries as arguments.
+
+### Read and build are separate
+
+A view can be read but not built; a write-only sink can be built but not read;
+a foreign handle may allow only reads. Combining read and build into one
+capability would force every such type either to fake the missing half or to
+stay out. The algorithms state exactly which half they need on each side:
+source read, target build.
+
+### Two editing models
+
+Persistent editing returns a new value; mutable editing changes the argument
+and returns `Unit`. They are different contracts: generic code written for the
+persistent form may keep the old value and expect it unchanged, which a mutable
+implementation would violate. So they are separate records, and a type
+provides the one matching its ownership model. Neither implies resizing,
+insertion or deletion.
+
+### Read everything, then build
+
+The algorithms read the whole source into a temporary array before calling
+`tabulate`. This costs $O(n)$ memory, but it makes failure atomic: if any read
+fails, the algorithm returns that error before the target exists, so callers
+never see a half-built container. It also calls the user's mapping function
+exactly once per element, in row-major order, which matters when the function
+has effects or is expensive.
+
+### Checked everywhere
+
+Every dictionary function returns a `Result`. A generic algorithm cannot know
+the bounds behaviour of an arbitrary container, so the contract requires each
+implementation to report bad indices and shapes as values instead of aborting.
+The repository adapters validate before they touch storage.
+
 ## Mathematical background
 
 ### A container is a representation of a function
@@ -83,60 +146,6 @@ $$
 and, being persistent, it leaves $v$ itself unchanged. A mutable edit satisfies
 the same equations with "the state of $v$ after the call" in place of the
 returned value.
-
-## Design decisions
-
-### Operation dictionaries instead of traits
-
-**Problem.** A capability such as "read elements of type `T` from container
-`V`" relates two types. MoonBit traits have one `Self` parameter and no
-associated types.
-
-**Options.** (a) A trait on `V` that fixes the element type, for example
-through a generic method. (b) A trait on `V` per element type. (c) A record of
-functions parametrized by both types.
-
-**Decision.** (c): `VectorReadOps[V, T]` and its siblings are plain structs of
-closures, built with `new` and passed explicitly.
-
-**Why.** A record expresses the two-parameter relation directly. It also lets
-one container type publish several dictionaries, for example a checked and a
-clamping read, or dictionaries for different element types of a polymorphic
-foreign handle, which a trait instance (unique per type) could not. The cost is
-explicit passing; the algorithms take the dictionaries as arguments.
-
-### Read and build are separate
-
-A view can be read but not built; a write-only sink can be built but not read;
-a foreign handle may allow only reads. Combining read and build into one
-capability would force every such type either to fake the missing half or to
-stay out. The algorithms state exactly which half they need on each side:
-source read, target build.
-
-### Two editing models
-
-Persistent editing returns a new value; mutable editing changes the argument
-and returns `Unit`. They are different contracts: generic code written for the
-persistent form may keep the old value and expect it unchanged, which a mutable
-implementation would violate. So they are separate records, and a type
-provides the one matching its ownership model. Neither implies resizing,
-insertion or deletion.
-
-### Read everything, then build
-
-The algorithms read the whole source into a temporary array before calling
-`tabulate`. This costs $O(n)$ memory, but it makes failure atomic: if any read
-fails, the algorithm returns that error before the target exists, so callers
-never see a half-built container. It also calls the user's mapping function
-exactly once per element, in row-major order, which matters when the function
-has effects or is expensive.
-
-### Checked everywhere
-
-Every dictionary function returns a `Result`. A generic algorithm cannot know
-the bounds behaviour of an arbitrary container, so the contract requires each
-implementation to report bad indices and shapes as values instead of aborting.
-The repository adapters validate before they touch storage.
 
 ## Correctness and invariants
 

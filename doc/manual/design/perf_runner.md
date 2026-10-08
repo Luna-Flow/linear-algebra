@@ -7,16 +7,11 @@ per-sample timings of a single case, under its own control of repetition and
 warm-up, and a way to replay a case and check its result. `perf_runner` is that
 single-case tool.
 
-## Mathematical background
+## Constraints
 
-A sample is the mean time of `repeat` consecutive calls,
-$t = \tfrac1{\text{repeat}} \sum_{j=1}^{\text{repeat}} T_j$. Averaging inside a
-sample reduces timer resolution error, which is fixed per measurement, by the
-factor `repeat`, and reduces independent per-call noise by
-$1/\sqrt{\text{repeat}}$. Across samples the pipeline uses order statistics
-(median, p90) and the MAD, which are robust to outliers caused by scheduling.
-Warm-up rounds discard the transient of the first calls (cache, branch
-predictors, lazy initialization).
+- The report pipeline needs raw samples of one case per process, with
+  control over repetition and warm-up.
+- The executable may not depend on a serialization library.
 
 ## Design decisions
 
@@ -36,6 +31,17 @@ observable and the diagnostic mode can verify bit-identical results.
 The output is one JSON object per run, assembled by string concatenation, which
 keeps the runner free of serialization dependencies and easy to parse from
 Python.
+
+## Mathematical background
+
+A sample is the mean time of `repeat` consecutive calls,
+$t = \tfrac1{\text{repeat}} \sum_{j=1}^{\text{repeat}} T_j$. Averaging inside a
+sample reduces timer resolution error, which is fixed per measurement, by the
+factor `repeat`, and reduces independent per-call noise by
+$1/\sqrt{\text{repeat}}$. Across samples the pipeline uses order statistics
+(median, p90) and the MAD, which are robust to outliers caused by scheduling.
+Warm-up rounds discard the transient of the first calls (cache, branch
+predictors, lazy initialization).
 
 ## Correctness and invariants
 

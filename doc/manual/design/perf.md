@@ -6,17 +6,10 @@
 `@mutable` numerical kernels on every registered case, with no extra
 infrastructure, so that a kernel change can be compared before and after.
 
-## Mathematical background
+## Constraints
 
-`moon bench` repeats each benchmark body many times and reports statistics of
-the per-iteration time. A steady-state measurement estimates the expected cost
-$\mathbb{E}[T]$ of one call after warm-up, excluding process start, fixture
-I/O and first-call effects. The repository's report scripts summarize samples
-with robust statistics: the median, the nearest-rank 90th percentile, and the
-median absolute deviation $\operatorname{MAD} = \operatorname{median}_i |t_i - \operatorname{median}(t)|$.
-Unlike the mean and the standard deviation, the median and the MAD have a
-breakdown point of 50%: a few samples disturbed by the operating system cannot
-move them arbitrarily.
+- Measurements must use the standard `moon bench` tool and run on `native`.
+- Fixture loading and input preparation must stay outside the timed region.
 
 ## Design decisions
 
@@ -34,6 +27,18 @@ cannot eliminate the call, while costing only one 64-bit fold per output value.
 
 Benchmarks depend on the machine and take long; they are excluded from
 `run_test.sh` unless `LINEAR_ALGEBRA_TEST_BENCH=1` is set.
+
+## Mathematical background
+
+`moon bench` repeats each benchmark body many times and reports statistics of
+the per-iteration time. A steady-state measurement estimates the expected cost
+$\mathbb{E}[T]$ of one call after warm-up, excluding process start, fixture
+I/O and first-call effects. The repository's report scripts summarize samples
+with robust statistics: the median, the nearest-rank 90th percentile, and the
+median absolute deviation $\operatorname{MAD} = \operatorname{median}_i |t_i - \operatorname{median}(t)|$.
+Unlike the mean and the standard deviation, the median and the MAD have a
+breakdown point of 50%: a few samples disturbed by the operating system cannot
+move them arbitrarily.
 
 ## Correctness and invariants
 

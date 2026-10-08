@@ -9,6 +9,28 @@ denote the same mathematics, so that users can switch representations without
 changing results, and so that a kernel optimization in one package cannot
 silently change semantics.
 
+## Constraints
+
+- `immut` and `mutable` must not depend on each other.
+- Comparisons must be exact, so that a failing test always means a real
+  disagreement and never rounding noise.
+- The checks must run in the default test gate without slowing it down.
+
+## Design decisions
+
+### A separate package
+
+The checks need both `immut` and `mutable`, and neither package should depend
+on the other. A third package that imports both for tests only keeps the
+dependency graph clean. Its tests are whitebox tests (`*_wbtest.mbt`) so that
+they can use unqualified helper names.
+
+### Documented differences are tested too
+
+Where the packages intentionally differ (for example `set` mutates in
+`mutable` and returns a new value in `immut`), a test pins the difference down,
+so that it stays a decision rather than an accident.
+
 ## Mathematical background
 
 ### Agreement as a homomorphism property
@@ -40,21 +62,6 @@ summation orders legitimately differ by rounding (see the
 [mutable design](mutable.md)), and the tests would need tolerances that could
 hide real bugs. The property-based tests draw random $2 \times 2$ integer
 matrices with quickcheck and check the laws on each sample.
-
-## Design decisions
-
-### A separate package
-
-The checks need both `immut` and `mutable`, and neither package should depend
-on the other. A third package that imports both for tests only keeps the
-dependency graph clean. Its tests are whitebox tests (`*_wbtest.mbt`) so that
-they can use unqualified helper names.
-
-### Documented differences are tested too
-
-Where the packages intentionally differ (for example `set` mutates in
-`mutable` and returns a new value in `immut`), a test pins the difference down,
-so that it stays a decision rather than an accident.
 
 ## Correctness and invariants
 

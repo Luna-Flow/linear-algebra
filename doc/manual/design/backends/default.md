@@ -9,46 +9,13 @@ any dependency on the experimental `algebra` layer. It is a backend, not the
 centre of the ecosystem: generic algorithms depend on the traits, and this
 package is one way to satisfy them.
 
-## Mathematical background
+## Constraints
 
-### Instances are evidence of laws
-
-Implementing `@algebra.MatMulMatrix` for a type claims the laws listed in the
-[algebra design](../algebra.md): associativity and distributivity of `*` over
-`+` wherever defined. For the wrappers these laws are inherited from the
-wrapped types, because every operator is defined as "unwrap, apply the inner
-operator, wrap":
-
-$$
-\mathrm{wrap}(A) \cdot \mathrm{wrap}(B) = \mathrm{wrap}(A \cdot B) .
-$$
-
-So `wrap` is a homomorphism for every operation, and any equation that holds
-for the inner type holds for the wrapper.
-
-### Partiality of the dense product
-
-For runtime-shaped dense matrices the product is defined on
-$\{(A, B) : \operatorname{cols}(A) = \operatorname{rows}(B)\}$. The trait
-method returns `Self`, so outside that set the wrapper must do something; it
-aborts, as the inner type does. This is the documented runtime precondition
-that the `MatMulMatrix` contract asks implementations to state.
-
-### Dot product and its rounding error
-
-`dot` computes $s_n = \sum_{i=1}^{n} u_i v_i$ by the recurrence
-$s_0 = 0$, $s_i = s_{i-1} + u_i v_i$. In floating point each step multiplies
-the error of all earlier terms by another factor $(1 + \delta)$, and the
-standard argument gives
-
-$$
-\big|\mathrm{fl}(s_n) - s_n\big| \le \gamma_n \sum_{i=1}^{n} |u_i v_i|,
-\qquad \gamma_n = \frac{n u}{1 - n u} .
-$$
-
-The relative error is therefore small when the terms have the same sign, and
-can be large when $\sum |u_i v_i| \gg |s_n|$ (cancellation). `matvec` is $m$
-such dot products and inherits the same bound row by row.
+- `impl Trait for Type` is allowed only in the package that owns the trait or
+  the type.
+- `immut` and `mutable` must not depend on the experimental `algebra` layer.
+- Wrapping must not copy data or change the semantics of the wrapped
+  operations.
 
 ## Design decisions
 
@@ -90,10 +57,60 @@ updates remain available on the inner `@mutable.Vector`.
 the same as $a v_i$; for non-commutative scalars the choice is visible, and it
 is documented rather than hidden.
 
+## Mathematical background
+
+### Instances are evidence of laws
+
+Implementing `@algebra.MatMulMatrix` for a type claims the laws listed in the
+[algebra design](../algebra.md): associativity and distributivity of `*` over
+`+` wherever defined. For the wrappers these laws are inherited from the
+wrapped types, because every operator is defined as "unwrap, apply the inner
+operator, wrap":
+
+$$
+\mathrm{wrap}(A) \cdot \mathrm{wrap}(B) = \mathrm{wrap}(A \cdot B) .
+$$
+
+So `wrap` is a homomorphism for every operation, and any equation that holds
+for the inner type holds for the wrapper. The converse matters too: the
+wrappers satisfy *only* the laws of the inner type. `MatMulMatrix` for
+`DenseMatrix[T]` is implemented for every `T : AddMonoid + Mul`, a bound that
+does not require distributivity or associativity of `*` on `T`. The product
+laws of the [algebra design](../algebra.md) hold when `T` is a semiring
+(`Int`, `BigInt`, ...), hold up to rounding for `Float` and `Double`, and can
+fail for a scalar type whose `Mul` is not associative or not distributive; the
+instance exists for such a type, but its laws do not.
+
+### Partiality of the dense product
+
+For runtime-shaped dense matrices the product is defined on
+$\{(A, B) : \operatorname{cols}(A) = \operatorname{rows}(B)\}$. The trait
+method returns `Self`, so outside that set the wrapper must do something; it
+aborts, as the inner type does. This is the documented runtime precondition
+that the `MatMulMatrix` contract asks implementations to state.
+
+### Dot product and its rounding error
+
+`dot` computes $s_n = \sum_{i=1}^{n} u_i v_i$ by the recurrence
+$s_0 = 0$, $s_i = s_{i-1} + u_i v_i$. In floating point each step multiplies
+the error of all earlier terms by another factor $(1 + \delta)$, and the
+standard argument gives
+
+$$
+\big|\mathrm{fl}(s_n) - s_n\big| \le \gamma_n \sum_{i=1}^{n} |u_i v_i|,
+\qquad \gamma_n = \frac{n u}{1 - n u} .
+$$
+
+The relative error is therefore small when the terms have the same sign, and
+can be large when $\sum |u_i v_i| \gg |s_n|$ (cancellation). `matvec` is $m$
+such dot products and inherits the same bound row by row.
+
 ## Correctness and invariants
 
-- **Homomorphism.** `inner(a op b) == inner(a) op inner(b)` for every operator,
-  so the wrappers satisfy exactly the laws of the wrapped types.
+- **Homomorphism.** `inner(a op b) == inner(a) op inner(b)` for every operator
+  (for `-` the right side is `inner(a) + -inner(b)`, since the inner vector
+  types have no `Sub`), so the wrappers satisfy exactly the laws of the wrapped
+  types.
 - **No copies on wrapping.** `from_backend(x).inner()` is physically `x`;
   writes to a mutable inner value are visible through the wrapper.
 - **Transpose.** `transpose` materializes; it never returns a view, so the

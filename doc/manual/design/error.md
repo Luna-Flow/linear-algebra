@@ -9,6 +9,60 @@ that every checked API of the repository can turn a partial operation into a
 total one and callers can decide what to do on the failure path without
 parsing text.
 
+## Constraints
+
+- MoonBit `Result` and pattern matching are the idiomatic way to return a
+  failure as a value; the type must work with both.
+- The error type sits below every package that reports failures, so it may
+  depend on nothing in this repository.
+- The aborting behaviour of releases before `0.4.0` had to stay available
+  under some name for existing callers.
+
+## Design decisions
+
+### A struct with a kind, not a `suberror`
+
+**Options.** (a) A MoonBit `suberror` raised with `raise`. (b) A plain enum.
+(c) A struct holding a kind and a message, returned in `Result`.
+
+**Decision.** (c), following the Luna-Flow convention: `pub struct
+LinearAlgebraError { kind, message }` with `pub enum LinearAlgebraErrorKind`.
+
+**Why.** A `Result` is an ordinary value: it can be stored, mapped and
+combined, and its presence is visible in the signature. The kind is the
+contract for control flow; the message is free to change and carries details
+such as which index was wrong. Keeping the enum read-only outside the package
+and exposing snake_case constructors (`LinearAlgebraError::singular_matrix`)
+lets the package add fields later without breaking callers.
+
+### Predicates beside the enum
+
+Every kind has an `is_*` predicate. Most callers only need a yes/no question
+("was it singular?"), and a predicate keeps working when a kind gains a payload
+in a future version, where an exhaustive `match` would not.
+
+### Unchecked forms keep their old behaviour
+
+Before `0.4.0` the matrix methods aborted or returned `Option`. Those
+behaviours are preserved under explicit `unchecked_*` names
+(`unchecked_inverse` still returns `Option`), and the short names became the
+checked forms. A reader of `m.inverse()` therefore sees the safe form by
+default, and the unsafe one announces itself.
+
+### Reserved kinds
+
+`InvalidLength`, `RaggedRows`, `NonConvergence` and `ArithmeticFailure` are not
+produced by any API in this release; the corresponding operations
+(`from_array`, `from_2d_array`, `eigen`) still abort. The kinds exist so that
+downstream checked wrappers and future checked constructors can report these
+failures in the shared vocabulary without a breaking change to the enum.
+
+### No `Show` or `Debug`
+
+The error implements only `Eq`. Formatting and localization are presentation
+policy, which this package leaves to applications; `message` is the
+diagnostic text.
+
 ## Mathematical background
 
 ### Partial functions
@@ -75,51 +129,6 @@ $\{x \in \operatorname{dom} f : f(x) \in \operatorname{dom} g\}$. In MoonBit
 this is a `match` that returns early on `Err`, or `Result::bind`. A single
 error type across the repository is what makes this composition possible
 without conversions.
-
-## Design decisions
-
-### A struct with a kind, not a `suberror`
-
-**Options.** (a) A MoonBit `suberror` raised with `raise`. (b) A plain enum.
-(c) A struct holding a kind and a message, returned in `Result`.
-
-**Decision.** (c), following the Luna-Flow convention: `pub struct
-LinearAlgebraError { kind, message }` with `pub enum LinearAlgebraErrorKind`.
-
-**Why.** A `Result` is an ordinary value: it can be stored, mapped and
-combined, and its presence is visible in the signature. The kind is the
-contract for control flow; the message is free to change and carries details
-such as which index was wrong. Keeping the enum read-only outside the package
-and exposing snake_case constructors (`LinearAlgebraError::singular_matrix`)
-lets the package add fields later without breaking callers.
-
-### Predicates beside the enum
-
-Every kind has an `is_*` predicate. Most callers only need a yes/no question
-("was it singular?"), and a predicate keeps working when a kind gains a payload
-in a future version, where an exhaustive `match` would not.
-
-### Unchecked forms keep their old behaviour
-
-Before `0.4.0` the matrix methods aborted or returned `Option`. Those
-behaviours are preserved under explicit `unchecked_*` names
-(`unchecked_inverse` still returns `Option`), and the short names became the
-checked forms. A reader of `m.inverse()` therefore sees the safe form by
-default, and the unsafe one announces itself.
-
-### Reserved kinds
-
-`InvalidLength`, `RaggedRows`, `NonConvergence` and `ArithmeticFailure` are not
-produced by any API in this release; the corresponding operations
-(`from_array`, `from_2d_array`, `eigen`) still abort. The kinds exist so that
-downstream checked wrappers and future checked constructors can report these
-failures in the shared vocabulary without a breaking change to the enum.
-
-### No `Show` or `Debug`
-
-The error implements only `Eq`. Formatting and localization are presentation
-policy, which this package leaves to applications; `message` is the
-diagnostic text.
 
 ## Correctness and invariants
 

@@ -8,32 +8,14 @@ the computation rather than of setup, and a guarantee that the measured code
 actually ran. `perf_support` provides those guarantees for the benchmark
 subsystem of this repository.
 
-## Mathematical background
+## Constraints
 
-### Deterministic inputs
-
-Inputs are generated from a per-case seed with the SplitMix64 generator and
-mapped to a target distribution (for example uniform on $[-1, 1]$). Structured
-families are built from such draws by construction, for example a symmetric
-positive definite matrix as $M^{\mathsf T} M + \alpha I$, which is SPD for any
-$\alpha > 0$ because $x^{\mathsf T}(M^{\mathsf T}M + \alpha I)x = \lVert Mx \rVert^2 + \alpha\lVert x\rVert^2 > 0$
-for $x \ne 0$. The same seed always gives the same bits, so a fixture can be
-regenerated instead of stored.
-
-### Checksums
-
-Each run folds the bit patterns of its result into a 64-bit value with an
-FNV-style mix,
-
-$$
-h_0 = 1469598103934665603, \qquad
-h_{k+1} = (h_k \oplus w_k) \cdot 1099511628211 \bmod 2^{64},
-$$
-
-where $w_k$ is the IEEE bit pattern of the $k$-th output value (shape first for
-matrices). The checksum serves two purposes: it keeps the compiler from
-removing the computation as dead code, and it detects a change of result bits
-between runs, targets or versions. It is not a cryptographic hash.
+- Inputs must be identical on every run and machine, without storing large
+  arrays in the repository's source code.
+- The measured work must stay observable, so that the compiler cannot remove
+  it.
+- The package serves only this repository's benchmark tools and the `native`
+  target.
 
 ## Design decisions
 
@@ -63,6 +45,34 @@ copies, so every sample measures the same work.
 The benchmarks call the `unchecked_*` methods, because the inputs are known to
 satisfy the preconditions and the cost of validation is not what is being
 measured.
+
+## Mathematical background
+
+### Deterministic inputs
+
+Inputs are generated from a per-case seed with the SplitMix64 generator and
+mapped to a target distribution (for example uniform on $[-0.9, 0.9]$, from
+the top 53 bits of each 64-bit draw). Structured
+families are built from such draws by construction, for example a symmetric
+positive definite matrix as $M^{\mathsf T} M + \alpha I$, which is SPD for any
+$\alpha > 0$ because $x^{\mathsf T}(M^{\mathsf T}M + \alpha I)x = \lVert Mx \rVert^2 + \alpha\lVert x\rVert^2 > 0$
+for $x \ne 0$. The same seed always gives the same bits, so a fixture can be
+regenerated instead of stored.
+
+### Checksums
+
+Each run folds the bit patterns of its result into a 64-bit value with an
+FNV-style mix,
+
+$$
+h_0 = 1469598103934665603, \qquad
+h_{k+1} = (h_k \oplus w_k) \cdot 1099511628211 \bmod 2^{64},
+$$
+
+where $w_k$ is the IEEE bit pattern of the $k$-th output value (shape first for
+matrices). The checksum serves two purposes: it keeps the compiler from
+removing the computation as dead code, and it detects a change of result bits
+between runs, targets or versions. It is not a cryptographic hash.
 
 ## Correctness and invariants
 
