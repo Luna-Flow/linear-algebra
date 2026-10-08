@@ -54,7 +54,7 @@ fn[T] BlasVector::from_backend(
   guard data.length() == length else {
     abort("Vector data length does not match shape")
   }
-  { length, data }
+  { length, data, }
 }
 
 ///|
@@ -69,7 +69,7 @@ fn[T] BlasMatrix::from_backend(
   guard data.length() == row * col else {
     abort("Matrix data length does not match shape")
   }
-  { row, col, data }
+  { row, col, data, }
 }
 
 ///|
@@ -96,7 +96,7 @@ pub fn[T : BLASInnerType] BlasVector::from_array(
 ) -> BlasVector[T] {
   ignore(T::tolerance())
   let fixed = FixedArray::from_array(data)
-  { length: fixed.length(), data: fixed }
+  { length: fixed.length(), data: fixed, }
 }
 
 ///|
@@ -150,7 +150,8 @@ pub fn[T] BlasVector::length(self : BlasVector[T]) -> Int {
 }
 
 ///|
-pub fn[T] BlasVector::op_get(self : BlasVector[T], index : Int) -> T {
+#alias("_[_]")
+pub fn[T] BlasVector::at(self : BlasVector[T], index : Int) -> T {
   self.data[index]
 }
 

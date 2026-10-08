@@ -42,7 +42,7 @@ pub impl[T : BLASInnerType + Show] Show for BlasVector[T] with fn output(
   self,
   logger,
 ) {
-  self.to_immut().output(logger)
+  Show::output(self.to_immut(), logger)
 }
 
 ///|
@@ -137,7 +137,7 @@ pub impl[T : BLASInnerType + Show] Show for BlasMatrix[T] with fn output(
   self,
   logger,
 ) {
-  self.to_immut().output(logger)
+  Show::output(self.to_immut(), logger)
 }
 
 ///|

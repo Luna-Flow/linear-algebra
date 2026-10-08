@@ -1,0 +1,32 @@
+--- a/cblas/cblas.mbt
++++ b/cblas/cblas.mbt
+@@ -83,7 +83,7 @@
+ /// ```c
+ /// typedef void (*openblas_dojob_callback)(int thread_num, void *jobdata, int dojob_data);
+ /// ```
+-pub typealias FuncRef[(Int, VoidPtr, Int) -> Unit] as Openblas_dojob_callback
++pub type Openblas_dojob_callback = FuncRef[(Int, VoidPtr, Int) -> Unit]
+ 
+ ///|
+ ///
+@@ -94,9 +94,9 @@
+ ///   void *jobdata, int dojob_data
+ /// );
+ /// ``` 
+-pub typealias FuncRef[
++pub type Openblas_threads_callback = FuncRef[
+   (Int, Openblas_dojob_callback, Int, Int, VoidPtr, Int) -> Unit,
+-] as Openblas_threads_callback
++]
+ 
+ ///|
+ ///
+@@ -217,7 +217,7 @@
+ /// ```c
+ /// typedef CBLAS_ORDER CBLAS_LAYOUT;
+ /// ```
+-pub typealias CBLAS_ORDER as CBLAS_LAYOUT
++pub type CBLAS_LAYOUT = CBLAS_ORDER
+ 
+ ///|
+ ///

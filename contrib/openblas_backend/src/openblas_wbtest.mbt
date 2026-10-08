@@ -11,7 +11,7 @@ fn[T : BLASInnerType] matrix_close(
   for i in 0..<left.row() {
     for j in 0..<left.col() {
       let diff = left_rows[i][j] + -right_rows[i][j]
-      let abs_diff = if diff < T::zero() { -diff } else { diff }
+      let abs_diff = if diff < @lf_alg.Zero::zero() { -diff } else { diff }
       if abs_diff > T::tolerance() {
         return false
       }
@@ -28,7 +28,7 @@ fn[T : BLASInnerType] vector_close(
   guard left.length() == right.length() else { return false }
   for i in 0..<left.length() {
     let diff = left[i] + -right[i]
-    let abs_diff = if diff < T::zero() { -diff } else { diff }
+    let abs_diff = if diff < @lf_alg.Zero::zero() { -diff } else { diff }
     if abs_diff > T::tolerance() {
       return false
     }

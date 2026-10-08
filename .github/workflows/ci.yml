@@ -32,19 +32,11 @@ jobs:
           moon version --all
           moonrun --version
 
-      - name: install openblas
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libopenblas-dev
-
       - name: update registry
         run: moon update
 
       - name: check
         run: moon check --target all
-
-      - name: test openblas backend
-        run: moon test src/backends/openblas --target native
 
       - name: test
         run: bash ./run_test.sh
