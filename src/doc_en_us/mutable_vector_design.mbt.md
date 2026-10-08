@@ -1,1 +1,0 @@
-../../doc/manual/design/mutable/vector.md

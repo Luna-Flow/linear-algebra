@@ -1,1 +1,0 @@
-../../doc/manual/api/mutable/matrix.md
