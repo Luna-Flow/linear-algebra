@@ -1,1 +1,0 @@
-../../doc/manual/design/immut/vector.md

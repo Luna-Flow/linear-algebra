@@ -1,1 +1,0 @@
-../../doc/manual/api/immut/vector.md

@@ -1,1 +1,0 @@
-../../doc/manual/api/immut/matrix.md
