@@ -1,5 +1,7 @@
 # arithmetic API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/arithmetic` is the scalar-operation layer of the
 repository. It re-exports the scalar types and traits that linear-algebra code
 uses from `Luna-Flow/luna-generic` and `Luna-Flow/arithmetic`, and adds five
@@ -11,9 +13,10 @@ Source: [`src/arithmetic/operation_traits.mbt`](../../../src/arithmetic/operatio
 [`src/arithmetic/alias.mbt`](../../../src/arithmetic/alias.mbt). The reasoning
 is in the [arithmetic design](../design/arithmetic.md).
 
-## Import
+## Importing
 
-The examples on this page use these aliases:
+Import the package, and the upstream `Luna-Flow/arithmetic` for the context
+and error types, in `moon.pkg`:
 
 ```moonbit nocheck
 ///|
@@ -23,33 +26,126 @@ import {
 }
 ```
 
+The examples on this page write every name with its package prefix, such as
+`@la_arithmetic.`, instead of a `using` declaration: all pages of this manual
+compile into one test package, where the declarations of different pages
+would clash.
+
 ## Re-exported names
 
-The package re-exports these upstream names with `pub using`, so
-`@la_arithmetic.Sqrt` and `@lf_arith.Sqrt` denote the same trait. Their
-behaviour is documented upstream: [luna-generic](https://lunaflow.cn/en/luna-generic/)
-and [arithmetic](https://lunaflow.cn/en/arithmetic/).
+The package re-exports upstream names with `pub using`, so
+`@la_arithmetic.Sqrt` and `@lf_arith.Sqrt` denote the same trait, and a scalar
+type that implements the upstream trait satisfies the re-exported one. Their
+full behaviour is documented upstream:
+[luna-generic](https://lunaflow.cn/en/luna-generic/) and
+[arithmetic](https://lunaflow.cn/en/arithmetic/).
 
-| Name | Kind | From | Meaning |
-| --- | --- | --- | --- |
-| `Zero` | trait | luna-generic | additive identity `zero()` |
-| `One` | trait | luna-generic | multiplicative identity `one()` |
-| `Inverse` | trait | luna-generic | multiplicative inverse `inv(x)` |
-| `Conjugate` | trait | luna-generic | involution `conjugate(x)`; the builtin real types have no instance |
-| `Sqrt` | trait | arithmetic | unchecked `sqrt(x)` |
-| `Cbrt` | trait | arithmetic | unchecked `cbrt(x)` |
-| `Power` | trait | arithmetic | unchecked `pow(x, y)` |
-| `Exponential` | trait | arithmetic | `exp(x)`, `exp2(x)` |
-| `Logarithmic` | trait | arithmetic | `ln(x)`, `log2(x)`, `log10(x)` |
-| `Constants` | trait | arithmetic | `pi()`, `tau()`, `e()` |
-| `SqrtChecked` | trait | arithmetic | `sqrt_checked(x, ctx)` returning `Result` |
-| `DivChecked` | trait | arithmetic | `div_checked(x, y, ctx)` returning `Result` |
-| `CompareChecked` | trait | arithmetic | `compare_checked(x, y)` returning `Result[Int, _]` |
-| `ArithmeticContext` | type | arithmetic | precision and rounding settings passed to checked operations |
-| `ArithmeticError` | type | arithmetic | structured scalar error with `kind` and `message` |
-| `ArithmeticErrorKind` | type | arithmetic | `DivisionByZero`, `DomainError`, `UnorderedComparison`, ... |
-| `FpClass` | type | arithmetic | `Finite`, `Infinity`, `NaN` |
-| `RoundingMode` | type | arithmetic | `ToNearestEven`, `TowardZero`, ... |
+### `Zero`, `One`, `Inverse`, `Conjugate`
+
+These re-export the scalar operation traits of `luna-generic`: the additive
+and multiplicative identities, the multiplicative inverse and conjugation.
+
+```mbti
+pub using @luna-generic {trait Zero}
+pub using @luna-generic {trait One}
+pub using @luna-generic {trait Inverse}
+pub using @luna-generic {trait Conjugate}
+```
+
+| Name | Method | Meaning |
+| --- | --- | --- |
+| `Zero` | `zero()` | additive identity $0$ |
+| `One` | `one()` | multiplicative identity $1$ |
+| `Inverse` | `inv(x)` | $x^{-1}$; the `Float` and `Double` instances abort on $0$ |
+| `Conjugate` | `conjugate(x)` | $\overline{x}$; the builtin real types have no instance |
+
+They state no laws by themselves; the structure traits of `luna-generic`
+(`Ring`, `Field`, ...) give them their meaning.
+
+### `Sqrt`, `Cbrt`, `Power`, `Exponential`, `Logarithmic`, `Constants`
+
+These re-export the unchecked analytic operations of `Luna-Flow/arithmetic`.
+
+```mbti
+pub using @Luna-Flow/arithmetic {trait Sqrt}
+pub using @Luna-Flow/arithmetic {trait Cbrt}
+pub using @Luna-Flow/arithmetic {trait Power}
+pub using @Luna-Flow/arithmetic {trait Exponential}
+pub using @Luna-Flow/arithmetic {trait Logarithmic}
+pub using @Luna-Flow/arithmetic {trait Constants}
+```
+
+| Name | Methods | Meaning |
+| --- | --- | --- |
+| `Sqrt` | `sqrt(x)` | $\sqrt{x}$; IEEE NaN for $x < 0$ |
+| `Cbrt` | `cbrt(x)` | $\sqrt[3]{x}$ |
+| `Power` | `pow(x, y)` | $x^y$ |
+| `Exponential` | `exp(x)`, `exp2(x)` | $e^x$, $2^x$ |
+| `Logarithmic` | `ln(x)`, `log2(x)`, `log10(x)` | logarithms |
+| `Constants` | `pi()`, `tau()`, `e()` | $\pi$, $2\pi$, $e$ |
+
+`Sqrt` is the one this repository uses: `mutable` needs it for
+`cholesky_decomposition`, `eigen`, `frobenius_norm` and `std_dev`.
+
+### `SqrtChecked`, `DivChecked`, `CompareChecked`
+
+These re-export the checked operations of `Luna-Flow/arithmetic`, which return
+`Result` instead of an IEEE special value.
+
+```mbti
+pub using @Luna-Flow/arithmetic {trait SqrtChecked}
+pub using @Luna-Flow/arithmetic {trait DivChecked}
+pub using @Luna-Flow/arithmetic {trait CompareChecked}
+```
+
+| Name | Method |
+| --- | --- |
+| `SqrtChecked` | `sqrt_checked(x, ctx) -> Result[Self, ArithmeticError]` |
+| `DivChecked` | `div_checked(x, y, ctx) -> Result[Self, ArithmeticError]` |
+| `CompareChecked` | `compare_checked(x, y) -> Result[Int, ArithmeticError]` |
+
+The local traits `CheckedSqrt`, `CheckedDiv` and `CheckedCompare` below
+delegate to them for `Float` and `Double`.
+
+### `ArithmeticContext`, `ArithmeticError`, `ArithmeticErrorKind`, `FpClass`, `RoundingMode`
+
+These re-export the types that the checked operations take and return.
+
+```mbti
+pub using @Luna-Flow/arithmetic {type ArithmeticContext}
+pub using @Luna-Flow/arithmetic {type ArithmeticError}
+pub using @Luna-Flow/arithmetic {type ArithmeticErrorKind}
+pub using @Luna-Flow/arithmetic {type FpClass}
+pub using @Luna-Flow/arithmetic {type RoundingMode}
+```
+
+| Name | Meaning |
+| --- | --- |
+| `ArithmeticContext` | precision and rounding settings; build it with `ArithmeticContext::new(precision)` |
+| `ArithmeticError` | structured scalar error with fields `kind` and `message` |
+| `ArithmeticErrorKind` | `DivisionByZero`, `DomainError`, `UnorderedComparison`, `ParseError`, `FormatError`, `UnsupportedOperation` |
+| `FpClass` | `Finite`, `Infinity`, `NaN` |
+| `RoundingMode` | `ToNearestEven`, `TowardZero`, `TowardPositive`, `TowardNegative`, `AwayFromZero` |
+
+```moonbit check
+///|
+fn[T : @la_arithmetic.Zero + @la_arithmetic.Sqrt + Add + Mul] arith_api_hypot(
+  x : T,
+  y : T,
+) -> T {
+  @la_arithmetic.Sqrt::sqrt(@la_arithmetic.Zero::zero() + x * x + y * y)
+}
+
+///|
+test "re-exported traits are the upstream ones" {
+  inspect(arith_api_hypot(3.0, 4.0), content="5")
+  let ctx = @lf_arith.ArithmeticContext::new(53)
+  inspect(
+    @la_arithmetic.SqrtChecked::sqrt_checked(-1.0, ctx) is Err(_),
+    content="true",
+  )
+}
+```
 
 ## Absolute value
 
@@ -122,7 +218,8 @@ fn ApproxEq::approx_eq(Self, Self) -> Bool
 
 The tolerance is absolute, so it is too strict for large magnitudes and too
 loose for tiny ones, and the relation is not transitive. It returns `false`
-whenever an operand is NaN. See the [design page](../design/arithmetic.md) for
+whenever an operand is NaN, and for an infinity compared with itself
+($\infty - \infty$ is NaN). See the [design page](../design/arithmetic.md) for
 the consequences.
 
 ```moonbit check
@@ -172,8 +269,8 @@ fn CheckedDiv::checked_div(Self, Self, ArithmeticContext) -> Result[Self, Arithm
 | --- | --- |
 | $0 / 0$ | `Err`, kind `DomainError` |
 | $\pm\infty / \pm\infty$ | `Err`, kind `DomainError` |
-| $x / 0$, $x \ne 0$ | `Err`, kind `DivisionByZero` |
-| otherwise | `Ok(x / y)`, rounded to nearest |
+| $x / 0$, $x \ne 0$ (also for $x = \infty$ or NaN) | `Err`, kind `DivisionByZero` |
+| otherwise | `Ok(x / y)`, rounded to nearest; NaN operands give `Ok(NaN)` |
 
 ### `CheckedSqrt`
 

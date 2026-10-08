@@ -9,6 +9,49 @@ comparison for ordering, and a way to compare floating-point results. The
 claiming that the scalar types satisfy laws they do not satisfy. It reuses the
 upstream vocabulary wherever it exists and adds a trait only where none does.
 
+## Constraints
+
+- Trait instances can only be written in the package that owns the trait or
+  the type, so names that already exist upstream must be re-exported, not
+  redefined.
+- `Float` and `Double` satisfy algebraic laws only up to rounding, so no trait
+  here may claim laws.
+- The package sits below every other package of the repository and may depend
+  only on `luna-generic` and `Luna-Flow/arithmetic`.
+
+## Design decisions
+
+### Reuse upstream names
+
+The scalar traits `Zero`, `One`, `Inverse`, `Conjugate` and the analytic
+traits of `Luna-Flow/arithmetic` are re-exported with `pub using` rather than
+redefined. A local copy would create a second, incompatible `Sqrt`, and a
+scalar type implementing the upstream trait would not satisfy the local one.
+With `pub using`, `@la_arithmetic.Sqrt` *is* `@lf_arith.Sqrt`.
+
+### Small local traits
+
+`Abs`, `ApproxEq`, `CheckedDiv`, `CheckedSqrt` and `CheckedCompare` exist
+because linear-algebra code wanted these names when the upstream package did
+not provide them in this form. Each is one method, so a scalar type can opt in
+to exactly the operations it supports. The checked traits delegate to the
+upstream checked traits for `Float` and `Double`, so the two layers agree on
+every input.
+
+### Context accepted and ignored for binary floating point
+
+`checked_div` and `checked_sqrt` take an `ArithmeticContext` so that one
+signature serves fixed-precision and arbitrary-precision scalar types. For
+`Float` and `Double` the precision is fixed by the hardware format and rounding
+is round-to-nearest-even, so the context has no effect.
+
+### Fixed absolute tolerances
+
+`ApproxEq` uses $10^{-12}$ for `Double` and $10^{-6}$ for `Float`. These are
+about $9000u$ and $17u$ for the unit roundoff $u$ of each format ($2^{-53}$
+and $2^{-24}$), so they suit values of order one, such as entries of normalized vectors.
+For other scales, compare with an explicit tolerance in your own code.
+
 ## Mathematical background
 
 ### Operations versus structures
@@ -53,7 +96,13 @@ operands:
 | $y \ne 0$, not both infinite | $\mathrm{fl}(x / y)$ | `Ok` of the same value |
 | $x = y = 0$ | NaN | `DomainError` |
 | $x, y$ both infinite | NaN | `DomainError` |
-| $x \ne 0$, $y = 0$ | $\pm\infty$ | `DivisionByZero` |
+| $x \ne 0$ (finite, infinite or NaN), $y = \pm 0$ | $\pm\infty$ or NaN | `DivisionByZero` |
+| $y \ne 0$, $x$ or $y$ NaN | NaN | `Ok(NaN)` |
+
+A NaN operand with a non-zero divisor passes through as `Ok(NaN)`: it is
+already outside the reals, and the check reports only the operands for which
+the division itself is undefined. A zero divisor is reported even when the
+dividend is NaN.
 
 ### Ordering with NaN
 
@@ -66,7 +115,7 @@ the result a total order on its domain.
 ### Approximate equality
 
 `ApproxEq` uses the absolute rule $a \approx b \iff |a - b| \le \varepsilon$.
-This relation is reflexive and symmetric but not transitive. From
+On finite values this relation is reflexive and symmetric but not transitive. From
 $|a - b| \le \varepsilon$ and $|b - c| \le \varepsilon$ the triangle inequality
 gives only
 
@@ -87,50 +136,21 @@ $|a - b| \le \varepsilon \max(|a|, |b|)$ fixes the scale problem but fails near
 zero, which is why careful code combines both; this package leaves that choice
 to the caller.
 
-## Design decisions
-
-### Reuse upstream names
-
-The scalar traits `Zero`, `One`, `Inverse`, `Conjugate` and the analytic
-traits of `Luna-Flow/arithmetic` are re-exported with `pub using` rather than
-redefined. A local copy would create a second, incompatible `Sqrt`, and a
-scalar type implementing the upstream trait would not satisfy the local one.
-With `pub using`, `@la_arithmetic.Sqrt` *is* `@lf_arith.Sqrt`.
-
-### Small local traits
-
-`Abs`, `ApproxEq`, `CheckedDiv`, `CheckedSqrt` and `CheckedCompare` exist
-because linear-algebra code wanted these names when the upstream package did
-not provide them in this form. Each is one method, so a scalar type can opt in
-to exactly the operations it supports. The checked traits delegate to the
-upstream checked traits for `Float` and `Double`, so the two layers agree on
-every input.
-
-### Context accepted and ignored for binary floating point
-
-`checked_div` and `checked_sqrt` take an `ArithmeticContext` so that one
-signature serves fixed-precision and arbitrary-precision scalar types. For
-`Float` and `Double` the precision is fixed by the hardware format and rounding
-is round-to-nearest-even, so the context has no effect.
-
-### Fixed absolute tolerances
-
-`ApproxEq` uses $10^{-12}$ for `Double` and $10^{-6}$ for `Float`. These are
-about $9000u$ and $17u$ for the unit roundoff $u$ of each format ($2^{-53}$
-and $2^{-24}$), so they suit values of order one, such as entries of normalized vectors.
-For other scales, compare with an explicit tolerance in your own code.
-
 ## Correctness and invariants
 
-- For `Float` and `Double`, `checked_div(x, y, ctx)` returns `Ok(v)` exactly
-  when IEEE division returns a value that is not produced from an invalid or
-  divide-by-zero exception, and then `v` equals the IEEE quotient bit for bit.
+- For `Float` and `Double`, `checked_div(x, y, ctx)` returns `Err` exactly
+  when $y = \pm 0$ or when $x$ and $y$ are both infinite; otherwise it returns
+  `Ok(v)` where `v` is the IEEE quotient bit for bit (NaN for a NaN operand). Note that IEEE 754 itself signals no exception for
+  $\infty / 0$, which `checked_div` nevertheless reports as `DivisionByZero`.
 - `checked_sqrt(x, ctx)` returns `Ok(√x)` for $x \ge 0$ and for NaN, and
-  `Err` for $x < 0$. Note that $-0.0 \ge 0$ holds, so `checked_sqrt(-0.0)` is
-  `Ok(-0.0)`.
+  `Err` with kind `DomainError` for $x < 0$, including $-\infty$. Note that
+  $-0.0 \ge 0$ holds, so `checked_sqrt(-0.0)` is `Ok(-0.0)`, as IEEE 754
+  requires.
 - `checked_compare` is antisymmetric on its domain:
   `checked_compare(a, b) == Ok(k)` implies `checked_compare(b, a) == Ok(-k)`.
-- `approx_eq` is reflexive and symmetric for non-NaN values and false for NaN.
+- `approx_eq` is symmetric, and reflexive on finite values. It is false
+  whenever an operand is NaN, and also for $\infty$ against itself, because
+  $\infty - \infty$ is NaN.
 
 ## Alternatives rejected
 

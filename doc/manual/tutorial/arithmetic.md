@@ -5,6 +5,15 @@ your own generic helpers: absolute values, approximate comparison, and checked
 division, square root and comparison that turn invalid inputs into values you
 can handle. The background is in the [arithmetic design](../design/arithmetic.md).
 
+| I want to | Use |
+| --- | --- |
+| take an absolute value generically | `@la_arithmetic.Abs::abs` |
+| compare floating-point results | `@la_arithmetic.ApproxEq::approx_eq` |
+| divide without producing infinities | `@la_arithmetic.CheckedDiv::checked_div` |
+| take a square root only on its domain | `@la_arithmetic.CheckedSqrt::checked_sqrt` |
+| order values that may be NaN | `@la_arithmetic.CheckedCompare::checked_compare` |
+| use `Sqrt`, `Zero`, `One` from one import | the re-exports of `@la_arithmetic` |
+
 ## Quick start
 
 ```sh
