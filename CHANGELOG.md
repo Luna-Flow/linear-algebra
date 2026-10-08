@@ -16,6 +16,21 @@ points; older release history lives in this file.
   `@lf_alg.lift_to` instead of the deprecated
   `IntegralHomomorphism::from_integral`.
 
+### Fixed
+
+- `@mutable.Matrix::eigen` for `2 x 2` input no longer aborts with "complex
+  eigenvalues" on symmetric matrices with large entries, no longer merges
+  eigenvalues closer than about `6e-6`, never returns a singular eigenvector
+  matrix, and pairs eigenvectors with the right eigenvalues on every target
+  ([#90](https://github.com/Luna-Flow/linear-algebra/issues/90)).
+- `@mutable.Matrix::eigen` for `n >= 3` deflates relative to the diagonal
+  instead of below an absolute `1e-11`, so matrices with small entries get
+  correct eigenvalues ([#91](https://github.com/Luna-Flow/linear-algebra/issues/91)).
+- The structural shortcuts of `inverse`, `cholesky_decomposition`,
+  `determinant` (and, on `js`, `rank` and `eigen`) are taken only for matrices
+  that have the structure exactly
+  ([#92](https://github.com/Luna-Flow/linear-algebra/issues/92)).
+
 ### Documentation
 
 - Brought the manual to the Luna Flow documentation standard: every API page
@@ -35,13 +50,12 @@ points; older release history lives in this file.
   products; a lazy `MatrixFn` power costs `(2n)^d` reads per entry;
   `checked_div` reports every zero divisor and `approx_eq` is not reflexive
   on infinities.
-- Documented known defects with warnings, without changing the code: the
-  `2 x 2` path of `@mutable.Matrix::eigen` merges eigenvalues closer than
-  about `6e-6`, can return a singular eigenvector matrix, and can abort with
-  "complex eigenvalues" on symmetric input with entries near `1e8`; all
-  `mutable` zero tests are absolute, so `eigen` is wrong for matrices whose
-  entries are below about `1e-11`; `@immut.Matrix::determinant` overflows to
-  NaN on `Double` matrices whose determinant is representable.
+- Documented open defects with warnings: `@immut.Matrix::determinant`
+  overflows to NaN on `Double` matrices whose determinant is representable
+  ([#93](https://github.com/Luna-Flow/linear-algebra/issues/93)), and the
+  `MatMulMatrix` instances of `backends/default` exist for scalar types that
+  break the product laws
+  ([#94](https://github.com/Luna-Flow/linear-algebra/issues/94)).
 - Translated the revised manual into Chinese and Japanese.
 
 ## 0.5.0 - 2026-10-07

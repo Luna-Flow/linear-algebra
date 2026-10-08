@@ -73,8 +73,7 @@ the algorithms (LU, Cholesky, the symmetric eigensolver, Bareiss elimination)
 and state their accuracy; the numerical routines of `mutable` use an absolute
 tolerance of `1e-11`, so scale data to order one, and read the
 [numerical caveats](./doc/manual/index.md#numerical-caveats) before relying
-on `eigen` for `2 x 2` matrices or on `@immut.Matrix::determinant` for
-floating-point data. Release history is in [CHANGELOG.md](./CHANGELOG.md).
+on `@immut.Matrix::determinant` for floating-point data. Release history is in [CHANGELOG.md](./CHANGELOG.md).
 
 ## Development
 
