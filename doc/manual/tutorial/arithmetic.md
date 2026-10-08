@@ -1,57 +1,198 @@
 # arithmetic tutorial
 
-## Project setup
+This tutorial shows how to use the scalar operation traits of `arithmetic` in
+your own generic helpers: absolute values, approximate comparison, and checked
+division, square root and comparison that turn invalid inputs into values you
+can handle. The background is in the [arithmetic design](../design/arithmetic.md).
 
-Install the shared abstraction packages first:
+## Quick start
 
 ```sh
 moon add Luna-Flow/linear-algebra@0.5.0
-moon add Luna-Flow/luna-generic@0.3.3
 moon add Luna-Flow/arithmetic@0.2.2
 ```
-
-Recommended `moon.pkg` imports:
 
 ```moonbit nocheck
 ///|
 import {
   "Luna-Flow/linear-algebra/arithmetic" @la_arithmetic,
-  "Luna-Flow/luna-generic" @lf_alg,
   "Luna-Flow/arithmetic" @lf_arith,
 }
 ```
 
-## Small case: turn a signed residual into a penalty signal
+A generic "largest magnitude" helper needs `Abs` and `Compare`:
 
 ```moonbit check
 ///|
-fn[T : @la_arithmetic.Abs] residual_penalty(value : T) -> T {
-  @la_arithmetic.Abs::abs(value)
+fn[T : @la_arithmetic.Abs + Compare] arith_tut_max_abs(xs : Array[T]) -> T? {
+  let mut best : T? = None
+  for x in xs {
+    let a = @la_arithmetic.Abs::abs(x)
+    best = match best {
+      Some(b) if b >= a => Some(b)
+      _ => Some(a)
+    }
+  }
+  best
 }
 
 ///|
-test "Abs-based penalty helper compiles for Int" {
-  inspect(residual_penalty(-3), content="3")
+test "largest magnitude" {
+  debug_inspect(arith_tut_max_abs([3, -7, 5]), content="Some(7)")
+  debug_inspect(arith_tut_max_abs([0.5, -0.25]), content="Some(0.5)")
 }
 ```
 
-This case is small, but it captures the role of the `arithmetic` layer:
+## Everyday tasks
 
-1. Start from a raw scalar value produced by a linear-algebra routine.
-2. Ask only for the concrete operation you need, here `Abs`.
-3. Convert the signed residual into a penalty value without claiming a richer algebraic structure.
+### Normalize a vector without dividing by zero
 
-That is the right fit when the algorithm needs a computable helper, not a full
-mathematical contract.
+`CheckedDiv` reports a zero divisor as an error instead of producing infinities:
 
-## Suggested flow
+```moonbit check
+///|
+fn arith_tut_normalize(
+  xs : Array[Double],
+  ctx : @lf_arith.ArithmeticContext,
+) -> Result[Array[Double], @lf_arith.ArithmeticError] {
+  let mut sum = 0.0
+  for x in xs {
+    sum = sum + x.abs()
+  }
+  let out = []
+  for x in xs {
+    match @la_arithmetic.CheckedDiv::checked_div(x, sum, ctx) {
+      Ok(v) => out.push(v)
+      Err(e) => return Err(e)
+    }
+  }
+  Ok(out)
+}
 
-1. Use `arithmetic` when the algorithm needs an operation such as `abs`, checked division, checked square root, or approximate comparison.
-2. Keep the requirement as narrow as possible so more scalar types can satisfy it.
-3. Move up to `algebra` only when the algorithm depends on a stronger structural meaning.
+///|
+test "normalize by the 1-norm" {
+  let ctx = @lf_arith.ArithmeticContext::new(53)
+  debug_inspect(
+    arith_tut_normalize([1.0, 3.0], ctx).unwrap(),
+    content="[0.25, 0.75]",
+  )
+  inspect(arith_tut_normalize([0.0, 0.0], ctx) is Err(_), content="true")
+}
+```
 
-## Practical guidance
+For the all-zero input the first division is $0/0$, which is reported with
+kind `DomainError`.
 
-- Prefer existing `Luna-Flow/luna-generic` or `Luna-Flow/arithmetic` traits when they already express the operation.
-- Add local linear-algebra-facing traits only when an upstream capability name is missing.
-- Do not use an arithmetic-only trait as a substitute for a stronger algebraic guarantee.
+### Take a square root only on its domain
+
+```moonbit check
+///|
+fn arith_tut_std_from_variance(
+  variance : Double,
+) -> Result[Double, @lf_arith.ArithmeticError] {
+  @la_arithmetic.CheckedSqrt::checked_sqrt(
+    variance,
+    @lf_arith.ArithmeticContext::new(53),
+  )
+}
+
+///|
+test "square root of a variance" {
+  inspect(arith_tut_std_from_variance(2.25).unwrap(), content="1.5")
+  match arith_tut_std_from_variance(-1.0e-18) {
+    Err(e) => inspect(e.is_domain_error(), content="true")
+    Ok(_) => fail("negative variance must be rejected")
+  }
+}
+```
+
+A slightly negative variance is a typical rounding artifact of a one-pass
+formula; the checked call makes you decide what to do with it.
+
+### Sort data that may contain NaN
+
+`checked_compare` fails on NaN, so you can detect unordered data before
+sorting:
+
+```moonbit check
+///|
+fn arith_tut_all_ordered(xs : Array[Double]) -> Bool {
+  for x in xs {
+    if @la_arithmetic.CheckedCompare::checked_compare(x, x) is Err(_) {
+      return false
+    }
+  }
+  true
+}
+
+///|
+test "detect NaN before sorting" {
+  inspect(arith_tut_all_ordered([2.0, 1.0]), content="true")
+  inspect(arith_tut_all_ordered([2.0, 0.0 / 0.0]), content="false")
+}
+```
+
+### Compare results approximately
+
+`ApproxEq` is convenient for values of order one, such as entries of a
+normalized vector:
+
+```moonbit check
+///|
+fn[T : @la_arithmetic.ApproxEq] arith_tut_all_close(
+  xs : Array[T],
+  ys : Array[T],
+) -> Bool {
+  if xs.length() != ys.length() {
+    return false
+  }
+  for i in 0..<xs.length() {
+    if !@la_arithmetic.ApproxEq::approx_eq(xs[i], ys[i]) {
+      return false
+    }
+  }
+  true
+}
+
+///|
+test "approximate comparison of computed values" {
+  inspect(arith_tut_all_close([0.1 + 0.2, 1.0], [0.3, 1.0]), content="true")
+  inspect(0.1 + 0.2 == 0.3, content="false")
+}
+```
+
+## Going further
+
+**Your own scalar type.** All traits are `pub(open)`. A decimal or rational
+type can implement `Abs`, `ApproxEq` (for an exact type, simply `==`) and the
+checked traits; it then works with every helper written against them.
+
+**Errors in matrix code.** The matrix packages report scalar failures with
+`LinearAlgebraError::arithmetic_failure`, which wraps an `ArithmeticError`.
+A helper that mixes matrix and scalar steps can convert with that constructor;
+see the [error tutorial](error.md).
+
+**Upstream traits.** For transcendental functions and contextual arithmetic,
+use `Luna-Flow/arithmetic` directly; this package re-exports only the names
+listed on the [API page](../api/arithmetic.md).
+
+## Common pitfalls
+
+- **Absolute tolerance at the wrong scale.** `approx_eq` on values around
+  $10^{20}$ is effectively exact equality, and on values around $10^{-20}$ it
+  accepts everything. Scale your data or use your own relative rule.
+- **Chaining approximate comparisons.** $a \approx b$ and $b \approx c$ do not
+  imply $a \approx c$.
+- **Expecting the context to change `Double` results.** The precision of
+  `ArithmeticContext` is ignored for binary floating point.
+- **`Abs` on `Int.MIN_VALUE`.** The result wraps and stays negative.
+
+## Next steps
+
+- [arithmetic API](../api/arithmetic.md) for the exact rules of each trait.
+- [arithmetic design](../design/arithmetic.md) for why `approx_eq` is not an
+  equivalence relation.
+- [mutable tutorial](mutable.md) for the matrix routines that depend on
+  `Sqrt` and `Tolerance`.
+- [Luna-Flow/arithmetic](https://lunaflow.cn/en/arithmetic/) for the full scalar
+  operation library.
