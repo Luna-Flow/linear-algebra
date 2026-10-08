@@ -10,6 +10,4 @@ import {
   "moonbitlang/x/fs",
 } for "wbtest"
 
-options(
-  "is-main": true,
-)
+pkgtype(kind: "executable")

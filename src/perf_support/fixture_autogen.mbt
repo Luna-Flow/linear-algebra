@@ -31,7 +31,7 @@ fn generate_fixture_inputs(
       } else {
         dense_matrix(case_item.rows, case_item.cols, rng, -1.0, 1.0)
       }
-      { data_a, data_b: dense_vector(case_item.cols, rng, -1.0, 1.0) }
+      { data_a, data_b: dense_vector(case_item.cols, rng, -1.0, 1.0), }
     }
     "determinant" => {
       let data_a = if case_item.structure == "dense_shifted" {
@@ -41,7 +41,7 @@ fn generate_fixture_inputs(
       } else {
         make_near_singular(case_item.rows, rng)
       }
-      { data_a, data_b: [] }
+      { data_a, data_b: [], }
     }
     "inverse" => {
       let data_a = if case_item.structure == "dense_shifted" {
@@ -54,7 +54,7 @@ fn generate_fixture_inputs(
           identity_matrix(case_item.rows, 1.0),
         )
       }
-      { data_a, data_b: [] }
+      { data_a, data_b: [], }
     }
     "rank" => {
       let data_a = if case_item.structure == "block_pattern" {
@@ -64,7 +64,7 @@ fn generate_fixture_inputs(
       } else {
         dense_matrix(case_item.rows, case_item.cols, rng, -1.0, 1.0)
       }
-      { data_a, data_b: [] }
+      { data_a, data_b: [], }
     }
     "reduce_row_elimination" => {
       let data_a = if case_item.structure == "block_pattern" {
@@ -74,7 +74,7 @@ fn generate_fixture_inputs(
       } else {
         dense_matrix(case_item.rows, case_item.cols, rng, -1.0, 1.0)
       }
-      { data_a, data_b: [] }
+      { data_a, data_b: [], }
     }
     "cholesky_decomposition" => {
       let diagonal_bias = if case_item.structure == "well_conditioned_spd" {
@@ -84,7 +84,7 @@ fn generate_fixture_inputs(
       } else {
         case_item.rows.to_double()
       }
-      { data_a: make_spd(case_item.rows, rng, diagonal_bias), data_b: [] }
+      { data_a: make_spd(case_item.rows, rng, diagonal_bias), data_b: [], }
     }
     "eigen" => {
       let data_a = if case_item.structure == "clustered_spectrum" {
@@ -94,7 +94,7 @@ fn generate_fixture_inputs(
       } else {
         make_symmetric(case_item.rows, rng, 0.75)
       }
-      { data_a, data_b: [] }
+      { data_a, data_b: [], }
     }
     "power_method" => {
       let data_a = if case_item.structure == "large_spectral_gap" {
@@ -104,7 +104,7 @@ fn generate_fixture_inputs(
       } else {
         make_dominant_symmetric(case_item.rows, rng, 0.08)
       }
-      { data_a, data_b: [] }
+      { data_a, data_b: [], }
     }
     _ => abort("unknown generated benchmark operation: " + case_item.operation)
   }

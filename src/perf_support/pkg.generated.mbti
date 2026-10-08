@@ -3,7 +3,6 @@ package "Luna-Flow/linear-algebra/perf_support"
 
 import {
   "Luna-Flow/linear-algebra/mutable",
-  "moonbitlang/core/json",
 }
 
 // Values
@@ -52,12 +51,6 @@ pub struct Case {
   rhs_cols : Int
 }
 
-type CaseFixtureFile derive(@json.FromJson)
-
-type CaseFixtureInputs derive(@json.FromJson)
-
-type CaseFixtureShape derive(@json.FromJson)
-
 pub struct PreparedCase {
   case_item : Case
   matrix_a : @mutable.Matrix[Double]
@@ -68,4 +61,3 @@ pub struct PreparedCase {
 // Type aliases
 
 // Traits
-

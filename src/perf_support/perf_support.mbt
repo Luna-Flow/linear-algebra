@@ -188,12 +188,12 @@ fn prepare_case_from_arrays(
   } else {
     @mutable.Vector::from_array([])
   }
-  { case_item, matrix_a, matrix_b, vector_b }
+  { case_item, matrix_a, matrix_b, vector_b, }
 }
 
 ///|
 fn[T : AddMonoid + Field + Num] require_numeric_traits(value : T) -> T {
-  ((value + T::zero()) / T::one()).abs()
+  Num::abs((value + @lf_alg.Zero::zero()) / @lf_alg.One::one())
 }
 
 ///|
@@ -207,20 +207,20 @@ fn string_array_contains(values : Array[String], target : String) -> Bool {
 }
 
 ///|
-struct CaseFixtureInputs {
+priv struct CaseFixtureInputs {
   data_a : Array[Double]
   data_b : Array[Double]
 } derive(FromJson)
 
 ///|
-struct CaseFixtureShape {
+priv struct CaseFixtureShape {
   rows : Int
   cols : Int
   rhs_cols : Int
 } derive(FromJson)
 
 ///|
-struct CaseFixtureFile {
+priv struct CaseFixtureFile {
   dataset_version : String
   case_id : String
   operation : String
@@ -283,7 +283,7 @@ fn load_case_fixture(case_item : Case, case_path : String) -> LoadedCaseFixture 
     fixture.shape.rhs_cols == case_item.rhs_cols else {
     abort("shape mismatch for " + case_path)
   }
-  { data_a: fixture.inputs.data_a, data_b: fixture.inputs.data_b }
+  { data_a: fixture.inputs.data_a, data_b: fixture.inputs.data_b, }
 }
 
 ///|
