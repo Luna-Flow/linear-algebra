@@ -16,11 +16,11 @@ fn[T : Compare + Field + Num + Tolerance] Matrix::lu_decompose_internal(
   let permutation = Array::makei(n, fn(i) { i })
   let mut swap_count = 0
   let mut singular = false
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   for j in 0..<n {
     let mut max_row = j
     for i in (j + 1)..<n {
-      if data[i * n + j].abs() > data[max_row * n + j].abs() {
+      if Num::abs(data[i * n + j]) > Num::abs(data[max_row * n + j]) {
         max_row = i
       }
     }
@@ -32,7 +32,7 @@ fn[T : Compare + Field + Num + Tolerance] Matrix::lu_decompose_internal(
       swap_count += 1
     }
     let pivot = data[j * n + j]
-    if pivot.abs() < tol {
+    if Num::abs(pivot) < tol {
       singular = true
       continue
     }
@@ -60,7 +60,7 @@ fn[T : Compare + Field + Num + Tolerance] Matrix::lu_decompose_internal(
       }
     }
   }
-  { lu, permutation, swap_count, singular }
+  { lu, permutation, swap_count, singular, }
 }
 
 ///|
@@ -68,11 +68,15 @@ fn[T : Num] LuDecomposition::determinant_internal(
   self : LuDecomposition[T],
 ) -> T {
   if self.singular {
-    return T::zero()
+    return Zero::zero()
   }
   let n = self.lu.row
   let lu_data = self.lu.data
-  let mut det = if (self.swap_count & 1) == 0 { T::one() } else { -T::one() }
+  let mut det = if (self.swap_count & 1) == 0 {
+    One::one()
+  } else {
+    -One::one()
+  }
   for i in 0..<n {
     det *= lu_data[i * n + i]
   }
@@ -93,8 +97,8 @@ fn[T : Compare + Field + Num + Tolerance] LuDecomposition::solve_internal(
   let lu_data = self.lu.data
   let rhs_data = rhs.data
   let permutation = self.permutation
-  let tol = T::tolerance()
-  let y = Matrix::new(n, cols, T::zero())
+  let tol = Tolerance::tolerance()
+  let y = Matrix::new(n, cols, Zero::zero())
   let y_data = y.data
   for i in 0..<n {
     let row_offset = i * cols
@@ -107,14 +111,14 @@ fn[T : Compare + Field + Num + Tolerance] LuDecomposition::solve_internal(
       y_data[row_offset + j] = acc
     }
   }
-  let x = Matrix::new(n, cols, T::zero())
+  let x = Matrix::new(n, cols, Zero::zero())
   let x_data = x.data
   for step in 0..<n {
     let i = n - 1 - step
     let row_offset = i * cols
     let lu_row_offset = i * n
     let pivot = lu_data[lu_row_offset + i]
-    if pivot.abs() < tol {
+    if Num::abs(pivot) < tol {
       return None
     }
     for j in 0..<cols {
@@ -138,13 +142,17 @@ fn[T : Compare + Field + Num + Tolerance] LuDecomposition::solve_identity_intern
   let n = self.lu.row
   let lu_data = self.lu.data
   let permutation = self.permutation
-  let tol = T::tolerance()
-  let work = Array::make(n, T::zero())
-  let x = Matrix::new(n, n, T::zero())
+  let tol = Tolerance::tolerance()
+  let work = Array::make(n, Zero::zero())
+  let x = Matrix::new(n, n, Zero::zero())
   let x_data = x.data
   for rhs_col in 0..<n {
     for i in 0..<n {
-      let mut acc = if permutation[i] == rhs_col { T::one() } else { T::zero() }
+      let mut acc = if permutation[i] == rhs_col {
+        One::one()
+      } else {
+        Zero::zero()
+      }
       let row_offset = i * n
       for k in 0..<i {
         acc = acc - lu_data[row_offset + k] * work[k]
@@ -155,7 +163,7 @@ fn[T : Compare + Field + Num + Tolerance] LuDecomposition::solve_identity_intern
       let i = n - 1 - step
       let row_offset = i * n
       let pivot = lu_data[row_offset + i]
-      if pivot.abs() < tol {
+      if Num::abs(pivot) < tol {
         return None
       }
       let mut acc = work[i]

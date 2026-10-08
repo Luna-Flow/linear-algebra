@@ -31,12 +31,12 @@ pub fn[T] DenseVector::from_backend(
 
 ///|
 pub fn[T] DenseVector::from_array(data : Array[T]) -> DenseVector[T] {
-  { inner: @mutable.Vector::from_array(data) }
+  { inner: @mutable.Vector::from_array(data), }
 }
 
 ///|
 pub fn[T] DenseVector::make(length : Int, value : T) -> DenseVector[T] {
-  { inner: @mutable.Vector::make(length, value) }
+  { inner: @mutable.Vector::make(length, value), }
 }
 
 ///|
@@ -50,7 +50,8 @@ pub fn[T] DenseVector::length(self : DenseVector[T]) -> Int {
 }
 
 ///|
-pub fn[T] DenseVector::op_get(self : DenseVector[T], index : Int) -> T {
+#alias("_[_]")
+pub fn[T] DenseVector::at(self : DenseVector[T], index : Int) -> T {
   self.inner[index]
 }
 
@@ -63,12 +64,12 @@ pub fn[T] DenseMatrix::from_backend(
 
 ///|
 pub fn[T] DenseMatrix::from_2d_array(data : Array[Array[T]]) -> DenseMatrix[T] {
-  { inner: @mutable.Matrix::from_2d_array(data) }
+  { inner: @mutable.Matrix::from_2d_array(data), }
 }
 
 ///|
 pub fn[T] DenseMatrix::new(row : Int, col : Int, value : T) -> DenseMatrix[T] {
-  { inner: @mutable.Matrix::new(row, col, value) }
+  { inner: @mutable.Matrix::new(row, col, value), }
 }
 
 ///|
@@ -97,7 +98,7 @@ pub fn[T] ImmutableDenseVector::from_backend(
 pub fn[T] ImmutableDenseVector::from_array(
   data : Array[T],
 ) -> ImmutableDenseVector[T] {
-  { inner: @immut.Vector::from_array(data) }
+  { inner: @immut.Vector::from_array(data), }
 }
 
 ///|
@@ -105,7 +106,7 @@ pub fn[T] ImmutableDenseVector::make(
   length : Int,
   value : T,
 ) -> ImmutableDenseVector[T] {
-  { inner: @immut.Vector::make(length, value) }
+  { inner: @immut.Vector::make(length, value), }
 }
 
 ///|
@@ -121,7 +122,8 @@ pub fn[T] ImmutableDenseVector::length(self : ImmutableDenseVector[T]) -> Int {
 }
 
 ///|
-pub fn[T] ImmutableDenseVector::op_get(
+#alias("_[_]")
+pub fn[T] ImmutableDenseVector::at(
   self : ImmutableDenseVector[T],
   index : Int,
 ) -> T {
@@ -139,7 +141,7 @@ pub fn[T] ImmutableDenseMatrix::from_backend(
 pub fn[T] ImmutableDenseMatrix::from_2d_array(
   data : Array[Array[T]],
 ) -> ImmutableDenseMatrix[T] {
-  { inner: @immut.Matrix::from_2d_array(data) }
+  { inner: @immut.Matrix::from_2d_array(data), }
 }
 
 ///|
@@ -148,7 +150,7 @@ pub fn[T] ImmutableDenseMatrix::new(
   col : Int,
   value : T,
 ) -> ImmutableDenseMatrix[T] {
-  { inner: @immut.Matrix::new(row, col, value) }
+  { inner: @immut.Matrix::new(row, col, value), }
 }
 
 ///|

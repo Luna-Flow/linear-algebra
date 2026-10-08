@@ -17,6 +17,7 @@ pub struct LinearAlgebraError {
 pub fn LinearAlgebraError::arithmetic_failure(@arithmetic.ArithmeticError) -> Self
 pub fn LinearAlgebraError::dimension_mismatch(String) -> Self
 pub fn LinearAlgebraError::empty_matrix(String) -> Self
+pub fn LinearAlgebraError::equal(Self, Self) -> Bool
 pub fn LinearAlgebraError::index_out_of_bounds(String) -> Self
 pub fn LinearAlgebraError::invalid_length(String) -> Self
 pub fn LinearAlgebraError::is_arithmetic_failure(Self) -> Bool
@@ -50,8 +51,8 @@ pub enum LinearAlgebraErrorKind {
   NonConvergence
   ArithmeticFailure(@arithmetic.ArithmeticError)
 } derive(Eq)
+pub fn LinearAlgebraErrorKind::equal(Self, Self) -> Bool
 
 // Type aliases
 
 // Traits
-

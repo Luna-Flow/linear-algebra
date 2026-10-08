@@ -23,66 +23,66 @@ pub struct LinearAlgebraError {
 pub fn LinearAlgebraError::dimension_mismatch(
   message : String,
 ) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::DimensionMismatch, message }
+  { kind: LinearAlgebraErrorKind::DimensionMismatch, message, }
 }
 
 ///|
 pub fn LinearAlgebraError::index_out_of_bounds(
   message : String,
 ) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::IndexOutOfBounds, message }
+  { kind: LinearAlgebraErrorKind::IndexOutOfBounds, message, }
 }
 
 ///|
 pub fn LinearAlgebraError::negative_dimension(
   message : String,
 ) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::NegativeDimension, message }
+  { kind: LinearAlgebraErrorKind::NegativeDimension, message, }
 }
 
 ///|
 pub fn LinearAlgebraError::invalid_length(
   message : String,
 ) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::InvalidLength, message }
+  { kind: LinearAlgebraErrorKind::InvalidLength, message, }
 }
 
 ///|
 pub fn LinearAlgebraError::ragged_rows(message : String) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::RaggedRows, message }
+  { kind: LinearAlgebraErrorKind::RaggedRows, message, }
 }
 
 ///|
 pub fn LinearAlgebraError::non_square_matrix(
   message : String,
 ) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::NonSquareMatrix, message }
+  { kind: LinearAlgebraErrorKind::NonSquareMatrix, message, }
 }
 
 ///|
 pub fn LinearAlgebraError::negative_exponent(
   message : String,
 ) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::NegativeExponent, message }
+  { kind: LinearAlgebraErrorKind::NegativeExponent, message, }
 }
 
 ///|
 pub fn LinearAlgebraError::empty_matrix(message : String) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::EmptyMatrix, message }
+  { kind: LinearAlgebraErrorKind::EmptyMatrix, message, }
 }
 
 ///|
 pub fn LinearAlgebraError::singular_matrix(
   message : String,
 ) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::SingularMatrix, message }
+  { kind: LinearAlgebraErrorKind::SingularMatrix, message, }
 }
 
 ///|
 pub fn LinearAlgebraError::non_convergence(
   message : String,
 ) -> LinearAlgebraError {
-  { kind: LinearAlgebraErrorKind::NonConvergence, message }
+  { kind: LinearAlgebraErrorKind::NonConvergence, message, }
 }
 
 ///|

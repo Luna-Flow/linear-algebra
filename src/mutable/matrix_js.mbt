@@ -92,11 +92,11 @@ pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
 ///
 /// ```moonbit nocheck
 /// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-/// inspect(m.to_string(), content="|1, 2, 3|\n|4, 5, 6|")
+/// inspect(m, content="|1, 2, 3|\n|4, 5, 6|")
 /// ```
 ///
 pub impl[T : Show] Show for Matrix[T] with fn to_string(self) {
-  let logger = StringBuilder::new()
+  let logger = StringBuilder()
   self.output(logger)
   logger.to_string()
 }
@@ -149,7 +149,7 @@ pub impl[T : Show] Show for Matrix[T] with fn output(self, logger) {
 /// ```
 ///
 pub fn[T, U] Matrix::map(self : Matrix[T], f : (T) -> U) -> Matrix[U] {
-  { row: self.row, col: self.col, data: self.data.map(f) }
+  { row: self.row, col: self.col, data: self.data.map(f), }
 }
 
 ///|
@@ -179,7 +179,7 @@ pub fn[T, U] Matrix::mapi(
   let row = self.row
   let col = self.col
   if row == 0 || col == 0 {
-    return { row, col, data: [] }
+    return { row, col, data: [], }
   }
   // Avoid division and modulo in the loop by using nested loops.
   // This is significantly faster for large matrices.
@@ -191,7 +191,7 @@ pub fn[T, U] Matrix::mapi(
       idx += 1
     }
   }
-  { row, col, data }
+  { row, col, data, }
 }
 
 ///|
@@ -496,7 +496,7 @@ pub fn[T] Matrix::eachi_col(
 /// ```
 ///
 pub fn[T] Matrix::copy(self : Matrix[T]) -> Matrix[T] {
-  { row: self.row, col: self.col, data: self.data.copy() }
+  { row: self.row, col: self.col, data: self.data.copy(), }
 }
 
 ///|
@@ -528,7 +528,7 @@ pub fn[A] Matrix::make(row : Int, col : Int, f : (Int, Int) -> A) -> Matrix[A] {
     abort("Matrix dimensions must be non-negative")
   }
   if row == 0 || col == 0 {
-    return { row, col, data: [] }
+    return { row, col, data: [], }
   }
   let init = f(0, 0)
   let data = Array::make(row * col, init)
@@ -538,7 +538,7 @@ pub fn[A] Matrix::make(row : Int, col : Int, f : (Int, Int) -> A) -> Matrix[A] {
       data[r_off + j] = f(i, j)
     }
   }
-  { row, col, data }
+  { row, col, data, }
 }
 
 ///|
@@ -557,7 +557,7 @@ pub fn[A] Matrix::make(row : Int, col : Int, f : (Int, Int) -> A) -> Matrix[A] {
 ///
 /// ```moonbit nocheck
 /// let m = Matrix::new(2, 3, 42)
-/// inspect(m.to_string(), content="|42, 42, 42|\n|42, 42, 42|")
+/// inspect(m, content="|42, 42, 42|\n|42, 42, 42|")
 /// ```
 ///
 pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
@@ -565,9 +565,9 @@ pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
     abort("Matrix dimensions must be non-negative")
   }
   if row == 0 || col == 0 {
-    return { row, col, data: [] }
+    return { row, col, data: [], }
   }
-  { row, col, data: Array::make(row * col, elem) }
+  { row, col, data: Array::make(row * col, elem), }
 }
 
 ///|
@@ -587,20 +587,22 @@ pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
 /// ```moonbit nocheck
 /// let data = [[1, 2, 3], [4, 5, 6]]
 /// let matrix = Matrix::from_2d_array(data)
-/// inspect(matrix.to_string(), content="|1, 2, 3|\n|4, 5, 6|")
+/// inspect(matrix, content="|1, 2, 3|\n|4, 5, 6|")
 /// ```
 ///
 pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
   let row = arr.length()
   if row == 0 {
-    return { row: 0, col: 0, data: [] }
+    return { row: 0, col: 0, data: [], }
   }
   let col = arr[0].length()
   for row_arr in arr {
-    guard row_arr.length() == col
+    guard row_arr.length() == col else {
+      abort("Matrix::from_2d_array: rows must have equal length")
+    }
   }
   if col == 0 {
-    return { row, col, data: [] }
+    return { row, col, data: [], }
   }
   let data = Array::make(row * col, arr[0][0])
   for i in 0..<row {
@@ -610,7 +612,7 @@ pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
       data[offset + j] = row_arr[j]
     }
   }
-  { row, col, data }
+  { row, col, data, }
 }
 
 ///|
@@ -653,8 +655,10 @@ pub fn[T] Matrix::from_array(
   guard row >= 0 && col >= 0 else {
     abort("Matrix dimensions must be non-negative")
   }
-  guard row * col == data.length()
-  { row, col, data }
+  guard row * col == data.length() else {
+    abort("Matrix::from_array: data length does not match dimensions")
+  }
+  { row, col, data, }
 }
 
 ///|
@@ -684,9 +688,10 @@ pub fn[T] Matrix::from_array(
 /// inspect(m[1][2], content="10")
 /// ```
 ///
-pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Lens[T] {
+#alias("_[_]")
+pub fn[T] Matrix::at(self : Matrix[T], row : Int) -> Lens[T] {
   ignore(self.matrix_row_offset(row))
-  { data: self, fst: row, is_transpose: false }
+  { data: self, fst: row, is_transpose: false, }
 }
 
 ///|
@@ -699,7 +704,8 @@ pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Lens[T] {
 ///
 /// Returns the value at the specified column index.
 ///
-pub fn[T] Lens::op_get(self : Lens[T], snd : Int) -> T {
+#alias("_[_]")
+pub fn[T] Lens::at(self : Lens[T], snd : Int) -> T {
   if self.is_transpose {
     self.data.get(snd, self.fst)
   } else {
@@ -721,7 +727,8 @@ pub fn[T] Lens::op_get(self : Lens[T], snd : Int) -> T {
 /// ```moonbit
 /// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 ///
-pub fn[T] Lens::op_set(self : Lens[T], snd : Int, elem : T) -> Unit {
+#alias("_[_]=_")
+pub fn[T] Lens::set(self : Lens[T], snd : Int, elem : T) -> Unit {
   if self.is_transpose {
     self.data.set(snd, self.fst, elem)
   } else {
@@ -755,7 +762,7 @@ pub impl[T : AddMonoid + Mul] Mul for Matrix[T] with fn mul(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
-  guard self.col == other.row
+  guard self.col == other.row else { abort("Matrix::mul: dimension mismatch") }
   self.unchecked_matmul(other)
 }
 
@@ -770,7 +777,7 @@ pub fn[T : AddMonoid + Mul] Matrix::unchecked_matmul(
   let row = self.row
   let col = other.col
   let inner = self.col
-  let data = Array::make(row * col, T::zero())
+  let data = Array::make(row * col, Zero::zero())
   let self_data = self.data
   let other_data = other.data
   if should_use_packed_rhs_matmul(row, col, inner) {
@@ -779,7 +786,7 @@ pub fn[T : AddMonoid + Mul] Matrix::unchecked_matmul(
   } else {
     matmul_unrolled_into(row, col, inner, self_data, other_data, data)
   }
-  { row, col, data }
+  { row, col, data, }
 }
 
 ///|
@@ -821,10 +828,10 @@ fn[T : AddMonoid + Mul] matmul_packed_rhs_into(
       let rhs1 = rhs0 + inner
       let rhs2 = rhs1 + inner
       let rhs3 = rhs2 + inner
-      let mut sum0 = T::zero()
-      let mut sum1 = T::zero()
-      let mut sum2 = T::zero()
-      let mut sum3 = T::zero()
+      let mut sum0 = Zero::zero()
+      let mut sum1 = Zero::zero()
+      let mut sum2 = Zero::zero()
+      let mut sum3 = Zero::zero()
       let mut k = 0
       while k + 3 < inner {
         let a0 = self_data[self_row_offset + k]
@@ -870,7 +877,7 @@ fn[T : AddMonoid + Mul] matmul_packed_rhs_into(
     }
     while j < col {
       let rhs_offset = j * inner
-      let mut sum = T::zero()
+      let mut sum = Zero::zero()
       for k = 0; k < inner; k = k + 1 {
         sum = sum + self_data[self_row_offset + k] * packed_rhs[rhs_offset + k]
       }
@@ -945,8 +952,8 @@ pub impl[T : Add] Add for Matrix[T] with fn add(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
-  guard self.col == other.col
-  guard self.row == other.row
+  guard self.col == other.col else { abort("Matrix::add: dimension mismatch") }
+  guard self.row == other.row else { abort("Matrix::add: dimension mismatch") }
   {
     data: array_zip_with(self.data, other.data, T::add),
     row: self.row,
@@ -968,7 +975,7 @@ pub impl[T : Add] Add for Matrix[T] with fn add(
 /// ```moonbit nocheck
 /// let m = @mutable.Matrix::from_2d_array([[1, -2], [3, -4]])
 /// let negated = -m
-/// inspect(negated.to_string(), content="|-1, 2|\n|-3, 4|")
+/// inspect(negated, content="|-1, 2|\n|-3, 4|")
 /// ```
 ///
 pub impl[T : Neg] Neg for Matrix[T] with fn neg(self : Matrix[T]) -> Matrix[T] {
@@ -1071,8 +1078,8 @@ pub fn[T : Add] Matrix::add_constant(self : Matrix[T], cst : T) -> Matrix[T] {
 ///
 pub fn[T : Zero + One] identity(size : Int) -> Matrix[T] {
   Matrix::make(size, size, fn(i, j) {
-    guard i == j else { T::zero() }
-    T::one()
+    guard i == j else { Zero::zero() }
+    One::one()
   })
 }
 
@@ -1096,7 +1103,7 @@ pub fn[T : Zero + One] identity(size : Int) -> Matrix[T] {
 /// ```
 ///
 pub fn[T : Compare + Zero] Matrix::null(self : Matrix[T]) -> Bool {
-  !self.data.iter().any(fn(x) { x != T::zero() })
+  !self.data.iter().any(fn(x) { x != Zero::zero() })
 }
 
 ///|
@@ -1134,7 +1141,7 @@ pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
   let row = self.row
   let col = self.col
   if row == 0 || col == 0 {
-    return { row: col, col: row, data: [] }
+    return { row: col, col: row, data: [], }
   }
   let init = self.data[0]
   let res_data = Array::make(col * row, init)
@@ -1144,7 +1151,7 @@ pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
       res_data[res_row_off + j] = self.data[j * col + i]
     }
   }
-  { row: col, col: row, data: res_data }
+  { row: col, col: row, data: res_data, }
 }
 
 ///|
@@ -1164,7 +1171,7 @@ pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
 /// ```moonbit nocheck
 /// let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 /// m.swap_rows(0, 1)
-/// inspect(m.to_string(), content="|4, 5, 6|\n|1, 2, 3|")
+/// inspect(m, content="|4, 5, 6|\n|1, 2, 3|")
 /// ```
 ///
 pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Unit {
@@ -1330,40 +1337,40 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::reduce_row_elimination(
     return self
   }
   let data = self.data
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   let mut col = 0
   for i = 0; i < r; i = i + 1 {
     while col < c {
       let mut max_row = i
       for j = i + 1; j < r; j = j + 1 {
-        if data[j * c + col].abs() > data[max_row * c + col].abs() {
+        if Num::abs(data[j * c + col]) > Num::abs(data[max_row * c + col]) {
           max_row = j
         }
       }
       ignore(self.swap_rows(i, max_row))
       let pivot_offset = i * c + col
-      if data[pivot_offset].abs() <= tol {
-        data[pivot_offset] = T::zero()
+      if Num::abs(data[pivot_offset]) <= tol {
+        data[pivot_offset] = Zero::zero()
         col = col + 1
         continue
       }
-      let factor_inv = data[pivot_offset].inv()
+      let factor_inv = @lf_alg.Inverse::inv(data[pivot_offset])
       let pivot_row_offset = i * c
       for k = col; k < c; k = k + 1 {
         data[pivot_row_offset + k] = data[pivot_row_offset + k] * factor_inv
       }
-      data[pivot_offset] = T::one()
+      data[pivot_offset] = One::one()
       for j = 0; j < r; j = j + 1 {
         if j == i {
           continue
         }
         let row_offset = j * c
         let factor = data[row_offset + col]
-        if factor.abs() <= tol {
-          data[row_offset + col] = T::zero()
+        if Num::abs(factor) <= tol {
+          data[row_offset + col] = Zero::zero()
           continue
         }
-        data[row_offset + col] = T::zero()
+        data[row_offset + col] = Zero::zero()
         for k = col + 1; k < c; k = k + 1 {
           data[row_offset + k] = data[row_offset + k] -
             data[pivot_row_offset + k] * factor
@@ -1382,11 +1389,11 @@ fn[T : Compare + Field + Num + Tolerance] Matrix::power_method_seed(
   x : Array[T],
   y : Array[T],
 ) -> Bool {
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   self.mul_array_into(x, y)
-  let mut scale = T::zero()
+  let mut scale = Zero::zero()
   for i = 0; i < x.length(); i = i + 1 {
-    let candidate = y[i].abs()
+    let candidate = Num::abs(y[i])
     if candidate > scale {
       scale = candidate
     }
@@ -1407,14 +1414,14 @@ fn[T : Compare + Field + Num + Tolerance] Matrix::initialize_power_method_vector
   y : Array[T],
 ) -> Bool {
   for i = 0; i < x.length(); i = i + 1 {
-    x[i] = T::one()
+    x[i] = One::one()
   }
   if self.power_method_seed(x, y) {
     return true
   }
   for basis = 0; basis < x.length(); basis = basis + 1 {
     for i = 0; i < x.length(); i = i + 1 {
-      x[i] = if i == basis { T::one() } else { T::zero() }
+      x[i] = if i == basis { One::one() } else { Zero::zero() }
     }
     if self.power_method_seed(x, y) {
       return true
@@ -1449,7 +1456,9 @@ pub fn[T] Matrix::horizontal_combine(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
-  guard self.row == other.row
+  guard self.row == other.row else {
+    abort("Matrix::horizontal_combine: dimension mismatch")
+  }
   Matrix::make(self.row, self.col + other.col, fn(i, j) {
     if j < self.col {
       // self[i][j]
@@ -1489,13 +1498,15 @@ pub fn[T] Matrix::vertical_combine(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
-  guard self.col == other.col
+  guard self.col == other.col else {
+    abort("Matrix::vertical_combine: dimension mismatch")
+  }
   let self_data = self.data
   let other_data = other.data
   let data = []
   data.push_iter(self_data.iter())
   data.push_iter(other_data.iter())
-  { row: self.row + other.row, col: self.col, data }
+  { row: self.row + other.row, col: self.col, data, }
 }
 
 ///|
@@ -1712,16 +1723,18 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::rank(
   let row_count = reduced.row
   let col_count = reduced.col
   let data = reduced.data
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   let mut pivot_col = 0
   for pivot_row = 0; pivot_row < row_count; pivot_row = pivot_row + 1 {
     while pivot_col < col_count {
       let mut max_row = pivot_row
-      let mut max_abs = data[pivot_row * col_count + pivot_col].abs()
+      let mut max_abs = Num::abs(data[pivot_row * col_count + pivot_col])
       for candidate_row = pivot_row + 1
           candidate_row < row_count
           candidate_row = candidate_row + 1 {
-        let candidate_abs = data[candidate_row * col_count + pivot_col].abs()
+        let candidate_abs = Num::abs(
+          data[candidate_row * col_count + pivot_col],
+        )
         if candidate_abs > max_abs {
           max_abs = candidate_abs
           max_row = candidate_row
@@ -1739,11 +1752,11 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::rank(
           eliminate_row = eliminate_row + 1 {
         let eliminate_offset = eliminate_row * col_count
         let factor = data[eliminate_offset + pivot_col] / pivot
-        if factor.abs() < tol {
-          data[eliminate_offset + pivot_col] = T::zero()
+        if Num::abs(factor) < tol {
+          data[eliminate_offset + pivot_col] = Zero::zero()
           continue
         }
-        data[eliminate_offset + pivot_col] = T::zero()
+        data[eliminate_offset + pivot_col] = Zero::zero()
         for col = pivot_col + 1; col < col_count; col = col + 1 {
           data[eliminate_offset + col] = data[eliminate_offset + col] -
             factor * data[pivot_row_offset + col]
@@ -1792,7 +1805,7 @@ pub fn[T : AddMonoid] Matrix::unchecked_trace(self : Matrix[T]) -> T {
   guard self.is_square() else {
     abort("Matrix must be square to calculate trace")
   }
-  let mut sum = T::zero()
+  let mut sum = Zero::zero()
   for i in 0..<self.row {
     // self[i][i]
     sum = sum + self.data[i * self.col + i]
@@ -1929,11 +1942,11 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::eigen(
     )
   }
   if self.is_square() && is_identity_matrix_js(self) {
-    let values = Array::make(self.row, T::one())
+    let values = Array::make(self.row, One::one())
     return (Vector::from_array(values), identity(self.row))
   }
   if self.is_square() && is_diagonal_matrix_js(self) {
-    let values = Array::make(self.row, T::zero())
+    let values = Array::make(self.row, Zero::zero())
     let data = self.data
     for i = 0; i < self.row; i = i + 1 {
       values[i] = data[i * self.col + i]
@@ -1975,20 +1988,20 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] householder_tridiagonalize(
   let n = matrix.row
   let q = matrix.copy()
   let q_data = q.data
-  let diagonal = Array::make(n, T::zero())
-  let off_diagonal = Array::make(n, T::zero())
+  let diagonal = Array::make(n, Zero::zero())
+  let off_diagonal = Array::make(n, Zero::zero())
   if n == 0 {
     return (diagonal, off_diagonal, q)
   }
   for i = n - 1; i >= 1; i = i - 1 {
     let l = i - 1
-    let mut h = T::zero()
-    let mut scale = T::zero()
+    let mut h = Zero::zero()
+    let mut scale = Zero::zero()
     if l > 0 {
       for k in 0..<(l + 1) {
-        scale = scale + q_data[i * n + k].abs()
+        scale = scale + Num::abs(q_data[i * n + k])
       }
-      if scale <= T::tolerance() {
+      if scale <= Tolerance::tolerance() {
         off_diagonal[i] = q_data[i * n + l]
       } else {
         for k in 0..<(l + 1) {
@@ -1998,14 +2011,14 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] householder_tridiagonalize(
         }
         let f = q_data[i * n + l]
         let g_abs = Sqrt::sqrt(h)
-        let g = if f >= T::zero() { -g_abs } else { g_abs }
+        let g = if f >= Zero::zero() { -g_abs } else { g_abs }
         off_diagonal[i] = scale * g
         h = h - f * g
         q_data[i * n + l] = f - g
-        let mut f_acc = T::zero()
+        let mut f_acc = Zero::zero()
         for j in 0..<(l + 1) {
           q_data[j * n + i] = q_data[i * n + j] / h
-          let mut g_acc = T::zero()
+          let mut g_acc = Zero::zero()
           for k in 0..<(j + 1) {
             g_acc = g_acc + q_data[j * n + k] * q_data[i * n + k]
           }
@@ -2032,13 +2045,13 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] householder_tridiagonalize(
     }
     diagonal[i] = h
   }
-  diagonal[0] = T::zero()
-  off_diagonal[0] = T::zero()
+  diagonal[0] = Zero::zero()
+  off_diagonal[0] = Zero::zero()
   for i in 0..<n {
     let l = i - 1
-    if diagonal[i].abs() > T::tolerance() && l >= 0 {
+    if Num::abs(diagonal[i]) > Tolerance::tolerance() && l >= 0 {
       for j in 0..<(l + 1) {
-        let mut g = T::zero()
+        let mut g = Zero::zero()
         for k in 0..<(l + 1) {
           g = g + q_data[i * n + k] * q_data[k * n + j]
         }
@@ -2048,11 +2061,11 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] householder_tridiagonalize(
       }
     }
     diagonal[i] = q_data[i * n + i]
-    q_data[i * n + i] = T::one()
+    q_data[i * n + i] = One::one()
     if l >= 0 {
       for j in 0..<(l + 1) {
-        q_data[j * n + i] = T::zero()
-        q_data[i * n + j] = T::zero()
+        q_data[j * n + i] = Zero::zero()
+        q_data[i * n + j] = Zero::zero()
       }
     }
   }
@@ -2075,15 +2088,16 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] symmetric_tridiagonal_eigen(
   for i in 1..<n {
     e[i - 1] = e[i]
   }
-  e[n - 1] = T::zero()
-  let tol = T::tolerance()
-  let two = T::one() + T::one()
+  e[n - 1] = Zero::zero()
+  let tol = Tolerance::tolerance()
+  let two = One::one() + One::one()
   for l in 0..<n {
     let mut iter = 0
     while true {
       let mut m = l
       while m < n - 1 &&
-            e[m].abs() > tol * (d[m].abs() + d[m + 1].abs() + T::one()) {
+            Num::abs(e[m]) >
+            tol * (Num::abs(d[m]) + Num::abs(d[m + 1]) + One::one()) {
         m += 1
       }
       if m == l {
@@ -2094,28 +2108,28 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] symmetric_tridiagonal_eigen(
       }
       iter += 1
       let mut g = (d[l + 1] - d[l]) / (two * e[l])
-      let mut r = Sqrt::sqrt(g * g + T::one())
-      if g < T::zero() {
+      let mut r = Sqrt::sqrt(g * g + One::one())
+      if g < Zero::zero() {
         r = -r
       }
       g = d[m] - d[l] + e[l] / (g + r)
-      let mut s = T::one()
-      let mut c = T::one()
-      let mut p = T::zero()
+      let mut s = One::one()
+      let mut c = One::one()
+      let mut p = Zero::zero()
       for i = m - 1; i >= l; i = i - 1 {
         let f = s * e[i]
         let b = c * e[i]
-        if f.abs() >= g.abs() {
+        if Num::abs(f) >= Num::abs(g) {
           c = g / f
-          r = Sqrt::sqrt(c * c + T::one())
+          r = Sqrt::sqrt(c * c + One::one())
           e[i + 1] = f * r
-          s = T::one() / r
+          s = One::one() / r
           c = c * s
         } else {
           s = f / g
-          r = Sqrt::sqrt(s * s + T::one())
+          r = Sqrt::sqrt(s * s + One::one())
           e[i + 1] = g * r
-          c = T::one() / r
+          c = One::one() / r
           s = s * c
         }
         g = d[i + 1] - p
@@ -2133,7 +2147,7 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] symmetric_tridiagonal_eigen(
       }
       d[l] = d[l] - p
       e[l] = g
-      e[m] = T::zero()
+      e[m] = Zero::zero()
     }
   }
   (Vector::from_array(d.copy()), eigenvectors)
@@ -2156,11 +2170,11 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] qr_decomposition(
   let r = matrix.copy()
   let q_data = q.data
   let r_data = r.data
-  let two = T::one() + T::one()
-  let tol = T::tolerance()
+  let two = One::one() + One::one()
+  let tol = Tolerance::tolerance()
   let limit = if m < n { m } else { n }
   for k in 0..<limit {
-    let mut norm_sq = T::zero()
+    let mut norm_sq = Zero::zero()
     for i in k..<m {
       let value = r_data[i * n + k]
       norm_sq += value * value
@@ -2169,13 +2183,13 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] qr_decomposition(
     if norm <= tol {
       continue
     }
-    let alpha = if r_data[k * n + k] >= T::zero() { -norm } else { norm }
-    let v = Array::make(m - k, T::zero())
+    let alpha = if r_data[k * n + k] >= Zero::zero() { -norm } else { norm }
+    let v = Array::make(m - k, Zero::zero())
     v[0] = r_data[k * n + k] - alpha
     for i in (k + 1)..<m {
       v[i - k] = r_data[i * n + k]
     }
-    let mut vnorm_sq = T::zero()
+    let mut vnorm_sq = Zero::zero()
     for i in 0..<v.length() {
       vnorm_sq += v[i] * v[i]
     }
@@ -2187,7 +2201,7 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] qr_decomposition(
       v[i] /= vnorm
     }
     for j in k..<n {
-      let mut dot = T::zero()
+      let mut dot = Zero::zero()
       for i in 0..<v.length() {
         dot += v[i] * r_data[(k + i) * n + j]
       }
@@ -2197,7 +2211,7 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] qr_decomposition(
       }
     }
     for i in 0..<m {
-      let mut dot = T::zero()
+      let mut dot = Zero::zero()
       for t in 0..<v.length() {
         dot += q_data[i * m + (k + t)] * v[t]
       }
@@ -2208,19 +2222,19 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] qr_decomposition(
     }
     for i in (k + 1)..<m {
       let idx = i * n + k
-      if r_data[idx].abs() <= tol {
-        r_data[idx] = T::zero()
+      if Num::abs(r_data[idx]) <= tol {
+        r_data[idx] = Zero::zero()
       }
     }
   }
-  let q_out = Matrix::new(m, n, T::zero())
+  let q_out = Matrix::new(m, n, Zero::zero())
   let q_out_data = q_out.data
   for i in 0..<m {
     for j in 0..<n {
       q_out_data[i * n + j] = q_data[i * m + j]
     }
   }
-  let r_out = Matrix::new(n, n, T::zero())
+  let r_out = Matrix::new(n, n, Zero::zero())
   let r_out_data = r_out.data
   let row_limit = if m < n { m } else { n }
   for i in 0..<row_limit {
@@ -2242,8 +2256,10 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] qr_decomposition(
 /// * The dominant eigenvalue.
 /// * The corresponding eigenvector as a normalized vector.
 ///
-/// Panics if the matrix is not square or if the iteration reaches a zero
-/// vector, which happens for zero or nilpotent cases.
+/// Returns `None` if the residual test is not met within `max_iterations`
+/// steps, or if the iteration reaches a zero vector (zero or nilpotent cases).
+///
+/// Panics if the matrix is not square or empty.
 pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
   self : Matrix[T],
   max_iterations : Int,
@@ -2255,28 +2271,28 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
   if n == 0 {
     abort("Matrix::power_method requires a non-empty square matrix")
   }
-  let tol = T::tolerance()
-  let result = Array::make(n, T::zero())
-  let x = Array::make(n, T::zero())
-  let y = Array::make(n, T::zero())
-  let ax = Array::make(n, T::zero())
+  let tol = Tolerance::tolerance()
+  let result = Array::make(n, Zero::zero())
+  let x = Array::make(n, Zero::zero())
+  let y = Array::make(n, Zero::zero())
+  let ax = Array::make(n, Zero::zero())
   guard self.initialize_power_method_vector(x, y) else { return None }
   for _ in 0..<max_iterations {
     self.mul_array_into(x, ax)
-    let mut numerator = T::zero()
-    let mut denominator = T::zero()
+    let mut numerator = Zero::zero()
+    let mut denominator = Zero::zero()
     for i in 0..<n {
       let xi = x[i]
       numerator = numerator + xi * ax[i]
       denominator = denominator + xi * xi
     }
-    if denominator.abs() <= tol {
+    if Num::abs(denominator) <= tol {
       return None
     }
     let lambda = numerator / denominator
-    let mut residual = T::zero()
+    let mut residual = Zero::zero()
     for i in 0..<n {
-      let delta = (ax[i] - x[i] * lambda).abs()
+      let delta = Num::abs(ax[i] - x[i] * lambda)
       if delta > residual {
         residual = delta
       }
@@ -2333,7 +2349,7 @@ pub fn[T : AddMonoid + Mul] Matrix::unchecked_mul_vec(
   guard n == v_data.length() else {
     abort("Matrix and vector dimensions are not compatible for multiplication")
   }
-  let res_data = Array::make(m, T::zero())
+  let res_data = Array::make(m, Zero::zero())
   self.mul_array_into(v_data, res_data)
   Vector(res_data)
 }
@@ -2355,7 +2371,7 @@ fn[T : AddMonoid + Mul] Matrix::mul_array_into(
   let data = self.data
   let mut idx = 0
   for i = 0; i < m; i = i + 1 {
-    let mut sum = T::zero()
+    let mut sum = Zero::zero()
     for j = 0; j < n; j = j + 1 {
       sum = sum + data[idx] * v_data[j]
       idx += 1
@@ -2395,45 +2411,45 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::eigen_2x2(
   let b = self.data[0 * n + 1]
   let c = self.data[1 * n + 0]
   let d = self.data[1 * n + 1]
-  let half = T::one() / (T::one() + T::one())
+  let half = One::one() / (One::one() + One::one())
   let mid = (a + d) * half
   let det = a * d - b * c
   let disc_prime = mid * mid - det
-  if disc_prime < -T::tolerance() {
+  if disc_prime < -Tolerance::tolerance() {
     abort(
       "Matrix::eigen currently requires real eigenvalues; complex eigenvalues require luna complex support",
     )
   }
-  let s = if disc_prime.abs() <= T::tolerance() {
-    T::zero()
+  let s = if Num::abs(disc_prime) <= Tolerance::tolerance() {
+    Zero::zero()
   } else {
     Sqrt::sqrt(disc_prime)
   }
   let l1 = mid + s
   let l2 = mid - s
-  let mut v11 = T::one()
-  let mut v21 = T::zero()
-  let mut v12 = T::zero()
-  let mut v22 = T::one()
-  if b != T::zero() {
+  let mut v11 = One::one()
+  let mut v21 = Zero::zero()
+  let mut v12 = Zero::zero()
+  let mut v22 = One::one()
+  if b != Zero::zero() {
     v11 = b
     v21 = l1 - a
-  } else if c != T::zero() {
+  } else if c != Zero::zero() {
     v11 = l1 - d
     v21 = c
   } else {
-    v11 = T::one()
-    v21 = T::zero()
+    v11 = One::one()
+    v21 = Zero::zero()
   }
-  if b != T::zero() {
+  if b != Zero::zero() {
     v12 = b
     v22 = l2 - a
-  } else if c != T::zero() {
+  } else if c != Zero::zero() {
     v12 = l2 - d
     v22 = c
   } else {
-    v12 = T::zero()
-    v22 = T::one()
+    v12 = Zero::zero()
+    v22 = One::one()
   }
   (Vector::from_array([l1, l2]), Matrix::from_array(2, 2, [v11, v12, v21, v22]))
 }
@@ -2493,14 +2509,14 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::unchecked_determinant(
   let n = self.row
   if n >= 5 && (is_upper_triangular_js(self) || is_lower_triangular_js(self)) {
     let data = self.data
-    let mut det = T::one()
+    let mut det = One::one()
     for i = 0; i < n; i = i + 1 {
       det *= data[i * n + i]
     }
     return det
   }
   match n {
-    0 => T::one()
+    0 => One::one()
     1 => self.data[0]
     2 => self.data[0] * self.data[3] - self.data[1] * self.data[2]
     3 => {
@@ -2535,11 +2551,11 @@ fn[T : Compare + Num + Tolerance] is_upper_triangular_js(
 ) -> Bool {
   let n = matrix.row
   let data = matrix.data
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   for i = 1; i < n; i = i + 1 {
     let row_offset = i * n
     for j = 0; j < i; j = j + 1 {
-      if data[row_offset + j].abs() > tol {
+      if Num::abs(data[row_offset + j]) > tol {
         return false
       }
     }
@@ -2553,11 +2569,11 @@ fn[T : Compare + Num + Tolerance] is_lower_triangular_js(
 ) -> Bool {
   let n = matrix.row
   let data = matrix.data
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   for i = 0; i < n; i = i + 1 {
     let row_offset = i * n
     for j = i + 1; j < n; j = j + 1 {
-      if data[row_offset + j].abs() > tol {
+      if Num::abs(data[row_offset + j]) > tol {
         return false
       }
     }
@@ -2609,23 +2625,23 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::unchecked_inverse(
   }
   let n = self.row
   if n == 0 {
-    return Some(Matrix::new(0, 0, T::zero()))
+    return Some(Matrix::new(0, 0, Zero::zero()))
   }
   if is_identity_matrix_js(self) {
     return Some(self.copy())
   }
   if is_diagonal_matrix_js(self) {
     let data = self.data
-    let out = Matrix::new(n, n, T::zero())
+    let out = Matrix::new(n, n, Zero::zero())
     let out_data = out.data
-    let tol = T::tolerance()
+    let tol = Tolerance::tolerance()
     for i = 0; i < n; i = i + 1 {
       let idx = i * n + i
       let diag = data[idx]
-      if diag.abs() < tol {
+      if Num::abs(diag) < tol {
         return None
       }
-      out_data[idx] = diag.inv()
+      out_data[idx] = @lf_alg.Inverse::inv(diag)
     }
     return Some(out)
   }
@@ -2695,16 +2711,16 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::cholesky_decomposit
   }
   let n = self.row
   if n == 0 {
-    return Some(Matrix::new(0, 0, T::zero()))
+    return Some(Matrix::new(0, 0, Zero::zero()))
   }
   if is_identity_matrix_js(self) {
     return Some(self.copy())
   }
   if is_diagonal_matrix_js(self) {
     let data = self.data
-    let out = Matrix::new(n, n, T::zero())
+    let out = Matrix::new(n, n, Zero::zero())
     let out_data = out.data
-    let tol = T::tolerance()
+    let tol = Tolerance::tolerance()
     for i = 0; i < n; i = i + 1 {
       let idx = i * n + i
       let diag = data[idx]
@@ -2715,15 +2731,15 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::cholesky_decomposit
     }
     return Some(out)
   }
-  let l = Matrix::new(n, n, T::zero())
+  let l = Matrix::new(n, n, Zero::zero())
   let self_data = self.data
   let l_data = l.data
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   for i = 0; i < n; i = i + 1 {
     let i_offset = i * n
     for j = 0; j <= i; j = j + 1 {
       let j_offset = j * n
-      let mut sum = T::zero()
+      let mut sum = Zero::zero()
       let mut k = 0
       while k + 3 < j {
         sum = sum +
@@ -2788,9 +2804,9 @@ pub fn[T : Field] Matrix::unchecked_mean(self : Matrix[T]) -> T {
   }
   let (sum, count) = self.data
     .iter()
-    .fold(init=(T::zero(), T::zero()), fn(acc, x) {
+    .fold(init=(Zero::zero(), Zero::zero()), fn(acc, x) {
       let (sum, count) = acc
-      (sum + x, count + T::one())
+      (sum + x, count + One::one())
     })
   sum / count
 }
@@ -2832,10 +2848,10 @@ pub fn[T : Field] Matrix::unchecked_variance(self : Matrix[T]) -> T {
   let m = self.unchecked_mean()
   let (sum_sq_diff, count) = self.data
     .iter()
-    .fold(init=(T::zero(), T::zero()), fn(acc, x) {
+    .fold(init=(Zero::zero(), Zero::zero()), fn(acc, x) {
       let (sum_sq_diff, count) = acc
       let diff = x - m
-      (sum_sq_diff + diff * diff, count + T::one())
+      (sum_sq_diff + diff * diff, count + One::one())
     })
   sum_sq_diff / count
 }
@@ -2904,8 +2920,8 @@ pub fn[T : Compare + Num + Tolerance] Matrix::is_symmetric(
   for i = 0; i < self.row; i = i + 1 {
     for j = i + 1; j < self.col; j = j + 1 {
       // (self[i][j] - self[j][i])
-      if (self.data[i * self.col + j] - self.data[j * self.col + i]).abs() >
-        T::tolerance() {
+      if Num::abs(self.data[i * self.col + j] - self.data[j * self.col + i]) >
+        Tolerance::tolerance() {
         return false
       }
     }
@@ -2922,10 +2938,10 @@ fn[T : Compare + Field] normalize_diagonal_rref_js(matrix : Matrix[T]) -> Unit {
   for i = 0; i < n; i = i + 1 {
     let row_offset = i * cols
     let diag = data[row_offset + i]
-    if diag == T::zero() {
+    if diag == Zero::zero() {
       continue
     }
-    data[row_offset + i] = T::one()
+    data[row_offset + i] = One::one()
   }
 }
 
@@ -2935,10 +2951,10 @@ fn[T : Compare + Num + Tolerance] count_nonzero_diagonal_js(
 ) -> Int {
   let n = matrix.row
   let data = matrix.data
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   let mut count = 0
   for i = 0; i < n; i = i + 1 {
-    if data[i * n + i].abs() > tol {
+    if Num::abs(data[i * n + i]) > tol {
       count += 1
     }
   }
@@ -2948,9 +2964,9 @@ fn[T : Compare + Num + Tolerance] count_nonzero_diagonal_js(
 ///|
 fn[T : Compare + Num + Tolerance] is_zero_matrix_js(matrix : Matrix[T]) -> Bool {
   let data = matrix.data
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   for i = 0; i < data.length(); i = i + 1 {
-    if data[i].abs() > tol {
+    if Num::abs(data[i]) > tol {
       return false
     }
   }
@@ -2966,12 +2982,12 @@ fn[T : Compare + Zero + One + Num + Tolerance] is_identity_matrix_js(
   }
   let n = matrix.row
   let data = matrix.data
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   for i = 0; i < n; i = i + 1 {
     let row_offset = i * n
     for j = 0; j < n; j = j + 1 {
-      let expected = if i == j { T::one() } else { T::zero() }
-      if (data[row_offset + j] - expected).abs() > tol {
+      let expected = if i == j { One::one() } else { Zero::zero() }
+      if Num::abs(data[row_offset + j] - expected) > tol {
         return false
       }
     }
@@ -2988,11 +3004,11 @@ fn[T : Compare + Num + Tolerance] is_diagonal_matrix_js(
   }
   let n = matrix.row
   let data = matrix.data
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   for i = 0; i < n; i = i + 1 {
     let row_offset = i * n
     for j = 0; j < n; j = j + 1 {
-      if i != j && data[row_offset + j].abs() > tol {
+      if i != j && Num::abs(data[row_offset + j]) > tol {
         return false
       }
     }
@@ -3009,15 +3025,15 @@ fn[T : Compare + One + Num + Tolerance] is_permutation_matrix_js(
   }
   let n = matrix.row
   let data = matrix.data
-  let tol = T::tolerance()
+  let tol = Tolerance::tolerance()
   for i = 0; i < n; i = i + 1 {
     let row_offset = i * n
     let mut one_count = 0
     for j = 0; j < n; j = j + 1 {
       let value = data[row_offset + j]
-      if (value - T::one()).abs() <= tol {
+      if Num::abs(value - One::one()) <= tol {
         one_count += 1
-      } else if value.abs() > tol {
+      } else if Num::abs(value) > tol {
         return false
       }
     }
@@ -3029,7 +3045,7 @@ fn[T : Compare + One + Num + Tolerance] is_permutation_matrix_js(
     let mut one_count = 0
     for i = 0; i < n; i = i + 1 {
       let value = data[i * n + j]
-      if (value - T::one()).abs() <= tol {
+      if Num::abs(value - One::one()) <= tol {
         one_count += 1
       }
     }
@@ -3121,7 +3137,9 @@ pub fn[T : Semiring] Matrix::unchecked_matrix_power(
 pub fn[T : AddMonoid + Mul + Sqrt] Matrix::frobenius_norm(
   self : Matrix[T],
 ) -> T {
-  let sum_sq = self.data.iter().fold(init=T::zero(), fn(acc, x) { acc + x * x })
+  let sum_sq = self.data
+    .iter()
+    .fold(init=Zero::zero(), fn(acc, x) { acc + x * x })
   Sqrt::sqrt(sum_sq)
 }
 

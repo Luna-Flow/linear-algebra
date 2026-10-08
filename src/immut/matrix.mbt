@@ -108,7 +108,7 @@ pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
 /// ```moonbit nocheck
 ///   let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 ///   inspect(
-///     m.to_string(),
+///     m,
 ///     content=
 ///       #||1, 2|
 ///       #||3, 4|
@@ -116,7 +116,7 @@ pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
 ///   )
 /// ```
 pub impl[T : Show] Show for Matrix[T] with fn to_string(self) {
-  let logger = StringBuilder::new()
+  let logger = StringBuilder()
   self.output(logger)
   logger.to_string()
 }
@@ -134,8 +134,8 @@ pub impl[T : Show] Show for Matrix[T] with fn to_string(self) {
 ///
 /// ```moonbit nocheck
 ///   let m = Matrix::from_2d_array([[1, 2], [3, 4]])
-///   let buf = @buffer.new(size_hint=0)
-///   m.output(buf)
+///   let buf = StringBuilder()
+///   Show::output(m, buf)
 ///   inspect(
 ///     buf.to_string(),
 ///     content=
@@ -174,7 +174,7 @@ pub impl[T : Show] Show for Matrix[T] with fn output(self, logger) {
 /// ```
 /// 
 pub fn[T, U] Matrix::map(self : Matrix[T], f : (T) -> U) -> Matrix[U] {
-  { row: self.row, col: self.col, data: self.data.map(f) }
+  { row: self.row, col: self.col, data: self.data.map(f), }
 }
 
 ///|
@@ -200,7 +200,7 @@ pub fn[T, U] Matrix::mapi(
   let data = Vector::makei(row * col, fn(i) {
     f(i / col, i % col, self.data[i])
   })
-  { row, col, data }
+  { row, col, data, }
 }
 
 ///|
@@ -222,9 +222,9 @@ pub fn[T] Matrix::make(row : Int, col : Int, f : (Int, Int) -> T) -> Matrix[T] {
     abort("Matrix dimensions must be non-negative")
   }
   if row == 0 || col == 0 {
-    return { row, col, data: Vector::from_array([]) }
+    return { row, col, data: Vector::from_array([]), }
   }
-  { row, col, data: Vector::makei(row * col, fn(i) { f(i / col, i % col) }) }
+  { row, col, data: Vector::makei(row * col, fn(i) { f(i / col, i % col) }), }
 }
 
 ///|
@@ -260,7 +260,7 @@ pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
 /// ```
 pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
   if arr.is_empty() {
-    return { row: 0, col: 0, data: Vector::from_array([]) }
+    return { row: 0, col: 0, data: Vector::from_array([]), }
   }
   let col = arr[0].length()
   for row in arr {
@@ -309,7 +309,7 @@ pub fn[T] Matrix::from_array(
   guard arr.length() == row * col else {
     abort("Invalid array length for matrix")
   }
-  Matrix::{ row, col, data: arr }
+  Matrix::{ row, col, data: arr, }
 }
 
 ///|
@@ -319,9 +319,10 @@ pub fn[T] Matrix::from_array(
 /// Parameters
 /// - `self`: The matrix to get the indexed type from.
 /// - `row`: The row index to get the data from.
-pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Indexed[T] {
+#alias("_[_]")
+pub fn[T] Matrix::at(self : Matrix[T], row : Int) -> Indexed[T] {
   @internal.ensure_row_in_bounds(self, row)
-  { index: c => self.data[self.matrix_index_offset(row, c)] }
+  { index: c => self.data[self.matrix_index_offset(row, c)], }
 }
 
 ///|
@@ -338,7 +339,8 @@ pub fn[T] Matrix::op_get(self : Matrix[T], row : Int) -> Indexed[T] {
 /// inspect(m[0][1], content="3")
 /// ```
 /// 
-pub fn[T] Indexed::op_get(self : Indexed[T], col : Int) -> T {
+#alias("_[_]")
+pub fn[T] Indexed::at(self : Indexed[T], col : Int) -> T {
   (self.index)(col)
 }
 
@@ -430,7 +432,7 @@ pub fn[T : Mul + Add + Zero] Matrix::unchecked_matmul(
     return Matrix::make(row, col, fn(_, _) { abort("unreachable") })
   }
   if inner == 0 {
-    return Matrix::new(row, col, T::zero())
+    return Matrix::new(row, col, Zero::zero())
   }
   let left_data = self.data
   let right_data = other.data
@@ -450,7 +452,7 @@ pub fn[T : Mul + Add + Zero] Matrix::unchecked_matmul(
     }
     sum
   })
-  { row, col, data }
+  { row, col, data, }
 }
 
 ///|
@@ -474,9 +476,13 @@ pub impl[T : Add] Add for Matrix[T] with fn add(
   self : Matrix[T],
   other : Matrix[T],
 ) -> Matrix[T] {
-  guard self.col == other.col
-  guard self.row == other.row
-  { data: self.data.zip_with(other.data, T::add), row: self.row, col: self.col }
+  guard self.col == other.col else { abort("Matrix::add: dimension mismatch") }
+  guard self.row == other.row else { abort("Matrix::add: dimension mismatch") }
+  {
+    data: self.data.zip_with(other.data, T::add),
+    row: self.row,
+    col: self.col,
+  }
 }
 
 ///|
@@ -579,8 +585,8 @@ pub fn[T : Add] Matrix::add_constant(self : Matrix[T], cst : T) -> Matrix[T] {
 /// ```
 pub fn[T : One + Zero] Matrix::identity(size : Int) -> Matrix[T] {
   Matrix::make(size, size, fn(i, j) {
-    guard i == j else { T::zero() }
-    T::one()
+    guard i == j else { Zero::zero() }
+    One::one()
   })
 }
 
@@ -596,7 +602,7 @@ pub fn[T : One + Zero] Matrix::identity(size : Int) -> Matrix[T] {
 /// inspect(m.null(), content="true")
 /// ```
 pub fn[T : Compare + Zero] Matrix::null(self : Matrix[T]) -> Bool {
-  !self.data.iter().any(fn(x) { x != T::zero() })
+  !self.data.iter().any(fn(x) { x != Zero::zero() })
 }
 
 ///|
@@ -661,7 +667,7 @@ pub fn[T : Add + Zero] Matrix::trace(
 pub fn[T : Add + Zero] Matrix::unchecked_trace(self : Matrix[T]) -> T {
   ensure_square(self)
   let n = self.row
-  let mut sum = T::zero()
+  let mut sum = Zero::zero()
   for i in 0..<n {
     sum = sum + self[i][i]
   }
@@ -876,7 +882,7 @@ pub fn[T : Compare + Num + Div] Matrix::unchecked_determinant(
   let n = self.row
   ensure_square(self)
   match n {
-    0 => T::one()
+    0 => One::one()
     1 => self.data[0]
     2 => {
       let a = self.data
@@ -906,33 +912,37 @@ pub fn[T : Compare + Num + Div] Matrix::unchecked_determinant(
     }
     _ => {
       let work = self.to_array()
-      let mut sign = T::one()
+      let mut sign = One::one()
       for k in 0..<(n - 1) {
         let mut pivot_row = k
-        let mut pivot_abs = work[k * n + k].abs()
+        let mut pivot_abs = Num::abs(work[k * n + k])
         for i in (k + 1)..<n {
-          let candidate = work[i * n + k].abs()
+          let candidate = Num::abs(work[i * n + k])
           if candidate > pivot_abs {
             pivot_abs = candidate
             pivot_row = i
           }
         }
-        if work[pivot_row * n + k] == T::zero() {
-          return T::zero()
+        if work[pivot_row * n + k] == Zero::zero() {
+          return Zero::zero()
         }
         if pivot_row != k {
           swap_dense_rows(work, n, pivot_row, k)
           sign = -sign
         }
         let pivot = work[k * n + k]
-        let denom = if k == 0 { T::one() } else { work[(k - 1) * n + (k - 1)] }
+        let denom = if k == 0 {
+          One::one()
+        } else {
+          work[(k - 1) * n + (k - 1)]
+        }
         for i in (k + 1)..<n {
           let left = work[i * n + k]
           for j in (k + 1)..<n {
             let idx = i * n + j
             work[idx] = (work[idx] * pivot - left * work[k * n + j]) / denom
           }
-          work[i * n + k] = T::zero()
+          work[i * n + k] = Zero::zero()
         }
       }
       sign * work[n * n - 1]
@@ -1021,7 +1031,9 @@ pub fn[T] Matrix::horizontal_combine(
   let c1 = self.col
   let r2 = other.row
   let c2 = other.col
-  guard r1 == r2
+  guard r1 == r2 else {
+    abort("Matrix::horizontal_combine: dimension mismatch")
+  }
   Matrix::make(r1, c1 + c2, fn(i, j) {
     if j < c1 {
       self[i][j]
@@ -1059,7 +1071,7 @@ pub fn[T] Matrix::vertical_combine(
   let r2 = other.row
   let c1 = self.col
   let c2 = other.col
-  guard c1 == c2
+  guard c1 == c2 else { abort("Matrix::vertical_combine: dimension mismatch") }
   Matrix::make(r1 + r2, c1, fn(i, j) {
     if i < r1 {
       self[i][j]
@@ -1087,8 +1099,12 @@ pub fn[T] Matrix::vertical_combine(
 /// )
 /// ```
 pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
-  guard r1 < self.row && r2 < self.row
-  guard r1 >= 0 && r2 >= 0
+  guard r1 < self.row && r2 < self.row else {
+    abort("Matrix::swap_rows: index out of bounds")
+  }
+  guard r1 >= 0 && r2 >= 0 else {
+    abort("Matrix::swap_rows: index out of bounds")
+  }
   if r1 == r2 {
     return self
   }
@@ -1123,8 +1139,12 @@ pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
 /// )
 /// ```
 pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Matrix[T] {
-  guard c1 < self.col && c2 < self.col
-  guard c1 >= 0 && c2 >= 0
+  guard c1 < self.col && c2 < self.col else {
+    abort("Matrix::swap_cols: index out of bounds")
+  }
+  guard c1 >= 0 && c2 >= 0 else {
+    abort("Matrix::swap_cols: index out of bounds")
+  }
   if c1 == c2 {
     return self
   }

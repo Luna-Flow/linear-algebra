@@ -9,7 +9,7 @@ fn[T : @lf_alg.Zero + Add + Mul] dot_immut_vectors(
   guard len == right.length() else {
     abort("Vector length mismatch for dot product")
   }
-  let mut sum = T::zero()
+  let mut sum = @lf_alg.Zero::zero()
   for i in 0..<len {
     sum = sum + left[i] * right[i]
   }
@@ -27,7 +27,7 @@ fn[T : @lf_alg.Zero + Add + Mul] matvec_immut(
     abort("Matrix and vector dimensions are not compatible for multiplication")
   }
   @immut.Vector::makei(row, fn(i) {
-    let mut sum = T::zero()
+    let mut sum = @lf_alg.Zero::zero()
     for j in 0..<col {
       sum = sum + matrix[i][j] * vector[j]
     }

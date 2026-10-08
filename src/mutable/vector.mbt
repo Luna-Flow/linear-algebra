@@ -17,8 +17,8 @@
 /// let sum = v2 + v3
 /// let scaled = v2.left_scale(2.0)
 ///
-/// inspect(sum.to_string(), content="|1, 3, 5|")
-/// inspect(scaled.to_string(), content="|0, 2, 4|")
+/// inspect(sum, content="|1, 3, 5|")
+/// inspect(scaled, content="|0, 2, 4|")
 /// ```
 pub struct Vector[A](Array[A])
 
@@ -55,8 +55,8 @@ pub impl[T : Arbitrary] Arbitrary for Vector[T] with fn arbitrary(size, rng) {
 /// let v1 = Vector::from_array([1, 2, 3])
 /// let v2 = Vector::from_array([1, 2, 3])
 /// let v3 = Vector::from_array([1, 2, 4])
-/// inspect(v1, content=v2.to_string())
-/// assert_eq(v1.to_string() != v3.to_string(), true)
+/// assert_true(v1 == v2)
+/// assert_true(v1 != v3)
 /// ```
 ///
 pub impl[T : Eq] Eq for Vector[T] with fn equal(self, other) {
@@ -78,11 +78,11 @@ pub impl[T : Eq] Eq for Vector[T] with fn equal(self, other) {
 ///
 /// ```moonbit nocheck
 /// let v = @mutable.Vector::from_array([1, 2, 3])
-/// inspect(v.to_string(), content="|1, 2, 3|")
+/// inspect(v, content="|1, 2, 3|")
 /// ```
 ///
 pub impl[T : Show] Show for Vector[T] with fn to_string(self) {
-  let logger = StringBuilder::new()
+  let logger = StringBuilder()
   self.output(logger)
   logger.to_string()
 }
@@ -110,10 +110,7 @@ pub impl[T : Show] Show for Vector[T] with fn output(self, logger) {
 
 ///|
 pub impl[T : Debug] Debug for Vector[T] with fn to_repr(self) {
-  Repr::opaque_(
-    "Vector",
-    Repr::array(self.iter().to_array().map(x => to_repr(x))),
-  )
+  Repr::opaque_("Vector", Repr::array(self.iter().to_array().map(x => Repr(x))))
 }
 
 ///|
@@ -137,7 +134,7 @@ fn[A, B, C] array_zip_with(
   f : (A, B) -> C,
 ) -> Array[C] {
   let n = a1.length()
-  guard n == a2.length()
+  guard n == a2.length() else { abort("array_zip_with: length mismatch") }
   if n == 0 {
     return []
   }
@@ -351,7 +348,8 @@ pub fn[A] Vector::copy(self : Vector[A]) -> Vector[A] {
 /// inspect(v[2], content="3")
 /// ```
 ///
-pub fn[A] Vector::op_get(self : Vector[A], index : Int) -> A {
+#alias("_[_]")
+pub fn[A] Vector::at(self : Vector[A], index : Int) -> A {
   // Direct indexed access to the underlying 1D array.
   self.0[index]
 }
@@ -376,7 +374,8 @@ pub fn[A] Vector::op_get(self : Vector[A], index : Int) -> A {
 /// // v is now [0, 42, 0]
 /// ```
 ///
-pub fn[A] Vector::op_set(self : Vector[A], index : Int, value : A) -> Unit {
+#alias("_[_]=_")
+pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Unit {
   // Direct indexed update to the underlying 1D array.
   self.0[index] = value
 }
@@ -396,7 +395,7 @@ pub fn[A] Vector::op_set(self : Vector[A], index : Int, value : A) -> Unit {
 /// ```moonbit nocheck
 /// let v = Vector::from_array([1, 2, 3, 4])
 /// let doubled = v.map(fn(x) { x * 2 })
-/// inspect(doubled.to_string(), content="|2, 4, 6, 8|")
+/// inspect(doubled, content="|2, 4, 6, 8|")
 /// ```
 ///
 pub fn[A, B] Vector::map(self : Vector[A], f : (A) -> B) -> Vector[B] {
@@ -537,7 +536,7 @@ pub fn[A : Mul] Vector::right_scale_inplace(
 /// ```moonbit nocheck
 /// let arr = [1, 2, 3, 4, 5]
 /// let vec = Vector::from_array(arr)
-/// inspect(vec.to_string(), content="|1, 2, 3, 4, 5|")
+/// inspect(vec, content="|1, 2, 3, 4, 5|")
 /// ```
 ///
 pub fn[A] Vector::from_array(a : Array[A]) -> Vector[A] {
@@ -657,7 +656,7 @@ pub fn[T : MulMonoid + Add + Neg] Vector::lerp(
   other : Vector[T],
   alpha : T,
 ) -> Vector[T] {
-  self.left_scale(T::one() + -alpha) + other.left_scale(alpha)
+  self.left_scale(One::one() + -alpha) + other.left_scale(alpha)
 }
 
 ///|
@@ -680,7 +679,7 @@ pub fn[T : AddMonoid + Mul] Vector::dot(
   if len != other.0.length() {
     abort("Vector length mismatch for dot product")
   }
-  let mut sum = T::zero()
+  let mut sum = Zero::zero()
   for i = 0; i < len; i = i + 1 {
     // Equivalent to sum += self[i] * other[i]
     sum = sum + self.0[i] * other.0[i]
@@ -734,7 +733,7 @@ pub fn[T : Zero] Vector::scaled_matrix(self : Vector[T]) -> Matrix[T] {
 /// let v1 = Vector::from_array([1, 2])
 /// let v2 = Vector::from_array([3, 4, 5])
 /// let result = v1.tensor_product(v2)
-/// inspect(result.to_string(), content=(
+/// inspect(result, content=(
 /// #||3, 4, 5|
 /// #||6, 8, 10|
 /// ))
@@ -780,7 +779,7 @@ pub fn[T : Mul + Add + Zero] Vector::lin_comb(
     }
   }
   // Single-pass linear combination to avoid multiple intermediate vector allocations.
-  let res_data = Array::make(len, T::zero())
+  let res_data = Array::make(len, Zero::zero())
   for i = 0; i < weights.length(); i = i + 1 {
     let w = weights[i]
     let v_data = vectors[i].0
@@ -808,7 +807,7 @@ pub fn[T : Mul + Add + Zero] Vector::lin_comb(
 /// ```moonbit nocheck
 /// let v = Vector::from_array([1, 2, 3])
 /// let result = v.add_constant(5)
-/// inspect(result.to_string(), content="|6, 7, 8|")
+/// inspect(result, content="|6, 7, 8|")
 /// ```
 ///
 pub fn[T : Add] Vector::add_constant(self : Vector[T], cst : T) -> Vector[T] {

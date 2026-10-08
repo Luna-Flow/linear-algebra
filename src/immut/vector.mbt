@@ -39,7 +39,7 @@ pub type VecLib[T] = Vector[T]
 /// Returns an arbitrary `Vector[T]` where each element is generated using the
 /// `Arbitrary` implementation of type `T`.
 pub impl[T : Arbitrary] Arbitrary for Vector[T] with fn arbitrary(size, rng) {
-  Vector::{ data: @core_vector.makei(size, i => T::arbitrary(i, rng)) }
+  Vector::{ data: @core_vector.makei(size, i => T::arbitrary(i, rng)), }
 }
 
 ///|
@@ -64,7 +64,7 @@ pub impl[T : Arbitrary] Arbitrary for Vector[T] with fn arbitrary(size, rng) {
 /// ```
 ///
 pub fn[T, U] Vector::map(self : Vector[T], f : (T) -> U) -> Vector[U] {
-  Vector::{ data: self.data.map(f) }
+  Vector::{ data: self.data.map(f), }
 }
 
 ///|
@@ -119,7 +119,7 @@ pub fn[T, U, V] Vector::zip_with(
   other : Vector[U],
   f : (T, U) -> V,
 ) -> Vector[V] {
-  Vector::{ data: array_zip_with(self.data, other.data, f) }
+  Vector::{ data: array_zip_with(self.data, other.data, f), }
 }
 
 ///|
@@ -181,7 +181,7 @@ pub fn[T] Vector::to_col_matrix(self : Vector[T]) -> Matrix[T] {
 /// ```
 ///
 pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
-  { data: self, row: 1, col: self.length() }
+  { data: self, row: 1, col: self.length(), }
 }
 
 ///|
@@ -203,7 +203,7 @@ pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
 /// ```
 ///
 pub fn[T] Vector::make(n : Int, elem : T) -> Vector[T] {
-  Vector::{ data: @core_vector.make(n, elem) }
+  Vector::{ data: @core_vector.make(n, elem), }
 }
 
 ///|
@@ -227,7 +227,7 @@ pub fn[T] Vector::make(n : Int, elem : T) -> Vector[T] {
 /// ```
 ///
 pub fn[T] Vector::makei(n : Int, f : (Int) -> T) -> Vector[T] {
-  Vector::{ data: @core_vector.makei(n, f) }
+  Vector::{ data: @core_vector.makei(n, f), }
 }
 
 ///|
@@ -270,7 +270,8 @@ pub fn[T] Vector::length(self : Vector[T]) -> Int {
 /// inspect(v[1], content="2")
 /// ```
 ///
-pub fn[T] Vector::op_get(self : Vector[T], i : Int) -> T {
+#alias("_[_]")
+pub fn[T] Vector::at(self : Vector[T], i : Int) -> T {
   self.data[i]
 }
 
@@ -296,7 +297,7 @@ pub fn[T] Vector::op_get(self : Vector[T], i : Int) -> T {
 /// ```
 ///
 pub fn[T] Vector::set(self : Vector[T], i : Int, x : T) -> Vector[T] {
-  Vector::{ data: self.data.set(i, x) }
+  Vector::{ data: self.data.set(i, x), }
 }
 
 ///|
@@ -363,7 +364,7 @@ pub fn[T : Mul] Vector::right_scale(self : Vector[T], scalar : T) -> Vector[T] {
 /// ```
 ///
 pub fn[T] Vector::from_array(arr : Array[T]) -> Vector[T] {
-  Vector::{ data: @core_vector.from_array(arr) }
+  Vector::{ data: @core_vector.from_array(arr), }
 }
 
 ///|
@@ -477,7 +478,7 @@ pub fn[T : One + Mul + Add + Neg] Vector::lerp(
   other : Vector[T],
   alpha : T,
 ) -> Vector[T] {
-  self.left_scale(T::one() + -alpha) + other.left_scale(alpha)
+  self.left_scale(One::one() + -alpha) + other.left_scale(alpha)
 }
 
 ///|
@@ -490,7 +491,7 @@ pub fn[T : One + Mul + Add + Neg] Vector::lerp(
 /// Returns a string representation of the vector with elements separated by
 /// commas and enclosed in pipe characters (e.g., "|1, 2, 3|").
 pub impl[T : Show] Show for Vector[T] with fn to_string(self) {
-  let logger = StringBuilder::new()
+  let logger = StringBuilder()
   self.output(logger)
   logger.to_string()
 }
@@ -511,10 +512,7 @@ pub impl[T : Show] Show for Vector[T] with fn output(self, logger) {
 
 ///|
 pub impl[T : Debug] Debug for Vector[T] with fn to_repr(self) {
-  Repr::opaque_(
-    "Vector",
-    Repr::array(self.iter().to_array().map(x => to_repr(x))),
-  )
+  Repr::opaque_("Vector", Repr::array(self.iter().to_array().map(x => Repr(x))))
 }
 
 ///|
@@ -611,7 +609,7 @@ fn[X, Y, Z] array_zip_with(
   f : (X, Y) -> Z,
 ) -> VecCore[Z] {
   let n = a1.length()
-  guard n == a2.length()
+  guard n == a2.length() else { abort("array_zip_with: length mismatch") }
   @core_vector.makei(n, i => f(a1[i], a2[i]))
 }
 

@@ -1,12 +1,12 @@
 ///|
 pub fn[T] Matrix::row_view(self : Matrix[T], row : Int) -> RowView[T] {
   ignore(self.matrix_row_offset(row))
-  { data: self, row }
+  { data: self, row, }
 }
 
 ///|
 pub fn[T] Matrix::col_view(self : Matrix[T], col : Int) -> ColView[T] {
-  { data: self, col: self.matrix_checked_col(col) }
+  { data: self, col: self.matrix_checked_col(col), }
 }
 
 ///|
@@ -20,43 +20,27 @@ pub fn[T] ColView::length(self : ColView[T]) -> Int {
 }
 
 ///|
+#alias("_[_]")
 pub fn[T] RowView::get(self : RowView[T], col : Int) -> T {
   self.data.get(self.row, col)
 }
 
 ///|
+#alias("_[_]")
 pub fn[T] ColView::get(self : ColView[T], row : Int) -> T {
   self.data.get(row, self.col)
 }
 
 ///|
+#alias("_[_]=_")
 pub fn[T] RowView::set(self : RowView[T], col : Int, val : T) -> Unit {
   self.data.set(self.row, col, val)
 }
 
 ///|
+#alias("_[_]=_")
 pub fn[T] ColView::set(self : ColView[T], row : Int, val : T) -> Unit {
   self.data.set(row, self.col, val)
-}
-
-///|
-pub fn[T] RowView::op_get(self : RowView[T], col : Int) -> T {
-  self.get(col)
-}
-
-///|
-pub fn[T] ColView::op_get(self : ColView[T], row : Int) -> T {
-  self.get(row)
-}
-
-///|
-pub fn[T] RowView::op_set(self : RowView[T], col : Int, val : T) -> Unit {
-  self.set(col, val)
-}
-
-///|
-pub fn[T] ColView::op_set(self : ColView[T], row : Int, val : T) -> Unit {
-  self.set(row, val)
 }
 
 ///|

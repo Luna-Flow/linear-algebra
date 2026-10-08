@@ -41,9 +41,10 @@ pub impl[T] HasShape for MatrixFn[T] with fn shape(self) {
 /// inspect(row[1], content="2")  // Access column 1 of the first row
 /// ```
 ///
-pub fn[T] MatrixFn::op_get(self : MatrixFn[T], i : Int) -> Indexed[T] {
+#alias("_[_]")
+pub fn[T] MatrixFn::at(self : MatrixFn[T], i : Int) -> Indexed[T] {
   @internal.ensure_row_in_bounds(self, i)
-  { index: c => (self.data)(i, c) }
+  { index: c => (self.data)(i, c), }
 }
 
 ///|
@@ -155,7 +156,7 @@ pub fn[T : Default] MatrixFn::new(row : Int, col : Int) -> MatrixFn[T] {
 /// ```
 ///
 pub fn[T, U] MatrixFn::map(self : MatrixFn[T], f : (T) -> U) -> MatrixFn[U] {
-  { data: (i, j) => f((self.data)(i, j)), grid: self.grid }
+  { data: (i, j) => f((self.data)(i, j)), grid: self.grid, }
 }
 
 ///|
@@ -173,7 +174,7 @@ pub fn[T, U] MatrixFn::map(self : MatrixFn[T], f : (T) -> U) -> MatrixFn[U] {
 /// Returns a `String` representation of the matrix in the format `|element1,
 /// element2|` for each row, with rows separated by newlines.
 pub impl[T : Show] Show for MatrixFn[T] with fn to_string(self) {
-  let logger = StringBuilder::new()
+  let logger = StringBuilder()
   self.output(logger)
   logger.to_string()
 }
@@ -301,7 +302,7 @@ pub fn[T] MatrixFn::map_col(
 /// ```
 ///
 pub fn[T] MatrixFn::transpose(self : MatrixFn[T]) -> MatrixFn[T] {
-  { data: (i, j) => (self.data)(j, i), grid: (self.grid.1, self.grid.0) }
+  { data: (i, j) => (self.data)(j, i), grid: (self.grid.1, self.grid.0), }
 }
 
 ///|
@@ -469,8 +470,8 @@ pub fn[T : Mul] MatrixFn::scale(self : MatrixFn[T], cst : T) -> MatrixFn[T] {
 ///
 /// * `size` : The number of rows and columns in the identity matrix.
 ///
-/// Returns a square `MatrixFn[T]` where diagonal elements are `T::one()` and
-/// all other elements are `T::zero()`.
+/// Returns a square `MatrixFn[T]` where diagonal elements are `One::one()` and
+/// all other elements are `Zero::zero()`.
 ///
 /// Example:
 ///
@@ -488,8 +489,8 @@ pub fn[T : Mul] MatrixFn::scale(self : MatrixFn[T], cst : T) -> MatrixFn[T] {
 ///
 pub fn[T : One + Zero] MatrixFn::identity(size : Int) -> MatrixFn[T] {
   MatrixFn::make(size, size, fn(i, j) {
-    guard i == j else { T::zero() }
-    T::one()
+    guard i == j else { Zero::zero() }
+    One::one()
   })
 }
 
@@ -597,7 +598,9 @@ pub fn[T] MatrixFn::swap_rows(
   r2 : Int,
 ) -> MatrixFn[T] {
   let (r, c) = self.grid
-  guard r1 < r && r2 < r && r1 >= 0 && r2 >= 0
+  guard r1 < r && r2 < r && r1 >= 0 && r2 >= 0 else {
+    abort("MatrixFn::swap_rows: index out of bounds")
+  }
   if r1 == r2 {
     self
   } else {
@@ -633,7 +636,7 @@ impl[T : Mul + Add + Zero] Mul for MatrixFn[T] with fn mul(self, other) {
     return MatrixFn::make(r1, c2, fn(_, _) { abort("unreachable") })
   }
   if c1 == 0 {
-    return MatrixFn::make(r1, c2, fn(_, _) { T::zero() })
+    return MatrixFn::make(r1, c2, fn(_, _) { Zero::zero() })
   }
   MatrixFn::make(r1, c2, fn(i, j) {
     let mut sum = (self.data)(i, 0) * (other.data)(0, j)
@@ -736,7 +739,9 @@ pub fn[T] MatrixFn::horizontal_combine(
 ) -> MatrixFn[T] {
   let (r1, c1) = self.grid
   let (r2, c2) = other.grid
-  guard r1 == r2
+  guard r1 == r2 else {
+    abort("MatrixFn::horizontal_combine: dimension mismatch")
+  }
   MatrixFn::make(r1, c1 + c2, fn(i, j) {
     if j < c1 {
       (self.data)(i, j)
@@ -784,7 +789,9 @@ pub fn[T] MatrixFn::vertical_combine(
 ) -> MatrixFn[T] {
   let (r1, c1) = self.grid
   let (r2, c2) = other.grid
-  guard c1 == c2
+  guard c1 == c2 else {
+    abort("MatrixFn::vertical_combine: dimension mismatch")
+  }
   MatrixFn::make(r1 + r2, c1, fn(i, j) {
     if i < r1 {
       (self.data)(i, j)

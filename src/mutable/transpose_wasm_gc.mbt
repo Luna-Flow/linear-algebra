@@ -17,7 +17,8 @@
 ///
 /// Returns a `Lens[T]` object for accessing elements in the specified row by 
 /// column index.
-pub fn[T] Transpose::op_get(self : Transpose[T], row : Int) -> Lens[T] {
+#alias("_[_]")
+pub fn[T] Transpose::at(self : Transpose[T], row : Int) -> Lens[T] {
   Lens::{
     data: self.0,
     fst: self.0.matrix_checked_col(row),
@@ -87,11 +88,11 @@ pub impl[T : Add] Add for Transpose[T] with fn add(a, b) {
 /// ```moonbit nocheck
 /// let m = @mutable.Matrix::make(2, 3, (i, j) => i + j)
 /// let t = m.to_transpose()
-/// inspect(t.to_string(), content="|0, 1|\n|1, 2|\n|2, 3|")
+/// inspect(t, content="|0, 1|\n|1, 2|\n|2, 3|")
 /// ```
 ///
 pub impl[T : Show] Show for Transpose[T] with fn to_string(self) {
-  let logger = StringBuilder::new()
+  let logger = StringBuilder()
   self.output(logger)
   logger.to_string()
 }
