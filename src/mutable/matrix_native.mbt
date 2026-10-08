@@ -1969,7 +1969,7 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] householder_tridiagonalize(
       for k in 0..<(l + 1) {
         scale = scale + Num::abs(q_data[i * n + k])
       }
-      if scale <= Tolerance::tolerance() {
+      if scale == Zero::zero() {
         off_diagonal[i] = q_data[i * n + l]
       } else {
         for k in 0..<(l + 1) {
@@ -2041,7 +2041,7 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] householder_tridiagonalize(
 }
 
 ///|
-fn[T : Compare + Field + Num + Sqrt + Tolerance] symmetric_tridiagonal_eigen(
+fn[T : Compare + Field + Num + Sqrt] symmetric_tridiagonal_eigen(
   diagonal : Array[T],
   off_diagonal : Array[T],
   eigenvectors : Matrix[T],
@@ -2057,15 +2057,16 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] symmetric_tridiagonal_eigen(
     e[i - 1] = e[i]
   }
   e[n - 1] = Zero::zero()
-  let tol = Tolerance::tolerance()
   let two = One::one() + One::one()
   for l in 0..<n {
     let mut iter = 0
     while true {
       let mut m = l
-      while m < n - 1 &&
-            Num::abs(e[m]) >
-            tol * (Num::abs(d[m]) + Num::abs(d[m + 1]) + One::one()) {
+      while m < n - 1 {
+        let dd = Num::abs(d[m]) + Num::abs(d[m + 1])
+        if dd + Num::abs(e[m]) == dd {
+          break
+        }
         m += 1
       }
       if m == l {
@@ -2360,10 +2361,10 @@ fn[T : AddMonoid + Mul] Matrix::mul_vec_into(
 }
 
 ///|
-/// Computes eigenvalues for 2x2 matrices analytically.
-/// 
-/// This function uses the characteristic polynomial to find the eigenvalues
-/// of a 2x2 matrix.
+/// Computes the eigenpairs of a symmetric 2x2 matrix analytically.
+///
+/// The eigenvalues are returned in decreasing order; each eigenvector column
+/// is scaled so that its entry of largest magnitude is 1.
 ///
 ///  Parameters:
 /// * `self` : The 2x2 matrix to compute eigenvalues for.
@@ -2379,46 +2380,84 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::eigen_2x2(
   let b = self.data[0 * n + 1]
   let c = self.data[1 * n + 0]
   let d = self.data[1 * n + 1]
-  let half = One::one() / (One::one() + One::one())
-  let mid = (a + d) * half
-  let det = a * d - b * c
-  let disc_prime = mid * mid - det
-  if disc_prime < -Tolerance::tolerance() {
+  let two = One::one() + One::one()
+  let half_diff = (a - d) / two
+  if half_diff * half_diff + b * c < Zero::zero() &&
+    Num::abs(b - c) > Tolerance::tolerance() {
     abort(
       "Matrix::eigen currently requires real eigenvalues; complex eigenvalues require luna complex support",
     )
   }
-  let s = if Num::abs(disc_prime) <= Tolerance::tolerance() {
+  // Symmetric case: work with the symmetric part, whose discriminant
+  // half_diff^2 + off^2 is a sum of squares and needs no threshold.
+  let off = (b + c) / two
+  if off == Zero::zero() {
+    // Diagonal: the eigenvalues are the diagonal entries, exactly.
+    return if a >= d {
+      (
+        Vector::from_array([a, d]),
+        Matrix::from_array(2, 2, [
+          One::one(),
+          Zero::zero(),
+          Zero::zero(),
+          One::one(),
+        ]),
+      )
+    } else {
+      (
+        Vector::from_array([d, a]),
+        Matrix::from_array(2, 2, [
+          Zero::zero(),
+          One::one(),
+          One::one(),
+          Zero::zero(),
+        ]),
+      )
+    }
+  }
+  let mean = (a + d) / two
+  let abs_diff = Num::abs(half_diff)
+  let abs_off = Num::abs(off)
+  let big = if abs_diff > abs_off { abs_diff } else { abs_off }
+  let radius = if big == Zero::zero() {
     Zero::zero()
   } else {
-    Sqrt::sqrt(disc_prime)
+    let p = half_diff / big
+    let q = off / big
+    big * Sqrt::sqrt(p * p + q * q)
   }
-  let l1 = mid + s
-  let l2 = mid - s
-  let mut v11 = One::one()
-  let mut v21 = Zero::zero()
-  let mut v12 = Zero::zero()
-  let mut v22 = One::one()
-  if b != Zero::zero() {
-    v11 = b
-    v21 = l1 - a
-  } else if c != Zero::zero() {
-    v11 = l1 - d
-    v21 = c
+  // Compute the eigenvalue of larger magnitude without cancellation and the
+  // other one from the determinant.
+  let det = a * d - off * off
+  let (l1, l2) = if mean > Zero::zero() {
+    let l1 = mean + radius
+    (l1, det / l1)
+  } else if mean < Zero::zero() {
+    let l2 = mean - radius
+    (det / l2, l2)
   } else {
-    v11 = One::one()
-    v21 = Zero::zero()
+    (radius, -radius)
   }
-  if b != Zero::zero() {
-    v12 = b
-    v22 = l2 - a
-  } else if c != Zero::zero() {
-    v12 = l2 - d
-    v22 = c
+  // Eigenvector of l1: (l1 - d, off) = (half_diff + radius, off) or
+  // (off, l1 - a) = (off, radius - half_diff); take the form without
+  // cancellation. The eigenvector of l2 is orthogonal to it.
+  let (x0, y0) = if half_diff >= Zero::zero() {
+    (half_diff + radius, off)
   } else {
-    v12 = Zero::zero()
-    v22 = One::one()
+    (off, radius - half_diff)
   }
+  let (x, y) = if x0 == Zero::zero() && y0 == Zero::zero() {
+    (One::one(), Zero::zero())
+  } else {
+    (x0, y0)
+  }
+  // Scale each column so that its entry of largest magnitude is 1.
+  let lead1 = if Num::abs(x) >= Num::abs(y) { x } else { y }
+  let v11 = x / lead1
+  let v21 = y / lead1
+  let lead2 = if Num::abs(y) >= Num::abs(x) { y } else { -x }
+  let v12 = y / lead2
+  let v22 = -x / lead2
   (Vector::from_array([l1, l2]), Matrix::from_array(2, 2, [v11, v12, v21, v22]))
 }
 
@@ -2515,16 +2554,13 @@ pub fn[T : Compare + Field + Num + Tolerance] Matrix::unchecked_determinant(
 }
 
 ///|
-fn[T : Compare + Num + Tolerance] is_upper_triangular_fast(
-  matrix : Matrix[T],
-) -> Bool {
+fn[T : Eq + Zero] is_upper_triangular_fast(matrix : Matrix[T]) -> Bool {
   let n = matrix.row
   let data = matrix.data
-  let tol = Tolerance::tolerance()
   for i = 1; i < n; i = i + 1 {
     let row_offset = i * n
     for j = 0; j < i; j = j + 1 {
-      if Num::abs(data[row_offset + j]) > tol {
+      if data[row_offset + j] != Zero::zero() {
         return false
       }
     }
@@ -2533,16 +2569,13 @@ fn[T : Compare + Num + Tolerance] is_upper_triangular_fast(
 }
 
 ///|
-fn[T : Compare + Num + Tolerance] is_lower_triangular_fast(
-  matrix : Matrix[T],
-) -> Bool {
+fn[T : Eq + Zero] is_lower_triangular_fast(matrix : Matrix[T]) -> Bool {
   let n = matrix.row
   let data = matrix.data
-  let tol = Tolerance::tolerance()
   for i = 0; i < n; i = i + 1 {
     let row_offset = i * n
     for j = i + 1; j < n; j = j + 1 {
-      if Num::abs(data[row_offset + j]) > tol {
+      if data[row_offset + j] != Zero::zero() {
         return false
       }
     }
@@ -2899,20 +2932,17 @@ pub fn[T : Compare + Num + Tolerance] Matrix::is_symmetric(
 }
 
 ///|
-fn[T : Compare + Zero + One + Num + Tolerance] is_identity_matrix_fast(
-  matrix : Matrix[T],
-) -> Bool {
+fn[T : Eq + Zero + One] is_identity_matrix_fast(matrix : Matrix[T]) -> Bool {
   if matrix.row != matrix.col {
     return false
   }
   let n = matrix.row
   let data = matrix.data
-  let tol = Tolerance::tolerance()
   for i = 0; i < n; i = i + 1 {
     let row_offset = i * n
     for j = 0; j < n; j = j + 1 {
       let expected = if i == j { One::one() } else { Zero::zero() }
-      if Num::abs(data[row_offset + j] - expected) > tol {
+      if data[row_offset + j] != expected {
         return false
       }
     }
@@ -2921,19 +2951,16 @@ fn[T : Compare + Zero + One + Num + Tolerance] is_identity_matrix_fast(
 }
 
 ///|
-fn[T : Compare + Num + Tolerance] is_diagonal_matrix_fast(
-  matrix : Matrix[T],
-) -> Bool {
+fn[T : Eq + Zero] is_diagonal_matrix_fast(matrix : Matrix[T]) -> Bool {
   if matrix.row != matrix.col {
     return false
   }
   let n = matrix.row
   let data = matrix.data
-  let tol = Tolerance::tolerance()
   for i = 0; i < n; i = i + 1 {
     let row_offset = i * n
     for j = 0; j < n; j = j + 1 {
-      if i != j && Num::abs(data[row_offset + j]) > tol {
+      if i != j && data[row_offset + j] != Zero::zero() {
         return false
       }
     }
@@ -2942,23 +2969,20 @@ fn[T : Compare + Num + Tolerance] is_diagonal_matrix_fast(
 }
 
 ///|
-fn[T : Compare + One + Num + Tolerance] is_permutation_matrix_fast(
-  matrix : Matrix[T],
-) -> Bool {
+fn[T : Eq + Zero + One] is_permutation_matrix_fast(matrix : Matrix[T]) -> Bool {
   if matrix.row != matrix.col {
     return false
   }
   let n = matrix.row
   let data = matrix.data
-  let tol = Tolerance::tolerance()
   for i = 0; i < n; i = i + 1 {
     let row_offset = i * n
     let mut one_count = 0
     for j = 0; j < n; j = j + 1 {
       let value = data[row_offset + j]
-      if Num::abs(value - One::one()) <= tol {
+      if value == One::one() {
         one_count += 1
-      } else if Num::abs(value) > tol {
+      } else if value != Zero::zero() {
         return false
       }
     }
@@ -2970,7 +2994,7 @@ fn[T : Compare + One + Num + Tolerance] is_permutation_matrix_fast(
     let mut one_count = 0
     for i = 0; i < n; i = i + 1 {
       let value = data[i * n + j]
-      if Num::abs(value - One::one()) <= tol {
+      if value == One::one() {
         one_count += 1
       }
     }
