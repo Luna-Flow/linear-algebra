@@ -1,5 +1,7 @@
 # immut API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/immut` provides value-oriented dense linear algebra:
 `Matrix[T]` and `Vector[T]` are immutable values backed by a persistent vector,
 and `MatrixFn[T]` is a lazy matrix given by a function of its coordinates.
@@ -10,7 +12,7 @@ determinant algorithm and the cost model are explained in the
 [immut design](../design/immut.md); [`mutable`](mutable.md) is the in-place
 counterpart with the same core names.
 
-## Import
+## Importing
 
 ```moonbit nocheck
 ///|
@@ -18,6 +20,11 @@ import {
   "Luna-Flow/linear-algebra/immut",
 }
 ```
+
+The examples on this page write every name with its package prefix, such as
+`@immut.`, instead of a `using` declaration: all pages of this manual
+compile into one test package, where the declarations of different pages
+would clash.
 
 ## Conventions
 
@@ -437,11 +444,26 @@ pub fn[T : Compare + @luna-generic.Num + Div] Matrix::determinant(Self[T]) -> Re
 ```
 
 For $n \le 4$ it evaluates closed cofactor formulas; for $n \ge 5$ it runs
-fraction-free (Bareiss) elimination with row pivoting, whose divisions are
-exact in an integral domain. The result is therefore **exact** for `BigInt`,
-and exact for `Int` and `Int64` as long as no intermediate minor overflows.
-$\det$ of the $0 \times 0$ matrix is `One::one()`. Cost $O(n^3)$. See the
+fraction-free (Bareiss) elimination, choosing as pivot the entry of largest
+`abs` in the current column, whose divisions are exact in an integral domain.
+The result is therefore **exact** for `BigInt`, and exact for `Int` and
+`Int64` as long as no intermediate product overflows (for $n \le 4$, as long as
+the determinant itself fits). If a whole pivot column is zero the result is
+`Zero::zero()` at once. $\det$ of the $0 \times 0$ matrix is `One::one()`.
+Cost $O(n^3)$ arithmetic operations. See the
 [immut design](../design/immut.md) for the derivation.
+
+> [!WARNING]
+> For `Double` and `Float` this is not the numerically preferred algorithm.
+> Every intermediate value of Bareiss elimination is a minor of $A$, and the
+> update multiplies two of them, so magnitudes are squared before they are
+> divided back. For $n \ge 5$ the result overflows to infinity or NaN long
+> before $\det A$ does: the $60 \times 60$ upper bidiagonal matrix with
+> diagonal $1000$ and superdiagonal $1$ has $\det A = 10^{180}$, which
+> `@mutable.Matrix::determinant` returns, while this method returns NaN. There
+> is no tolerance either: only an exactly zero pivot column is detected. Use
+> [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for
+> floating-point matrices.
 
 ### `Matrix::unchecked_determinant`
 
@@ -713,9 +735,10 @@ pub fn[T : @luna-generic.Semiring] MatrixFn::pow(Self[T], Int) -> Self[T]
 ```
 
 Non-square input or a negative exponent aborts. Because nothing is cached,
-reading one entry of $A^{k}$ recomputes the nested products, which costs
-$O(n^{d})$ entry reads for a product tree of depth $d \approx \log_2 k$; read
-all entries into a `Matrix` if you need more than a few.
+reading one entry of $A^{k}$ recomputes the nested products. One entry of the
+lazy square $B \cdot B$ reads $2n$ entries of $B$, so one entry of $A^{2^d}$
+reads $(2n)^d = k^{1 + \log_2 n}$ entries of $A$ for $k = 2^d$; read all entries
+into a `Matrix` with `Matrix::make` if you need more than a few.
 
 ### `MatrixFn::determinant`
 

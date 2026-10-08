@@ -5,6 +5,15 @@ them, update them without losing earlier versions, compute exact integer
 results such as powers and determinants, and use lazy matrices for structured
 data. The reasoning behind the package is in the [immut design](../design/immut.md).
 
+| I want to | Use |
+| --- | --- |
+| build a matrix | `@immut.Matrix::from_2d_array`, `make`, `identity` |
+| change one entry and keep the old matrix | `Matrix::set` |
+| multiply with a shape check | `Matrix::matmul` |
+| compute an exact power or determinant | `Matrix::pow`, `Matrix::determinant` over `Int` or `BigInt` |
+| build matrices from vectors | `Vector::to_row_matrix`, `tensor_product`, `scaled_matrix` |
+| describe a structured matrix without storing it | `@immut.MatrixFn::make` |
+
 ## Quick start
 
 ```sh
@@ -169,6 +178,11 @@ faster; freeze it into an `immut` value at the end.
   if you read many entries.
 - **Operators abort.** `+`, `-`, `*` abort on shape mismatch; use `matmul`
   when shapes come from input.
+- **Floating-point determinants.** `determinant` is built for exact
+  arithmetic. On `Double` matrices of size $5$ and more its intermediate
+  values grow like products of minors and can overflow to NaN while the
+  determinant itself is representable; use `@mutable.Matrix::determinant` for
+  floating-point data.
 
 ## Next steps
 
