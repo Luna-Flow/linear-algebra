@@ -170,13 +170,13 @@ over any semiring, including non-commutative ones such as quaternions. The
 derivation also covers empty inner dimensions: when $n = 0$ or $p = 0$ an inner
 sum is the empty sum $0$, and right distributivity over the empty sum is the
 absorption law $0 \cdot c = 0$ (and left distributivity gives $a \cdot 0 = 0$),
-which every semiring has.[^absorb]
+which every semiring has.[^absorb] The same computation with $C = I$ shows
+$AI = A$, and distributivity of the product over matrix addition follows
+entry-wise from distributivity in $R$.
 
 [^absorb]: For rings absorption follows from distributivity,
 $0 \cdot c = (0 + 0)c = 0 \cdot c + 0 \cdot c$; for semirings, which lack
-subtraction, it is an axiom. The same
-computation with $C = I$ shows $AI = A$, and distributivity of the product over
-matrix addition follows entry-wise from distributivity in $R$.
+subtraction, it is an axiom.
 
 ### Transpose
 
