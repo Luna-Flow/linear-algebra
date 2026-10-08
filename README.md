@@ -60,8 +60,8 @@ does not compile with MoonBit 0.10. The source and re-enable steps are kept in
 
 MoonBit with `moonc` 0.10 or newer. The module builds without warnings with
 `moon check --target all` and is tested on `wasm-gc`, `js`, `wasm` and
-`native`. It depends on `Luna-Flow/luna-generic` `0.3.3` and
-`Luna-Flow/arithmetic` `0.2.2`.
+`native`. It depends on `Luna-Flow/luna-generic` `0.4.0` and
+`Luna-Flow/arithmetic` `0.5.0`.
 
 ## Documentation
 
