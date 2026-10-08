@@ -1,5 +1,7 @@
 # container/adapters API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/container/adapters` provides ready-made
 [`container`](../container.md) operation dictionaries for every vector and
 matrix type of this repository: the `@immut` and `@mutable` types, the mutable
@@ -13,7 +15,7 @@ Why the adapters live in a package of their own is explained in the
 > [!WARNING]
 > Like `container`, this package is experimental.
 
-## Import
+## Importing
 
 ```moonbit nocheck
 ///|
@@ -22,6 +24,11 @@ import {
   "Luna-Flow/linear-algebra/container/adapters" @container_adapters,
 }
 ```
+
+The examples on this page write every name with its package prefix, such as
+`@container_adapters.`, instead of a `using` declaration: all pages of this manual
+compile into one test package, where the declarations of different pages
+would clash.
 
 ## Capability matrix
 

@@ -5,6 +5,13 @@ This page is for contributors who add a matrix operation to `immut` or
 `internal`; it sees the guards only through the public methods. The rules are
 in the [internal design](../design/internal.md).
 
+| I want to | Use |
+| --- | --- |
+| validate a new checked method | the `ensure_*_checked` guards |
+| abort in the unchecked partner | the `ensure_*` guards |
+| check an index on access | `ensure_index_in_bounds` |
+| give my matrix type the guards | implement `HasShape` |
+
 ## Quick start
 
 Inside the repository, import the package in `moon.pkg` and bring the guards

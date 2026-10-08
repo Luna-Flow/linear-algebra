@@ -6,6 +6,15 @@ those traits: the repository's dense wrappers or a type of your own. You need
 to know MoonBit generics; the mathematics is kept light and explained in the
 [algebra design](../design/algebra.md).
 
+| I want to | Use |
+| --- | --- |
+| write one helper for every additive vector type | a bound `V : @algebra.AdditiveVector` |
+| use the matrix product generically | `M : @algebra.MatMulMatrix` and `@default.matmul` |
+| transpose generically | `@algebra.TransposeMatrix::transpose` or `@default.transpose` |
+| check shapes before `*` | `@algebra.MatrixShape::shape` |
+| run the helpers on dense data | the `backends/default` wrappers |
+| make my own type usable | implement the smallest trait that fits |
+
 ## Quick start
 
 Add the module and the packages you use:

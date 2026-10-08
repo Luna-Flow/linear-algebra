@@ -5,6 +5,14 @@ the repository's types and use it with the `container` algorithms, including
 the live views of `@mutable.Matrix`. If you want to write dictionaries for a
 type of your own, read the [container tutorial](../container.md) instead.
 
+| I want to | Use |
+| --- | --- |
+| copy a row out of a matrix | `mutable_row_view_read_ops` with `vector_convert` |
+| materialize a transpose view | `mutable_transpose_read_ops` with `matrix_convert` |
+| write through a column view | `mutable_col_view_mutable_edit_ops` |
+| move between the backend wrappers | the `dense_*` and `immutable_dense_*` dictionaries |
+| find the dictionary for a type | the capability matrix of the [API page](../../api/container/adapters.md) |
+
 ## Quick start
 
 ```sh

@@ -5,6 +5,12 @@ check its result from MoonBit code, for example when investigating a kernel
 change. The method is described in the [perf_support design](../design/perf_support.md)
 and in `bench/README.md`.
 
+| I want to | Use |
+| --- | --- |
+| list the benchmark cases | `@support.case_names` |
+| run one case and get a checksum | `@support.run_case_once`, or `prepare_case` and `run_prepared_case_once` |
+| regenerate a fixture | delete it; the loader rebuilds it from the seed |
+
 ## Quick start
 
 `perf_support` is used inside this repository. Its tests run with:

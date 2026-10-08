@@ -5,6 +5,14 @@ with the `container` algorithms, how to change the element type on the way, and
 how to make your own container type take part by writing two small operation
 dictionaries. The model behind it is in the [container design](../design/container.md).
 
+| I want to | Use |
+| --- | --- |
+| copy a matrix into another representation | `@container.matrix_convert` |
+| convert and change the element type | `@container.matrix_map`, `@container.vector_map` |
+| transpose into another representation | `@container.matrix_transpose` |
+| edit an entry without knowing the type | a `VectorPersistentEditOps` or `MatrixMutableEditOps` dictionary |
+| let my own type take part | build `VectorReadOps` / `MatrixBuildOps` with `new` |
+
 ## Quick start
 
 ```sh

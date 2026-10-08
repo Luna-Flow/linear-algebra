@@ -1,5 +1,7 @@
 # perf API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/perf` is the entry package for `moon bench`. It has
 no public items: its only content is a benchmark test that runs every
 registered case of [`perf_support`](perf_support.md) through
@@ -7,6 +9,10 @@ registered case of [`perf_support`](perf_support.md) through
 
 Source: [`src/perf/perf_bench.mbt`](../../../src/perf/perf_bench.mbt). The
 measurement method is in the [perf design](../design/perf.md).
+
+## Importing
+
+Nothing to import: the package is run with `moon bench -p perf`.
 
 ## Public items
 

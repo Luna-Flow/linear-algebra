@@ -4,6 +4,13 @@ This page is for contributors: it shows how to run the cross-package agreement
 tests and how to add one when you add an operation to both `immut` and
 `mutable`. The reasoning is in the [consistency design](../design/consistency.md).
 
+| I want to | Use |
+| --- | --- |
+| run the agreement tests | `moon test -p consistency` |
+| check a new operation in both packages | a test comparing `to_array` of both results |
+| check an algebraic law on random inputs | a quickcheck property over small `Int` matrices |
+| pin down an intended difference | a test of the documented behaviour |
+
 ## Quick start
 
 From the repository root:

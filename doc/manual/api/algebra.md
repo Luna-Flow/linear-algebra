@@ -1,5 +1,7 @@
 # algebra API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/algebra` defines the structure traits that whole
 vector and matrix objects implement: shape, closed additive structure,
 Hadamard multiplication, transpose and matrix multiplication. Each trait asks
@@ -19,7 +21,7 @@ types choose a level.
 > stable. Depend on the smallest trait you need, and do not re-export these
 > traits as a stable public boundary of your own library yet.
 
-## Import
+## Importing
 
 ```moonbit nocheck
 ///|
@@ -27,6 +29,11 @@ import {
   "Luna-Flow/linear-algebra/algebra",
 }
 ```
+
+The examples on this page write every name with its package prefix, such as
+`@algebra.`, instead of a `using` declaration: all pages of this manual
+compile into one test package, where the declarations of different pages
+would clash.
 
 ## Trait hierarchy
 
@@ -364,6 +371,12 @@ test "matrix traits compose" {
 | `@default.ImmutableDenseVector[T]` | the same as `DenseVector` |
 | `@default.DenseMatrix[T]` | `MatrixShape`, `TransposeMatrix`; `AdditiveMatrix` when `T : Add + Neg`; `MatMulMatrix` when `T : Add + Neg + AddMonoid + Mul` |
 | `@default.ImmutableDenseMatrix[T]` | `MatrixShape`, `TransposeMatrix`; `AdditiveMatrix` when `T : Add + Neg`; `MatMulMatrix` when `T : Add + Neg + Zero + Mul` |
+
+The bounds on `T` only make the operations exist; the laws hold exactly when
+`T` satisfies the corresponding scalar laws. In particular the product laws of
+`MatMulMatrix` need `T` to be a semiring (associative `*` that distributes over
+`+`), which `AddMonoid + Mul` does not enforce, and hold only up to rounding
+for `Float` and `Double`.
 
 The concrete `@immut` and `@mutable` types do not implement these traits
 directly; they are wrapped by `backends/default` so that the packages keep

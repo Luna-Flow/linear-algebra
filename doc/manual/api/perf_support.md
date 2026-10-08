@@ -1,5 +1,7 @@
 # perf_support API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/perf_support` is the shared library of the benchmark
 subsystem. It holds the registry of benchmark cases, loads or regenerates
 their input fixtures, prepares `@mutable` inputs, and runs one case, returning
@@ -15,6 +17,19 @@ and in `bench/README.md`.
 > runner and the bench package can share it; it is not a stable interface for
 > other libraries. It needs file-system access (`moonbitlang/x/fs`) and is
 > meant for the `native` target.
+
+## Importing
+
+Inside this repository, import it in `moon.pkg`:
+
+```moonbit nocheck
+///|
+import {
+  "Luna-Flow/linear-algebra/perf_support" @support,
+}
+```
+
+The examples on this page write every name with the `@support.` prefix.
 
 ## Types
 

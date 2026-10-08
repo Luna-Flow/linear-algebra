@@ -4,6 +4,12 @@ This page shows contributors how to benchmark the `@mutable` kernels with
 `moon bench` and how to read the result. The method is in the
 [perf design](../design/perf.md); the full pipeline is in `bench/README.md`.
 
+| I want to | Use |
+| --- | --- |
+| benchmark every kernel | `moon bench -p perf --target native --release` |
+| compare a kernel change | run the benchmark before and after |
+| get a full report with statistics | `bench/run.py` |
+
 ## Quick start
 
 ```sh

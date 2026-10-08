@@ -1,11 +1,17 @@
 # perf_runner API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/perf_runner` is an executable that runs one
 benchmark case and prints a JSON record: either a diagnostic checksum or a list
 of timing samples. It has no public library items.
 
 Source: [`src/perf_runner/main.mbt`](../../../src/perf_runner/main.mbt). The
 measurement method is in the [perf_runner design](../design/perf_runner.md).
+
+## Importing
+
+Nothing to import: the package is an executable, run with `moon run src/perf_runner`.
 
 ## Public items
 

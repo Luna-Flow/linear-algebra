@@ -1,5 +1,7 @@
 # container API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/container` describes how generic code observes,
 builds and edits linear containers without knowing their storage. A capability
 is an *operation dictionary*: a record of functions for one container type `V`
@@ -18,7 +20,7 @@ publish dictionaries.
 > `container` is experimental. Record fields, error contracts and algorithm
 > signatures may change incompatibly before the package is declared stable.
 
-## Import
+## Importing
 
 ```moonbit nocheck
 ///|
@@ -28,6 +30,11 @@ import {
   "Luna-Flow/linear-algebra/error" @la_error,
 }
 ```
+
+The examples on this page write every name with its package prefix, such as
+`@container.`, instead of a `using` declaration: all pages of this manual
+compile into one test package, where the declarations of different pages
+would clash.
 
 ## Contracts shared by all dictionaries
 
@@ -261,7 +268,9 @@ pub fn[V1, V2, A, B] vector_map(V1, VectorReadOps[V1, A], VectorBuildOps[V2, B],
 
 It returns `NegativeDimension` if `source_ops.length` reports a negative
 length, the first read error otherwise, and finally whatever `tabulate`
-returns. `f` is called exactly once per element, in index order.
+returns. `f` is called exactly once per element, in index order, right after
+that element is read; if a read fails, `f` has already been called on the
+elements before it.
 
 ### `vector_convert`
 

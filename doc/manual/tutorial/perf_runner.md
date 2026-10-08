@@ -3,6 +3,12 @@
 This page shows contributors how to replay one benchmark case and collect raw
 timing samples. The method is in the [perf_runner design](../design/perf_runner.md).
 
+| I want to | Use |
+| --- | --- |
+| check that a change keeps results identical | diagnostic mode, `--samples 0` |
+| collect raw timing samples | `--samples`, `--repeat`, `--warmup` |
+| run a case on my own input | `--case-file` |
+
 ## Quick start
 
 ```sh

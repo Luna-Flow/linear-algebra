@@ -1,5 +1,7 @@
 # error API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/error` defines `LinearAlgebraError`, the error value
 returned by every checked API of this repository, and its classification
 `LinearAlgebraErrorKind`. A caller branches on the kind (or on an `is_*`
@@ -8,7 +10,7 @@ predicate) and uses the message only for diagnostics.
 Source: [`src/error/error.mbt`](../../../src/error/error.mbt). Why checked APIs
 return this value is explained in the [error design](../design/error.md).
 
-## Import
+## Importing
 
 ```moonbit nocheck
 ///|
@@ -17,8 +19,11 @@ import {
 }
 ```
 
-The examples use the alias `@la_error`, which avoids a clash with MoonBit's
-builtin `Error` vocabulary.
+The examples on this page write every name with its package prefix, such as
+`@la_error.`, instead of a `using` declaration: all pages of this manual
+compile into one test package, where the declarations of different pages
+would clash. The alias `@la_error` avoids a clash with MoonBit's builtin
+`Error` vocabulary.
 
 ## Types
 

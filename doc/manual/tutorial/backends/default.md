@@ -5,6 +5,15 @@ ready-to-run data for generic code written against the `algebra` traits, and
 how to step down to the full concrete API when you need it. The background is
 in the [backends/default design](../../design/backends/default.md).
 
+| I want to | Use |
+| --- | --- |
+| run generic code on dense data | `@default.DenseMatrix`, `@default.DenseVector` |
+| use immutable data instead | `ImmutableDenseMatrix`, `ImmutableDenseVector` |
+| compute a dot product or $Ax$ | `dot`, `matvec` |
+| compute $xa + y$ | `axpy` |
+| reach the full concrete API | `inner()` |
+| wrap an existing matrix without copying | `from_backend` |
+
 ## Quick start
 
 ```sh

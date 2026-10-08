@@ -1,5 +1,7 @@
 # backends/default API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/backends/default` is the reference dense backend. It
 wraps the concrete `@mutable` and `@immut` types in four owned structs and
 implements the [`algebra`](../algebra.md) traits for them, so that generic
@@ -11,7 +13,7 @@ Source: [`src/backends/default`](../../../../src/backends/default/types.mbt).
 Why the wrappers exist is explained in the
 [backends/default design](../../design/backends/default.md).
 
-## Import
+## Importing
 
 ```moonbit nocheck
 ///|
@@ -20,6 +22,11 @@ import {
   "Luna-Flow/linear-algebra/backends/default",
 }
 ```
+
+The examples on this page write every name with its package prefix, such as
+`@default.`, instead of a `using` declaration: all pages of this manual
+compile into one test package, where the declarations of different pages
+would clash.
 
 ## Overview
 

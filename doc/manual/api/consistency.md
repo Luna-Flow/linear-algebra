@@ -1,5 +1,7 @@
 # consistency API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/consistency` is a test-only package. It has no public
 items: its interface file is empty, and it exists to run cross-package
 agreement tests between [`immut`](immut.md), [`mutable`](mutable.md) and
@@ -8,6 +10,11 @@ agreement tests between [`immut`](immut.md), [`mutable`](mutable.md) and
 Source: [`src/consistency/core_wbtest.mbt`](../../../src/consistency/core_wbtest.mbt).
 What is compared and why is explained in the
 [consistency design](../design/consistency.md).
+
+## Importing
+
+Nothing to import: the package has no public items, and its tests run with
+`moon test -p consistency`.
 
 ## Public items
 

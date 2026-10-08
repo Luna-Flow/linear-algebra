@@ -1,5 +1,7 @@
 # internal API
 
+## Purpose
+
 `Luna-Flow/linear-algebra/internal` holds the shape-checking helpers shared by
 [`immut`](immut.md) and [`mutable`](mutable.md). It defines the `HasShape`
 trait and, for each precondition, a checked guard returning
@@ -13,6 +15,20 @@ trait and, for each precondition, a checked guard returning
 > `Matrix::shape` methods come from it.
 
 Source: [`src/internal/algebra.mbt`](../../../src/internal/algebra.mbt).
+
+## Importing
+
+Only packages inside the `Luna-Flow/linear-algebra` module can import it:
+
+```moonbit nocheck
+///|
+import {
+  "Luna-Flow/linear-algebra/internal",
+}
+```
+
+Code outside the module cannot name `@internal`; it sees `HasShape` only
+through the `shape` methods that `immut` and `mutable` promote.
 
 ## `HasShape`
 

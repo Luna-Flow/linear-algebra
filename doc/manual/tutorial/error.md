@@ -6,6 +6,14 @@ checked steps, and report failures from your own helpers in the same
 vocabulary. The reasoning behind the error type is in the
 [error design](../design/error.md).
 
+| I want to | Use |
+| --- | --- |
+| know why a checked call failed | an `is_*` predicate or `e.kind` |
+| recover from a singular matrix | `match` on `Err(e)` with `e.is_singular_matrix()` |
+| chain several checked steps | `match` with early return, or `Result::bind` |
+| report failures from my own helper | the `LinearAlgebraError` constructors |
+| turn a scalar failure into a matrix error | `LinearAlgebraError::arithmetic_failure` |
+
 ## Quick start
 
 ```sh
