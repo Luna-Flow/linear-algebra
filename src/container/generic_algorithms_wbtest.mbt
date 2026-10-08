@@ -32,7 +32,7 @@ fn[T] test_vector_build_ops() -> VectorBuildOps[TestVector[T], T] {
         @la_error.LinearAlgebraError::negative_dimension("Negative length"),
       )
     }
-    Ok({ data: Array::makei(length, initializer) })
+    Ok({ data: Array::makei(length, initializer), })
   })
 }
 
@@ -74,7 +74,7 @@ fn[T] test_matrix_build_ops() -> MatrixBuildOps[TestMatrix[T], T] {
 
 ///|
 test "generic vector map converts scalar and container types" {
-  let source : TestVector[Int] = { data: [1, 2, 3] }
+  let source : TestVector[Int] = { data: [1, 2, 3], }
   let output : TestVector[String] = vector_map(
     source,
     test_vector_read_ops(),
@@ -116,7 +116,7 @@ test "generic algorithms reject malformed dimensions before building" {
     fn(_) { -1 },
     fn(_, _) { Ok(0) },
   )
-  match vector_convert({ data: [] }, bad_vector, test_vector_build_ops()) {
+  match vector_convert({ data: [], }, bad_vector, test_vector_build_ops()) {
     Err(error) => inspect(error.is_negative_dimension(), content="true")
     Ok(_) => fail("expected negative vector length error")
   }
@@ -126,7 +126,7 @@ test "generic algorithms reject malformed dimensions before building" {
   )
   match
     matrix_convert(
-      { rows: -1, cols: 2, data: [] },
+      { rows: -1, cols: 2, data: [], },
       bad_matrix,
       test_matrix_build_ops(),
     ) {
@@ -155,9 +155,9 @@ test "generic algorithms propagate read errors without building" {
     initializer,
   ) {
     builds = builds + 1
-    Ok({ data: Array::makei(length, initializer) })
+    Ok({ data: Array::makei(length, initializer), })
   })
-  match vector_convert({ data: [1, 2] }, read, build) {
+  match vector_convert({ data: [1, 2], }, read, build) {
     Err(error) => inspect(error.is_index_out_of_bounds(), content="true")
     Ok(_) => fail("expected synthetic read error")
   }

@@ -68,6 +68,13 @@ fn nonzero_double(n : Int) -> Double {
 }
 
 ///|
+/// Keeps generated integers in the small range these absolute-tolerance
+/// properties were written for (quickcheck now samples the full `Int` range).
+fn small_int(n : Int) -> Int {
+  n % 100
+}
+
+///|
 /// Tests the functionality of row and column mapping operations on matrices.
 ///
 /// This test verifies that `map_row` and `map_col` methods correctly apply
@@ -1446,6 +1453,7 @@ test "qr_decomposition_reconstructs_input/property" {
 test "eigenvalues_match_trace_and_determinant_for_diagonal_3x3/property" {
   fn prop(input : (Int, Int, Int)) {
     let (d0, d1, d2) = input
+    let (d0, d1, d2) = (small_int(d0), small_int(d1), small_int(d2))
     let matrix = Matrix::from_2d_array([
       [Double::from_int(d0), 0.0, 0.0],
       [0.0, Double::from_int(d1), 0.0],
@@ -1465,6 +1473,7 @@ test "eigenvalues_match_trace_and_determinant_for_diagonal_3x3/property" {
 test "eigenvalues_match_trace_and_determinant_for_symmetric_2x2/property" {
   fn prop(input : (Int, Int, Int)) {
     let (a00, a01, a11) = input
+    let (a00, a01, a11) = (small_int(a00), small_int(a01), small_int(a11))
     let matrix = float_matrix_2x2(a00, a01, a01, a11)
     let (eigenvalues, eigenvectors) = matrix.eigen()
     let _ = eigenvectors
@@ -1480,7 +1489,12 @@ test "eigenvalues_match_trace_and_determinant_for_symmetric_2x2/property" {
 test "cholesky_reconstructs_spd_matrix/property" {
   fn prop(input : ((Int, Int), (Int, Int))) {
     let ((b00, b01), (b10, b11)) = input
-    let basis = float_matrix_2x2(b00, b01, b10, b11)
+    let basis = float_matrix_2x2(
+      small_int(b00),
+      small_int(b01),
+      small_int(b10),
+      small_int(b11),
+    )
     let identity_2 : Matrix[Double] = identity(2)
     let spd = basis.transpose() * basis + identity_2
     let chol = spd.cholesky_decomposition()
@@ -1496,6 +1510,8 @@ test "cholesky_reconstructs_spd_matrix/property" {
 test "upper_triangular_inverse_det_rank_align/property" {
   fn prop(input : ((Int, Int, Int), (Int, Int, Int))) {
     let ((d0, d1, d2), (u01, u02, u12)) = input
+    let (d0, d1, d2) = (small_int(d0), small_int(d1), small_int(d2))
+    let (u01, u02, u12) = (small_int(u01), small_int(u02), small_int(u12))
     let matrix = Matrix::from_2d_array([
       [nonzero_double(d0), Double::from_int(u01), Double::from_int(u02)],
       [0.0, nonzero_double(d1), Double::from_int(u12)],

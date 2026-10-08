@@ -15,12 +15,12 @@ impl TransposeMatrix for ScalarMatrix with fn transpose(self) {
 
 ///|
 impl Add for ScalarMatrix with fn add(left, right) {
-  { value: left.value + right.value }
+  { value: left.value + right.value, }
 }
 
 ///|
 impl Neg for ScalarMatrix with fn neg(value) {
-  { value: -value.value }
+  { value: -value.value, }
 }
 
 ///|
@@ -30,7 +30,7 @@ impl Sub for ScalarMatrix with fn sub(left, right) {
 
 ///|
 impl Mul for ScalarMatrix with fn mul(left, right) {
-  { value: left.value * right.value }
+  { value: left.value * right.value, }
 }
 
 ///|
@@ -41,11 +41,11 @@ impl MatMulMatrix for ScalarMatrix
 
 ///|
 fn[T : MatMulMatrix] gram_step(matrix : T) -> T {
-  matrix.transpose() * matrix
+  TransposeMatrix::transpose(matrix) * matrix
 }
 
 ///|
 test "algebra traits stay focused on linear-algebra structure" {
-  let matrix : ScalarMatrix = { value: 3 }
+  let matrix : ScalarMatrix = { value: 3, }
   inspect(gram_step(matrix).value, content="9")
 }
