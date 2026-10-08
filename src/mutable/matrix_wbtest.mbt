@@ -1543,3 +1543,122 @@ test "row_swap_flips_determinant_preserves_rank/property" {
 
   @qc.quick_check_fn(prop)
 }
+
+///|
+fn eigen_regression_residual(
+  a : Matrix[Double],
+  values : Vector[Double],
+  vectors : Matrix[Double],
+) -> Double {
+  let n = a.row()
+  let mut worst = 0.0
+  for k in 0..<n {
+    for i in 0..<n {
+      let mut av = 0.0
+      for j in 0..<n {
+        av = av + a.get(i, j) * vectors.get(j, k)
+      }
+      let r = (av - values[k] * vectors.get(i, k)).abs()
+      if r > worst {
+        worst = r
+      }
+    }
+  }
+  worst
+}
+
+///|
+test "eigen_2x2 does not abort on symmetric input with large entries (#90)" {
+  let a = Matrix::from_2d_array([[100000000.74, 0.0], [0.0, 99999999.78]])
+  let (values, vectors) = a.eigen()
+  inspect(values, content="|100000000.74, 99999999.78|")
+  inspect(vectors, content="|1, 0|\n|0, 1|")
+}
+
+///|
+test "eigen_2x2 separates close eigenvalues (#90)" {
+  let a = Matrix::from_2d_array([[1.0, 0.0], [0.0, 1.000002]])
+  let (values, vectors) = a.eigen()
+  inspect(values, content="|1.000002, 1|")
+  inspect(vectors, content="|0, 1|\n|1, 0|")
+  let b = Matrix::from_2d_array([[1.0, 1.0e-6], [1.0e-6, 1.0]])
+  let (bv, bw) = b.eigen()
+  inspect((bv[0] - 1.000001).abs() < 1.0e-15, content="true")
+  inspect((bv[1] - 0.999999).abs() < 1.0e-15, content="true")
+  inspect(bw, content="|1, 1|\n|1, -1|")
+  inspect(eigen_regression_residual(b, bv, bw) < 1.0e-15, content="true")
+}
+
+///|
+test "eigen_2x2 pairs eigenvectors with eigenvalues (#90)" {
+  let a = Matrix::from_2d_array([[1.0, 0.0], [0.0, 3.0]])
+  let (values, vectors) = a.eigen()
+  inspect(values, content="|3, 1|")
+  inspect(vectors, content="|0, 1|\n|1, 0|")
+  let c = Matrix::from_2d_array([[-5.0, 2.0], [2.0, -1.0]])
+  let (cv, cw) = c.eigen()
+  inspect(cv[0] >= cv[1], content="true")
+  inspect(eigen_regression_residual(c, cv, cw) < 1.0e-12, content="true")
+  let z = Matrix::from_2d_array([[0.0, 0.0], [0.0, 0.0]])
+  let (zv, zw) = z.eigen()
+  inspect(zv, content="|0, 0|")
+  inspect(zw, content="|1, 0|\n|0, 1|")
+}
+
+///|
+test "eigen is scale invariant for small entries (#91)" {
+  let base = Matrix::from_2d_array([
+    [2.0, 1.0, 0.0],
+    [1.0, 2.0, 1.0],
+    [0.0, 1.0, 2.0],
+  ])
+  let small = base.scale(1.0e-12)
+  let (values, vectors) = small.eigen()
+  let sorted = values.0.copy()
+  sorted.sort()
+  let expected = [2.0 - 1.4142135623730951, 2.0, 2.0 + 1.4142135623730951]
+  for i in 0..<3 {
+    inspect((sorted[i] * 1.0e12 - expected[i]).abs() < 1.0e-12, content="true")
+  }
+  inspect(
+    eigen_regression_residual(small, values, vectors) < 1.0e-26,
+    content="true",
+  )
+}
+
+///|
+test "fast paths require the exact structure (#92)" {
+  let a = Matrix::from_2d_array([[1.0, 1.0e-12], [1.0e-12, 1.0]])
+  let inv = a.inverse().unwrap()
+  inspect(inv.get(0, 1) < 0.0, content="true")
+  let prod = a * inv
+  inspect(prod.get(0, 1).abs() < 1.0e-20, content="true")
+  let l = a.cholesky_decomposition().unwrap()
+  inspect(l.get(0, 1), content="0")
+  inspect((l.get(1, 0) - 1.0e-12).abs() < 1.0e-24, content="true")
+  let p = Matrix::from_2d_array([
+    [0.0, 1.0, 0.0],
+    [1.0e-12, 0.0, 1.0],
+    [1.0, 0.0, 0.0],
+  ])
+  let pinv = p.inverse().unwrap()
+  let check = p * pinv
+  inspect(check.get(1, 0).abs() < 1.0e-20, content="true")
+  let t = Matrix::make(5, 5, (i, j) => {
+    if i == j {
+      2.0
+    } else if i == 4 && j == 0 {
+      1.0e-12
+    } else if j > i {
+      1.0
+    } else {
+      0.0
+    }
+  })
+  // det = 32 - 1e-12 (the lower-left entry contributes)
+  inspect((t.determinant().unwrap() - 32.0).abs() > 0.0, content="true")
+  inspect(
+    Matrix::from_2d_array([[1.0e-11, 0.0], [0.0, 1.0]]).rank(),
+    content="2",
+  )
+}
