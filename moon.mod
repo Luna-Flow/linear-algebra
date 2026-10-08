@@ -3,8 +3,8 @@ name = "Luna-Flow/linear-algebra"
 version = "0.5.0"
 
 import {
-  "Luna-Flow/arithmetic@0.2.2",
-  "Luna-Flow/luna-generic@0.3.3",
+  "Luna-Flow/arithmetic@0.5.0",
+  "Luna-Flow/luna-generic@0.4.0",
   "moonbitlang/quickcheck@0.14.0",
   "moonbitlang/x@0.4.46",
 }

@@ -4,6 +4,18 @@ All notable repository-release changes are tracked here. The main
 [`README.md`](./README.md) stays focused on the current baseline and entry
 points; older release history lives in this file.
 
+## Unreleased
+
+### Changed
+
+- Bumped `Luna-Flow/luna-generic` from `0.3.3` to `0.4.0` and
+  `Luna-Flow/arithmetic` from `0.2.2` to `0.5.0`. The public interface is
+  unchanged. Under luna-generic `0.4.0`, `Float::inv` and `Double::inv` abort
+  with an explicit message on zero instead of a bare abort.
+- The white-box tests of `mutable` convert integer fixtures with
+  `@lf_alg.lift_to` instead of the deprecated
+  `IntegralHomomorphism::from_integral`.
+
 ## 0.5.0 - 2026-10-07
 
 Current repository release. MoonBit 0.10 migration and temporary withdrawal of
