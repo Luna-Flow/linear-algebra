@@ -77,6 +77,34 @@ test "determinant floating boundaries" {
 }
 
 ///|
+test "determinant floating exponent accumulation and nonfinite propagation" {
+  let balanced_double = Matrix::from_2d_array([
+    [1.0e200, 0.0, 0.0, 0.0],
+    [0.0, 1.0e200, 0.0, 0.0],
+    [0.0, 0.0, 1.0e-200, 0.0],
+    [0.0, 0.0, 0.0, 1.0e-200],
+  ])
+  assert_true((balanced_double.determinant().unwrap() - 1.0).abs() < 1.0e-12)
+  let balanced_float : Matrix[Float] = Matrix::from_2d_array([
+    [1.0e20, 0.0, 0.0, 0.0],
+    [0.0, 1.0e20, 0.0, 0.0],
+    [0.0, 0.0, 1.0e-20, 0.0],
+    [0.0, 0.0, 0.0, 1.0e-20],
+  ])
+  assert_true((balanced_float.determinant().unwrap() - 1.0).abs() < 1.0e-5)
+  let nan = 0.0 / 0.0
+  let nan_matrix = Matrix::from_2d_array([[0.0, 1.0], [nan, 1.0]])
+  assert_true(
+    nan_matrix.determinant().unwrap() != nan_matrix.determinant().unwrap(),
+  )
+  let infinity = 1.0 / 0.0
+  let indeterminate = Matrix::from_2d_array([[infinity, 0.0], [0.0, 0.0]])
+  assert_true(
+    indeterminate.determinant().unwrap() != indeterminate.determinant().unwrap(),
+  )
+}
+
+///|
 test "determinant exact scalar strategies" {
   let entries = [
     [2, -1, 0, 0, 0],
