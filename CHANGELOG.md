@@ -18,6 +18,9 @@ points; older release history lives in this file.
 
 ### Fixed
 
+- `@mutable.Transpose::mul` now evaluates each scalar product in the order
+  required by matrix multiplication, including for non-commutative scalar
+  types ([#88](https://github.com/Luna-Flow/linear-algebra/issues/88)).
 - `@mutable.Matrix::eigen` for `2 x 2` input no longer aborts with "complex
   eigenvalues" on symmetric matrices with large entries, no longer merges
   eigenvalues closer than about `6e-6`, never returns a singular eigenvector

@@ -2821,12 +2821,8 @@ msgid "Entry-wise arithmetic, returning a view of a new matrix."
 msgstr "要素ごとの算術演算で、新しい行列に対するビューを返します。"
 
 #: manual/api/mutable.md:1109
-msgid "`Transpose::mul(s, t)` returns the product of two views, computed as $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ without moving data."
-msgstr "`Transpose::mul(s, t)` は 2 つのビューの積を返します。データを移動せずに $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ として計算します。"
-
-#: manual/api/mutable.md:1116
-msgid "[!WARNING] The identity $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ holds only for commuting scalars. For a non-commutative scalar type, materialize the views and multiply the matrices instead."
-msgstr "[!WARNING] 恒等式 $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ は可換なスカラーに対してのみ成り立ちます。非可換なスカラー型では、ビューを実体化してから行列どうしを掛けてください。"
+msgid "`Transpose::mul(s, t)` returns the product of the two transposed views. If the wrapped matrices are $U$ and $V$, their shapes must satisfy $U_{\\text{rows}} = V_{\\text{cols}}$. The result has shape $U_{\\text{cols}} \\times V_{\\text{rows}}$ and entry $(i, k)$ is $\\sum_j U_{ji} V_{kj}$. The implementation preserves this factor order for non-commutative scalar multiplication and does not materialize the input views. A dimension mismatch aborts, as it does for `Matrix::mul`."
+msgstr "`Transpose::mul(s, t)` は 2 つの転置ビューの積を返します。ラップされた行列を $U$ と $V$ とすると、形状は $U_{\\text{rows}} = V_{\\text{cols}}$ を満たす必要があります。結果の形状は $U_{\\text{cols}} \\times V_{\\text{rows}}$ で、$(i, k)$ 成分は $\\sum_j U_{ji} V_{kj}$ です。実装はスカラー乗算が非可換でもこの因子順序を保ち、入力ビューを実体化しません。次元が一致しない場合は `Matrix::mul` と同様に abort します。"
 
 #: manual/api/mutable.md:1123
 msgid "`equal` compares the wrapped matrices; `to_string` renders the view row by row."
@@ -3694,7 +3690,7 @@ msgstr "積の順序を反転させる対合 $x \\mapsto \\bar{x}$、つまり $
 #: manual/design/error.md:133
 #: manual/design/immut.md:306
 #: manual/design/internal.md:56
-#: manual/design/mutable.md:594
+#: manual/design/mutable.md:600
 #: manual/design/perf.md:43
 #: manual/design/perf_runner.md:46
 #: manual/design/perf_support.md:77
@@ -3763,7 +3759,7 @@ msgstr "N. J. Higham, *Accuracy and Stability of Numerical Algorithms*, 2nd ed.,
 #: manual/design/error.md:149
 #: manual/design/immut.md:325
 #: manual/design/internal.md:63
-#: manual/design/mutable.md:622
+#: manual/design/mutable.md:628
 #: manual/design/perf.md:48
 #: manual/design/perf_runner.md:52
 #: manual/design/perf_support.md:84
@@ -3795,7 +3791,7 @@ msgstr "**すべての演算を持つ 1 つの `Matrix` trait。** 部分的な�
 #: manual/design/error.md:158
 #: manual/design/immut.md:335
 #: manual/design/internal.md:69
-#: manual/design/mutable.md:634
+#: manual/design/mutable.md:640
 #: manual/design/perf.md:54
 #: manual/design/perf_runner.md:57
 #: manual/design/perf_support.md:90
@@ -5432,54 +5428,56 @@ msgid "Transpose views and products"
 msgstr "転置ビューと積"
 
 #: manual/design/mutable.md:581
-msgid "`Transpose::mul` computes $A^{\\mathsf T} B^{\\mathsf T}$ as $(BA)^{\\mathsf T}$ by reusing the matrix kernel on the wrapped matrices. Entry by entry,"
-msgstr "`Transpose::mul` は、ラップした行列に対して行列カーネルを再利用し、$A^{\\mathsf T} B^{\\mathsf T}$ を $(BA)^{\\mathsf T}$ として計算します。要素ごとに見ると、"
+#, fuzzy
+#| msgid "Let $U$ and $V$ be the matrices wrapped by the two transpose views. Their logical product $C = U^{\\mathsf T}V^{\\mathsf T}$ is defined when $U_{\\text{rows}}=V_{\\text{cols}}$. Its shape is $U_{\\text{cols}} \\times V_{\\text{rows}}$, and the matrix product definition gives, for $0 \\le i < U_{\\text{cols}}$ and $0 \\le k < V_{\\text{rows}}$, "
+msgid "Let $U$ and $V$ be the matrices wrapped by the two transpose views. Their logical product $C = U^{\\mathsf T}V^{\\mathsf T}$ is defined when $U_{\\text{rows}}=V_{\\text{cols}}$. Its shape is $U_{\\text{cols}} \\times V_{\\text{rows}}$, and the matrix product definition gives, for $0 \\le i < U_{\\text{cols}}$ and $0 \\le k < V_{\\text{rows}}$,"
+msgstr "2 つの転置ビューがラップする行列を $U$ と $V$ とします。論理積 $C = U^{\\mathsf T}V^{\\mathsf T}$ は $U_{\\text{rows}}=V_{\\text{cols}}$ のとき定義されます。形状は $U_{\\text{cols}} \\times V_{\\text{rows}}$ です。行列積の定義より、$0 \\le i < U_{\\text{cols}}$ および $0 \\le k < V_{\\text{rows}}$ に対して、"
 
-#: manual/design/mutable.md:589
-msgid "which agree when the scalars commute. All scalar types with `Tolerance` (`Float`, `Double`) commute, but `Transpose::mul` only requires `AddMonoid + Mul`; for a non-commutative scalar type the result is the product in the wrong order (see the [algebra design](algebra.md))."
-msgstr "であり、両者はスカラーが可換なときに一致します。`Tolerance` を持つスカラー型（`Float`、`Double`）はすべて可換ですが、`Transpose::mul` が要求するのは `AddMonoid + Mul` だけです。非可換なスカラー型では、結果は逆順の積になります（[algebra の設計](algebra.md) を参照）。"
+#: manual/design/mutable.md:591
+msgid "The implementation evaluates this sum in the displayed factor order and stores $C^{\\mathsf T}$ in the returned `Transpose` wrapper. It requires only `AddMonoid + Mul`: `Zero` supplies the empty sum when the inner dimension is zero, and no commutativity or distributivity law for scalar multiplication is used. The previous shortcut computed $\\sum_j V_{kj}U_{ji}$, which is generally different when scalar multiplication is non-commutative. The direct loop takes $O(U_{\\text{cols}}V_{\\text{rows}}U_{\\text{rows}})$ scalar multiply-adds and allocates the output matrix, without copying either input view."
+msgstr "実装は表示された因子順でこの和を計算し、$C^{\\mathsf T}$ を返される `Transpose` ラッパーに格納します。必要なのは `AddMonoid + Mul` だけです。内側の次元が 0 のときは `Zero` が空和を与え、スカラー乗算の可換律や分配律は使いません。以前の近道では $\\sum_j V_{kj}U_{ji}$ を計算していましたが、スカラー乗算が非可換なら一般に異なります。直接ループは $O(U_{\\text{cols}}V_{\\text{rows}}U_{\\text{rows}})$ 回のスカラー積和を行い、入力ビューをコピーせず出力行列を確保します。"
 
-#: manual/design/mutable.md:596
+#: manual/design/mutable.md:602
 msgid "**Storage.** `data.length() == row * col` at all times; every public accessor checks the row and column separately."
 msgstr "**ストレージ。** 常に `data.length() == row * col` です。すべての公開アクセサは行と列を別々に検査します。"
 
-#: manual/design/mutable.md:598
+#: manual/design/mutable.md:604
 msgid "**Value-returning methods do not mutate.** Only `Unit`-returning methods, view writes and `reduce_row_elimination` change a matrix."
 msgstr "**値を返すメソッドは変更しない。** 行列を変更するのは `Unit` を返すメソッド、ビューへの書き込み、`reduce_row_elimination` だけです。"
 
-#: manual/design/mutable.md:600
+#: manual/design/mutable.md:606
 msgid "**Checked/unchecked law.** `x.f() == Ok(x.unchecked_f())` whenever the precondition holds; `inverse` returns `Err(SingularMatrix)` exactly when `unchecked_inverse` returns `None`."
 msgstr "**検査付き・検査なしの法則。** 前提条件が成り立つときは常に `x.f() == Ok(x.unchecked_f())` です。`inverse` が `Err(SingularMatrix)` を返すのは、`unchecked_inverse` が `None` を返すときに限ります。"
 
-#: manual/design/mutable.md:603
+#: manual/design/mutable.md:609
 msgid "**Determinant consistency.** For $n \\ge 5$ and a matrix that is not triangular, `determinant` returns exactly `0` when the LU factorization reports a pivot below $\\tau$, which is also when `is_invertible` returns `false` and `inverse` fails; otherwise it returns a product of pivots that are at least $\\tau$ in magnitude, which can still underflow. For $n \\le 4$ the closed formulas are used for `determinant`, while `is_invertible` still uses LU, so a matrix with a tiny non-zero determinant can be \"not invertible\" with a non-zero `determinant`."
 msgstr "**行列式の一貫性。** $n \\ge 5$ で三角でない行列では、LU 分解が $\\tau$ 未満のピボットを報告したときに `determinant` はちょうど `0` を返し、それは `is_invertible` が `false` を返し `inverse` が失敗するときでもあります。そうでなければ大きさ $\\tau$ 以上のピボットの積を返しますが、これもアンダーフローしえます。$n \\le 4$ では `determinant` は閉じた公式を使い、`is_invertible` は LU のままなので、行列式が零でないごく小さな行列が、`determinant` は零でないのに「可逆でない」とされることがあります。"
 
-#: manual/design/mutable.md:611
+#: manual/design/mutable.md:617
 msgid "**Residual guarantees.** `cholesky_decomposition` returns a factor with backward error $O(nu)$ relative to $|\\hat L|\\,|\\hat L^{\\mathsf T}|$; `eigen` returns eigenpairs with backward error $O(nu)\\lVert A \\rVert$, for every scale of $A$; `power_method` returns only pairs with residual at most $\\tau$."
 msgstr "**残差の保証。** `cholesky_decomposition` が返す因子の後退誤差は $|\\hat L|\\,|\\hat L^{\\mathsf T}|$ に対して $O(nu)$ です。`eigen` が返す固有対の後退誤差は、$A$ のどのスケールでも $O(nu)\\lVert A \\rVert$ です。`power_method` が返すのは残差が $\\tau$ 以下の組だけです。"
 
-#: manual/design/mutable.md:616
+#: manual/design/mutable.md:622
 msgid "**Complexity.** `*`: $2rcn$ flops; `determinant`: $\\tfrac23 n^3$; `inverse`: $\\tfrac83 n^3$; `rank`, `reduce_row_elimination`: $O(rc\\min(r, c))$; `cholesky_decomposition`: $\\tfrac13 n^3$; `eigen`: about $9n^3$; `power_method`: two matrix-vector products, $4n^2$ flops, per iteration; statistics: $O(rc)$."
 msgstr "**計算量。** `*`：$2rcn$ flops。`determinant`：$\\tfrac23 n^3$。`inverse`：$\\tfrac83 n^3$。`rank`、`reduce_row_elimination`：$O(rc\\min(r, c))$。`cholesky_decomposition`：$\\tfrac13 n^3$。`eigen`：約 $9n^3$。`power_method`：反復ごとに行列ベクトル積二回、$4n^2$ flops。統計：$O(rc)$。"
 
-#: manual/design/mutable.md:624
+#: manual/design/mutable.md:630
 msgid "**A relative or norm-scaled tolerance.** More robust, but it would change the results of existing callers; deferred until a tolerance policy can be passed explicitly."
 msgstr "**相対的な、またはノルムでスケーリングした許容誤差。** より頑健ですが、既存の呼び出し側の結果が変わってしまいます。許容誤差の方針を明示的に渡せるようになるまで見送ります。"
 
-#: manual/design/mutable.md:627
+#: manual/design/mutable.md:633
 msgid "**Returning complex eigenvalues.** Would make this package depend on a complex number type and change the signature for real symmetric input."
 msgstr "**複素固有値を返す。** このパッケージが複素数型に依存することになり、実対称な入力に対するシグネチャも変わります。"
 
-#: manual/design/mutable.md:629
+#: manual/design/mutable.md:635
 msgid "**Copy-on-write views.** Would hide the cost of writes and break the in-place contract that views exist for."
 msgstr "**コピーオンライトのビュー。** 書き込みのコストを隠し、ビューの存在意義であるインプレースの契約を壊します。"
 
-#: manual/design/mutable.md:631
+#: manual/design/mutable.md:637
 msgid "**A single portable kernel.** Measured to be slower on some targets; the per-target files trade code size for speed while sharing one specification."
 msgstr "**単一の移植可能なカーネル。** 計測の結果、一部のターゲットで遅くなりました。ターゲットごとのファイルは、1 つの仕様を共有しながらコードサイズと引き換えに速度を得ています。"
 
-#: manual/design/mutable.md:636
+#: manual/design/mutable.md:642
 msgid "`mutable` does not provide linear solves for a right-hand side as a public method (only the inverse), QR, SVD or least-squares solvers, eigenvalues of non-symmetric matrices, sparse storage, condition number estimates, or scale-aware tolerances. It does not implement the [`algebra`](algebra.md) traits itself; [`backends/default`](backends/default.md) wraps it for that. Domain workflows such as regression or optimization belong in downstream packages."
 msgstr "`mutable` は、右辺に対する連立一次方程式の求解を公開メソッドとして提供せず（逆行列のみ）、QR、SVD、最小二乗ソルバー、非対称行列の固有値、疎なストレージ、条件数の推定、スケールを考慮した許容誤差も提供しません。[`algebra`](algebra.md) の trait も自身では実装しません。そのために [`backends/default`](backends/default.md) がこれをラップしています。回帰や最適化のような分野固有のワークフローは下流のパッケージに属します。"
 

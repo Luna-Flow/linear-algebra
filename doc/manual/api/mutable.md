@@ -1106,17 +1106,17 @@ pub fn[T : Add] Transpose::add_constant(Self[T], T) -> Self[T]
 
 ### `Transpose::mul`
 
-`Transpose::mul(s, t)` returns the product of two views, computed as
-$A^{\mathsf T} B^{\mathsf T} = (BA)^{\mathsf T}$ without moving data.
+`Transpose::mul(s, t)` returns the product of the two transposed views. If the
+wrapped matrices are $U$ and $V$, their shapes must satisfy
+$U_{\text{rows}} = V_{\text{cols}}$. The result has shape
+$U_{\text{cols}} \times V_{\text{rows}}$ and entry $(i, k)$ is
+$\sum_j U_{ji} V_{kj}$. The implementation preserves this factor order for
+non-commutative scalar multiplication and does not materialize the input views.
+A dimension mismatch aborts, as it does for `Matrix::mul`.
 
 ```mbti
 pub fn[T : @luna-generic.AddMonoid + Mul] Transpose::mul(Self[T], Self[T]) -> Self[T]
 ```
-
-> [!WARNING]
-> The identity $A^{\mathsf T} B^{\mathsf T} = (BA)^{\mathsf T}$ holds only for
-> commuting scalars. For a non-commutative scalar type, materialize the views
-> and multiply the matrices instead.
 
 ### `Transpose::equal`, `Transpose::to_string`
 

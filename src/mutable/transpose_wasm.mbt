@@ -150,11 +150,19 @@ pub impl[T : Show] Show for Transpose[T] with fn output(self, logger) {
 /// ```
 ///
 pub impl[T : AddMonoid + Mul] Mul for Transpose[T] with fn mul(a, b) {
-  // Leverage the matrix identity: A^T * B^T = (B * A)^T
-  // This allows us to reuse the heavily optimized Matrix multiplication logic
-  // by just swapping the operand order, effectively performing the multiplication 
-  // on the transposed views without any data movement or manual loop management.
-  Transpose(b.0 * a.0)
+  guard a.0.row() == b.0.col() else { abort("Matrix::mul: dimension mismatch") }
+  let row = b.0.row()
+  let col = a.0.col()
+  let inner = a.0.row()
+  Transpose(
+    Matrix::make(row, col, fn(i, k) {
+      let mut sum = Zero::zero()
+      for j = 0; j < inner; j = j + 1 {
+        sum = sum + a.0.get(j, k) * b.0.get(i, j)
+      }
+      sum
+    }),
+  )
 }
 
 ///|

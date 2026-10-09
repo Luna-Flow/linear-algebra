@@ -2815,11 +2815,7 @@ msgid "Entry-wise arithmetic, returning a view of a new matrix."
 msgstr ""
 
 #: manual/api/mutable.md:1109
-msgid "`Transpose::mul(s, t)` returns the product of two views, computed as $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ without moving data."
-msgstr ""
-
-#: manual/api/mutable.md:1116
-msgid "[!WARNING] The identity $A^{\\mathsf T} B^{\\mathsf T} = (BA)^{\\mathsf T}$ holds only for commuting scalars. For a non-commutative scalar type, materialize the views and multiply the matrices instead."
+msgid "`Transpose::mul(s, t)` returns the product of the two transposed views. If the wrapped matrices are $U$ and $V$, their shapes must satisfy $U_{\\text{rows}} = V_{\\text{cols}}$. The result has shape $U_{\\text{cols}} \\times V_{\\text{rows}}$ and entry $(i, k)$ is $\\sum_j U_{ji} V_{kj}$. The implementation preserves this factor order for non-commutative scalar multiplication and does not materialize the input views. A dimension mismatch aborts, as it does for `Matrix::mul`."
 msgstr ""
 
 #: manual/api/mutable.md:1123
@@ -3688,7 +3684,7 @@ msgstr ""
 #: manual/design/error.md:133
 #: manual/design/immut.md:306
 #: manual/design/internal.md:56
-#: manual/design/mutable.md:594
+#: manual/design/mutable.md:600
 #: manual/design/perf.md:43
 #: manual/design/perf_runner.md:46
 #: manual/design/perf_support.md:77
@@ -3757,7 +3753,7 @@ msgstr ""
 #: manual/design/error.md:149
 #: manual/design/immut.md:325
 #: manual/design/internal.md:63
-#: manual/design/mutable.md:622
+#: manual/design/mutable.md:628
 #: manual/design/perf.md:48
 #: manual/design/perf_runner.md:52
 #: manual/design/perf_support.md:84
@@ -3789,7 +3785,7 @@ msgstr ""
 #: manual/design/error.md:158
 #: manual/design/immut.md:335
 #: manual/design/internal.md:69
-#: manual/design/mutable.md:634
+#: manual/design/mutable.md:640
 #: manual/design/perf.md:54
 #: manual/design/perf_runner.md:57
 #: manual/design/perf_support.md:90
@@ -5402,54 +5398,54 @@ msgid "Transpose views and products"
 msgstr ""
 
 #: manual/design/mutable.md:581
-msgid "`Transpose::mul` computes $A^{\\mathsf T} B^{\\mathsf T}$ as $(BA)^{\\mathsf T}$ by reusing the matrix kernel on the wrapped matrices. Entry by entry,"
+msgid "Let $U$ and $V$ be the matrices wrapped by the two transpose views. Their logical product $C = U^{\\mathsf T}V^{\\mathsf T}$ is defined when $U_{\\text{rows}}=V_{\\text{cols}}$. Its shape is $U_{\\text{cols}} \\times V_{\\text{rows}}$, and the matrix product definition gives, for $0 \\le i < U_{\\text{cols}}$ and $0 \\le k < V_{\\text{rows}}$,"
 msgstr ""
 
-#: manual/design/mutable.md:589
-msgid "which agree when the scalars commute. All scalar types with `Tolerance` (`Float`, `Double`) commute, but `Transpose::mul` only requires `AddMonoid + Mul`; for a non-commutative scalar type the result is the product in the wrong order (see the [algebra design](algebra.md))."
+#: manual/design/mutable.md:591
+msgid "The implementation evaluates this sum in the displayed factor order and stores $C^{\\mathsf T}$ in the returned `Transpose` wrapper. It requires only `AddMonoid + Mul`: `Zero` supplies the empty sum when the inner dimension is zero, and no commutativity or distributivity law for scalar multiplication is used. The previous shortcut computed $\\sum_j V_{kj}U_{ji}$, which is generally different when scalar multiplication is non-commutative. The direct loop takes $O(U_{\\text{cols}}V_{\\text{rows}}U_{\\text{rows}})$ scalar multiply-adds and allocates the output matrix, without copying either input view."
 msgstr ""
 
-#: manual/design/mutable.md:596
+#: manual/design/mutable.md:602
 msgid "**Storage.** `data.length() == row * col` at all times; every public accessor checks the row and column separately."
 msgstr ""
 
-#: manual/design/mutable.md:598
+#: manual/design/mutable.md:604
 msgid "**Value-returning methods do not mutate.** Only `Unit`-returning methods, view writes and `reduce_row_elimination` change a matrix."
 msgstr ""
 
-#: manual/design/mutable.md:600
+#: manual/design/mutable.md:606
 msgid "**Checked/unchecked law.** `x.f() == Ok(x.unchecked_f())` whenever the precondition holds; `inverse` returns `Err(SingularMatrix)` exactly when `unchecked_inverse` returns `None`."
 msgstr ""
 
-#: manual/design/mutable.md:603
+#: manual/design/mutable.md:609
 msgid "**Determinant consistency.** For $n \\ge 5$ and a matrix that is not triangular, `determinant` returns exactly `0` when the LU factorization reports a pivot below $\\tau$, which is also when `is_invertible` returns `false` and `inverse` fails; otherwise it returns a product of pivots that are at least $\\tau$ in magnitude, which can still underflow. For $n \\le 4$ the closed formulas are used for `determinant`, while `is_invertible` still uses LU, so a matrix with a tiny non-zero determinant can be \"not invertible\" with a non-zero `determinant`."
 msgstr ""
 
-#: manual/design/mutable.md:611
+#: manual/design/mutable.md:617
 msgid "**Residual guarantees.** `cholesky_decomposition` returns a factor with backward error $O(nu)$ relative to $|\\hat L|\\,|\\hat L^{\\mathsf T}|$; `eigen` returns eigenpairs with backward error $O(nu)\\lVert A \\rVert$, for every scale of $A$; `power_method` returns only pairs with residual at most $\\tau$."
 msgstr ""
 
-#: manual/design/mutable.md:616
+#: manual/design/mutable.md:622
 msgid "**Complexity.** `*`: $2rcn$ flops; `determinant`: $\\tfrac23 n^3$; `inverse`: $\\tfrac83 n^3$; `rank`, `reduce_row_elimination`: $O(rc\\min(r, c))$; `cholesky_decomposition`: $\\tfrac13 n^3$; `eigen`: about $9n^3$; `power_method`: two matrix-vector products, $4n^2$ flops, per iteration; statistics: $O(rc)$."
 msgstr ""
 
-#: manual/design/mutable.md:624
+#: manual/design/mutable.md:630
 msgid "**A relative or norm-scaled tolerance.** More robust, but it would change the results of existing callers; deferred until a tolerance policy can be passed explicitly."
 msgstr ""
 
-#: manual/design/mutable.md:627
+#: manual/design/mutable.md:633
 msgid "**Returning complex eigenvalues.** Would make this package depend on a complex number type and change the signature for real symmetric input."
 msgstr ""
 
-#: manual/design/mutable.md:629
+#: manual/design/mutable.md:635
 msgid "**Copy-on-write views.** Would hide the cost of writes and break the in-place contract that views exist for."
 msgstr ""
 
-#: manual/design/mutable.md:631
+#: manual/design/mutable.md:637
 msgid "**A single portable kernel.** Measured to be slower on some targets; the per-target files trade code size for speed while sharing one specification."
 msgstr ""
 
-#: manual/design/mutable.md:636
+#: manual/design/mutable.md:642
 msgid "`mutable` does not provide linear solves for a right-hand side as a public method (only the inverse), QR, SVD or least-squares solvers, eigenvalues of non-symmetric matrices, sparse storage, condition number estimates, or scale-aware tolerances. It does not implement the [`algebra`](algebra.md) traits itself; [`backends/default`](backends/default.md) wraps it for that. Domain workflows such as regression or optimization belong in downstream packages."
 msgstr ""
 
