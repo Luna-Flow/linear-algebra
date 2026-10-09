@@ -125,6 +125,22 @@ test "mapi" {
 }
 
 ///|
+test "matmul checked result" {
+  let left = Matrix::from_2d_array([[1, 2], [3, 4]])
+  let right = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
+  match left.matmul(right) {
+    Ok(product) =>
+      inspect(product.to_string(), content="|9, 12, 15|\n|19, 26, 33|")
+    Err(_) => fail("compatible matrix dimensions must multiply")
+  }
+  let incompatible = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+  match left.matmul(incompatible) {
+    Ok(_) => fail("incompatible matrix dimensions must return an error")
+    Err(err) => inspect(err.is_dimension_mismatch(), content="true")
+  }
+}
+
+///|
 /// Tests the matrix element assignment functionality through the `op_set`
 /// operation.
 ///

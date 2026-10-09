@@ -2529,16 +2529,24 @@ msgid "`Matrix::mul(a, b)` is the matrix product behind `a * b`."
 msgstr "`Matrix::mul(a, b)` は `a * b` の背後にある行列積です。"
 
 #: manual/api/mutable.md:509
-msgid "It checks $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ and aborts with `Matrix::mul: dimension mismatch` otherwise, then calls `unchecked_matmul`. There is no `Result`-returning `matmul` in this package; check shapes first or use `@immut.Matrix::matmul`."
-msgstr "$\\operatorname{cols}(A) = \\operatorname{rows}(B)$ を検査し、成り立たなければ `Matrix::mul: dimension mismatch` で中断し、成り立てば `unchecked_matmul` を呼び出します。このパッケージには `Result` を返す `matmul` はありません。先に形状を検査するか、`@immut.Matrix::matmul` を使ってください。"
+msgid "It checks $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ and aborts with `Matrix::mul: dimension mismatch` otherwise, then calls `unchecked_matmul`."
+msgstr "$\\operatorname{cols}(A) = \\operatorname{rows}(B)$ を検査し、成り立たなければ `Matrix::mul: dimension mismatch` で中断し、成り立てば `unchecked_matmul` を呼び出します。"
+
+#: manual/api/mutable.md
+msgid "`Matrix::matmul(a, b)` returns the product when the shapes are compatible and a `DimensionMismatch` error otherwise."
+msgstr "形状が適合する場合、`Matrix::matmul(a, b)` は積を返し、それ以外では `DimensionMismatch` エラーを返します。"
+
+#: manual/api/mutable.md
+msgid "Use this method when incompatible dimensions should be handled without aborting."
+msgstr "次元が適合しない場合に中断せずエラーとして処理するには、このメソッドを使います。"
 
 #: manual/api/mutable.md:516
 msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ **without validating shapes**."
 msgstr "`Matrix::unchecked_matmul(a, b)` は **形状を検証せずに** $AB$ を返します。"
 
 #: manual/api/mutable.md:522
-msgid "[!CAUTION] The caller must guarantee $\\operatorname{cols}(A) = \\operatorname{rows}(B)$. On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `*` unless the shapes are known."
-msgstr "[!CAUTION] 呼び出し側が $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ を保証しなければなりません。違反した場合の結果は規定されておらず、配列インデックスエラーで中断することも、誤った行列を黙って返すこともあります。形状が既知でない限り `*` を使ってください。"
+msgid "[!CAUTION] On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
+msgstr "[!CAUTION] 前提に違反した場合の結果は規定されておらず、配列インデックスエラーで中断することも、誤った行列を黙って返すこともあります。中断しない形状検査には `matmul` を使い、不一致時の中断を許容できる場合は `*` を使ってください。"
 
 #: manual/api/mutable.md:527
 msgid "Cost: $rcn$ multiply-adds. Large products (at least $4 \\times 16 \\times 16$) pack the columns of $B$ contiguously before multiplying."
@@ -5108,8 +5116,8 @@ msgid "Checked forms without changing the kernels"
 msgstr "カーネルを変えずに検査付き形式を提供する"
 
 #: manual/design/mutable.md:97
-msgid "Every checked method validates (squareness, exponent sign, non-emptiness, lengths) and then calls its unchecked partner, which keeps the original aborting or `Option` behaviour. There is no checked matrix product here: `*` validates and aborts, and `unchecked_matmul` does not validate at all. This asymmetry with `@immut.Matrix::matmul` is known; a checked `matmul` would be an addition, not a change."
-msgstr "すべての検査付きメソッドは検証（正方性、指数の符号、空でないこと、長さ）を行ってから、元の中断する振る舞いまたは `Option` の振る舞いを保つ検査なしの対を呼び出します。ここには検査付きの行列積はありません。`*` は検証して中断し、`unchecked_matmul` はまったく検証しません。`@immut.Matrix::matmul` とのこの非対称性は認識されています。検査付きの `matmul` は変更ではなく追加になるでしょう。"
+msgid "Every checked method validates (squareness, exponent sign, non-emptiness, lengths) and then calls its unchecked partner, which keeps the original aborting or `Option` behaviour. Matrix multiplication also provides `matmul`, which returns a `DimensionMismatch` error before entering the same unchecked kernel. The `*` operator keeps its aborting behavior, and `unchecked_matmul` remains available when callers establish compatible shapes."
+msgstr "すべての検査付きメソッドは検証（正方性、指数の符号、空でないこと、長さ）を行ってから、元の中断する振る舞いまたは `Option` の振る舞いを保つ検査なしの対を呼び出します。行列積には `matmul` もあり、同じ検査なしカーネルに入る前に `DimensionMismatch` エラーを返します。`*` 演算子は中断する振る舞いを保ち、呼び出し側が形状の適合を保証できる場合には `unchecked_matmul` も引き続き利用できます。"
 
 #: manual/design/mutable.md:104
 msgid "Symmetric eigenvalues only"
@@ -7767,8 +7775,8 @@ msgid "**Transpose without copying.** `to_transpose()` is an $O(1)$ view; produc
 msgstr "**コピーなしの転置。** `to_transpose()` は $O(1)$ のビューです。2 つのビューの積は行列カーネルを再利用します。独立した行列が必要な場合は `transpose()` か `materialize()` を使ってください。"
 
 #: manual/tutorial/mutable.md:180
-msgid "**Unchecked forms in hot loops.** After you have established the preconditions (for example square matrices built by your own code), the `unchecked_*` methods skip validation. Never use `unchecked_matmul` on shapes you have not checked: it does not validate and may return a wrong result."
-msgstr "**ホットループでの検査なし形式。** 前提条件を確立した後（たとえば自分のコードで構築した正方行列）であれば、`unchecked_*` メソッドは検証を省略します。検査していない形状に `unchecked_matmul` を使ってはいけません。検証を行わず、誤った結果を返すことがあります。"
+msgid "**Unchecked forms in hot loops.** After you have established the preconditions (for example square matrices built by your own code), the `unchecked_*` methods skip validation. Use `matmul` when dimensions may be incompatible and the caller should handle an error; use `unchecked_matmul` only when compatible shapes are already guaranteed."
+msgstr "**ホットループでの検査なし形式。** 前提条件を確立した後（たとえば自分のコードで構築した正方行列）、`unchecked_*` メソッドは検証を省略します。次元が適合しない可能性があり、呼び出し側でエラーを処理する場合は `matmul` を使い、形状の適合が保証されている場合に限り `unchecked_matmul` を使ってください。"
 
 #: manual/tutorial/mutable.md:185
 msgid "**Scaling.** The routines decide \"zero\" with an absolute threshold of $10^{-11}$. Scale your data to order one first; otherwise tiny but regular matrices are reported singular. See the [design page](../design/mutable.md#tolerance-based-decisions)."

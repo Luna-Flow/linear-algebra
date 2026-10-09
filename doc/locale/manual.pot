@@ -2523,7 +2523,15 @@ msgid "`Matrix::mul(a, b)` is the matrix product behind `a * b`."
 msgstr ""
 
 #: manual/api/mutable.md:509
-msgid "It checks $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ and aborts with `Matrix::mul: dimension mismatch` otherwise, then calls `unchecked_matmul`. There is no `Result`-returning `matmul` in this package; check shapes first or use `@immut.Matrix::matmul`."
+msgid "It checks $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ and aborts with `Matrix::mul: dimension mismatch` otherwise, then calls `unchecked_matmul`."
+msgstr ""
+
+#: manual/api/mutable.md
+msgid "`Matrix::matmul(a, b)` returns the product when the shapes are compatible and a `DimensionMismatch` error otherwise."
+msgstr ""
+
+#: manual/api/mutable.md
+msgid "Use this method when incompatible dimensions should be handled without aborting."
 msgstr ""
 
 #: manual/api/mutable.md:516
@@ -2531,7 +2539,7 @@ msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ **without validating shapes
 msgstr ""
 
 #: manual/api/mutable.md:522
-msgid "[!CAUTION] The caller must guarantee $\\operatorname{cols}(A) = \\operatorname{rows}(B)$. On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `*` unless the shapes are known."
+msgid "[!CAUTION] On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
 msgstr ""
 
 #: manual/api/mutable.md:527
@@ -5086,7 +5094,7 @@ msgid "Checked forms without changing the kernels"
 msgstr ""
 
 #: manual/design/mutable.md:97
-msgid "Every checked method validates (squareness, exponent sign, non-emptiness, lengths) and then calls its unchecked partner, which keeps the original aborting or `Option` behaviour. There is no checked matrix product here: `*` validates and aborts, and `unchecked_matmul` does not validate at all. This asymmetry with `@immut.Matrix::matmul` is known; a checked `matmul` would be an addition, not a change."
+msgid "Every checked method validates (squareness, exponent sign, non-emptiness, lengths) and then calls its unchecked partner, which keeps the original aborting or `Option` behaviour. Matrix multiplication also provides `matmul`, which returns a `DimensionMismatch` error before entering the same unchecked kernel. The `*` operator keeps its aborting behavior, and `unchecked_matmul` remains available when callers establish compatible shapes."
 msgstr ""
 
 #: manual/design/mutable.md:104
@@ -7733,7 +7741,7 @@ msgid "**Transpose without copying.** `to_transpose()` is an $O(1)$ view; produc
 msgstr ""
 
 #: manual/tutorial/mutable.md:180
-msgid "**Unchecked forms in hot loops.** After you have established the preconditions (for example square matrices built by your own code), the `unchecked_*` methods skip validation. Never use `unchecked_matmul` on shapes you have not checked: it does not validate and may return a wrong result."
+msgid "**Unchecked forms in hot loops.** After you have established the preconditions (for example square matrices built by your own code), the `unchecked_*` methods skip validation. Use `matmul` when dimensions may be incompatible and the caller should handle an error; use `unchecked_matmul` only when compatible shapes are already guaranteed."
 msgstr ""
 
 #: manual/tutorial/mutable.md:185

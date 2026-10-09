@@ -96,10 +96,10 @@ matrix that is merely close to the structure goes through the general path.
 
 Every checked method validates (squareness, exponent sign, non-emptiness,
 lengths) and then calls its unchecked partner, which keeps the original
-aborting or `Option` behaviour. There is no checked matrix product here: `*`
-validates and aborts, and `unchecked_matmul` does not validate at all. This
-asymmetry with `@immut.Matrix::matmul` is known; a checked `matmul` would be
-an addition, not a change.
+aborting or `Option` behaviour. Matrix multiplication also provides
+`matmul`, which returns a `DimensionMismatch` error before entering the same
+unchecked kernel. The `*` operator keeps its aborting behavior, and
+`unchecked_matmul` remains available when callers establish compatible shapes.
 
 ### Symmetric eigenvalues only
 
