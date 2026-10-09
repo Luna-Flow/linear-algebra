@@ -1622,19 +1622,19 @@ msgstr ""
 
 #: manual/api/error.md:346
 #: manual/api/immut.md:977
-#: manual/api/mutable.md:1301
+#: manual/api/mutable.md:1313
 msgid "Deprecated"
 msgstr ""
 
 #: manual/api/error.md:348
 #: manual/api/immut.md:982
-#: manual/api/mutable.md:1303
+#: manual/api/mutable.md:1315
 msgid "Item"
 msgstr ""
 
 #: manual/api/error.md:348
 #: manual/api/immut.md:982
-#: manual/api/mutable.md:1303
+#: manual/api/mutable.md:1315
 msgid "Replacement"
 msgstr ""
 
@@ -1899,7 +1899,7 @@ msgid "`Matrix::unchecked_trace(a)` returns $\\operatorname{tr} A$ and aborts on
 msgstr ""
 
 #: manual/api/immut.md:439
-#: manual/api/mutable.md:604
+#: manual/api/mutable.md:616
 msgid "`Matrix::determinant(a)` returns `Ok(det A)` for a square matrix and `NonSquareMatrix` otherwise."
 msgstr ""
 
@@ -2092,7 +2092,7 @@ msgid "`equal` compares shapes and every entry (forcing them); `to_string` rende
 msgstr ""
 
 #: manual/api/immut.md:808
-#: manual/api/mutable.md:1148
+#: manual/api/mutable.md:1160
 msgid "Vector"
 msgstr ""
 
@@ -2173,12 +2173,12 @@ msgid "These method forms exist only for source compatibility; they are hidden f
 msgstr ""
 
 #: manual/api/immut.md:985
-#: manual/api/mutable.md:1309
+#: manual/api/mutable.md:1321
 msgid "string interpolation or `Show::output(x, logger)`"
 msgstr ""
 
 #: manual/api/immut.md:986
-#: manual/api/mutable.md:1310
+#: manual/api/mutable.md:1322
 msgid "`Repr(v)` or `@debug.Debug::to_repr(v)`"
 msgstr ""
 
@@ -2526,395 +2526,395 @@ msgstr ""
 msgid "It checks $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ and aborts with `Matrix::mul: dimension mismatch` otherwise, then calls `unchecked_matmul`."
 msgstr ""
 
-#: manual/api/mutable.md
+#: manual/api/mutable.md:514
 msgid "`Matrix::matmul(a, b)` returns the product when the shapes are compatible and a `DimensionMismatch` error otherwise."
 msgstr ""
 
-#: manual/api/mutable.md
+#: manual/api/mutable.md:521
 msgid "Use this method when incompatible dimensions should be handled without aborting."
 msgstr ""
 
-#: manual/api/mutable.md:516
-msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ **without validating shapes**."
+#: manual/api/mutable.md:525
+msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ without checking shape compatibility. Its caller must guarantee $\\operatorname{cols}(A) = \\operatorname{rows}(B)$."
 msgstr ""
 
-#: manual/api/mutable.md:522
-msgid "[!CAUTION] On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
+#: manual/api/mutable.md:533
+msgid "[!CAUTION] The caller must guarantee $\\operatorname{cols}(A) = \\operatorname{rows}(B)$. On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
 msgstr ""
 
-#: manual/api/mutable.md:527
+#: manual/api/mutable.md:539
 msgid "Cost: $rcn$ multiply-adds. Large products (at least $4 \\times 16 \\times 16$) pack the columns of $B$ contiguously before multiplying."
 msgstr ""
 
-#: manual/api/mutable.md:532
+#: manual/api/mutable.md:544
 msgid "`Matrix::mul_vec(a, x)` returns `Ok(Ax)` when $\\operatorname{cols}(A) = \\operatorname{len}(x)$ and `DimensionMismatch` otherwise."
 msgstr ""
 
-#: manual/api/mutable.md:542
+#: manual/api/mutable.md:554
 msgid "`Matrix::unchecked_mul_vec(a, x)` returns $Ax$ and aborts on a length mismatch."
 msgstr ""
 
-#: manual/api/mutable.md:550
+#: manual/api/mutable.md:562
 msgid "`pow(k)` returns `Ok(A^k)` for square $A$ and $k \\ge 0$ ($A^0 = I$), by binary exponentiation. `matrix_power` is the same function under another name."
 msgstr ""
 
-#: manual/api/mutable.md:558
+#: manual/api/mutable.md:570
 msgid "Errors: `NonSquareMatrix` (checked first), then `NegativeExponent`."
 msgstr ""
 
-#: manual/api/mutable.md:562
+#: manual/api/mutable.md:574
 msgid "Aborting forms of `pow` and `matrix_power`."
 msgstr ""
 
-#: manual/api/mutable.md:571
+#: manual/api/mutable.md:583
 msgid "`trace()` returns `Ok(Σ a_ii)` for a square matrix and `NonSquareMatrix` otherwise; `unchecked_trace` aborts instead."
 msgstr ""
 
-#: manual/api/mutable.md:595
+#: manual/api/mutable.md:607
 msgid "Linear systems and decompositions"
 msgstr ""
 
-#: manual/api/mutable.md:597
+#: manual/api/mutable.md:609
 msgid "All routines in this section are for `Float` and `Double` matrices. Decisions such as \"this pivot is zero\" compare absolute values with `Tolerance::tolerance()` ($10^{-11}$); see the [design page](../design/mutable.md) for the algorithms, costs and error bounds."
 msgstr ""
 
-#: manual/api/mutable.md:611
+#: manual/api/mutable.md:623
 msgid "For $n \\le 4$: closed cofactor formulas. For $n \\ge 5$: the product of the diagonal if the matrix is exactly triangular, otherwise LU factorization with partial pivoting, $\\det A = (-1)^{s} \\prod_i u_{ii}$ for $s$ row exchanges. If a pivot falls below the tolerance the result is exactly zero; otherwise it is a product of pivots of magnitude at least $10^{-11}$, which can still underflow to zero or overflow to infinity for large $n$. $\\det$ of the $0 \\times 0$ matrix is $1$."
 msgstr ""
 
-#: manual/api/mutable.md:621
+#: manual/api/mutable.md:633
 msgid "Aborting form of `determinant`."
 msgstr ""
 
-#: manual/api/mutable.md:629
+#: manual/api/mutable.md:641
 msgid "`Matrix::inverse(a)` returns `Ok(A^{-1})`, `NonSquareMatrix` for a non-square matrix, or `SingularMatrix` when a pivot is below the tolerance."
 msgstr ""
 
-#: manual/api/mutable.md:636
+#: manual/api/mutable.md:648
 msgid "Identity, diagonal and permutation matrices are recognized and inverted directly ($P^{-1} = P^{\\mathsf T}$); other matrices are solved column by column from an LU factorization with partial pivoting. Cost $\\approx \\tfrac{8}{3} n^3$ flops. The inverse of the $0 \\times 0$ matrix is the $0 \\times 0$ matrix."
 msgstr ""
 
-#: manual/api/mutable.md:641
+#: manual/api/mutable.md:653
 msgid "The recognition is exact: only a matrix that has the structure exactly takes the shortcut, so the shortcut returns what the LU path would."
 msgstr ""
 
-#: manual/api/mutable.md:646
+#: manual/api/mutable.md:658
 msgid "`Matrix::unchecked_inverse(a)` returns `Some(A^{-1})` or `None` for a singular matrix, and aborts on a non-square one."
 msgstr ""
 
-#: manual/api/mutable.md:655
+#: manual/api/mutable.md:667
 msgid "`is_invertible()` returns `Ok(true)` when LU factorization finds no pivot below the tolerance, `Ok(false)` otherwise, and `NonSquareMatrix` for a non-square matrix; `unchecked_is_invertible` aborts instead."
 msgstr ""
 
-#: manual/api/mutable.md:666
+#: manual/api/mutable.md:678
 msgid "`Matrix::rank(a)` returns the number of pivots found by Gaussian elimination with partial pivoting on a copy of `a`."
 msgstr ""
 
-#: manual/api/mutable.md:673
+#: manual/api/mutable.md:685
 msgid "A column whose largest remaining entry is below the tolerance contributes no pivot. Works for any shape; `a` is unchanged. Cost $O(\\min(r, c)\\, r c)$."
 msgstr ""
 
-#: manual/api/mutable.md:678
+#: manual/api/mutable.md:690
 msgid "`Matrix::reduce_row_elimination(a)` transforms `a` **in place** into reduced row echelon form by Gauss–Jordan elimination with partial pivoting, and returns `a` itself."
 msgstr ""
 
-#: manual/api/mutable.md:686
+#: manual/api/mutable.md:698
 msgid "Columns are processed left to right. In each column the entry of largest magnitude at or below the current row is swapped up; if its magnitude is at most the tolerance, that one entry is set to zero and the column is skipped (the other entries below it, also at most the tolerance, are left as they are). Otherwise the pivot row is divided by the pivot, which makes the pivot one, and every other row with an entry of magnitude above the tolerance in the pivot column has a multiple of the pivot row subtracted; an entry at or below the tolerance is set to zero without touching the rest of its row. Copy first if you need the original."
 msgstr ""
 
-#: manual/api/mutable.md:698
+#: manual/api/mutable.md:710
 msgid "`Matrix::cholesky_decomposition(a)` returns `Some(L)` with $L$ lower triangular, positive diagonal and $L L^{\\mathsf T} = A$, or `None`."
 msgstr ""
 
-#: manual/api/mutable.md:705
+#: manual/api/mutable.md:717
 msgid "`None` means that `a` is not square, not symmetric within tolerance, or that a diagonal pivot $a_{jj} - \\sum_{k<j} l_{jk}^2$ is at most the tolerance (the matrix is not positive definite, or nearly singular). Only the lower triangle of `a` is read. Cost $\\approx n^3/3$ flops."
 msgstr ""
 
-#: manual/api/mutable.md:710
+#: manual/api/mutable.md:722
 msgid "Two fast paths run first: the exact identity is returned as a copy, and an exactly diagonal matrix gives the square roots of its diagonal (or `None` if one of them is at most the tolerance)."
 msgstr ""
 
-#: manual/api/mutable.md:716
+#: manual/api/mutable.md:728
 msgid "`Matrix::is_positive_definite(a)` returns whether `cholesky_decomposition` succeeds."
 msgstr ""
 
-#: manual/api/mutable.md:725
+#: manual/api/mutable.md:737
 msgid "`Matrix::is_symmetric(a)` returns `true` when `a` is square and $|a_{ij} - a_{ji}| \\le \\mathrm{tol}$ for all $i < j$."
 msgstr ""
 
-#: manual/api/mutable.md:751
+#: manual/api/mutable.md:763
 msgid "Eigenvalues"
 msgstr ""
 
-#: manual/api/mutable.md:755
+#: manual/api/mutable.md:767
 msgid "`Matrix::eigen(a)` returns the eigenvalues and eigenvectors of a real symmetric matrix as `(values, vectors)`, where column $k$ of `vectors` is an eigenvector for `values[k]`."
 msgstr ""
 
-#: manual/api/mutable.md:763
+#: manual/api/mutable.md:775
 msgid "Aborts if `a` is not square, not symmetric within tolerance, or if an eigenvalue does not converge within 60 iterations."
 msgstr ""
 
-#: manual/api/mutable.md:765
+#: manual/api/mutable.md:777
 msgid "For $2 \\times 2$ input a closed formula is used on the symmetric part $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$, $s = \\tfrac12 (a_{01} + a_{10})$: $\\lambda_{1,2} = m \\pm \\sqrt{\\big(\\tfrac{a-d}{2}\\big)^2 + s^2}$ with $m = \\tfrac12 \\operatorname{tr} A$, ordered $\\lambda_1 \\ge \\lambda_2$. The eigenvector columns are **not normalized**: each is scaled so that its entry of largest magnitude is $1$. A diagonal matrix returns its diagonal entries exactly."
 msgstr ""
 
-#: manual/api/mutable.md:772
+#: manual/api/mutable.md:784
 msgid "For other sizes the matrix is reduced to tridiagonal form by Householder reflections and diagonalized by the implicit QL algorithm with Wilkinson shifts. Only the lower triangle is read. The eigenvector columns are orthonormal up to rounding. The eigenvalues are not sorted."
 msgstr ""
 
-#: manual/api/mutable.md:776
+#: manual/api/mutable.md:788
 msgid "Cost $O(n^3)$."
 msgstr ""
 
-#: manual/api/mutable.md:778
+#: manual/api/mutable.md:790
 msgid "Every decision inside `eigen` is relative to the entries (a deflated off-diagonal entry is negligible next to its diagonal neighbours), so `eigen` of $sA$ is $s$ times `eigen` of $A$ up to rounding, for any scale $s$; only the symmetry check uses the absolute tolerance. See the [design page](../design/mutable.md#symmetric-eigenvalue-problem)."
 msgstr ""
 
-#: manual/api/mutable.md:786
+#: manual/api/mutable.md:798
 msgid "`Matrix::power_method(a, max_iterations)` approximates a dominant eigenpair $(\\lambda, x)$ by power iteration and returns `Some((λ, x))` once $\\lVert A x - \\lambda x \\rVert_\\infty \\le \\mathrm{tol}$."
 msgstr ""
 
-#: manual/api/mutable.md:794
+#: manual/api/mutable.md:806
 msgid "$x$ is scaled so that $\\lVert x \\rVert_\\infty = 1$; $\\lambda$ is the Rayleigh quotient $x^{\\mathsf T} A x / x^{\\mathsf T} x$."
 msgstr ""
 
-#: manual/api/mutable.md:796
+#: manual/api/mutable.md:808
 msgid "Returns `None` when the iteration does not meet the residual test within `max_iterations` steps, or when the iterate becomes numerically zero (for example for a nilpotent matrix). Two dominant eigenvalues of equal magnitude and opposite sign, such as $\\pm 1$, prevent convergence."
 msgstr ""
 
-#: manual/api/mutable.md:800
+#: manual/api/mutable.md:812
 msgid "Aborts for a non-square or empty matrix."
 msgstr ""
 
-#: manual/api/mutable.md:801
+#: manual/api/mutable.md:813
 msgid "Each iteration costs two matrix-vector products, $O(n^2)$: one for the Rayleigh quotient and the residual, and one for the next iterate (the code does not reuse the first). The starting vector is $(1, \\dots, 1)$, or the first coordinate vector $e_k$ with $A e_k$ above the tolerance if $A (1, \\dots, 1)^{\\mathsf T}$ is not; it is multiplied by $A$ and scaled once before the first residual test."
 msgstr ""
 
-#: manual/api/mutable.md:807
+#: manual/api/mutable.md:819
 msgid "The residual test is absolute, so the accuracy of $x$ scales with $\\lVert A \\rVert$: for a matrix of size about $10^{-6}$ the test passes while $x$ is still wrong in the sixth digit."
 msgstr ""
 
-#: manual/api/mutable.md:831
+#: manual/api/mutable.md:843
 msgid "Statistics and norms"
 msgstr ""
 
-#: manual/api/mutable.md:833
+#: manual/api/mutable.md:845
 msgid "The statistics treat the matrix as a flat list of its $N = rc$ entries."
 msgstr ""
 
-#: manual/api/mutable.md:837
+#: manual/api/mutable.md:849
 msgid "`mean()` returns `Ok(\\bar a)`, $\\bar a = \\tfrac1N \\sum a_{ij}$, or `EmptyMatrix` when $N = 0$; `unchecked_mean` aborts instead."
 msgstr ""
 
-#: manual/api/mutable.md:847
+#: manual/api/mutable.md:859
 msgid "`variance()` returns the population variance $\\tfrac1N \\sum (a_{ij} - \\bar a)^2$ (two-pass), or `EmptyMatrix`."
 msgstr ""
 
-#: manual/api/mutable.md:857
+#: manual/api/mutable.md:869
 msgid "`std_dev()` returns the square root of the population variance, or `EmptyMatrix`."
 msgstr ""
 
-#: manual/api/mutable.md:867
+#: manual/api/mutable.md:879
 msgid "The largest or smallest entry by `Compare`, or `EmptyMatrix`."
 msgstr ""
 
-#: manual/api/mutable.md:874
+#: manual/api/mutable.md:886
 msgid "With NaN entries the result depends on their position; filter them first."
 msgstr ""
 
-#: manual/api/mutable.md:878
+#: manual/api/mutable.md:890
 msgid "Aborting forms of `max_element` and `min_element`."
 msgstr ""
 
-#: manual/api/mutable.md:887
+#: manual/api/mutable.md:899
 msgid "`Matrix::frobenius_norm(a)` returns $\\lVert A \\rVert_F = \\sqrt{\\sum a_{ij}^2}$."
 msgstr ""
 
-#: manual/api/mutable.md:893
+#: manual/api/mutable.md:905
 msgid "The sum of squares is not rescaled, so entries above about $10^{154}$ overflow for `Double`. An empty matrix has norm $0$."
 msgstr ""
 
-#: manual/api/mutable.md:910
+#: manual/api/mutable.md:922
 msgid "Views"
 msgstr ""
 
-#: manual/api/mutable.md:914
+#: manual/api/mutable.md:926
 msgid "Read or write position `i` of the viewed row or column; they back `view[i]` and `view[i] = x`."
 msgstr ""
 
-#: manual/api/mutable.md:930
+#: manual/api/mutable.md:942
 msgid "The number of columns (row view) or rows (column view) of the matrix."
 msgstr ""
 
-#: manual/api/mutable.md:939
+#: manual/api/mutable.md:951
 msgid "Traverse the viewed entries in order."
 msgstr ""
 
-#: manual/api/mutable.md:952
+#: manual/api/mutable.md:964
 msgid "Replace every viewed entry by `f(entry)`, in the underlying matrix."
 msgstr ""
 
-#: manual/api/mutable.md:961
+#: manual/api/mutable.md:973
 msgid "Copy the viewed entries out."
 msgstr ""
 
-#: manual/api/mutable.md:972
+#: manual/api/mutable.md:984
 msgid "Render the viewed entries as `|a, b, c|`."
 msgstr ""
 
-#: manual/api/mutable.md:979
+#: manual/api/mutable.md:991
 msgid "Transpose view"
 msgstr ""
 
-#: manual/api/mutable.md:981
+#: manual/api/mutable.md:993
 msgid "Every `Transpose` method addresses the transposed matrix and works on the shared storage, unless it is documented to return a new value."
 msgstr ""
 
-#: manual/api/mutable.md:986
+#: manual/api/mutable.md:998
 msgid "The shape of the view: `row()` is the column count of the wrapped matrix and `col()` its row count."
 msgstr ""
 
-#: manual/api/mutable.md:996
+#: manual/api/mutable.md:1008
 msgid "`get(i, j)` and `set(i, j, x)` access entry $(i, j)$ of the view, that is $(j, i)$ of the matrix; `at` backs `t[i][j]` and `t[i][j] = x`."
 msgstr ""
 
-#: manual/api/mutable.md:1008
+#: manual/api/mutable.md:1020
 msgid "`Transpose::transpose(t)` returns the wrapped matrix itself, not a copy."
 msgstr ""
 
-#: manual/api/mutable.md:1016
+#: manual/api/mutable.md:1028
 msgid "`Transpose::materialize(t)` copies the view into a new matrix of the transposed shape."
 msgstr ""
 
-#: manual/api/mutable.md:1025
+#: manual/api/mutable.md:1037
 msgid "`Transpose::copy(t)` returns a view of a deep copy of the wrapped matrix."
 msgstr ""
 
-#: manual/api/mutable.md:1031
+#: manual/api/mutable.md:1043
 msgid "Traversal: `Transpose::each`, `Transpose::eachi`, `Transpose::each_row_col`, `Transpose::each_row`, `Transpose::eachi_row`, `Transpose::each_col`, `Transpose::eachi_col`"
 msgstr ""
 
-#: manual/api/mutable.md:1033
+#: manual/api/mutable.md:1045
 msgid "Traverse the view."
 msgstr ""
 
-#: manual/api/mutable.md:1045
+#: manual/api/mutable.md:1057
 msgid "`each`, `eachi` and `each_row_col` visit entries in the storage order of the wrapped matrix, which is column-major for the view; `eachi` passes the row-major index *of the view*, and `each_row_col` passes view coordinates. The row and column forms visit a row or column of the view in order."
 msgstr ""
 
-#: manual/api/mutable.md:1052
+#: manual/api/mutable.md:1064
 msgid "Copy one row or column of the view."
 msgstr ""
 
-#: manual/api/mutable.md:1063
+#: manual/api/mutable.md:1075
 msgid "`map` returns a new view of a new matrix; the `*_inplace` forms change the shared storage."
 msgstr ""
 
-#: manual/api/mutable.md:1078
+#: manual/api/mutable.md:1090
 msgid "Exchange two rows or columns of the view in place (columns or rows of the wrapped matrix)."
 msgstr ""
 
-#: manual/api/mutable.md:1088
+#: manual/api/mutable.md:1100
 msgid "Block concatenation of views, returning a view of a new matrix."
 msgstr ""
 
-#: manual/api/mutable.md:1097
+#: manual/api/mutable.md:1109
 msgid "Entry-wise arithmetic, returning a view of a new matrix."
 msgstr ""
 
-#: manual/api/mutable.md:1109
+#: manual/api/mutable.md:1121
 msgid "`Transpose::mul(s, t)` returns the product of the two transposed views. If the wrapped matrices are $U$ and $V$, their shapes must satisfy $U_{\\text{rows}} = V_{\\text{cols}}$. The result has shape $U_{\\text{cols}} \\times V_{\\text{rows}}$ and entry $(i, k)$ is $\\sum_j U_{ji} V_{kj}$. The implementation preserves this factor order for non-commutative scalar multiplication and does not materialize the input views. A dimension mismatch aborts, as it does for `Matrix::mul`."
 msgstr ""
 
-#: manual/api/mutable.md:1123
+#: manual/api/mutable.md:1135
 msgid "`equal` compares the wrapped matrices; `to_string` renders the view row by row."
 msgstr ""
 
-#: manual/api/mutable.md:1152
+#: manual/api/mutable.md:1164
 msgid "`Vector::from_array(xs)` adopts `xs` as the vector's storage without copying."
 msgstr ""
 
-#: manual/api/mutable.md:1160
+#: manual/api/mutable.md:1172
 msgid "$n$ copies of a value, or $(f(0), \\dots, f(n-1))$."
 msgstr ""
 
-#: manual/api/mutable.md:1169
+#: manual/api/mutable.md:1181
 msgid "Length, deep copy, and iterator."
 msgstr ""
 
-#: manual/api/mutable.md:1179
+#: manual/api/mutable.md:1191
 msgid "Read or write element `i` in place; they back `v[i]` and `v[i] = x`. An out-of-range index aborts."
 msgstr ""
 
-#: manual/api/mutable.md:1191
+#: manual/api/mutable.md:1203
 msgid "`map` and `zip_with` return new vectors (`zip_with` aborts on different lengths); `map_inplace` rewrites every element."
 msgstr ""
 
-#: manual/api/mutable.md:1203
+#: manual/api/mutable.md:1215
 msgid "Element-wise $u + v$, Hadamard $u \\odot v$, $-u$, and $u + a$. Different lengths abort. There is no `Sub`; write `u + -v`."
 msgstr ""
 
-#: manual/api/mutable.md:1215
+#: manual/api/mutable.md:1227
 msgid "$(a v_i)$ and $(v_i a)$, as new vectors or in place."
 msgstr ""
 
-#: manual/api/mutable.md:1228
+#: manual/api/mutable.md:1240
 msgid "`Vector::dot(u, v)` returns $\\sum_i u_i v_i$, summed left to right; different lengths abort."
 msgstr ""
 
-#: manual/api/mutable.md:1237
+#: manual/api/mutable.md:1249
 msgid "`Vector::lerp(u, v, t)` returns $(1 - t) u + t v$."
 msgstr ""
 
-#: manual/api/mutable.md:1245
+#: manual/api/mutable.md:1257
 msgid "`Vector::lin_comb(weights, vectors)` returns $\\sum_k w_k v_k$, accumulated into one new vector."
 msgstr ""
 
-#: manual/api/mutable.md:1252
+#: manual/api/mutable.md:1264
 msgid "Empty inputs, different counts of weights and vectors, or vectors of different lengths abort."
 msgstr ""
 
-#: manual/api/mutable.md:1257
+#: manual/api/mutable.md:1269
 msgid "`lin_comb(a, u, b, v)` returns $a u + b v$; it is a top-level function."
 msgstr ""
 
-#: manual/api/mutable.md:1265
+#: manual/api/mutable.md:1277
 msgid "The vector as a $1 \\times n$ or $n \\times 1$ matrix (copied), the diagonal matrix $\\operatorname{diag}(v)$, and the outer product $u v^{\\mathsf T}$."
 msgstr ""
 
-#: manual/api/mutable.md:1277
+#: manual/api/mutable.md:1289
 msgid "`equal` compares elements (backs `==`); `to_string` renders `|a, b, c|`."
 msgstr ""
 
-#: manual/api/mutable.md:1305
+#: manual/api/mutable.md:1317
 msgid "`Matrix::map_in_place`, `map_row_in_place`, `map_col_in_place` (aliases)"
 msgstr ""
 
-#: manual/api/mutable.md:1306
+#: manual/api/mutable.md:1318
 msgid "`Transpose::map_in_place`, `map_row_in_place`, `map_col_in_place` (aliases)"
 msgstr ""
 
-#: manual/api/mutable.md:1306
+#: manual/api/mutable.md:1318
 msgid "the `*_inplace` names"
 msgstr ""
 
-#: manual/api/mutable.md:1307
+#: manual/api/mutable.md:1319
 msgid "`Vector::map_in_place`, `left_scale_in_place`, `right_scale_in_place` (aliases)"
 msgstr ""
 
-#: manual/api/mutable.md:1308
+#: manual/api/mutable.md:1320
 msgid "`not_equal` method form on `Matrix`, `Transpose`, `Vector` (hidden)"
 msgstr ""
 
-#: manual/api/mutable.md:1309
+#: manual/api/mutable.md:1321
 msgid "`output` method form on `Matrix`, `Transpose`, `RowView`, `ColView`, `Vector` (hidden)"
 msgstr ""
 
-#: manual/api/mutable.md:1310
+#: manual/api/mutable.md:1322
 msgid "`Vector::to_repr` (hidden)"
 msgstr ""
 
-#: manual/api/mutable.md:1311
+#: manual/api/mutable.md:1323
 msgid "`Vector::arbitrary` (hidden)"
 msgstr ""
 
@@ -6728,7 +6728,7 @@ msgstr ""
 #: manual/tutorial/error.md:199
 #: manual/tutorial/immut.md:168
 #: manual/tutorial/internal.md:96
-#: manual/tutorial/mutable.md:193
+#: manual/tutorial/mutable.md:194
 #: manual/tutorial/perf.md:47
 #: manual/tutorial/perf_runner.md:49
 #: manual/tutorial/perf_support.md:66
@@ -6760,7 +6760,7 @@ msgstr ""
 #: manual/tutorial/error.md:210
 #: manual/tutorial/immut.md:187
 #: manual/tutorial/internal.md:103
-#: manual/tutorial/mutable.md:212
+#: manual/tutorial/mutable.md:213
 #: manual/tutorial/perf.md:53
 #: manual/tutorial/perf_runner.md:54
 #: manual/tutorial/perf_support.md:74
@@ -7744,51 +7744,51 @@ msgstr ""
 msgid "**Unchecked forms in hot loops.** After you have established the preconditions (for example square matrices built by your own code), the `unchecked_*` methods skip validation. Use `matmul` when dimensions may be incompatible and the caller should handle an error; use `unchecked_matmul` only when compatible shapes are already guaranteed."
 msgstr ""
 
-#: manual/tutorial/mutable.md:185
+#: manual/tutorial/mutable.md:186
 msgid "**Scaling.** The routines decide \"zero\" with an absolute threshold of $10^{-11}$. Scale your data to order one first; otherwise tiny but regular matrices are reported singular. See the [design page](../design/mutable.md#tolerance-based-decisions)."
 msgstr ""
 
-#: manual/tutorial/mutable.md:190
+#: manual/tutorial/mutable.md:191
 msgid "**Generic code.** Wrap the matrix in `@default.DenseMatrix` to pass it to functions bounded by the `algebra` traits; `inner()` gets it back."
 msgstr ""
 
-#: manual/tutorial/mutable.md:195
+#: manual/tutorial/mutable.md:196
 msgid "**Forgetting that `reduce_row_elimination` mutates.** It transforms the receiver in place and returns it. Call `copy()` first."
 msgstr ""
 
-#: manual/tutorial/mutable.md:197
+#: manual/tutorial/mutable.md:198
 msgid "**Expecting normalized $2 \\times 2$ eigenvectors.** For $2 \\times 2$ input, each eigenvector column is scaled so that its largest entry is $1$, not to unit length; larger inputs return orthonormal columns."
 msgstr ""
 
-#: manual/tutorial/mutable.md:200
+#: manual/tutorial/mutable.md:201
 msgid "**Matrices far from order one.** The singularity and definiteness tests use the absolute threshold $10^{-11}$. A matrix whose entries are all around $10^{-12}$ is singular to `inverse` and not positive definite to `cholesky_decomposition`; scale first. `eigen` does not depend on the scale."
 msgstr ""
 
-#: manual/tutorial/mutable.md:204
+#: manual/tutorial/mutable.md:205
 msgid "**Numerical routines on integers.** `determinant`, `inverse`, `rank`, `eigen` and friends need `Tolerance`, which exists only for `Float` and `Double`. For exact integer determinants use `@immut.Matrix::determinant`."
 msgstr ""
 
-#: manual/tutorial/mutable.md:207
+#: manual/tutorial/mutable.md:208
 msgid "**`Float` precision.** The tolerance is far below `Float` precision; nearly singular `Float` matrices are not detected. Prefer `Double`."
 msgstr ""
 
-#: manual/tutorial/mutable.md:209
+#: manual/tutorial/mutable.md:210
 msgid "**Power method on symmetric spectra.** Eigenvalues $\\pm\\lambda$ of equal magnitude prevent convergence; `power_method` then returns `None`."
 msgstr ""
 
-#: manual/tutorial/mutable.md:214
+#: manual/tutorial/mutable.md:215
 msgid "[mutable API](../api/mutable.md) for every method, its errors and cost."
 msgstr ""
 
-#: manual/tutorial/mutable.md:215
+#: manual/tutorial/mutable.md:216
 msgid "[mutable design](../design/mutable.md) for LU, Cholesky, QL and their error bounds."
 msgstr ""
 
-#: manual/tutorial/mutable.md:217
+#: manual/tutorial/mutable.md:218
 msgid "[error tutorial](error.md) for handling checked results."
 msgstr ""
 
-#: manual/tutorial/mutable.md:218
+#: manual/tutorial/mutable.md:219
 msgid "[immut tutorial](immut.md) for exact, value-oriented work."
 msgstr ""
 
