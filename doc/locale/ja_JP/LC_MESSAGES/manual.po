@@ -1626,19 +1626,19 @@ msgstr "実際の検査付き呼び出しが返したエラーに述語を使う
 
 #: manual/api/error.md:346
 #: manual/api/immut.md:977
-#: manual/api/mutable.md:1301
+#: manual/api/mutable.md:1313
 msgid "Deprecated"
 msgstr "非推奨"
 
 #: manual/api/error.md:348
 #: manual/api/immut.md:982
-#: manual/api/mutable.md:1303
+#: manual/api/mutable.md:1315
 msgid "Item"
 msgstr "項目"
 
 #: manual/api/error.md:348
 #: manual/api/immut.md:982
-#: manual/api/mutable.md:1303
+#: manual/api/mutable.md:1315
 msgid "Replacement"
 msgstr "代替"
 
@@ -1905,7 +1905,7 @@ msgid "`Matrix::unchecked_trace(a)` returns $\\operatorname{tr} A$ and aborts on
 msgstr "`Matrix::unchecked_trace(a)` は $\\operatorname{tr} A$ を返し、正方でない行列では中断します。"
 
 #: manual/api/immut.md:439
-#: manual/api/mutable.md:604
+#: manual/api/mutable.md:616
 msgid "`Matrix::determinant(a)` returns `Ok(det A)` for a square matrix and `NonSquareMatrix` otherwise."
 msgstr "`Matrix::determinant(a)` は正方行列に対して `Ok(det A)` を、それ以外では `NonSquareMatrix` を返します。"
 
@@ -2098,7 +2098,7 @@ msgid "`equal` compares shapes and every entry (forcing them); `to_string` rende
 msgstr "`equal` は形状とすべての成分を（評価して）比較し、`to_string` は `Matrix` と同じ形で表示します。"
 
 #: manual/api/immut.md:808
-#: manual/api/mutable.md:1148
+#: manual/api/mutable.md:1160
 msgid "Vector"
 msgstr "ベクトル"
 
@@ -2179,12 +2179,12 @@ msgid "These method forms exist only for source compatibility; they are hidden f
 msgstr "これらのメソッド形式はソース互換性のためだけに存在します。インターフェースからは隠されており、使用すると警告が出ます。"
 
 #: manual/api/immut.md:985
-#: manual/api/mutable.md:1309
+#: manual/api/mutable.md:1321
 msgid "string interpolation or `Show::output(x, logger)`"
 msgstr "文字列補間または `Show::output(x, logger)`"
 
 #: manual/api/immut.md:986
-#: manual/api/mutable.md:1310
+#: manual/api/mutable.md:1322
 msgid "`Repr(v)` or `@debug.Debug::to_repr(v)`"
 msgstr "`Repr(v)` または `@debug.Debug::to_repr(v)`"
 
@@ -2532,395 +2532,396 @@ msgstr "`Matrix::mul(a, b)` は `a * b` の背後にある行列積です。"
 msgid "It checks $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ and aborts with `Matrix::mul: dimension mismatch` otherwise, then calls `unchecked_matmul`."
 msgstr "$\\operatorname{cols}(A) = \\operatorname{rows}(B)$ を検査し、成り立たなければ `Matrix::mul: dimension mismatch` で中断し、成り立てば `unchecked_matmul` を呼び出します。"
 
-#: manual/api/mutable.md
+#: manual/api/mutable.md:514
 msgid "`Matrix::matmul(a, b)` returns the product when the shapes are compatible and a `DimensionMismatch` error otherwise."
 msgstr "形状が適合する場合、`Matrix::matmul(a, b)` は積を返し、それ以外では `DimensionMismatch` エラーを返します。"
 
-#: manual/api/mutable.md
+#: manual/api/mutable.md:521
 msgid "Use this method when incompatible dimensions should be handled without aborting."
 msgstr "次元が適合しない場合に中断せずエラーとして処理するには、このメソッドを使います。"
 
-#: manual/api/mutable.md:516
-msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ **without validating shapes**."
-msgstr "`Matrix::unchecked_matmul(a, b)` は **形状を検証せずに** $AB$ を返します。"
+#: manual/api/mutable.md:525
+msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ without checking shape compatibility. Its caller must guarantee $\\operatorname{cols}(A) = \\operatorname{rows}(B)$."
+msgstr ""
 
-#: manual/api/mutable.md:522
-msgid "[!CAUTION] On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
-msgstr "[!CAUTION] 前提に違反した場合の結果は規定されておらず、配列インデックスエラーで中断することも、誤った行列を黙って返すこともあります。中断しない形状検査には `matmul` を使い、不一致時の中断を許容できる場合は `*` を使ってください。"
+#: manual/api/mutable.md:533
+#| msgid "[!CAUTION] On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
+msgid "[!CAUTION] The caller must guarantee $\\operatorname{cols}(A) = \\operatorname{rows}(B)$. On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
+msgstr "[!CAUTION] 呼び出し側は $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ を保証しなければなりません。この前提に違反した場合の結果は規定されておらず、配列インデックスエラーで中断することも、誤った行列を黙って返すこともあります。中断しない形状検査には `matmul` を使い、不一致時の中断を許容できる場合は `*` を使ってください。"
 
-#: manual/api/mutable.md:527
+#: manual/api/mutable.md:539
 msgid "Cost: $rcn$ multiply-adds. Large products (at least $4 \\times 16 \\times 16$) pack the columns of $B$ contiguously before multiplying."
 msgstr "コスト: $rcn$ 回の積和。大きな積（$4 \\times 16 \\times 16$ 以上）では、乗算の前に $B$ の列を連続領域にパックします。"
 
-#: manual/api/mutable.md:532
+#: manual/api/mutable.md:544
 msgid "`Matrix::mul_vec(a, x)` returns `Ok(Ax)` when $\\operatorname{cols}(A) = \\operatorname{len}(x)$ and `DimensionMismatch` otherwise."
 msgstr "`Matrix::mul_vec(a, x)` は、$\\operatorname{cols}(A) = \\operatorname{len}(x)$ のとき `Ok(Ax)` を、そうでなければ `DimensionMismatch` を返します。"
 
-#: manual/api/mutable.md:542
+#: manual/api/mutable.md:554
 msgid "`Matrix::unchecked_mul_vec(a, x)` returns $Ax$ and aborts on a length mismatch."
 msgstr "`Matrix::unchecked_mul_vec(a, x)` は $Ax$ を返し、長さが一致しない場合は中断します。"
 
-#: manual/api/mutable.md:550
+#: manual/api/mutable.md:562
 msgid "`pow(k)` returns `Ok(A^k)` for square $A$ and $k \\ge 0$ ($A^0 = I$), by binary exponentiation. `matrix_power` is the same function under another name."
 msgstr "`pow(k)` は正方行列 $A$ と $k \\ge 0$ に対して、二分累乗法により `Ok(A^k)` を返します（$A^0 = I$）。`matrix_power` は同じ関数の別名です。"
 
-#: manual/api/mutable.md:558
+#: manual/api/mutable.md:570
 msgid "Errors: `NonSquareMatrix` (checked first), then `NegativeExponent`."
 msgstr "エラー: `NonSquareMatrix`（最初に検査）、次に `NegativeExponent`。"
 
-#: manual/api/mutable.md:562
+#: manual/api/mutable.md:574
 msgid "Aborting forms of `pow` and `matrix_power`."
 msgstr "`pow` と `matrix_power` の中断する形式です。"
 
-#: manual/api/mutable.md:571
+#: manual/api/mutable.md:583
 msgid "`trace()` returns `Ok(Σ a_ii)` for a square matrix and `NonSquareMatrix` otherwise; `unchecked_trace` aborts instead."
 msgstr "`trace()` は正方行列に対して `Ok(Σ a_ii)` を返し、それ以外では `NonSquareMatrix` を返します。`unchecked_trace` は代わりに中断します。"
 
-#: manual/api/mutable.md:595
+#: manual/api/mutable.md:607
 msgid "Linear systems and decompositions"
 msgstr "連立一次方程式と分解"
 
-#: manual/api/mutable.md:597
+#: manual/api/mutable.md:609
 msgid "All routines in this section are for `Float` and `Double` matrices. Decisions such as \"this pivot is zero\" compare absolute values with `Tolerance::tolerance()` ($10^{-11}$); see the [design page](../design/mutable.md) for the algorithms, costs and error bounds."
 msgstr "この節のルーチンはすべて `Float` と `Double` の行列向けです。「このピボットはゼロである」といった判定は、絶対値を `Tolerance::tolerance()`（$10^{-11}$）と比較して行います。アルゴリズム、コスト、誤差限界については [設計ページ](../design/mutable.md) を参照してください。"
 
-#: manual/api/mutable.md:611
+#: manual/api/mutable.md:623
 msgid "For $n \\le 4$: closed cofactor formulas. For $n \\ge 5$: the product of the diagonal if the matrix is exactly triangular, otherwise LU factorization with partial pivoting, $\\det A = (-1)^{s} \\prod_i u_{ii}$ for $s$ row exchanges. If a pivot falls below the tolerance the result is exactly zero; otherwise it is a product of pivots of magnitude at least $10^{-11}$, which can still underflow to zero or overflow to infinity for large $n$. $\\det$ of the $0 \\times 0$ matrix is $1$."
 msgstr "$n \\le 4$ では閉じた余因子公式を使います。$n \\ge 5$ では、厳密に三角行列なら対角成分の積を、そうでなければ部分ピボット選択付き LU 分解を使い、$s$ 回の行交換に対して $\\det A = (-1)^{s} \\prod_i u_{ii}$ とします。ピボットが許容誤差を下回れば結果はちょうど零です。そうでなければ結果は大きさ $10^{-11}$ 以上のピボットの積ですが、$n$ が大きいと零へのアンダーフローや無限大へのオーバーフローは起こりえます。$0 \\times 0$ 行列の $\\det$ は $1$ です。"
 
-#: manual/api/mutable.md:621
+#: manual/api/mutable.md:633
 msgid "Aborting form of `determinant`."
 msgstr "`determinant` の中断する形式です。"
 
-#: manual/api/mutable.md:629
+#: manual/api/mutable.md:641
 msgid "`Matrix::inverse(a)` returns `Ok(A^{-1})`, `NonSquareMatrix` for a non-square matrix, or `SingularMatrix` when a pivot is below the tolerance."
 msgstr "`Matrix::inverse(a)` は `Ok(A^{-1})` を返します。非正方行列では `NonSquareMatrix` を、ピボットが許容誤差を下回る場合は `SingularMatrix` を返します。"
 
-#: manual/api/mutable.md:636
+#: manual/api/mutable.md:648
 msgid "Identity, diagonal and permutation matrices are recognized and inverted directly ($P^{-1} = P^{\\mathsf T}$); other matrices are solved column by column from an LU factorization with partial pivoting. Cost $\\approx \\tfrac{8}{3} n^3$ flops. The inverse of the $0 \\times 0$ matrix is the $0 \\times 0$ matrix."
 msgstr "単位行列、対角行列、置換行列は判別されて直接反転されます（$P^{-1} = P^{\\mathsf T}$）。それ以外の行列は、部分ピボット選択付き LU 分解から列ごとに解きます。コストは $\\approx \\tfrac{8}{3} n^3$ flops です。$0 \\times 0$ 行列の逆行列は $0 \\times 0$ 行列です。"
 
-#: manual/api/mutable.md:641
+#: manual/api/mutable.md:653
 msgid "The recognition is exact: only a matrix that has the structure exactly takes the shortcut, so the shortcut returns what the LU path would."
 msgstr "判定は厳密です。構造をちょうど持つ行列だけが近道を通るので、近道の結果は LU の経路と同じになります。"
 
-#: manual/api/mutable.md:646
+#: manual/api/mutable.md:658
 msgid "`Matrix::unchecked_inverse(a)` returns `Some(A^{-1})` or `None` for a singular matrix, and aborts on a non-square one."
 msgstr "`Matrix::unchecked_inverse(a)` は `Some(A^{-1})` を、特異行列では `None` を返し、非正方行列では中断します。"
 
-#: manual/api/mutable.md:655
+#: manual/api/mutable.md:667
 msgid "`is_invertible()` returns `Ok(true)` when LU factorization finds no pivot below the tolerance, `Ok(false)` otherwise, and `NonSquareMatrix` for a non-square matrix; `unchecked_is_invertible` aborts instead."
 msgstr "`is_invertible()` は、LU 分解で許容誤差を下回るピボットが見つからなければ `Ok(true)` を、見つかれば `Ok(false)` を、非正方行列では `NonSquareMatrix` を返します。`unchecked_is_invertible` は代わりに中断します。"
 
-#: manual/api/mutable.md:666
+#: manual/api/mutable.md:678
 msgid "`Matrix::rank(a)` returns the number of pivots found by Gaussian elimination with partial pivoting on a copy of `a`."
 msgstr "`Matrix::rank(a)` は、`a` のコピーに対して部分ピボット選択付き Gauss 消去を行い、見つかったピボットの数を返します。"
 
-#: manual/api/mutable.md:673
+#: manual/api/mutable.md:685
 msgid "A column whose largest remaining entry is below the tolerance contributes no pivot. Works for any shape; `a` is unchanged. Cost $O(\\min(r, c)\\, r c)$."
 msgstr "残りの要素の最大値が許容誤差を下回る列はピボットに寄与しません。任意の形状で動作し、`a` は変更されません。コストは $O(\\min(r, c)\\, r c)$ です。"
 
-#: manual/api/mutable.md:678
+#: manual/api/mutable.md:690
 msgid "`Matrix::reduce_row_elimination(a)` transforms `a` **in place** into reduced row echelon form by Gauss–Jordan elimination with partial pivoting, and returns `a` itself."
 msgstr "`Matrix::reduce_row_elimination(a)` は、部分ピボット選択付き Gauss–Jordan 消去によって `a` を **インプレースで** 被約行階段形に変換し、`a` 自身を返します。"
 
-#: manual/api/mutable.md:686
+#: manual/api/mutable.md:698
 msgid "Columns are processed left to right. In each column the entry of largest magnitude at or below the current row is swapped up; if its magnitude is at most the tolerance, that one entry is set to zero and the column is skipped (the other entries below it, also at most the tolerance, are left as they are). Otherwise the pivot row is divided by the pivot, which makes the pivot one, and every other row with an entry of magnitude above the tolerance in the pivot column has a multiple of the pivot row subtracted; an entry at or below the tolerance is set to zero without touching the rest of its row. Copy first if you need the original."
 msgstr "列は左から右へ処理します。各列で、現在の行以下にある絶対値最大の要素を上に交換します。その絶対値が許容誤差以下なら、その一つの要素だけを零にしてその列を飛ばします（その下にある、やはり許容誤差以下の他の要素はそのまま残ります）。そうでなければピボット行をピボットで割ってピボットを一にし、ピボット列に許容誤差を超える要素を持つ他の各行からピボット行の倍数を引きます。許容誤差以下の要素は、その行の残りに触れずに零にします。元の行列が必要なら先にコピーしてください。"
 
-#: manual/api/mutable.md:698
+#: manual/api/mutable.md:710
 msgid "`Matrix::cholesky_decomposition(a)` returns `Some(L)` with $L$ lower triangular, positive diagonal and $L L^{\\mathsf T} = A$, or `None`."
 msgstr "`Matrix::cholesky_decomposition(a)` は、$L$ が正の対角要素を持つ下三角行列で $L L^{\\mathsf T} = A$ を満たす `Some(L)`、または `None` を返します。"
 
-#: manual/api/mutable.md:705
+#: manual/api/mutable.md:717
 msgid "`None` means that `a` is not square, not symmetric within tolerance, or that a diagonal pivot $a_{jj} - \\sum_{k<j} l_{jk}^2$ is at most the tolerance (the matrix is not positive definite, or nearly singular). Only the lower triangle of `a` is read. Cost $\\approx n^3/3$ flops."
 msgstr "`None` は、`a` が正方でない、許容誤差の範囲で対称でない、あるいは対角ピボット $a_{jj} - \\sum_{k<j} l_{jk}^2$ が許容誤差以下である（行列が正定値でないか、特異に近い）ことを意味します。読むのは `a` の下三角部分だけです。コストは $\\approx n^3/3$ flops です。"
 
-#: manual/api/mutable.md:710
+#: manual/api/mutable.md:722
 msgid "Two fast paths run first: the exact identity is returned as a copy, and an exactly diagonal matrix gives the square roots of its diagonal (or `None` if one of them is at most the tolerance)."
 msgstr "先に二つの高速経路が実行されます。厳密な単位行列はコピーが返され、厳密に対角な行列では対角要素の平方根が返されます（そのいずれかが許容誤差以下なら `None`）。"
 
-#: manual/api/mutable.md:716
+#: manual/api/mutable.md:728
 msgid "`Matrix::is_positive_definite(a)` returns whether `cholesky_decomposition` succeeds."
 msgstr "`Matrix::is_positive_definite(a)` は `cholesky_decomposition` が成功するかどうかを返します。"
 
-#: manual/api/mutable.md:725
+#: manual/api/mutable.md:737
 msgid "`Matrix::is_symmetric(a)` returns `true` when `a` is square and $|a_{ij} - a_{ji}| \\le \\mathrm{tol}$ for all $i < j$."
 msgstr "`Matrix::is_symmetric(a)` は、`a` が正方で、すべての $i < j$ について $|a_{ij} - a_{ji}| \\le \\mathrm{tol}$ であるときに `true` を返します。"
 
-#: manual/api/mutable.md:751
+#: manual/api/mutable.md:763
 msgid "Eigenvalues"
 msgstr "固有値"
 
-#: manual/api/mutable.md:755
+#: manual/api/mutable.md:767
 msgid "`Matrix::eigen(a)` returns the eigenvalues and eigenvectors of a real symmetric matrix as `(values, vectors)`, where column $k$ of `vectors` is an eigenvector for `values[k]`."
 msgstr "`Matrix::eigen(a)` は実対称行列の固有値と固有ベクトルを `(values, vectors)` として返します。`vectors` の列 $k$ は `values[k]` に対する固有ベクトルです。"
 
-#: manual/api/mutable.md:763
+#: manual/api/mutable.md:775
 msgid "Aborts if `a` is not square, not symmetric within tolerance, or if an eigenvalue does not converge within 60 iterations."
 msgstr "`a` が正方でない場合、許容誤差の範囲で対称でない場合、またはある固有値が 60 回の反復以内に収束しない場合は中断します。"
 
-#: manual/api/mutable.md:765
+#: manual/api/mutable.md:777
 msgid "For $2 \\times 2$ input a closed formula is used on the symmetric part $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$, $s = \\tfrac12 (a_{01} + a_{10})$: $\\lambda_{1,2} = m \\pm \\sqrt{\\big(\\tfrac{a-d}{2}\\big)^2 + s^2}$ with $m = \\tfrac12 \\operatorname{tr} A$, ordered $\\lambda_1 \\ge \\lambda_2$. The eigenvector columns are **not normalized**: each is scaled so that its entry of largest magnitude is $1$. A diagonal matrix returns its diagonal entries exactly."
 msgstr "$2 \\times 2$ の入力では、対称部分 $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$（$s = \\tfrac12 (a_{01} + a_{10})$）に閉じた公式を使います。$m = \\tfrac12 \\operatorname{tr} A$ として $\\lambda_{1,2} = m \\pm \\sqrt{\\big(\\tfrac{a-d}{2}\\big)^2 + s^2}$ で、$\\lambda_1 \\ge \\lambda_2$ の順に並べます。固有ベクトルの列は**正規化されません**。各列は絶対値最大の要素が $1$ になるようにスケーリングされます。対角行列では対角要素がそのまま厳密に返されます。"
 
-#: manual/api/mutable.md:772
+#: manual/api/mutable.md:784
 msgid "For other sizes the matrix is reduced to tridiagonal form by Householder reflections and diagonalized by the implicit QL algorithm with Wilkinson shifts. Only the lower triangle is read. The eigenvector columns are orthonormal up to rounding. The eigenvalues are not sorted."
 msgstr "それ以外のサイズでは、Householder 反射で三重対角形に縮約し、Wilkinson シフト付きの陰的 QL アルゴリズムで対角化します。読むのは下三角部分だけです。固有ベクトルの列は丸め誤差の範囲で正規直交です。固有値は整列されません。"
 
-#: manual/api/mutable.md:776
+#: manual/api/mutable.md:788
 msgid "Cost $O(n^3)$."
 msgstr "コストは $O(n^3)$ です。"
 
-#: manual/api/mutable.md:778
+#: manual/api/mutable.md:790
 msgid "Every decision inside `eigen` is relative to the entries (a deflated off-diagonal entry is negligible next to its diagonal neighbours), so `eigen` of $sA$ is $s$ times `eigen` of $A$ up to rounding, for any scale $s$; only the symmetry check uses the absolute tolerance. See the [design page](../design/mutable.md#symmetric-eigenvalue-problem)."
 msgstr "`eigen` の内部の判定はすべて要素に対して相対的です（減次される副対角要素は、隣の対角要素に比べて無視できるもの）。そのため任意のスケール $s$ について、$sA$ の `eigen` は丸め誤差を除いて $A$ の `eigen` の $s$ 倍です。絶対許容誤差を使うのは対称性の判定だけです。[設計ページ](../design/mutable.md#symmetric-eigenvalue-problem) を参照してください。"
 
-#: manual/api/mutable.md:786
+#: manual/api/mutable.md:798
 msgid "`Matrix::power_method(a, max_iterations)` approximates a dominant eigenpair $(\\lambda, x)$ by power iteration and returns `Some((λ, x))` once $\\lVert A x - \\lambda x \\rVert_\\infty \\le \\mathrm{tol}$."
 msgstr "`Matrix::power_method(a, max_iterations)` は、べき乗反復により優勢な固有対 $(\\lambda, x)$ を近似し、$\\lVert A x - \\lambda x \\rVert_\\infty \\le \\mathrm{tol}$ となった時点で `Some((λ, x))` を返します。"
 
-#: manual/api/mutable.md:794
+#: manual/api/mutable.md:806
 msgid "$x$ is scaled so that $\\lVert x \\rVert_\\infty = 1$; $\\lambda$ is the Rayleigh quotient $x^{\\mathsf T} A x / x^{\\mathsf T} x$."
 msgstr "$x$ は $\\lVert x \\rVert_\\infty = 1$ となるようにスケーリングされます。$\\lambda$ は Rayleigh 商 $x^{\\mathsf T} A x / x^{\\mathsf T} x$ です。"
 
-#: manual/api/mutable.md:796
+#: manual/api/mutable.md:808
 msgid "Returns `None` when the iteration does not meet the residual test within `max_iterations` steps, or when the iterate becomes numerically zero (for example for a nilpotent matrix). Two dominant eigenvalues of equal magnitude and opposite sign, such as $\\pm 1$, prevent convergence."
 msgstr "`max_iterations` ステップ以内に反復が残差判定を満たさない場合、または反復ベクトルが数値的にゼロになった場合（たとえば冪零行列）は `None` を返します。$\\pm 1$ のように絶対値が等しく符号が逆の 2 つの優勢固有値があると収束しません。"
 
-#: manual/api/mutable.md:800
+#: manual/api/mutable.md:812
 msgid "Aborts for a non-square or empty matrix."
 msgstr "非正方行列または空行列では中断します。"
 
-#: manual/api/mutable.md:801
+#: manual/api/mutable.md:813
 msgid "Each iteration costs two matrix-vector products, $O(n^2)$: one for the Rayleigh quotient and the residual, and one for the next iterate (the code does not reuse the first). The starting vector is $(1, \\dots, 1)$, or the first coordinate vector $e_k$ with $A e_k$ above the tolerance if $A (1, \\dots, 1)^{\\mathsf T}$ is not; it is multiplied by $A$ and scaled once before the first residual test."
 msgstr "各反復のコストは行列ベクトル積二回、$O(n^2)$ です。一回は Rayleigh 商と残差のため、もう一回は次の反復ベクトルのためです（コードは最初の積を再利用しません）。初期ベクトルは $(1, \\dots, 1)$ で、$A (1, \\dots, 1)^{\\mathsf T}$ が許容誤差以下なら、$A e_k$ が許容誤差を超える最初の座標ベクトル $e_k$ を使います。最初の残差判定の前に、これに一度 $A$ を掛けてスケーリングします。"
 
-#: manual/api/mutable.md:807
+#: manual/api/mutable.md:819
 msgid "The residual test is absolute, so the accuracy of $x$ scales with $\\lVert A \\rVert$: for a matrix of size about $10^{-6}$ the test passes while $x$ is still wrong in the sixth digit."
 msgstr "残差判定は絶対的なので、$x$ の精度は $\\lVert A \\rVert$ に比例して変わります。大きさが $10^{-6}$ 程度の行列では、$x$ の 6 桁目がまだ誤っていても判定に通ります。"
 
-#: manual/api/mutable.md:831
+#: manual/api/mutable.md:843
 msgid "Statistics and norms"
 msgstr "統計量とノルム"
 
-#: manual/api/mutable.md:833
+#: manual/api/mutable.md:845
 msgid "The statistics treat the matrix as a flat list of its $N = rc$ entries."
 msgstr "統計量は、行列を $N = rc$ 個の要素からなる平坦なリストとして扱います。"
 
-#: manual/api/mutable.md:837
+#: manual/api/mutable.md:849
 msgid "`mean()` returns `Ok(\\bar a)`, $\\bar a = \\tfrac1N \\sum a_{ij}$, or `EmptyMatrix` when $N = 0$; `unchecked_mean` aborts instead."
 msgstr "`mean()` は `Ok(\\bar a)`（$\\bar a = \\tfrac1N \\sum a_{ij}$）を返し、$N = 0$ のときは `EmptyMatrix` を返します。`unchecked_mean` は代わりに中断します。"
 
-#: manual/api/mutable.md:847
+#: manual/api/mutable.md:859
 msgid "`variance()` returns the population variance $\\tfrac1N \\sum (a_{ij} - \\bar a)^2$ (two-pass), or `EmptyMatrix`."
 msgstr "`variance()` は母分散 $\\tfrac1N \\sum (a_{ij} - \\bar a)^2$（2 パス）を返すか、`EmptyMatrix` を返します。"
 
-#: manual/api/mutable.md:857
+#: manual/api/mutable.md:869
 msgid "`std_dev()` returns the square root of the population variance, or `EmptyMatrix`."
 msgstr "`std_dev()` は母分散の平方根を返すか、`EmptyMatrix` を返します。"
 
-#: manual/api/mutable.md:867
+#: manual/api/mutable.md:879
 msgid "The largest or smallest entry by `Compare`, or `EmptyMatrix`."
 msgstr "`Compare` による最大または最小の要素を返します。空なら `EmptyMatrix` です。"
 
-#: manual/api/mutable.md:874
+#: manual/api/mutable.md:886
 msgid "With NaN entries the result depends on their position; filter them first."
 msgstr "NaN の要素があると、結果はその位置に依存します。先に取り除いてください。"
 
-#: manual/api/mutable.md:878
+#: manual/api/mutable.md:890
 msgid "Aborting forms of `max_element` and `min_element`."
 msgstr "`max_element` と `min_element` の中断する形式です。"
 
-#: manual/api/mutable.md:887
+#: manual/api/mutable.md:899
 msgid "`Matrix::frobenius_norm(a)` returns $\\lVert A \\rVert_F = \\sqrt{\\sum a_{ij}^2}$."
 msgstr "`Matrix::frobenius_norm(a)` は $\\lVert A \\rVert_F = \\sqrt{\\sum a_{ij}^2}$ を返します。"
 
-#: manual/api/mutable.md:893
+#: manual/api/mutable.md:905
 msgid "The sum of squares is not rescaled, so entries above about $10^{154}$ overflow for `Double`. An empty matrix has norm $0$."
 msgstr "二乗和はスケーリングし直さないため、`Double` ではおよそ $10^{154}$ を超える要素でオーバーフローします。空行列のノルムは $0$ です。"
 
-#: manual/api/mutable.md:910
+#: manual/api/mutable.md:922
 msgid "Views"
 msgstr "ビュー"
 
-#: manual/api/mutable.md:914
+#: manual/api/mutable.md:926
 msgid "Read or write position `i` of the viewed row or column; they back `view[i]` and `view[i] = x`."
 msgstr "ビューが指す行または列の位置 `i` を読み書きします。`view[i]` と `view[i] = x` を支えます。"
 
-#: manual/api/mutable.md:930
+#: manual/api/mutable.md:942
 msgid "The number of columns (row view) or rows (column view) of the matrix."
 msgstr "行列の列数（行ビュー）または行数（列ビュー）です。"
 
-#: manual/api/mutable.md:939
+#: manual/api/mutable.md:951
 msgid "Traverse the viewed entries in order."
 msgstr "ビューが指す要素を順に走査します。"
 
-#: manual/api/mutable.md:952
+#: manual/api/mutable.md:964
 msgid "Replace every viewed entry by `f(entry)`, in the underlying matrix."
 msgstr "ビューが指す各要素を、元の行列の中で `f(entry)` に置き換えます。"
 
-#: manual/api/mutable.md:961
+#: manual/api/mutable.md:973
 msgid "Copy the viewed entries out."
 msgstr "ビューが指す要素をコピーして取り出します。"
 
-#: manual/api/mutable.md:972
+#: manual/api/mutable.md:984
 msgid "Render the viewed entries as `|a, b, c|`."
 msgstr "ビューが指す要素を `|a, b, c|` として出力します。"
 
-#: manual/api/mutable.md:979
+#: manual/api/mutable.md:991
 msgid "Transpose view"
 msgstr "転置ビュー"
 
-#: manual/api/mutable.md:981
+#: manual/api/mutable.md:993
 msgid "Every `Transpose` method addresses the transposed matrix and works on the shared storage, unless it is documented to return a new value."
 msgstr "`Transpose` のメソッドはすべて転置された行列を対象とし、新しい値を返すと明記されていない限り共有ストレージ上で動作します。"
 
-#: manual/api/mutable.md:986
+#: manual/api/mutable.md:998
 msgid "The shape of the view: `row()` is the column count of the wrapped matrix and `col()` its row count."
 msgstr "ビューの形状です。`row()` はラップした行列の列数、`col()` はその行数です。"
 
-#: manual/api/mutable.md:996
+#: manual/api/mutable.md:1008
 msgid "`get(i, j)` and `set(i, j, x)` access entry $(i, j)$ of the view, that is $(j, i)$ of the matrix; `at` backs `t[i][j]` and `t[i][j] = x`."
 msgstr "`get(i, j)` と `set(i, j, x)` はビューの要素 $(i, j)$、すなわち行列の $(j, i)$ にアクセスします。`at` は `t[i][j]` と `t[i][j] = x` を支えます。"
 
-#: manual/api/mutable.md:1008
+#: manual/api/mutable.md:1020
 msgid "`Transpose::transpose(t)` returns the wrapped matrix itself, not a copy."
 msgstr "`Transpose::transpose(t)` はコピーではなく、ラップした行列そのものを返します。"
 
-#: manual/api/mutable.md:1016
+#: manual/api/mutable.md:1028
 msgid "`Transpose::materialize(t)` copies the view into a new matrix of the transposed shape."
 msgstr "`Transpose::materialize(t)` はビューを、転置した形状の新しい行列にコピーします。"
 
-#: manual/api/mutable.md:1025
+#: manual/api/mutable.md:1037
 msgid "`Transpose::copy(t)` returns a view of a deep copy of the wrapped matrix."
 msgstr "`Transpose::copy(t)` は、ラップした行列のディープコピーに対するビューを返します。"
 
-#: manual/api/mutable.md:1031
+#: manual/api/mutable.md:1043
 msgid "Traversal: `Transpose::each`, `Transpose::eachi`, `Transpose::each_row_col`, `Transpose::each_row`, `Transpose::eachi_row`, `Transpose::each_col`, `Transpose::eachi_col`"
 msgstr "走査: `Transpose::each`、`Transpose::eachi`、`Transpose::each_row_col`、`Transpose::each_row`、`Transpose::eachi_row`、`Transpose::each_col`、`Transpose::eachi_col`"
 
-#: manual/api/mutable.md:1033
+#: manual/api/mutable.md:1045
 msgid "Traverse the view."
 msgstr "ビューを走査します。"
 
-#: manual/api/mutable.md:1045
+#: manual/api/mutable.md:1057
 msgid "`each`, `eachi` and `each_row_col` visit entries in the storage order of the wrapped matrix, which is column-major for the view; `eachi` passes the row-major index *of the view*, and `each_row_col` passes view coordinates. The row and column forms visit a row or column of the view in order."
 msgstr "`each`、`eachi`、`each_row_col` は、ラップした行列のストレージ順（ビューにとっては列優先）に要素を訪れます。`eachi` は *ビューの* 行優先インデックスを渡し、`each_row_col` はビューの座標を渡します。行と列の形式は、ビューの 1 つの行または列を順に訪れます。"
 
-#: manual/api/mutable.md:1052
+#: manual/api/mutable.md:1064
 msgid "Copy one row or column of the view."
 msgstr "ビューの 1 つの行または列をコピーします。"
 
-#: manual/api/mutable.md:1063
+#: manual/api/mutable.md:1075
 msgid "`map` returns a new view of a new matrix; the `*_inplace` forms change the shared storage."
 msgstr "`map` は新しい行列に対する新しいビューを返します。`*_inplace` 形式は共有ストレージを変更します。"
 
-#: manual/api/mutable.md:1078
+#: manual/api/mutable.md:1090
 msgid "Exchange two rows or columns of the view in place (columns or rows of the wrapped matrix)."
 msgstr "ビューの 2 つの行または列（ラップした行列にとっては列または行）をインプレースで交換します。"
 
-#: manual/api/mutable.md:1088
+#: manual/api/mutable.md:1100
 msgid "Block concatenation of views, returning a view of a new matrix."
 msgstr "ビューのブロック連結で、新しい行列に対するビューを返します。"
 
-#: manual/api/mutable.md:1097
+#: manual/api/mutable.md:1109
 msgid "Entry-wise arithmetic, returning a view of a new matrix."
 msgstr "要素ごとの算術演算で、新しい行列に対するビューを返します。"
 
-#: manual/api/mutable.md:1109
+#: manual/api/mutable.md:1121
 msgid "`Transpose::mul(s, t)` returns the product of the two transposed views. If the wrapped matrices are $U$ and $V$, their shapes must satisfy $U_{\\text{rows}} = V_{\\text{cols}}$. The result has shape $U_{\\text{cols}} \\times V_{\\text{rows}}$ and entry $(i, k)$ is $\\sum_j U_{ji} V_{kj}$. The implementation preserves this factor order for non-commutative scalar multiplication and does not materialize the input views. A dimension mismatch aborts, as it does for `Matrix::mul`."
 msgstr "`Transpose::mul(s, t)` は 2 つの転置ビューの積を返します。ラップされた行列を $U$ と $V$ とすると、形状は $U_{\\text{rows}} = V_{\\text{cols}}$ を満たす必要があります。結果の形状は $U_{\\text{cols}} \\times V_{\\text{rows}}$ で、$(i, k)$ 成分は $\\sum_j U_{ji} V_{kj}$ です。実装はスカラー乗算が非可換でもこの因子順序を保ち、入力ビューを実体化しません。次元が一致しない場合は `Matrix::mul` と同様に abort します。"
 
-#: manual/api/mutable.md:1123
+#: manual/api/mutable.md:1135
 msgid "`equal` compares the wrapped matrices; `to_string` renders the view row by row."
 msgstr "`equal` はラップした行列どうしを比較し、`to_string` はビューを行ごとに出力します。"
 
-#: manual/api/mutable.md:1152
+#: manual/api/mutable.md:1164
 msgid "`Vector::from_array(xs)` adopts `xs` as the vector's storage without copying."
 msgstr "`Vector::from_array(xs)` は `xs` をコピーせずにベクトルのストレージとして採用します。"
 
-#: manual/api/mutable.md:1160
+#: manual/api/mutable.md:1172
 msgid "$n$ copies of a value, or $(f(0), \\dots, f(n-1))$."
 msgstr "値の $n$ 個のコピー、または $(f(0), \\dots, f(n-1))$ です。"
 
-#: manual/api/mutable.md:1169
+#: manual/api/mutable.md:1181
 msgid "Length, deep copy, and iterator."
 msgstr "長さ、ディープコピー、イテレータです。"
 
-#: manual/api/mutable.md:1179
+#: manual/api/mutable.md:1191
 msgid "Read or write element `i` in place; they back `v[i]` and `v[i] = x`. An out-of-range index aborts."
 msgstr "要素 `i` をインプレースで読み書きします。`v[i]` と `v[i] = x` を支えます。範囲外のインデックスでは中断します。"
 
-#: manual/api/mutable.md:1191
+#: manual/api/mutable.md:1203
 msgid "`map` and `zip_with` return new vectors (`zip_with` aborts on different lengths); `map_inplace` rewrites every element."
 msgstr "`map` と `zip_with` は新しいベクトルを返します（`zip_with` は長さが異なると中断します）。`map_inplace` はすべての要素を書き換えます。"
 
-#: manual/api/mutable.md:1203
+#: manual/api/mutable.md:1215
 msgid "Element-wise $u + v$, Hadamard $u \\odot v$, $-u$, and $u + a$. Different lengths abort. There is no `Sub`; write `u + -v`."
 msgstr "要素ごとの $u + v$、Hadamard 積 $u \\odot v$、$-u$、$u + a$ です。長さが異なる場合は中断します。`Sub` はないので、`u + -v` と書いてください。"
 
-#: manual/api/mutable.md:1215
+#: manual/api/mutable.md:1227
 msgid "$(a v_i)$ and $(v_i a)$, as new vectors or in place."
 msgstr "$(a v_i)$ と $(v_i a)$ を、新しいベクトルとして、またはインプレースで求めます。"
 
-#: manual/api/mutable.md:1228
+#: manual/api/mutable.md:1240
 msgid "`Vector::dot(u, v)` returns $\\sum_i u_i v_i$, summed left to right; different lengths abort."
 msgstr "`Vector::dot(u, v)` は左から右へ足し合わせた $\\sum_i u_i v_i$ を返します。長さが異なる場合は中断します。"
 
-#: manual/api/mutable.md:1237
+#: manual/api/mutable.md:1249
 msgid "`Vector::lerp(u, v, t)` returns $(1 - t) u + t v$."
 msgstr "`Vector::lerp(u, v, t)` は $(1 - t) u + t v$ を返します。"
 
-#: manual/api/mutable.md:1245
+#: manual/api/mutable.md:1257
 msgid "`Vector::lin_comb(weights, vectors)` returns $\\sum_k w_k v_k$, accumulated into one new vector."
 msgstr "`Vector::lin_comb(weights, vectors)` は $\\sum_k w_k v_k$ を返します。結果は一つの新しいベクトルに累積されます。"
 
-#: manual/api/mutable.md:1252
+#: manual/api/mutable.md:1264
 msgid "Empty inputs, different counts of weights and vectors, or vectors of different lengths abort."
 msgstr "入力が空の場合、重みとベクトルの個数が異なる場合、またはベクトルの長さが異なる場合は中断します。"
 
-#: manual/api/mutable.md:1257
+#: manual/api/mutable.md:1269
 msgid "`lin_comb(a, u, b, v)` returns $a u + b v$; it is a top-level function."
 msgstr "`lin_comb(a, u, b, v)` は $a u + b v$ を返します。これはトップレベル関数です。"
 
-#: manual/api/mutable.md:1265
+#: manual/api/mutable.md:1277
 msgid "The vector as a $1 \\times n$ or $n \\times 1$ matrix (copied), the diagonal matrix $\\operatorname{diag}(v)$, and the outer product $u v^{\\mathsf T}$."
 msgstr "ベクトルを $1 \\times n$ または $n \\times 1$ 行列として（コピーして）返すもの、対角行列 $\\operatorname{diag}(v)$、外積 $u v^{\\mathsf T}$ です。"
 
-#: manual/api/mutable.md:1277
+#: manual/api/mutable.md:1289
 msgid "`equal` compares elements (backs `==`); `to_string` renders `|a, b, c|`."
 msgstr "`equal` は要素を比較し（`==` を支えます）、`to_string` は `|a, b, c|` を出力します。"
 
-#: manual/api/mutable.md:1305
+#: manual/api/mutable.md:1317
 msgid "`Matrix::map_in_place`, `map_row_in_place`, `map_col_in_place` (aliases)"
 msgstr "`Matrix::map_in_place`、`map_row_in_place`、`map_col_in_place`（別名）"
 
-#: manual/api/mutable.md:1306
+#: manual/api/mutable.md:1318
 msgid "`Transpose::map_in_place`, `map_row_in_place`, `map_col_in_place` (aliases)"
 msgstr "`Transpose::map_in_place`、`map_row_in_place`、`map_col_in_place`（別名）"
 
-#: manual/api/mutable.md:1306
+#: manual/api/mutable.md:1318
 msgid "the `*_inplace` names"
 msgstr "`*_inplace` の名前"
 
-#: manual/api/mutable.md:1307
+#: manual/api/mutable.md:1319
 msgid "`Vector::map_in_place`, `left_scale_in_place`, `right_scale_in_place` (aliases)"
 msgstr "`Vector::map_in_place`、`left_scale_in_place`、`right_scale_in_place`（別名）"
 
-#: manual/api/mutable.md:1308
+#: manual/api/mutable.md:1320
 msgid "`not_equal` method form on `Matrix`, `Transpose`, `Vector` (hidden)"
 msgstr "`Matrix`、`Transpose`、`Vector` の `not_equal` メソッド形式（非公開）"
 
-#: manual/api/mutable.md:1309
+#: manual/api/mutable.md:1321
 msgid "`output` method form on `Matrix`, `Transpose`, `RowView`, `ColView`, `Vector` (hidden)"
 msgstr "`Matrix`、`Transpose`、`RowView`、`ColView`、`Vector` の `output` メソッド形式（非公開）"
 
-#: manual/api/mutable.md:1310
+#: manual/api/mutable.md:1322
 msgid "`Vector::to_repr` (hidden)"
 msgstr "`Vector::to_repr`（非公開）"
 
-#: manual/api/mutable.md:1311
+#: manual/api/mutable.md:1323
 msgid "`Vector::arbitrary` (hidden)"
 msgstr "`Vector::arbitrary`（非公開）"
 
@@ -6762,7 +6763,7 @@ msgstr "**検査付きの積。** 失敗を値にしなければならない場�
 #: manual/tutorial/error.md:199
 #: manual/tutorial/immut.md:168
 #: manual/tutorial/internal.md:96
-#: manual/tutorial/mutable.md:193
+#: manual/tutorial/mutable.md:194
 #: manual/tutorial/perf.md:47
 #: manual/tutorial/perf_runner.md:49
 #: manual/tutorial/perf_support.md:66
@@ -6794,7 +6795,7 @@ msgstr "**浮動小数点の結果を厳密に比較する。** `Double` 行列�
 #: manual/tutorial/error.md:210
 #: manual/tutorial/immut.md:187
 #: manual/tutorial/internal.md:103
-#: manual/tutorial/mutable.md:212
+#: manual/tutorial/mutable.md:213
 #: manual/tutorial/perf.md:53
 #: manual/tutorial/perf_runner.md:54
 #: manual/tutorial/perf_support.md:74
@@ -7778,51 +7779,51 @@ msgstr "**コピーなしの転置。** `to_transpose()` は $O(1)$ のビュー
 msgid "**Unchecked forms in hot loops.** After you have established the preconditions (for example square matrices built by your own code), the `unchecked_*` methods skip validation. Use `matmul` when dimensions may be incompatible and the caller should handle an error; use `unchecked_matmul` only when compatible shapes are already guaranteed."
 msgstr "**ホットループでの検査なし形式。** 前提条件を確立した後（たとえば自分のコードで構築した正方行列）、`unchecked_*` メソッドは検証を省略します。次元が適合しない可能性があり、呼び出し側でエラーを処理する場合は `matmul` を使い、形状の適合が保証されている場合に限り `unchecked_matmul` を使ってください。"
 
-#: manual/tutorial/mutable.md:185
+#: manual/tutorial/mutable.md:186
 msgid "**Scaling.** The routines decide \"zero\" with an absolute threshold of $10^{-11}$. Scale your data to order one first; otherwise tiny but regular matrices are reported singular. See the [design page](../design/mutable.md#tolerance-based-decisions)."
 msgstr "**スケーリング。** ルーチンは $10^{-11}$ という絶対しきい値で「ゼロ」を判定します。先にデータを 1 程度の大きさにスケーリングしてください。そうしないと、小さいだけの正則な行列が特異と報告されます。[設計ページ](../design/mutable.md#tolerance-based-decisions) を参照してください。"
 
-#: manual/tutorial/mutable.md:190
+#: manual/tutorial/mutable.md:191
 msgid "**Generic code.** Wrap the matrix in `@default.DenseMatrix` to pass it to functions bounded by the `algebra` traits; `inner()` gets it back."
 msgstr "**汎用コード。** `algebra` の trait で境界付けられた関数に渡すには、行列を `@default.DenseMatrix` でラップしてください。`inner()` で元に戻せます。"
 
-#: manual/tutorial/mutable.md:195
+#: manual/tutorial/mutable.md:196
 msgid "**Forgetting that `reduce_row_elimination` mutates.** It transforms the receiver in place and returns it. Call `copy()` first."
 msgstr "**`reduce_row_elimination` が変更を行うことを忘れる。** レシーバーをインプレースで変換して返します。先に `copy()` を呼んでください。"
 
-#: manual/tutorial/mutable.md:197
+#: manual/tutorial/mutable.md:198
 msgid "**Expecting normalized $2 \\times 2$ eigenvectors.** For $2 \\times 2$ input, each eigenvector column is scaled so that its largest entry is $1$, not to unit length; larger inputs return orthonormal columns."
 msgstr "**$2 \\times 2$ の固有ベクトルが正規化されていると思い込む。** $2 \\times 2$ の入力では、各固有ベクトルの列は最大の要素が $1$ になるようにスケーリングされ、長さ 1 にはなりません。より大きな入力では正規直交な列が返ります。"
 
-#: manual/tutorial/mutable.md:200
+#: manual/tutorial/mutable.md:201
 msgid "**Matrices far from order one.** The singularity and definiteness tests use the absolute threshold $10^{-11}$. A matrix whose entries are all around $10^{-12}$ is singular to `inverse` and not positive definite to `cholesky_decomposition`; scale first. `eigen` does not depend on the scale."
 msgstr "**1 程度から大きく外れた行列。** 特異性と正定値性の判定は絶対しきい値 $10^{-11}$ を使います。要素がすべて $10^{-12}$ 程度の行列は、`inverse` にとっては特異で、`cholesky_decomposition` にとっては正定値ではありません。先にスケーリングしてください。`eigen` はスケールに依存しません。"
 
-#: manual/tutorial/mutable.md:204
+#: manual/tutorial/mutable.md:205
 msgid "**Numerical routines on integers.** `determinant`, `inverse`, `rank`, `eigen` and friends need `Tolerance`, which exists only for `Float` and `Double`. For exact integer determinants use `@immut.Matrix::determinant`."
 msgstr "**整数に対する数値ルーチン。** `determinant`、`inverse`、`rank`、`eigen` などは `Tolerance` を必要としますが、これは `Float` と `Double` にしかありません。厳密な整数の行列式には `@immut.Matrix::determinant` を使ってください。"
 
-#: manual/tutorial/mutable.md:207
+#: manual/tutorial/mutable.md:208
 msgid "**`Float` precision.** The tolerance is far below `Float` precision; nearly singular `Float` matrices are not detected. Prefer `Double`."
 msgstr "**`Float` の精度。** 許容誤差は `Float` の精度よりはるかに小さいので、ほぼ特異な `Float` 行列は検出されません。`Double` を使ってください。"
 
-#: manual/tutorial/mutable.md:209
+#: manual/tutorial/mutable.md:210
 msgid "**Power method on symmetric spectra.** Eigenvalues $\\pm\\lambda$ of equal magnitude prevent convergence; `power_method` then returns `None`."
 msgstr "**対称なスペクトルに対するべき乗法。** 絶対値の等しい固有値 $\\pm\\lambda$ があると収束しません。その場合 `power_method` は `None` を返します。"
 
-#: manual/tutorial/mutable.md:214
+#: manual/tutorial/mutable.md:215
 msgid "[mutable API](../api/mutable.md) for every method, its errors and cost."
 msgstr "すべてのメソッドとそのエラー、コストについては [mutable API](../api/mutable.md)。"
 
-#: manual/tutorial/mutable.md:215
+#: manual/tutorial/mutable.md:216
 msgid "[mutable design](../design/mutable.md) for LU, Cholesky, QL and their error bounds."
 msgstr "LU、Cholesky、QL とその誤差限界については [mutable の設計](../design/mutable.md)。"
 
-#: manual/tutorial/mutable.md:217
+#: manual/tutorial/mutable.md:218
 msgid "[error tutorial](error.md) for handling checked results."
 msgstr "検査付きの結果の扱いについては [error のチュートリアル](error.md)。"
 
-#: manual/tutorial/mutable.md:218
+#: manual/tutorial/mutable.md:219
 msgid "[immut tutorial](immut.md) for exact, value-oriented work."
 msgstr "厳密で値指向の計算については [immut のチュートリアル](immut.md)。"
 
@@ -8054,6 +8055,9 @@ msgstr "計時付きの実行については [perf_runner のチュートリア�
 #: manual/tutorial/perf_support.md:78
 msgid "[mutable design](../design/mutable.md) for the measured algorithms."
 msgstr "計測対象のアルゴリズムについては [mutable の設計](../design/mutable.md)。"
+
+#~ msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ **without validating shapes**."
+#~ msgstr "`Matrix::unchecked_matmul(a, b)` は **形状を検証せずに** $AB$ を返します。"
 
 #~ msgid "The recognition uses the tolerance: a matrix whose entries are within $10^{-11}$ of the identity is returned as a copy of itself, one whose off-diagonal entries are at most $10^{-11}$ is inverted as if they were zero, and one within $10^{-11}$ of a permutation matrix is returned transposed."
 #~ msgstr "この判定には許容誤差が使われます。単位行列との差が各要素で $10^{-11}$ 以内の行列はそれ自身のコピーが返され、非対角要素がすべて $10^{-11}$ 以下の行列はそれらを零とみなして逆行列が計算され、置換行列との差が $10^{-11}$ 以内の行列は転置が返されます。"

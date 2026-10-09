@@ -1626,19 +1626,19 @@ msgstr "在真实受检调用返回的错误上使用这些判断方法："
 
 #: manual/api/error.md:346
 #: manual/api/immut.md:977
-#: manual/api/mutable.md:1301
+#: manual/api/mutable.md:1313
 msgid "Deprecated"
 msgstr "已弃用"
 
 #: manual/api/error.md:348
 #: manual/api/immut.md:982
-#: manual/api/mutable.md:1303
+#: manual/api/mutable.md:1315
 msgid "Item"
 msgstr "项"
 
 #: manual/api/error.md:348
 #: manual/api/immut.md:982
-#: manual/api/mutable.md:1303
+#: manual/api/mutable.md:1315
 msgid "Replacement"
 msgstr "替代方案"
 
@@ -1905,7 +1905,7 @@ msgid "`Matrix::unchecked_trace(a)` returns $\\operatorname{tr} A$ and aborts on
 msgstr "`Matrix::unchecked_trace(a)` 返回 $\\operatorname{tr} A$，遇到非方阵时中止。"
 
 #: manual/api/immut.md:439
-#: manual/api/mutable.md:604
+#: manual/api/mutable.md:616
 msgid "`Matrix::determinant(a)` returns `Ok(det A)` for a square matrix and `NonSquareMatrix` otherwise."
 msgstr "对于方阵，`Matrix::determinant(a)` 返回 `Ok(det A)`；否则返回 `NonSquareMatrix`。"
 
@@ -2098,7 +2098,7 @@ msgid "`equal` compares shapes and every entry (forcing them); `to_string` rende
 msgstr "`equal` 比较形状和每个元素（会对它们求值）；`to_string` 的渲染方式与 `Matrix` 相同。"
 
 #: manual/api/immut.md:808
-#: manual/api/mutable.md:1148
+#: manual/api/mutable.md:1160
 msgid "Vector"
 msgstr "向量"
 
@@ -2179,12 +2179,12 @@ msgid "These method forms exist only for source compatibility; they are hidden f
 msgstr "这些方法形式仅为源码兼容而保留；它们不出现在接口中，使用时会产生警告。"
 
 #: manual/api/immut.md:985
-#: manual/api/mutable.md:1309
+#: manual/api/mutable.md:1321
 msgid "string interpolation or `Show::output(x, logger)`"
 msgstr "字符串插值或 `Show::output(x, logger)`"
 
 #: manual/api/immut.md:986
-#: manual/api/mutable.md:1310
+#: manual/api/mutable.md:1322
 msgid "`Repr(v)` or `@debug.Debug::to_repr(v)`"
 msgstr "`Repr(v)` 或 `@debug.Debug::to_repr(v)`"
 
@@ -2532,395 +2532,396 @@ msgstr "`Matrix::mul(a, b)` 是 `a * b` 背后的矩阵乘积。"
 msgid "It checks $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ and aborts with `Matrix::mul: dimension mismatch` otherwise, then calls `unchecked_matmul`."
 msgstr "它检查 $\\operatorname{cols}(A) = \\operatorname{rows}(B)$，不满足时以 `Matrix::mul: dimension mismatch` 中止，满足时调用 `unchecked_matmul`。"
 
-#: manual/api/mutable.md
+#: manual/api/mutable.md:514
 msgid "`Matrix::matmul(a, b)` returns the product when the shapes are compatible and a `DimensionMismatch` error otherwise."
 msgstr "当形状兼容时，`Matrix::matmul(a, b)` 返回乘积；否则返回 `DimensionMismatch` 错误。"
 
-#: manual/api/mutable.md
+#: manual/api/mutable.md:521
 msgid "Use this method when incompatible dimensions should be handled without aborting."
 msgstr "需要在维度不兼容时通过错误处理而不中止时，请使用此方法。"
 
-#: manual/api/mutable.md:516
-msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ **without validating shapes**."
-msgstr "`Matrix::unchecked_matmul(a, b)` 返回 $AB$，**不验证形状**。"
+#: manual/api/mutable.md:525
+msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ without checking shape compatibility. Its caller must guarantee $\\operatorname{cols}(A) = \\operatorname{rows}(B)$."
+msgstr ""
 
-#: manual/api/mutable.md:522
-msgid "[!CAUTION] On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
-msgstr "[!CAUTION] 若违反此前提，结果未定义：可能因数组索引错误而中止，也可能静默返回错误的矩阵。需要非中止的形状检查时请使用 `matmul`；接受维度不匹配时中止则可使用 `*`。"
+#: manual/api/mutable.md:533
+#| msgid "[!CAUTION] On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
+msgid "[!CAUTION] The caller must guarantee $\\operatorname{cols}(A) = \\operatorname{rows}(B)$. On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
+msgstr "[!CAUTION] 调用者必须保证 $\\operatorname{cols}(A) = \\operatorname{rows}(B)$。若违反此前提，结果未定义：可能因数组索引错误而中止，也可能静默返回错误的矩阵。需要非中止的形状检查时请使用 `matmul`；接受维度不匹配时中止则可使用 `*`。"
 
-#: manual/api/mutable.md:527
+#: manual/api/mutable.md:539
 msgid "Cost: $rcn$ multiply-adds. Large products (at least $4 \\times 16 \\times 16$) pack the columns of $B$ contiguously before multiplying."
 msgstr "开销：$rcn$ 次乘加。较大的乘积（至少 $4 \\times 16 \\times 16$）会先把 $B$ 的列连续打包，再做乘法。"
 
-#: manual/api/mutable.md:532
+#: manual/api/mutable.md:544
 msgid "`Matrix::mul_vec(a, x)` returns `Ok(Ax)` when $\\operatorname{cols}(A) = \\operatorname{len}(x)$ and `DimensionMismatch` otherwise."
 msgstr "当 $\\operatorname{cols}(A) = \\operatorname{len}(x)$ 时，`Matrix::mul_vec(a, x)` 返回 `Ok(Ax)`，否则返回 `DimensionMismatch`。"
 
-#: manual/api/mutable.md:542
+#: manual/api/mutable.md:554
 msgid "`Matrix::unchecked_mul_vec(a, x)` returns $Ax$ and aborts on a length mismatch."
 msgstr "`Matrix::unchecked_mul_vec(a, x)` 返回 $Ax$，长度不匹配时中止。"
 
-#: manual/api/mutable.md:550
+#: manual/api/mutable.md:562
 msgid "`pow(k)` returns `Ok(A^k)` for square $A$ and $k \\ge 0$ ($A^0 = I$), by binary exponentiation. `matrix_power` is the same function under another name."
 msgstr "对方阵 $A$ 和 $k \\ge 0$，`pow(k)` 通过二进制快速幂返回 `Ok(A^k)`（$A^0 = I$）。`matrix_power` 是同一函数的另一个名字。"
 
-#: manual/api/mutable.md:558
+#: manual/api/mutable.md:570
 msgid "Errors: `NonSquareMatrix` (checked first), then `NegativeExponent`."
 msgstr "错误：`NonSquareMatrix`（先检查），然后是 `NegativeExponent`。"
 
-#: manual/api/mutable.md:562
+#: manual/api/mutable.md:574
 msgid "Aborting forms of `pow` and `matrix_power`."
 msgstr "`pow` 与 `matrix_power` 的中止形式。"
 
-#: manual/api/mutable.md:571
+#: manual/api/mutable.md:583
 msgid "`trace()` returns `Ok(Σ a_ii)` for a square matrix and `NonSquareMatrix` otherwise; `unchecked_trace` aborts instead."
 msgstr "对方阵，`trace()` 返回 `Ok(Σ a_ii)`，否则返回 `NonSquareMatrix`；`unchecked_trace` 则改为中止。"
 
-#: manual/api/mutable.md:595
+#: manual/api/mutable.md:607
 msgid "Linear systems and decompositions"
 msgstr "线性方程组与分解"
 
-#: manual/api/mutable.md:597
+#: manual/api/mutable.md:609
 msgid "All routines in this section are for `Float` and `Double` matrices. Decisions such as \"this pivot is zero\" compare absolute values with `Tolerance::tolerance()` ($10^{-11}$); see the [design page](../design/mutable.md) for the algorithms, costs and error bounds."
 msgstr "本节所有例程都面向 `Float` 与 `Double` 矩阵。诸如“该主元为零”之类的判断，是将绝对值与 `Tolerance::tolerance()`（$10^{-11}$）比较；算法、开销与误差界见[设计页面](../design/mutable.md)。"
 
-#: manual/api/mutable.md:611
+#: manual/api/mutable.md:623
 msgid "For $n \\le 4$: closed cofactor formulas. For $n \\ge 5$: the product of the diagonal if the matrix is exactly triangular, otherwise LU factorization with partial pivoting, $\\det A = (-1)^{s} \\prod_i u_{ii}$ for $s$ row exchanges. If a pivot falls below the tolerance the result is exactly zero; otherwise it is a product of pivots of magnitude at least $10^{-11}$, which can still underflow to zero or overflow to infinity for large $n$. $\\det$ of the $0 \\times 0$ matrix is $1$."
 msgstr "当 $n \\le 4$ 时：使用闭式余子式公式。当 $n \\ge 5$ 时：若矩阵恰好是三角矩阵，则取对角线乘积；否则做部分选主元的 LU 分解，对 $s$ 次行交换有 $\\det A = (-1)^{s} \\prod_i u_{ii}$。若某个主元低于容差，结果严格为零；否则结果是绝对值至少为 $10^{-11}$ 的主元之积，在 $n$ 较大时仍可能下溢为零或上溢为无穷。$0 \\times 0$ 矩阵的 $\\det$ 为 $1$。"
 
-#: manual/api/mutable.md:621
+#: manual/api/mutable.md:633
 msgid "Aborting form of `determinant`."
 msgstr "`determinant` 的中止形式。"
 
-#: manual/api/mutable.md:629
+#: manual/api/mutable.md:641
 msgid "`Matrix::inverse(a)` returns `Ok(A^{-1})`, `NonSquareMatrix` for a non-square matrix, or `SingularMatrix` when a pivot is below the tolerance."
 msgstr "`Matrix::inverse(a)` 返回 `Ok(A^{-1})`；对非方阵返回 `NonSquareMatrix`；当某个主元低于容差时返回 `SingularMatrix`。"
 
-#: manual/api/mutable.md:636
+#: manual/api/mutable.md:648
 msgid "Identity, diagonal and permutation matrices are recognized and inverted directly ($P^{-1} = P^{\\mathsf T}$); other matrices are solved column by column from an LU factorization with partial pivoting. Cost $\\approx \\tfrac{8}{3} n^3$ flops. The inverse of the $0 \\times 0$ matrix is the $0 \\times 0$ matrix."
 msgstr "单位矩阵、对角矩阵和置换矩阵会被识别并直接求逆（$P^{-1} = P^{\\mathsf T}$）；其他矩阵则基于部分选主元的 LU 分解逐列求解。开销 $\\approx \\tfrac{8}{3} n^3$ flops。$0 \\times 0$ 矩阵的逆矩阵是 $0 \\times 0$ 矩阵。"
 
-#: manual/api/mutable.md:641
+#: manual/api/mutable.md:653
 msgid "The recognition is exact: only a matrix that has the structure exactly takes the shortcut, so the shortcut returns what the LU path would."
 msgstr "识别是精确的：只有恰好具有该结构的矩阵才走快捷路径，因此快捷路径的结果与 LU 路径一致。"
 
-#: manual/api/mutable.md:646
+#: manual/api/mutable.md:658
 msgid "`Matrix::unchecked_inverse(a)` returns `Some(A^{-1})` or `None` for a singular matrix, and aborts on a non-square one."
 msgstr "`Matrix::unchecked_inverse(a)` 返回 `Some(A^{-1})`，对奇异矩阵返回 `None`，对非方阵则中止。"
 
-#: manual/api/mutable.md:655
+#: manual/api/mutable.md:667
 msgid "`is_invertible()` returns `Ok(true)` when LU factorization finds no pivot below the tolerance, `Ok(false)` otherwise, and `NonSquareMatrix` for a non-square matrix; `unchecked_is_invertible` aborts instead."
 msgstr "当 LU 分解没有发现低于容差的主元时，`is_invertible()` 返回 `Ok(true)`，否则返回 `Ok(false)`；对非方阵返回 `NonSquareMatrix`；`unchecked_is_invertible` 则改为中止。"
 
-#: manual/api/mutable.md:666
+#: manual/api/mutable.md:678
 msgid "`Matrix::rank(a)` returns the number of pivots found by Gaussian elimination with partial pivoting on a copy of `a`."
 msgstr "`Matrix::rank(a)` 返回在 `a` 的副本上做部分选主元高斯消元所找到的主元个数。"
 
-#: manual/api/mutable.md:673
+#: manual/api/mutable.md:685
 msgid "A column whose largest remaining entry is below the tolerance contributes no pivot. Works for any shape; `a` is unchanged. Cost $O(\\min(r, c)\\, r c)$."
 msgstr "若某列剩余元素中的最大值低于容差，该列不贡献主元。适用于任意形状；`a` 保持不变。开销 $O(\\min(r, c)\\, r c)$。"
 
-#: manual/api/mutable.md:678
+#: manual/api/mutable.md:690
 msgid "`Matrix::reduce_row_elimination(a)` transforms `a` **in place** into reduced row echelon form by Gauss–Jordan elimination with partial pivoting, and returns `a` itself."
 msgstr "`Matrix::reduce_row_elimination(a)` 通过部分选主元的 Gauss–Jordan 消元把 `a` **原地**变换为简化行阶梯形，并返回 `a` 本身。"
 
-#: manual/api/mutable.md:686
+#: manual/api/mutable.md:698
 msgid "Columns are processed left to right. In each column the entry of largest magnitude at or below the current row is swapped up; if its magnitude is at most the tolerance, that one entry is set to zero and the column is skipped (the other entries below it, also at most the tolerance, are left as they are). Otherwise the pivot row is divided by the pivot, which makes the pivot one, and every other row with an entry of magnitude above the tolerance in the pivot column has a multiple of the pivot row subtracted; an entry at or below the tolerance is set to zero without touching the rest of its row. Copy first if you need the original."
 msgstr "各列按从左到右处理。在每一列中，把当前行及其下方绝对值最大的元素交换上来；若其绝对值不超过容差，就只把这一个元素置零并跳过该列（其下方同样不超过容差的其他元素保持原样）。否则，主元行除以主元使主元变为一；主元列中绝对值超过容差的其他各行都减去主元行的相应倍数；绝对值不超过容差的元素直接置零，而不改动该行的其余部分。如需保留原矩阵，请先复制。"
 
-#: manual/api/mutable.md:698
+#: manual/api/mutable.md:710
 msgid "`Matrix::cholesky_decomposition(a)` returns `Some(L)` with $L$ lower triangular, positive diagonal and $L L^{\\mathsf T} = A$, or `None`."
 msgstr "`Matrix::cholesky_decomposition(a)` 返回 `Some(L)`，其中 $L$ 为下三角矩阵、对角线为正且 $L L^{\\mathsf T} = A$；否则返回 `None`。"
 
-#: manual/api/mutable.md:705
+#: manual/api/mutable.md:717
 msgid "`None` means that `a` is not square, not symmetric within tolerance, or that a diagonal pivot $a_{jj} - \\sum_{k<j} l_{jk}^2$ is at most the tolerance (the matrix is not positive definite, or nearly singular). Only the lower triangle of `a` is read. Cost $\\approx n^3/3$ flops."
 msgstr "`None` 表示 `a` 不是方阵、在容差内不对称，或者某个对角主元 $a_{jj} - \\sum_{k<j} l_{jk}^2$ 不超过容差（矩阵不是正定的，或接近奇异）。只读取 `a` 的下三角部分。开销 $\\approx n^3/3$ flops。"
 
-#: manual/api/mutable.md:710
+#: manual/api/mutable.md:722
 msgid "Two fast paths run first: the exact identity is returned as a copy, and an exactly diagonal matrix gives the square roots of its diagonal (or `None` if one of them is at most the tolerance)."
 msgstr "先运行两条快速路径：恰好为单位矩阵时返回其副本；恰好为对角矩阵时给出其对角元的平方根（若某个对角元不超过容差则返回 `None`）。"
 
-#: manual/api/mutable.md:716
+#: manual/api/mutable.md:728
 msgid "`Matrix::is_positive_definite(a)` returns whether `cholesky_decomposition` succeeds."
 msgstr "`Matrix::is_positive_definite(a)` 返回 `cholesky_decomposition` 是否成功。"
 
-#: manual/api/mutable.md:725
+#: manual/api/mutable.md:737
 msgid "`Matrix::is_symmetric(a)` returns `true` when `a` is square and $|a_{ij} - a_{ji}| \\le \\mathrm{tol}$ for all $i < j$."
 msgstr "当 `a` 是方阵且对所有 $i < j$ 有 $|a_{ij} - a_{ji}| \\le \\mathrm{tol}$ 时，`Matrix::is_symmetric(a)` 返回 `true`。"
 
-#: manual/api/mutable.md:751
+#: manual/api/mutable.md:763
 msgid "Eigenvalues"
 msgstr "特征值"
 
-#: manual/api/mutable.md:755
+#: manual/api/mutable.md:767
 msgid "`Matrix::eigen(a)` returns the eigenvalues and eigenvectors of a real symmetric matrix as `(values, vectors)`, where column $k$ of `vectors` is an eigenvector for `values[k]`."
 msgstr "`Matrix::eigen(a)` 以 `(values, vectors)` 的形式返回实对称矩阵的特征值与特征向量，其中 `vectors` 的第 $k$ 列是对应 `values[k]` 的特征向量。"
 
-#: manual/api/mutable.md:763
+#: manual/api/mutable.md:775
 msgid "Aborts if `a` is not square, not symmetric within tolerance, or if an eigenvalue does not converge within 60 iterations."
 msgstr "若 `a` 不是方阵、在容差内不对称，或某个特征值在 60 次迭代内未收敛，则中止。"
 
-#: manual/api/mutable.md:765
+#: manual/api/mutable.md:777
 msgid "For $2 \\times 2$ input a closed formula is used on the symmetric part $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$, $s = \\tfrac12 (a_{01} + a_{10})$: $\\lambda_{1,2} = m \\pm \\sqrt{\\big(\\tfrac{a-d}{2}\\big)^2 + s^2}$ with $m = \\tfrac12 \\operatorname{tr} A$, ordered $\\lambda_1 \\ge \\lambda_2$. The eigenvector columns are **not normalized**: each is scaled so that its entry of largest magnitude is $1$. A diagonal matrix returns its diagonal entries exactly."
 msgstr "对 $2 \\times 2$ 输入，在对称部分 $\\begin{pmatrix} a & s \\\\ s & d \\end{pmatrix}$（$s = \\tfrac12 (a_{01} + a_{10})$）上使用闭式公式：$\\lambda_{1,2} = m \\pm \\sqrt{\\big(\\tfrac{a-d}{2}\\big)^2 + s^2}$，其中 $m = \\tfrac12 \\operatorname{tr} A$，按 $\\lambda_1 \\ge \\lambda_2$ 排序。特征向量列**未归一化**：每列都被缩放，使其绝对值最大的元素为 $1$。对角矩阵精确地返回其对角元。"
 
-#: manual/api/mutable.md:772
+#: manual/api/mutable.md:784
 msgid "For other sizes the matrix is reduced to tridiagonal form by Householder reflections and diagonalized by the implicit QL algorithm with Wilkinson shifts. Only the lower triangle is read. The eigenvector columns are orthonormal up to rounding. The eigenvalues are not sorted."
 msgstr "对其他规模，矩阵先通过 Householder 反射约化为三对角形式，再用带 Wilkinson 位移的隐式 QL 算法对角化。只读取下三角部分。特征向量列在舍入误差范围内是标准正交的。特征值不排序。"
 
-#: manual/api/mutable.md:776
+#: manual/api/mutable.md:788
 msgid "Cost $O(n^3)$."
 msgstr "开销 $O(n^3)$。"
 
-#: manual/api/mutable.md:778
+#: manual/api/mutable.md:790
 msgid "Every decision inside `eigen` is relative to the entries (a deflated off-diagonal entry is negligible next to its diagonal neighbours), so `eigen` of $sA$ is $s$ times `eigen` of $A$ up to rounding, for any scale $s$; only the symmetry check uses the absolute tolerance. See the [design page](../design/mutable.md#symmetric-eigenvalue-problem)."
 msgstr "`eigen` 内部的每个判断都是相对于矩阵元素的（被收缩的次对角元相对于其相邻的对角元可以忽略），因此对任意尺度 $s$，$sA$ 的 `eigen` 在舍入误差内等于 $s$ 乘以 $A$ 的 `eigen`；只有对称性检查使用绝对容差。参见[设计页面](../design/mutable.md#symmetric-eigenvalue-problem)。"
 
-#: manual/api/mutable.md:786
+#: manual/api/mutable.md:798
 msgid "`Matrix::power_method(a, max_iterations)` approximates a dominant eigenpair $(\\lambda, x)$ by power iteration and returns `Some((λ, x))` once $\\lVert A x - \\lambda x \\rVert_\\infty \\le \\mathrm{tol}$."
 msgstr "`Matrix::power_method(a, max_iterations)` 通过幂迭代逼近主特征对 $(\\lambda, x)$，一旦 $\\lVert A x - \\lambda x \\rVert_\\infty \\le \\mathrm{tol}$ 即返回 `Some((λ, x))`。"
 
-#: manual/api/mutable.md:794
+#: manual/api/mutable.md:806
 msgid "$x$ is scaled so that $\\lVert x \\rVert_\\infty = 1$; $\\lambda$ is the Rayleigh quotient $x^{\\mathsf T} A x / x^{\\mathsf T} x$."
 msgstr "$x$ 被缩放使得 $\\lVert x \\rVert_\\infty = 1$；$\\lambda$ 是 Rayleigh 商 $x^{\\mathsf T} A x / x^{\\mathsf T} x$。"
 
-#: manual/api/mutable.md:796
+#: manual/api/mutable.md:808
 msgid "Returns `None` when the iteration does not meet the residual test within `max_iterations` steps, or when the iterate becomes numerically zero (for example for a nilpotent matrix). Two dominant eigenvalues of equal magnitude and opposite sign, such as $\\pm 1$, prevent convergence."
 msgstr "若迭代在 `max_iterations` 步内未通过残差检验，或迭代向量在数值上变为零（例如对幂零矩阵），则返回 `None`。两个模相等、符号相反的主特征值（例如 $\\pm 1$）会阻碍收敛。"
 
-#: manual/api/mutable.md:800
+#: manual/api/mutable.md:812
 msgid "Aborts for a non-square or empty matrix."
 msgstr "对非方阵或空矩阵中止。"
 
-#: manual/api/mutable.md:801
+#: manual/api/mutable.md:813
 msgid "Each iteration costs two matrix-vector products, $O(n^2)$: one for the Rayleigh quotient and the residual, and one for the next iterate (the code does not reuse the first). The starting vector is $(1, \\dots, 1)$, or the first coordinate vector $e_k$ with $A e_k$ above the tolerance if $A (1, \\dots, 1)^{\\mathsf T}$ is not; it is multiplied by $A$ and scaled once before the first residual test."
 msgstr "每次迭代花费两次矩阵-向量乘积，$O(n^2)$：一次用于 Rayleigh 商和残差，一次用于下一个迭代向量（代码没有复用第一次的结果）。初始向量为 $(1, \\dots, 1)$；若 $A (1, \\dots, 1)^{\\mathsf T}$ 不超过容差，则取第一个使 $A e_k$ 超过容差的坐标向量 $e_k$；在第一次残差检验之前，它先被 $A$ 乘一次并缩放。"
 
-#: manual/api/mutable.md:807
+#: manual/api/mutable.md:819
 msgid "The residual test is absolute, so the accuracy of $x$ scales with $\\lVert A \\rVert$: for a matrix of size about $10^{-6}$ the test passes while $x$ is still wrong in the sixth digit."
 msgstr "残差检验是绝对的，因此 $x$ 的精度随 $\\lVert A \\rVert$ 缩放：对量级约为 $10^{-6}$ 的矩阵，检验通过时 $x$ 的第六位数字仍可能是错的。"
 
-#: manual/api/mutable.md:831
+#: manual/api/mutable.md:843
 msgid "Statistics and norms"
 msgstr "统计量与范数"
 
-#: manual/api/mutable.md:833
+#: manual/api/mutable.md:845
 msgid "The statistics treat the matrix as a flat list of its $N = rc$ entries."
 msgstr "统计函数把矩阵视为其 $N = rc$ 个元素组成的扁平列表。"
 
-#: manual/api/mutable.md:837
+#: manual/api/mutable.md:849
 msgid "`mean()` returns `Ok(\\bar a)`, $\\bar a = \\tfrac1N \\sum a_{ij}$, or `EmptyMatrix` when $N = 0$; `unchecked_mean` aborts instead."
 msgstr "`mean()` 返回 `Ok(\\bar a)`，其中 $\\bar a = \\tfrac1N \\sum a_{ij}$；当 $N = 0$ 时返回 `EmptyMatrix`；`unchecked_mean` 则改为中止。"
 
-#: manual/api/mutable.md:847
+#: manual/api/mutable.md:859
 msgid "`variance()` returns the population variance $\\tfrac1N \\sum (a_{ij} - \\bar a)^2$ (two-pass), or `EmptyMatrix`."
 msgstr "`variance()` 返回总体方差 $\\tfrac1N \\sum (a_{ij} - \\bar a)^2$（两遍算法），或返回 `EmptyMatrix`。"
 
-#: manual/api/mutable.md:857
+#: manual/api/mutable.md:869
 msgid "`std_dev()` returns the square root of the population variance, or `EmptyMatrix`."
 msgstr "`std_dev()` 返回总体方差的平方根，或返回 `EmptyMatrix`。"
 
-#: manual/api/mutable.md:867
+#: manual/api/mutable.md:879
 msgid "The largest or smallest entry by `Compare`, or `EmptyMatrix`."
 msgstr "按 `Compare` 取最大或最小元素，或返回 `EmptyMatrix`。"
 
-#: manual/api/mutable.md:874
+#: manual/api/mutable.md:886
 msgid "With NaN entries the result depends on their position; filter them first."
 msgstr "若含有 NaN 元素，结果取决于它们的位置；请先将其过滤。"
 
-#: manual/api/mutable.md:878
+#: manual/api/mutable.md:890
 msgid "Aborting forms of `max_element` and `min_element`."
 msgstr "`max_element` 与 `min_element` 的中止形式。"
 
-#: manual/api/mutable.md:887
+#: manual/api/mutable.md:899
 msgid "`Matrix::frobenius_norm(a)` returns $\\lVert A \\rVert_F = \\sqrt{\\sum a_{ij}^2}$."
 msgstr "`Matrix::frobenius_norm(a)` 返回 $\\lVert A \\rVert_F = \\sqrt{\\sum a_{ij}^2}$。"
 
-#: manual/api/mutable.md:893
+#: manual/api/mutable.md:905
 msgid "The sum of squares is not rescaled, so entries above about $10^{154}$ overflow for `Double`. An empty matrix has norm $0$."
 msgstr "平方和不做缩放，因此对 `Double` 而言，大于约 $10^{154}$ 的元素会溢出。空矩阵的范数为 $0$。"
 
-#: manual/api/mutable.md:910
+#: manual/api/mutable.md:922
 msgid "Views"
 msgstr "视图"
 
-#: manual/api/mutable.md:914
+#: manual/api/mutable.md:926
 msgid "Read or write position `i` of the viewed row or column; they back `view[i]` and `view[i] = x`."
 msgstr "读取或写入所视行或列的第 `i` 个位置；它们支撑 `view[i]` 与 `view[i] = x`。"
 
-#: manual/api/mutable.md:930
+#: manual/api/mutable.md:942
 msgid "The number of columns (row view) or rows (column view) of the matrix."
 msgstr "矩阵的列数（行视图）或行数（列视图）。"
 
-#: manual/api/mutable.md:939
+#: manual/api/mutable.md:951
 msgid "Traverse the viewed entries in order."
 msgstr "按顺序遍历视图中的元素。"
 
-#: manual/api/mutable.md:952
+#: manual/api/mutable.md:964
 msgid "Replace every viewed entry by `f(entry)`, in the underlying matrix."
 msgstr "在底层矩阵中把视图中的每个元素替换为 `f(entry)`。"
 
-#: manual/api/mutable.md:961
+#: manual/api/mutable.md:973
 msgid "Copy the viewed entries out."
 msgstr "把视图中的元素复制出来。"
 
-#: manual/api/mutable.md:972
+#: manual/api/mutable.md:984
 msgid "Render the viewed entries as `|a, b, c|`."
 msgstr "把视图中的元素渲染为 `|a, b, c|`。"
 
-#: manual/api/mutable.md:979
+#: manual/api/mutable.md:991
 msgid "Transpose view"
 msgstr "转置视图"
 
-#: manual/api/mutable.md:981
+#: manual/api/mutable.md:993
 msgid "Every `Transpose` method addresses the transposed matrix and works on the shared storage, unless it is documented to return a new value."
 msgstr "除非文档说明返回新值，`Transpose` 的每个方法都寻址转置后的矩阵，并作用于共享存储。"
 
-#: manual/api/mutable.md:986
+#: manual/api/mutable.md:998
 msgid "The shape of the view: `row()` is the column count of the wrapped matrix and `col()` its row count."
 msgstr "视图的形状：`row()` 是被包装矩阵的列数，`col()` 是其行数。"
 
-#: manual/api/mutable.md:996
+#: manual/api/mutable.md:1008
 msgid "`get(i, j)` and `set(i, j, x)` access entry $(i, j)$ of the view, that is $(j, i)$ of the matrix; `at` backs `t[i][j]` and `t[i][j] = x`."
 msgstr "`get(i, j)` 与 `set(i, j, x)` 访问视图的元素 $(i, j)$，即矩阵的元素 $(j, i)$；`at` 支撑 `t[i][j]` 与 `t[i][j] = x`。"
 
-#: manual/api/mutable.md:1008
+#: manual/api/mutable.md:1020
 msgid "`Transpose::transpose(t)` returns the wrapped matrix itself, not a copy."
 msgstr "`Transpose::transpose(t)` 返回被包装的矩阵本身，而不是副本。"
 
-#: manual/api/mutable.md:1016
+#: manual/api/mutable.md:1028
 msgid "`Transpose::materialize(t)` copies the view into a new matrix of the transposed shape."
 msgstr "`Transpose::materialize(t)` 把视图复制到一个具有转置形状的新矩阵中。"
 
-#: manual/api/mutable.md:1025
+#: manual/api/mutable.md:1037
 msgid "`Transpose::copy(t)` returns a view of a deep copy of the wrapped matrix."
 msgstr "`Transpose::copy(t)` 返回被包装矩阵深拷贝的视图。"
 
-#: manual/api/mutable.md:1031
+#: manual/api/mutable.md:1043
 msgid "Traversal: `Transpose::each`, `Transpose::eachi`, `Transpose::each_row_col`, `Transpose::each_row`, `Transpose::eachi_row`, `Transpose::each_col`, `Transpose::eachi_col`"
 msgstr "遍历：`Transpose::each`、`Transpose::eachi`、`Transpose::each_row_col`、`Transpose::each_row`、`Transpose::eachi_row`、`Transpose::each_col`、`Transpose::eachi_col`"
 
-#: manual/api/mutable.md:1033
+#: manual/api/mutable.md:1045
 msgid "Traverse the view."
 msgstr "遍历视图。"
 
-#: manual/api/mutable.md:1045
+#: manual/api/mutable.md:1057
 msgid "`each`, `eachi` and `each_row_col` visit entries in the storage order of the wrapped matrix, which is column-major for the view; `eachi` passes the row-major index *of the view*, and `each_row_col` passes view coordinates. The row and column forms visit a row or column of the view in order."
 msgstr "`each`、`eachi` 和 `each_row_col` 按被包装矩阵的存储顺序访问元素，对视图而言这是列主序；`eachi` 传入的是*视图的*行主序索引，`each_row_col` 传入视图坐标。行和列形式按顺序访问视图的一行或一列。"
 
-#: manual/api/mutable.md:1052
+#: manual/api/mutable.md:1064
 msgid "Copy one row or column of the view."
 msgstr "复制视图的一行或一列。"
 
-#: manual/api/mutable.md:1063
+#: manual/api/mutable.md:1075
 msgid "`map` returns a new view of a new matrix; the `*_inplace` forms change the shared storage."
 msgstr "`map` 返回一个新矩阵的新视图；`*_inplace` 形式修改共享存储。"
 
-#: manual/api/mutable.md:1078
+#: manual/api/mutable.md:1090
 msgid "Exchange two rows or columns of the view in place (columns or rows of the wrapped matrix)."
 msgstr "原地交换视图的两行或两列（即被包装矩阵的两列或两行）。"
 
-#: manual/api/mutable.md:1088
+#: manual/api/mutable.md:1100
 msgid "Block concatenation of views, returning a view of a new matrix."
 msgstr "视图的分块拼接，返回一个新矩阵的视图。"
 
-#: manual/api/mutable.md:1097
+#: manual/api/mutable.md:1109
 msgid "Entry-wise arithmetic, returning a view of a new matrix."
 msgstr "逐元素算术，返回一个新矩阵的视图。"
 
-#: manual/api/mutable.md:1109
+#: manual/api/mutable.md:1121
 msgid "`Transpose::mul(s, t)` returns the product of the two transposed views. If the wrapped matrices are $U$ and $V$, their shapes must satisfy $U_{\\text{rows}} = V_{\\text{cols}}$. The result has shape $U_{\\text{cols}} \\times V_{\\text{rows}}$ and entry $(i, k)$ is $\\sum_j U_{ji} V_{kj}$. The implementation preserves this factor order for non-commutative scalar multiplication and does not materialize the input views. A dimension mismatch aborts, as it does for `Matrix::mul`."
 msgstr "`Transpose::mul(s, t)` 返回两个转置视图的乘积。若被包装的矩阵为 $U$ 和 $V$，其形状必须满足 $U_{\\text{rows}} = V_{\\text{cols}}$。结果形状为 $U_{\\text{cols}} \\times V_{\\text{rows}}$，其 $(i, k)$ 项为 $\\sum_j U_{ji} V_{kj}$。实现对非交换标量乘法也会保留这一因子顺序，并且不会物化输入视图。维度不匹配时会 abort，与 `Matrix::mul` 一致。"
 
-#: manual/api/mutable.md:1123
+#: manual/api/mutable.md:1135
 msgid "`equal` compares the wrapped matrices; `to_string` renders the view row by row."
 msgstr "`equal` 比较被包装的矩阵；`to_string` 逐行渲染视图。"
 
-#: manual/api/mutable.md:1152
+#: manual/api/mutable.md:1164
 msgid "`Vector::from_array(xs)` adopts `xs` as the vector's storage without copying."
 msgstr "`Vector::from_array(xs)` 直接将 `xs` 作为向量的存储，不做复制。"
 
-#: manual/api/mutable.md:1160
+#: manual/api/mutable.md:1172
 msgid "$n$ copies of a value, or $(f(0), \\dots, f(n-1))$."
 msgstr "某个值的 $n$ 份拷贝，或 $(f(0), \\dots, f(n-1))$。"
 
-#: manual/api/mutable.md:1169
+#: manual/api/mutable.md:1181
 msgid "Length, deep copy, and iterator."
 msgstr "长度、深拷贝与迭代器。"
 
-#: manual/api/mutable.md:1179
+#: manual/api/mutable.md:1191
 msgid "Read or write element `i` in place; they back `v[i]` and `v[i] = x`. An out-of-range index aborts."
 msgstr "原地读取或写入第 `i` 个元素；它们支撑 `v[i]` 与 `v[i] = x`。索引越界时中止。"
 
-#: manual/api/mutable.md:1191
+#: manual/api/mutable.md:1203
 msgid "`map` and `zip_with` return new vectors (`zip_with` aborts on different lengths); `map_inplace` rewrites every element."
 msgstr "`map` 与 `zip_with` 返回新向量（`zip_with` 在长度不同时中止）；`map_inplace` 改写每个元素。"
 
-#: manual/api/mutable.md:1203
+#: manual/api/mutable.md:1215
 msgid "Element-wise $u + v$, Hadamard $u \\odot v$, $-u$, and $u + a$. Different lengths abort. There is no `Sub`; write `u + -v`."
 msgstr "逐元素的 $u + v$、Hadamard 积 $u \\odot v$、$-u$ 以及 $u + a$。长度不同时中止。没有 `Sub`；请写作 `u + -v`。"
 
-#: manual/api/mutable.md:1215
+#: manual/api/mutable.md:1227
 msgid "$(a v_i)$ and $(v_i a)$, as new vectors or in place."
 msgstr "$(a v_i)$ 与 $(v_i a)$，可得到新向量，也可原地进行。"
 
-#: manual/api/mutable.md:1228
+#: manual/api/mutable.md:1240
 msgid "`Vector::dot(u, v)` returns $\\sum_i u_i v_i$, summed left to right; different lengths abort."
 msgstr "`Vector::dot(u, v)` 返回 $\\sum_i u_i v_i$，从左到右求和；长度不同时中止。"
 
-#: manual/api/mutable.md:1237
+#: manual/api/mutable.md:1249
 msgid "`Vector::lerp(u, v, t)` returns $(1 - t) u + t v$."
 msgstr "`Vector::lerp(u, v, t)` 返回 $(1 - t) u + t v$。"
 
-#: manual/api/mutable.md:1245
+#: manual/api/mutable.md:1257
 msgid "`Vector::lin_comb(weights, vectors)` returns $\\sum_k w_k v_k$, accumulated into one new vector."
 msgstr "`Vector::lin_comb(weights, vectors)` 返回 $\\sum_k w_k v_k$，累加到一个新向量中。"
 
-#: manual/api/mutable.md:1252
+#: manual/api/mutable.md:1264
 msgid "Empty inputs, different counts of weights and vectors, or vectors of different lengths abort."
 msgstr "输入为空、权重与向量个数不同，或向量长度不同时中止。"
 
-#: manual/api/mutable.md:1257
+#: manual/api/mutable.md:1269
 msgid "`lin_comb(a, u, b, v)` returns $a u + b v$; it is a top-level function."
 msgstr "`lin_comb(a, u, b, v)` 返回 $a u + b v$；它是顶层函数。"
 
-#: manual/api/mutable.md:1265
+#: manual/api/mutable.md:1277
 msgid "The vector as a $1 \\times n$ or $n \\times 1$ matrix (copied), the diagonal matrix $\\operatorname{diag}(v)$, and the outer product $u v^{\\mathsf T}$."
 msgstr "把向量作为 $1 \\times n$ 或 $n \\times 1$ 矩阵（复制）、对角矩阵 $\\operatorname{diag}(v)$，以及外积 $u v^{\\mathsf T}$。"
 
-#: manual/api/mutable.md:1277
+#: manual/api/mutable.md:1289
 msgid "`equal` compares elements (backs `==`); `to_string` renders `|a, b, c|`."
 msgstr "`equal` 比较元素（支撑 `==`）；`to_string` 渲染为 `|a, b, c|`。"
 
-#: manual/api/mutable.md:1305
+#: manual/api/mutable.md:1317
 msgid "`Matrix::map_in_place`, `map_row_in_place`, `map_col_in_place` (aliases)"
 msgstr "`Matrix::map_in_place`、`map_row_in_place`、`map_col_in_place`（别名）"
 
-#: manual/api/mutable.md:1306
+#: manual/api/mutable.md:1318
 msgid "`Transpose::map_in_place`, `map_row_in_place`, `map_col_in_place` (aliases)"
 msgstr "`Transpose::map_in_place`、`map_row_in_place`、`map_col_in_place`（别名）"
 
-#: manual/api/mutable.md:1306
+#: manual/api/mutable.md:1318
 msgid "the `*_inplace` names"
 msgstr "`*_inplace` 系列名称"
 
-#: manual/api/mutable.md:1307
+#: manual/api/mutable.md:1319
 msgid "`Vector::map_in_place`, `left_scale_in_place`, `right_scale_in_place` (aliases)"
 msgstr "`Vector::map_in_place`、`left_scale_in_place`、`right_scale_in_place`（别名）"
 
-#: manual/api/mutable.md:1308
+#: manual/api/mutable.md:1320
 msgid "`not_equal` method form on `Matrix`, `Transpose`, `Vector` (hidden)"
 msgstr "`Matrix`、`Transpose`、`Vector` 上的 `not_equal` 方法形式（隐藏）"
 
-#: manual/api/mutable.md:1309
+#: manual/api/mutable.md:1321
 msgid "`output` method form on `Matrix`, `Transpose`, `RowView`, `ColView`, `Vector` (hidden)"
 msgstr "`Matrix`、`Transpose`、`RowView`、`ColView`、`Vector` 上的 `output` 方法形式（隐藏）"
 
-#: manual/api/mutable.md:1310
+#: manual/api/mutable.md:1322
 msgid "`Vector::to_repr` (hidden)"
 msgstr "`Vector::to_repr`（隐藏）"
 
-#: manual/api/mutable.md:1311
+#: manual/api/mutable.md:1323
 msgid "`Vector::arbitrary` (hidden)"
 msgstr "`Vector::arbitrary`（隐藏）"
 
@@ -6762,7 +6763,7 @@ msgstr "**受检乘积。** 当失败必须作为值返回时，请转换为具�
 #: manual/tutorial/error.md:199
 #: manual/tutorial/immut.md:168
 #: manual/tutorial/internal.md:96
-#: manual/tutorial/mutable.md:193
+#: manual/tutorial/mutable.md:194
 #: manual/tutorial/perf.md:47
 #: manual/tutorial/perf_runner.md:49
 #: manual/tutorial/perf_support.md:66
@@ -6794,7 +6795,7 @@ msgstr "**精确比较浮点结果。** `Double` 矩阵的乘积只在舍入误�
 #: manual/tutorial/error.md:210
 #: manual/tutorial/immut.md:187
 #: manual/tutorial/internal.md:103
-#: manual/tutorial/mutable.md:212
+#: manual/tutorial/mutable.md:213
 #: manual/tutorial/perf.md:53
 #: manual/tutorial/perf_runner.md:54
 #: manual/tutorial/perf_support.md:74
@@ -7778,51 +7779,51 @@ msgstr "**不复制的转置。** `to_transpose()` 是 $O(1)$ 的视图；两个
 msgid "**Unchecked forms in hot loops.** After you have established the preconditions (for example square matrices built by your own code), the `unchecked_*` methods skip validation. Use `matmul` when dimensions may be incompatible and the caller should handle an error; use `unchecked_matmul` only when compatible shapes are already guaranteed."
 msgstr "**在热循环中使用非受检形式。** 确立前置条件后（例如由你自己的代码构造方阵），`unchecked_*` 方法会跳过校验。维度可能不兼容且调用方需要处理错误时，请使用 `matmul`；只有在已能保证形状兼容时才使用 `unchecked_matmul`。"
 
-#: manual/tutorial/mutable.md:185
+#: manual/tutorial/mutable.md:186
 msgid "**Scaling.** The routines decide \"zero\" with an absolute threshold of $10^{-11}$. Scale your data to order one first; otherwise tiny but regular matrices are reported singular. See the [design page](../design/mutable.md#tolerance-based-decisions)."
 msgstr "**缩放。** 这些例程以 $10^{-11}$ 的绝对阈值判断“零”。请先把数据缩放到量级为一；否则很小但正则的矩阵会被报告为奇异。参见[设计页面](../design/mutable.md#tolerance-based-decisions)。"
 
-#: manual/tutorial/mutable.md:190
+#: manual/tutorial/mutable.md:191
 msgid "**Generic code.** Wrap the matrix in `@default.DenseMatrix` to pass it to functions bounded by the `algebra` traits; `inner()` gets it back."
 msgstr "**泛型代码。** 把矩阵包装为 `@default.DenseMatrix`，即可传给以 `algebra` trait 为约束的函数；用 `inner()` 取回。"
 
-#: manual/tutorial/mutable.md:195
+#: manual/tutorial/mutable.md:196
 msgid "**Forgetting that `reduce_row_elimination` mutates.** It transforms the receiver in place and returns it. Call `copy()` first."
 msgstr "**忘记 `reduce_row_elimination` 会修改矩阵。** 它原地变换接收者并将其返回。请先调用 `copy()`。"
 
-#: manual/tutorial/mutable.md:197
+#: manual/tutorial/mutable.md:198
 msgid "**Expecting normalized $2 \\times 2$ eigenvectors.** For $2 \\times 2$ input, each eigenvector column is scaled so that its largest entry is $1$, not to unit length; larger inputs return orthonormal columns."
 msgstr "**期望 $2 \\times 2$ 特征向量已归一化。** 对 $2 \\times 2$ 输入，每个特征向量列被缩放为最大元素为 $1$，而不是单位长度；更大的输入返回标准正交的列。"
 
-#: manual/tutorial/mutable.md:200
+#: manual/tutorial/mutable.md:201
 msgid "**Matrices far from order one.** The singularity and definiteness tests use the absolute threshold $10^{-11}$. A matrix whose entries are all around $10^{-12}$ is singular to `inverse` and not positive definite to `cholesky_decomposition`; scale first. `eigen` does not depend on the scale."
 msgstr "**远离 1 量级的矩阵。** 奇异性和正定性检验使用绝对阈值 $10^{-11}$。元素都在 $10^{-12}$ 左右的矩阵，对 `inverse` 而言是奇异的，对 `cholesky_decomposition` 而言不是正定的；请先缩放。`eigen` 不依赖于尺度。"
 
-#: manual/tutorial/mutable.md:204
+#: manual/tutorial/mutable.md:205
 msgid "**Numerical routines on integers.** `determinant`, `inverse`, `rank`, `eigen` and friends need `Tolerance`, which exists only for `Float` and `Double`. For exact integer determinants use `@immut.Matrix::determinant`."
 msgstr "**在整数上使用数值例程。** `determinant`、`inverse`、`rank`、`eigen` 等需要 `Tolerance`，而它只为 `Float` 和 `Double` 提供。要得到精确的整数行列式，请使用 `@immut.Matrix::determinant`。"
 
-#: manual/tutorial/mutable.md:207
+#: manual/tutorial/mutable.md:208
 msgid "**`Float` precision.** The tolerance is far below `Float` precision; nearly singular `Float` matrices are not detected. Prefer `Double`."
 msgstr "**`Float` 精度。** 容差远低于 `Float` 的精度；接近奇异的 `Float` 矩阵不会被检测出来。请优先使用 `Double`。"
 
-#: manual/tutorial/mutable.md:209
+#: manual/tutorial/mutable.md:210
 msgid "**Power method on symmetric spectra.** Eigenvalues $\\pm\\lambda$ of equal magnitude prevent convergence; `power_method` then returns `None`."
 msgstr "**在对称谱上使用幂法。** 模相等的特征值 $\\pm\\lambda$ 会阻碍收敛；此时 `power_method` 返回 `None`。"
 
-#: manual/tutorial/mutable.md:214
+#: manual/tutorial/mutable.md:215
 msgid "[mutable API](../api/mutable.md) for every method, its errors and cost."
 msgstr "[mutable API](../api/mutable.md)：每个方法及其错误与开销。"
 
-#: manual/tutorial/mutable.md:215
+#: manual/tutorial/mutable.md:216
 msgid "[mutable design](../design/mutable.md) for LU, Cholesky, QL and their error bounds."
 msgstr "[mutable 设计](../design/mutable.md)：LU、Cholesky、QL 及其误差界。"
 
-#: manual/tutorial/mutable.md:217
+#: manual/tutorial/mutable.md:218
 msgid "[error tutorial](error.md) for handling checked results."
 msgstr "[错误教程](error.md)：处理受检结果。"
 
-#: manual/tutorial/mutable.md:218
+#: manual/tutorial/mutable.md:219
 msgid "[immut tutorial](immut.md) for exact, value-oriented work."
 msgstr "[immut 教程](immut.md)：精确的、面向值的计算。"
 
@@ -8054,6 +8055,9 @@ msgstr "[perf_runner 教程](perf_runner.md)：计时运行。"
 #: manual/tutorial/perf_support.md:78
 msgid "[mutable design](../design/mutable.md) for the measured algorithms."
 msgstr "[mutable 设计](../design/mutable.md)：被测量的算法。"
+
+#~ msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ **without validating shapes**."
+#~ msgstr "`Matrix::unchecked_matmul(a, b)` 返回 $AB$，**不验证形状**。"
 
 #~ msgid "The recognition uses the tolerance: a matrix whose entries are within $10^{-11}$ of the identity is returned as a copy of itself, one whose off-diagonal entries are at most $10^{-11}$ is inverted as if they were zero, and one within $10^{-11}$ of a permutation matrix is returned transposed."
 #~ msgstr "识别时使用容差：与单位矩阵的元素差都在 $10^{-11}$ 以内的矩阵会原样返回其副本；非对角元绝对值都不超过 $10^{-11}$ 的矩阵按这些元素为零来求逆；与某个置换矩阵相差在 $10^{-11}$ 以内的矩阵会返回其转置。"
