@@ -278,10 +278,12 @@ integer division; those scalars retain Bareiss.
 There is no absolute or relative zero threshold. An exactly zero selected
 pivot returns zero; the method does not classify numerical rank. The empty
 pivot product is one. Inputs are immutable because all elimination occurs on
-a private array. Floating-point rounding and elimination growth remain, and
-the sequential pivot product may overflow or underflow even when the final
-mathematical determinant is representable. NaN and infinity follow scalar
-arithmetic without a checked error. Tests of known triangular and dense
+a private array. Floating-point rounding and elimination growth remain. Finite
+pivots are accumulated with a normalized mantissa and a binary exponent, so
+their product does not overflow or underflow merely because intermediate
+pivots have opposing scales; a final result outside the scalar range still
+overflows or underflows. NaN and infinity follow scalar arithmetic without a
+checked error. Tests of known triangular and dense
 factorizations are finite evidence, not a universal accuracy proof.
 
 [^bareiss]: E. H. Bareiss, "Sylvester's identity and multistep integer-preserving

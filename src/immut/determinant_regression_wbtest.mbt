@@ -85,6 +85,13 @@ test "determinant floating exponent accumulation and nonfinite propagation" {
     [0.0, 0.0, 0.0, 1.0e-200],
   ])
   assert_true((balanced_double.determinant().unwrap() - 1.0).abs() < 1.0e-12)
+  let reversed_double = Matrix::from_2d_array([
+    [1.0e-200, 0.0, 0.0, 0.0],
+    [0.0, 1.0e-200, 0.0, 0.0],
+    [0.0, 0.0, 1.0e200, 0.0],
+    [0.0, 0.0, 0.0, 1.0e200],
+  ])
+  assert_true((reversed_double.determinant().unwrap() - 1.0).abs() < 1.0e-12)
   let balanced_float : Matrix[Float] = Matrix::from_2d_array([
     [1.0e20, 0.0, 0.0, 0.0],
     [0.0, 1.0e20, 0.0, 0.0],

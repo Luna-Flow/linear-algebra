@@ -459,8 +459,10 @@ For `PivotedLU` (`Float` and `Double`), every size uses Gaussian elimination
 with partial pivoting on a private copy, then multiplies the pivots with the
 row-swap sign. No tolerance is applied: an exactly zero pivot returns zero.
 This is a determinant computation, not a numerical-rank test. Floating-point
-rounding, elimination growth, and pivot-product overflow or underflow remain
-possible; NaN and infinity are not rejected. The $60 \times 60$ upper
+rounding and elimination growth remain. Finite pivot products are accumulated
+with a mantissa and binary exponent to avoid avoidable overflow or underflow;
+final results still overflow or underflow when outside the scalar range. NaN
+and infinity follow scalar arithmetic and are propagated. The $60 \times 60$ upper
 bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ now returns a
 finite approximation to $10^{180}$ instead of Bareiss's NaN.
 

@@ -96,6 +96,17 @@ fn[T : Compare + Num + Div] Matrix::determinant_lu(self : Matrix[T]) -> T {
       exponent -= 1
     }
     determinant = determinant * mantissa
+    let mut determinant_magnitude = Num::abs(determinant)
+    while determinant_magnitude >= one {
+      determinant = determinant / two
+      determinant_magnitude = Num::abs(determinant)
+      exponent += 1
+    }
+    while determinant_magnitude < half {
+      determinant = determinant * two
+      determinant_magnitude = Num::abs(determinant)
+      exponent -= 1
+    }
     for i in (k + 1)..<n {
       let factor = work[i * n + k] / pivot
       work[i * n + k] = Zero::zero()
