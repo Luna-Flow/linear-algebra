@@ -157,9 +157,12 @@ Wrap it in `@default.ImmutableDenseMatrix` to pass it to functions bounded by
 decompositions or statistics, convert with the
 [`container` adapters](container/adapters.md) and use [`mutable`](mutable.md).
 
-**Your own scalar type.** Any type implementing the `luna-generic` traits
-works: a rational or modular-integer type with `Num` and `Div` gets exact
-determinants through Bareiss elimination, and any `Semiring` gets `pow`.
+**Your own scalar type.** Determinants require `DeterminantScalar` in addition
+to its inherited `Compare + Num + Div` operations. Select `Bareiss` for an
+integral domain with exact division on divisible values, or `PivotedLU` for
+field-like division. A modular ring with zero divisors is not an integral
+domain. Generic determinant callers must add `T : @immut.DeterminantScalar`;
+any `Semiring` still gets `pow`.
 
 **Performance.** Reads and single-entry updates cost $O(\log_{32} N)$. For a
 long series of edits on a large matrix, a `@mutable.Matrix` working buffer is
@@ -178,11 +181,10 @@ faster; freeze it into an `immut` value at the end.
   if you read many entries.
 - **Operators abort.** `+`, `-`, `*` abort on shape mismatch; use `matmul`
   when shapes come from input.
-- **Floating-point determinants.** `determinant` is built for exact
-  arithmetic. On `Double` matrices of size $5$ and more its intermediate
-  values grow like products of minors and can overflow to NaN while the
-  determinant itself is representable; use `@mutable.Matrix::determinant` for
-  floating-point data.
+- **Floating-point determinants.** `Float` and `Double` use pivoted LU for
+  every size. No tolerance is used to classify a pivot as zero, so this is
+  not a numerical-rank test. Rounding, overflow and underflow remain possible;
+  use an error budget appropriate to the matrix instead of exact equality.
 
 ## Next steps
 

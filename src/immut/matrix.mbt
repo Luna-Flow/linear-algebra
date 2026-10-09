@@ -866,7 +866,7 @@ fn[T] swap_dense_rows(
 /// let m = Matrix::from_2d_array([[1, 2], [3, 4]])
 /// inspect(m.determinant().unwrap(), content="-2")
 /// ```
-pub fn[T : Compare + Num + Div] Matrix::determinant(
+pub fn[T : DeterminantScalar] Matrix::determinant(
   self : Matrix[T],
 ) -> Result[T, LinearAlgebraError] {
   match ensure_square_checked(self) {
@@ -876,11 +876,15 @@ pub fn[T : Compare + Num + Div] Matrix::determinant(
 }
 
 ///|
-pub fn[T : Compare + Num + Div] Matrix::unchecked_determinant(
+pub fn[T : DeterminantScalar] Matrix::unchecked_determinant(
   self : Matrix[T],
 ) -> T {
   let n = self.row
   ensure_square(self)
+  match T::determinant_algorithm() {
+    PivotedLU => return self.determinant_lu()
+    Bareiss => ()
+  }
   match n {
     0 => One::one()
     1 => self.data[0]

@@ -660,7 +660,7 @@ msgid "`DenseMatrix::inner(m)` returns the wrapped `@mutable.Matrix`, which give
 msgstr ""
 
 #: manual/api/backends/default.md:280
-#: manual/api/immut.md:202
+#: manual/api/immut.md:203
 msgid "`row` and `col` return the number of rows and columns."
 msgstr ""
 
@@ -677,7 +677,7 @@ msgid "Entry-wise `+`, `-` and unary `-`."
 msgstr ""
 
 #: manual/api/backends/default.md:315
-#: manual/api/immut.md:360
+#: manual/api/immut.md:361
 msgid "Operands of different shapes abort."
 msgstr ""
 
@@ -1400,7 +1400,7 @@ msgid "The examples on this page write every name with its package prefix, such 
 msgstr ""
 
 #: manual/api/error.md:28
-#: manual/api/immut.md:48
+#: manual/api/immut.md:49
 #: manual/api/mutable.md:58
 #: manual/api/perf_support.md:34
 msgid "Types"
@@ -1621,19 +1621,19 @@ msgid "The predicates in use, on errors returned by real checked calls:"
 msgstr ""
 
 #: manual/api/error.md:346
-#: manual/api/immut.md:977
+#: manual/api/immut.md:1003
 #: manual/api/mutable.md:1313
 msgid "Deprecated"
 msgstr ""
 
 #: manual/api/error.md:348
-#: manual/api/immut.md:982
+#: manual/api/immut.md:1008
 #: manual/api/mutable.md:1315
 msgid "Item"
 msgstr ""
 
 #: manual/api/error.md:348
-#: manual/api/immut.md:982
+#: manual/api/immut.md:1008
 #: manual/api/mutable.md:1315
 msgid "Replacement"
 msgstr ""
@@ -1684,500 +1684,508 @@ msgid "**Checked and unchecked.** `matmul`, `trace`, `determinant` and `pow` ret
 msgstr ""
 
 #: manual/api/immut.md:45
-msgid "**Scalars.** Bounds come from `luna-generic`: `Zero`, `One`, `Semiring`, `Num` (a ring with `abs` and `signum`), `Conjugate`."
+msgid "**Scalars.** Bounds come from `luna-generic`: `Zero`, `One`, `Semiring`, `Num` (a ring with `abs` and `signum`), `Conjugate`. Determinants also require this package's `DeterminantScalar` strategy."
 msgstr ""
 
-#: manual/api/immut.md:52
+#: manual/api/immut.md:53
 msgid "`Matrix[T]` is an immutable dense $r \\times c$ matrix."
 msgstr ""
 
-#: manual/api/immut.md:58
+#: manual/api/immut.md:59
 msgid "The type is abstract: build it with the constructors below. It implements `Eq`, `Show` (rows printed as `|a, b|` separated by newlines), `Add`, `Sub`, `Neg`, `Mul` (matrix product) under the element constraints of the corresponding methods."
 msgstr ""
 
-#: manual/api/immut.md:65
+#: manual/api/immut.md:66
 msgid "`Indexed[T]` is the row accessor returned by `m[r]`."
 msgstr ""
 
-#: manual/api/immut.md:71
+#: manual/api/immut.md:72
 msgid "It is a function from a column index to an entry; it holds no copy of the row."
 msgstr ""
 
-#: manual/api/immut.md:75
+#: manual/api/immut.md:76
 msgid "`Indexed::at(row, c)` returns the entry in column `c`; it backs `m[r][c]`."
 msgstr ""
 
-#: manual/api/immut.md:82
+#: manual/api/immut.md:83
 msgid "A column index outside `0..<col()` aborts."
 msgstr ""
 
-#: manual/api/immut.md:86
+#: manual/api/immut.md:87
 msgid "`MatrixFn[T]` is a lazy matrix: a shape and a function $(i, j) \\mapsto a_{ij}$."
 msgstr ""
 
-#: manual/api/immut.md:92
+#: manual/api/immut.md:93
 msgid "Entries are computed on every read and never stored. Its methods are listed in [`MatrixFn` operations](#matrixfn-operations)."
 msgstr ""
 
-#: manual/api/immut.md:97
+#: manual/api/immut.md:98
 msgid "`Vector[T]` is an immutable dense vector."
 msgstr ""
 
-#: manual/api/immut.md:104
+#: manual/api/immut.md:105
 msgid "It implements `Eq`, `Show` (printed as `|a, b, c|`), `Add`, `Mul` (element-wise), `Neg`, `Debug` and quickcheck's `Arbitrary`."
 msgstr ""
 
-#: manual/api/immut.md:109
+#: manual/api/immut.md:110
 msgid "`VecLib[T]` is an alias of `Vector[T]`."
 msgstr ""
 
-#: manual/api/immut.md:118
+#: manual/api/immut.md:119
 msgid "`VecCore[T]` is an alias of the core persistent vector `@moonbitlang/core/immut/vector.Vector[T]` that backs `Vector`."
 msgstr ""
 
-#: manual/api/immut.md:125
+#: manual/api/immut.md:126
 msgid "Matrix construction"
 msgstr ""
 
-#: manual/api/immut.md:129
+#: manual/api/immut.md:130
 msgid "`Matrix::make(r, c, f)` builds the $r \\times c$ matrix with entries $a_{ij} = f(i, j)$."
 msgstr ""
 
-#: manual/api/immut.md:136
+#: manual/api/immut.md:137
 msgid "`f` is called once per entry in row-major order, and not at all when $r = 0$ or $c = 0$. Negative dimensions abort."
 msgstr ""
 
-#: manual/api/immut.md:141
+#: manual/api/immut.md:142
 msgid "`Matrix::new(r, c, x)` builds an $r \\times c$ matrix with every entry `x`."
 msgstr ""
 
-#: manual/api/immut.md:149
+#: manual/api/immut.md:150
 msgid "`Matrix::from_2d_array(rows)` builds a matrix from nested row arrays."
 msgstr ""
 
-#: manual/api/immut.md:155
+#: manual/api/immut.md:156
 msgid "`[]` gives $0 \\times 0$; `[[], []]` gives $2 \\times 0$. Rows of different lengths abort. The input is copied."
 msgstr ""
 
-#: manual/api/immut.md:160
+#: manual/api/immut.md:161
 msgid "`Matrix::from_array(r, c, v)` uses the vector `v` as the row-major entries of an $r \\times c$ matrix."
 msgstr ""
 
-#: manual/api/immut.md:167
+#: manual/api/immut.md:168
 msgid "Negative dimensions or `v.length() != r * c` abort. No copy is made; `v` is immutable."
 msgstr ""
 
-#: manual/api/immut.md:172
+#: manual/api/immut.md:173
 msgid "`Matrix::identity(n)` builds the $n \\times n$ identity matrix $I_n$."
 msgstr ""
 
-#: manual/api/immut.md:178
+#: manual/api/immut.md:179
 msgid "A negative `n` aborts."
 msgstr ""
 
-#: manual/api/immut.md:198
+#: manual/api/immut.md:199
 msgid "Shape and access"
 msgstr ""
 
-#: manual/api/immut.md:211
+#: manual/api/immut.md:212
 msgid "`Matrix::shape(m)` returns `(row, col)`."
 msgstr ""
 
-#: manual/api/immut.md:219
+#: manual/api/immut.md:220
 msgid "`Matrix::is_square(m)` returns `row() == col()`; a $0 \\times 0$ matrix is square."
 msgstr ""
 
-#: manual/api/immut.md:228
+#: manual/api/immut.md:229
 msgid "`Matrix::null(m)` returns `true` when every entry equals `Zero::zero()`; an empty matrix is null."
 msgstr ""
 
-#: manual/api/immut.md:237
+#: manual/api/immut.md:238
 msgid "`Matrix::at(m, r)` returns the accessor for row `r`; it backs `m[r]`."
 msgstr ""
 
-#: manual/api/immut.md:244
+#: manual/api/immut.md:245
 msgid "A row index outside `0..<row()` aborts immediately."
 msgstr ""
 
-#: manual/api/immut.md:248
+#: manual/api/immut.md:249
 msgid "`Matrix::set(m, r, c, x)` returns a matrix equal to `m` except that entry $(r, c)$ is `x`."
 msgstr ""
 
-#: manual/api/immut.md:255
+#: manual/api/immut.md:256
 msgid "`m` is unchanged. Out-of-range indices abort. Cost $O(\\log_{32}(rc))$; the new matrix shares all other storage with `m`."
 msgstr ""
 
-#: manual/api/immut.md:260
+#: manual/api/immut.md:261
 msgid "`Matrix::equal(a, b)` compares shapes and entries; it backs `==`."
 msgstr ""
 
-#: manual/api/immut.md:268
+#: manual/api/immut.md:269
 msgid ""
 "`Matrix::to_string(m)` renders the rows as `|a, b|` lines joined by `\\n"
 "`."
 msgstr ""
 
-#: manual/api/immut.md:274
+#: manual/api/immut.md:275
 msgid "An empty matrix renders as the empty string."
 msgstr ""
 
-#: manual/api/immut.md:289
+#: manual/api/immut.md:290
 msgid "Element-wise transforms"
 msgstr ""
 
-#: manual/api/immut.md:293
+#: manual/api/immut.md:294
 msgid "`Matrix::map(m, f)` applies `f` to every entry; the element type may change."
 msgstr ""
 
-#: manual/api/immut.md:301
+#: manual/api/immut.md:302
 msgid "`Matrix::mapi(m, f)` applies `f(i, j, a_ij)` to every entry."
 msgstr ""
 
-#: manual/api/immut.md:309
+#: manual/api/immut.md:310
 msgid "`Matrix::scale(m, a)` multiplies every entry on the right by `a`: $(a_{ij} a)$."
 msgstr ""
 
-#: manual/api/immut.md:317
+#: manual/api/immut.md:318
 msgid "`Matrix::add_constant(m, a)` adds `a` to every entry."
 msgstr ""
 
-#: manual/api/immut.md:325
+#: manual/api/immut.md:326
 msgid "`Matrix::adjoint(m)` returns the conjugate transpose $A^{*}$, $(A^{*})_{ij} = \\overline{a_{ji}}$."
 msgstr ""
 
-#: manual/api/immut.md:332
+#: manual/api/immut.md:333
 msgid "It needs a scalar type that implements `Conjugate`, such as a complex number type; the builtin real types do not."
 msgstr ""
 
-#: manual/api/immut.md:348
+#: manual/api/immut.md:349
 #: manual/api/mutable.md:461
 msgid "Arithmetic"
 msgstr ""
 
-#: manual/api/immut.md:352
+#: manual/api/immut.md:353
 msgid "Entry-wise $A + B$, $A - B$ and $-A$; these back the operators."
 msgstr ""
 
-#: manual/api/immut.md:364
+#: manual/api/immut.md:365
 msgid "`Matrix::mul(a, b)` is the matrix product behind `a * b`; it is `unchecked_matmul`."
 msgstr ""
 
-#: manual/api/immut.md:373
+#: manual/api/immut.md:374
 msgid "`Matrix::matmul(a, b)` returns `Ok(AB)` when $\\operatorname{cols}(A) = \\operatorname{rows}(B)$, and `Err` with kind `DimensionMismatch` otherwise."
 msgstr ""
 
-#: manual/api/immut.md:381
+#: manual/api/immut.md:382
 msgid "$(AB)_{ik} = \\sum_{j} a_{ij} b_{jk}$, summed in increasing $j$. When the inner dimension is $0$ the result is the zero matrix of shape $\\operatorname{rows}(A) \\times \\operatorname{cols}(B)$, the empty sum. Cost: $rcn$ multiply-adds plus an $O(cn)$ transposed copy of $B$."
 msgstr ""
 
-#: manual/api/immut.md:388
+#: manual/api/immut.md:389
 msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ and aborts on incompatible shapes."
 msgstr ""
 
-#: manual/api/immut.md:397
+#: manual/api/immut.md:398
 msgid "`Matrix::pow(a, k)` returns `Ok(A^k)` for a square matrix and $k \\ge 0$, with $A^0 = I$."
 msgstr ""
 
-#: manual/api/immut.md:404
+#: manual/api/immut.md:405
 msgid "A non-square matrix gives `NonSquareMatrix` (checked first); a negative exponent gives `NegativeExponent`. The power is computed by binary exponentiation with at most $2\\lfloor\\log_2 k\\rfloor + 1$ matrix products."
 msgstr ""
 
-#: manual/api/immut.md:410
+#: manual/api/immut.md:411
 msgid "`Matrix::unchecked_pow(a, k)` returns $A^k$ and aborts on a non-square matrix or negative exponent."
 msgstr ""
 
-#: manual/api/immut.md:419
+#: manual/api/immut.md:420
 msgid "`Matrix::trace(a)` returns `Ok(tr A)`, $\\sum_i a_{ii}$, for a square matrix, and `NonSquareMatrix` otherwise."
 msgstr ""
 
-#: manual/api/immut.md:426
+#: manual/api/immut.md:427
 msgid "The trace of the $0 \\times 0$ matrix is `Zero::zero()`."
 msgstr ""
 
-#: manual/api/immut.md:430
+#: manual/api/immut.md:431
 msgid "`Matrix::unchecked_trace(a)` returns $\\operatorname{tr} A$ and aborts on a non-square matrix."
 msgstr ""
 
-#: manual/api/immut.md:439
+#: manual/api/immut.md:440
 #: manual/api/mutable.md:616
 msgid "`Matrix::determinant(a)` returns `Ok(det A)` for a square matrix and `NonSquareMatrix` otherwise."
 msgstr ""
 
-#: manual/api/immut.md:446
-msgid "For $n \\le 4$ it evaluates closed cofactor formulas; for $n \\ge 5$ it runs fraction-free (Bareiss) elimination, choosing as pivot the entry of largest `abs` in the current column, whose divisions are exact in an integral domain. The result is therefore **exact** for `BigInt`, and exact for `Int` and `Int64` as long as no intermediate product overflows (for $n \\le 4$, as long as the determinant itself fits). If a whole pivot column is zero the result is `Zero::zero()` at once. $\\det$ of the $0 \\times 0$ matrix is `One::one()`. Cost $O(n^3)$ arithmetic operations. See the [immut design](../design/immut.md) for the derivation."
+#: manual/api/immut.md:447
+msgid "For the `Bareiss` strategy, $n \\le 4$ evaluates closed cofactor formulas; for $n \\ge 5$ it runs fraction-free (Bareiss) elimination, choosing as pivot the entry of largest `abs` in the current column, whose divisions are exact in an integral domain. The result is therefore **exact** for `BigInt`, and exact for `Int` and `Int64` as long as no intermediate product overflows (for $n \\le 4$, as long as the determinant itself fits). If a whole pivot column is zero the result is `Zero::zero()` at once. $\\det$ of the $0 \\times 0$ matrix is `One::one()`. Cost $O(n^3)$ arithmetic operations. See the [immut design](../design/immut.md) for the derivation."
 msgstr ""
 
-#: manual/api/immut.md:456
-msgid "[!WARNING] For `Double` and `Float` this is not the numerically preferred algorithm. Every intermediate value of Bareiss elimination is a minor of $A$, and the update multiplies two of them, so magnitudes are squared before they are divided back. For $n \\ge 5$ the result overflows to infinity or NaN long before $\\det A$ does: the $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ has $\\det A = 10^{180}$, which `@mutable.Matrix::determinant` returns, while this method returns NaN. There is no tolerance either: only an exactly zero pivot column is detected. Use [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for floating-point matrices. The issue is tracked as [#93](https://github.com/Luna-Flow/linear-algebra/issues/93)."
+#: manual/api/immut.md:458
+msgid "For `PivotedLU` (`Float` and `Double`), every size uses Gaussian elimination with partial pivoting on a private copy, then multiplies the pivots with the row-swap sign. No tolerance is applied: an exactly zero pivot returns zero. This is a determinant computation, not a numerical-rank test. Floating-point rounding and elimination growth remain. Finite pivot products are accumulated with a mantissa and binary exponent to avoid avoidable overflow or underflow; final results still overflow or underflow when outside the scalar range. NaN and infinity follow scalar arithmetic and are propagated. The $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ now returns a finite approximation to $10^{180}$ instead of Bareiss's NaN."
 msgstr ""
 
 #: manual/api/immut.md:471
+msgid "`DeterminantScalar` is an open strategy trait extending `Compare + Num + Div`. Its `determinant_algorithm()` method selects `Bareiss` or `PivotedLU`. `Int`, `Int16`, `Int64` and `BigInt` select `Bareiss`; `Float` and `Double` select `PivotedLU` with scaled pivot accumulation. Custom scalars must implement the trait explicitly; the default pivot product uses native scalar multiplication."
+msgstr ""
+
+#: manual/api/immut.md:489
+msgid "Choose `Bareiss` for a commutative integral domain with exact division of divisible values, without intermediate overflow. Choose `PivotedLU` for field-like division, accepting rounding for inexact scalars. These obligations are not checked by the compiler. Generic callers must replace `T : Compare + Num + Div` with `T : @immut.DeterminantScalar`."
+msgstr ""
+
+#: manual/api/immut.md:497
 msgid "`Matrix::unchecked_determinant(a)` returns $\\det A$ and aborts on a non-square matrix."
 msgstr ""
 
-#: manual/api/immut.md:505
+#: manual/api/immut.md:531
 msgid "The second matrix is a Vandermonde matrix with nodes $2, \\dots, 7$, whose determinant is $\\prod_{i<j}(x_j - x_i) = 1!\\,2!\\,3!\\,4!\\,5! = 34560$."
 msgstr ""
 
-#: manual/api/immut.md:508
+#: manual/api/immut.md:534
 msgid "Structural operations"
 msgstr ""
 
-#: manual/api/immut.md:512
+#: manual/api/immut.md:538
 msgid "`Matrix::transpose(m)` returns the materialized transpose $A^{\\mathsf T}$."
 msgstr ""
 
-#: manual/api/immut.md:520
+#: manual/api/immut.md:546
 msgid "`Matrix::horizontal_combine(a, b)` places `b` to the right of `a`: the block matrix $[A \\; B]$."
 msgstr ""
 
-#: manual/api/immut.md:527
+#: manual/api/immut.md:553
 msgid "Different row counts abort."
 msgstr ""
 
-#: manual/api/immut.md:531
+#: manual/api/immut.md:557
 msgid "`Matrix::vertical_combine(a, b)` places `b` below `a`."
 msgstr ""
 
-#: manual/api/immut.md:537
+#: manual/api/immut.md:563
 msgid "Different column counts abort."
 msgstr ""
 
-#: manual/api/immut.md:541
+#: manual/api/immut.md:567
 msgid "`swap_rows(i, j)` and `swap_cols(i, j)` return a matrix with two rows or two columns exchanged."
 msgstr ""
 
-#: manual/api/immut.md:549
+#: manual/api/immut.md:575
 msgid "Out-of-range indices abort. Swapping an index with itself returns `m` itself. Otherwise the whole matrix is rebuilt, $O(rc)$."
 msgstr ""
 
-#: manual/api/immut.md:566
+#: manual/api/immut.md:592
 msgid "Iteration and conversion"
 msgstr ""
 
-#: manual/api/immut.md:570
+#: manual/api/immut.md:596
 msgid "`Matrix::iter(m)` iterates over all entries in row-major order."
 msgstr ""
 
-#: manual/api/immut.md:578
+#: manual/api/immut.md:604
 msgid "`iter_row(r)` iterates over row `r` left to right; `iter_col(c)` over column `c` top to bottom."
 msgstr ""
 
-#: manual/api/immut.md:586
+#: manual/api/immut.md:612
 msgid "Out-of-range indices abort when the iterator is created."
 msgstr ""
 
-#: manual/api/immut.md:590
+#: manual/api/immut.md:616
 msgid "`Matrix::to_array(m)` copies the entries into a flat row-major array."
 msgstr ""
 
-#: manual/api/immut.md:598
+#: manual/api/immut.md:624
 msgid "`Matrix::to_2d_array(m)` copies the entries into nested row arrays."
 msgstr ""
 
-#: manual/api/immut.md:604
+#: manual/api/immut.md:630
 msgid "For an $r \\times 0$ matrix the result has $r$ empty rows."
 msgstr ""
 
-#: manual/api/immut.md:616
+#: manual/api/immut.md:642
 msgid "`MatrixFn` operations"
 msgstr ""
 
-#: manual/api/immut.md:618
+#: manual/api/immut.md:644
 msgid "All `MatrixFn` operations are lazy: they compose functions and do no work until an entry is read. Shape checks happen eagerly; bounds checks happen on reads."
 msgstr ""
 
-#: manual/api/immut.md:623
+#: manual/api/immut.md:649
 msgid "`MatrixFn::make(r, c, f)` builds the lazy matrix with entries $f(i, j)$."
 msgstr ""
 
-#: manual/api/immut.md:629
+#: manual/api/immut.md:655
 msgid "Negative dimensions abort. Reading an entry outside the shape aborts."
 msgstr ""
 
-#: manual/api/immut.md:633
+#: manual/api/immut.md:659
 msgid "`MatrixFn::new(r, c)` builds an $r \\times c$ lazy matrix whose entries are `T::default()`."
 msgstr ""
 
-#: manual/api/immut.md:642
+#: manual/api/immut.md:668
 msgid "`MatrixFn::from_2d_array(rows)` builds a lazy view of nested rows."
 msgstr ""
 
-#: manual/api/immut.md:648
+#: manual/api/immut.md:674
 msgid "Ragged input aborts. The arrays are captured, not copied: later writes to them are visible through the `MatrixFn`."
 msgstr ""
 
-#: manual/api/immut.md:653
+#: manual/api/immut.md:679
 msgid "`MatrixFn::identity(n)` is the lazy $n \\times n$ identity."
 msgstr ""
 
-#: manual/api/immut.md:661
+#: manual/api/immut.md:687
 msgid "`MatrixFn::shape(m)` returns `(rows, cols)`."
 msgstr ""
 
-#: manual/api/immut.md:669
+#: manual/api/immut.md:695
 msgid "`MatrixFn::at(m, r)` returns the row accessor behind `m[r][c]`."
 msgstr ""
 
-#: manual/api/immut.md:676
+#: manual/api/immut.md:702
 msgid "The row index is checked immediately, the column when it is read."
 msgstr ""
 
-#: manual/api/immut.md:680
+#: manual/api/immut.md:706
 msgid "`MatrixFn::map(m, f)` composes `f` after every entry."
 msgstr ""
 
-#: manual/api/immut.md:688
+#: manual/api/immut.md:714
 msgid "`map_row(r, f)` and `map_col(c, f)` apply `f` to one row or one column."
 msgstr ""
 
-#: manual/api/immut.md:695
+#: manual/api/immut.md:721
 msgid "Out-of-range indices abort immediately."
 msgstr ""
 
-#: manual/api/immut.md:699
+#: manual/api/immut.md:725
 msgid "`MatrixFn::zip_with(a, b, f)` combines two lazy matrices entry by entry."
 msgstr ""
 
-#: manual/api/immut.md:705
+#: manual/api/immut.md:731
 msgid "Different shapes abort."
 msgstr ""
 
-#: manual/api/immut.md:709
+#: manual/api/immut.md:735
 msgid "`MatrixFn::fold(m, init~, f)` reduces all entries in row-major order."
 msgstr ""
 
-#: manual/api/immut.md:715
+#: manual/api/immut.md:741
 msgid "This forces every entry once."
 msgstr ""
 
-#: manual/api/immut.md:719
+#: manual/api/immut.md:745
 msgid "Lazy entry-wise $A + B$, $A - B$, $-A$ and $A a$."
 msgstr ""
 
-#: manual/api/immut.md:728
+#: manual/api/immut.md:754
 msgid "`MatrixFn` has no public `*` operator; use `pow` or convert to `Matrix`."
 msgstr ""
 
-#: manual/api/immut.md:732
+#: manual/api/immut.md:758
 msgid "`MatrixFn::pow(a, k)` returns the lazy power $A^k$ by binary exponentiation."
 msgstr ""
 
-#: manual/api/immut.md:738
+#: manual/api/immut.md:764
 msgid "Non-square input or a negative exponent aborts. Because nothing is cached, reading one entry of $A^{k}$ recomputes the nested products. One entry of the lazy square $B \\cdot B$ reads $2n$ entries of $B$, so one entry of $A^{2^d}$ reads $(2n)^d = k^{1 + \\log_2 n}$ entries of $A$ for $k = 2^d$; read all entries into a `Matrix` with `Matrix::make` if you need more than a few."
 msgstr ""
 
-#: manual/api/immut.md:746
+#: manual/api/immut.md:772
 msgid "`MatrixFn::determinant(a)` materializes the matrix and returns its determinant with the algorithm of `Matrix::determinant`."
 msgstr ""
 
-#: manual/api/immut.md:753
+#: manual/api/immut.md:779
 msgid "A non-square matrix aborts; there is no checked form."
 msgstr ""
 
-#: manual/api/immut.md:757
+#: manual/api/immut.md:783
 msgid "Lazy transpose and conjugate transpose."
 msgstr ""
 
-#: manual/api/immut.md:766
+#: manual/api/immut.md:792
 msgid "Lazy row and column exchange; out-of-range indices abort."
 msgstr ""
 
-#: manual/api/immut.md:775
+#: manual/api/immut.md:801
 msgid "Lazy block concatenation; mismatched row or column counts abort."
 msgstr ""
 
-#: manual/api/immut.md:784
+#: manual/api/immut.md:810
 msgid "`equal` compares shapes and every entry (forcing them); `to_string` renders like `Matrix`."
 msgstr ""
 
-#: manual/api/immut.md:808
+#: manual/api/immut.md:834
 #: manual/api/mutable.md:1160
 msgid "Vector"
 msgstr ""
 
-#: manual/api/immut.md:812
+#: manual/api/immut.md:838
 msgid "`Vector::from_array(xs)` copies an array into a new vector."
 msgstr ""
 
-#: manual/api/immut.md:820
+#: manual/api/immut.md:846
 msgid "`make(n, x)` builds $n$ copies of `x`; `makei(n, f)` builds $(f(0), \\dots, f(n-1))$."
 msgstr ""
 
-#: manual/api/immut.md:830
+#: manual/api/immut.md:856
 msgid "`Vector::length(v)` returns the number of elements."
 msgstr ""
 
-#: manual/api/immut.md:838
+#: manual/api/immut.md:864
 msgid "`Vector::at(v, i)` returns element `i`; it backs `v[i]`. An out-of-range index aborts."
 msgstr ""
 
-#: manual/api/immut.md:848
+#: manual/api/immut.md:874
 msgid "`Vector::set(v, i, x)` returns a vector equal to `v` except at `i`, in $O(\\log_{32} n)$; `v` is unchanged."
 msgstr ""
 
-#: manual/api/immut.md:857
+#: manual/api/immut.md:883
 msgid "`Vector::iter(v)` iterates over the elements in order."
 msgstr ""
 
-#: manual/api/immut.md:865
+#: manual/api/immut.md:891
 msgid "`map(f)` applies `f` to every element; `zip_with(w, f)` combines two vectors element by element and aborts on different lengths."
 msgstr ""
 
-#: manual/api/immut.md:875
+#: manual/api/immut.md:901
 msgid "Element-wise $u + v$, Hadamard $u \\odot v$ and $-u$; they back the operators. Different lengths abort."
 msgstr ""
 
-#: manual/api/immut.md:884
+#: manual/api/immut.md:910
 msgid "`Vector` has no `Sub` implementation; write `u + -v`."
 msgstr ""
 
-#: manual/api/immut.md:888
+#: manual/api/immut.md:914
 msgid "`Vector::add_constant(v, a)` adds `a` to every element."
 msgstr ""
 
-#: manual/api/immut.md:896
+#: manual/api/immut.md:922
 msgid "`left_scale(a)` returns $(a v_i)_i$; `right_scale(a)` returns $(v_i a)_i$. They differ only for non-commutative scalars."
 msgstr ""
 
-#: manual/api/immut.md:906
+#: manual/api/immut.md:932
 msgid "`Vector::lerp(u, v, t)` returns $(1 - t) u + t v$, with scalars on the left."
 msgstr ""
 
-#: manual/api/immut.md:912
+#: manual/api/immut.md:938
 msgid "Different lengths abort."
 msgstr ""
 
-#: manual/api/immut.md:916
+#: manual/api/immut.md:942
 msgid "`lin_comb(a, u, b, v)` returns $a u + b v$, with scalars on the left."
 msgstr ""
 
-#: manual/api/immut.md:924
+#: manual/api/immut.md:950
 msgid "The vector as a $1 \\times n$ or an $n \\times 1$ matrix."
 msgstr ""
 
-#: manual/api/immut.md:933
+#: manual/api/immut.md:959
 msgid "`Vector::scaled_matrix(v)` returns the diagonal matrix $\\operatorname{diag}(v_0, \\dots, v_{n-1})$."
 msgstr ""
 
-#: manual/api/immut.md:942
+#: manual/api/immut.md:968
 msgid "`Vector::tensor_product(u, v)` returns the outer product $u v^{\\mathsf T}$, the $m \\times n$ matrix with entries $u_i v_j$."
 msgstr ""
 
-#: manual/api/immut.md:951
+#: manual/api/immut.md:977
 msgid "`equal` compares lengths and elements; `to_string` renders `|a, b, c|`."
 msgstr ""
 
-#: manual/api/immut.md:979
+#: manual/api/immut.md:1005
 msgid "These method forms exist only for source compatibility; they are hidden from the interface and warn when used."
 msgstr ""
 
-#: manual/api/immut.md:985
+#: manual/api/immut.md:1011
 #: manual/api/mutable.md:1321
 msgid "string interpolation or `Show::output(x, logger)`"
 msgstr ""
 
-#: manual/api/immut.md:986
+#: manual/api/immut.md:1012
 #: manual/api/mutable.md:1322
 msgid "`Repr(v)` or `@debug.Debug::to_repr(v)`"
 msgstr ""
@@ -3283,7 +3291,7 @@ msgid "`CORRECTNESS_CHECKLIST.md` records the audited status of the numerical ro
 msgstr ""
 
 #: manual/architecture.md:81
-#: manual/index.md:161
+#: manual/index.md:166
 msgid "Outside the module"
 msgstr ""
 
@@ -3690,7 +3698,7 @@ msgstr ""
 #: manual/design/container.md:150
 #: manual/design/container/adapters.md:84
 #: manual/design/error.md:133
-#: manual/design/immut.md:306
+#: manual/design/immut.md:326
 #: manual/design/internal.md:56
 #: manual/design/mutable.md:600
 #: manual/design/perf.md:43
@@ -3759,7 +3767,7 @@ msgstr ""
 #: manual/design/container.md:165
 #: manual/design/container/adapters.md:96
 #: manual/design/error.md:149
-#: manual/design/immut.md:325
+#: manual/design/immut.md:345
 #: manual/design/internal.md:63
 #: manual/design/mutable.md:628
 #: manual/design/perf.md:48
@@ -3791,7 +3799,7 @@ msgstr ""
 #: manual/design/container.md:177
 #: manual/design/container/adapters.md:104
 #: manual/design/error.md:158
-#: manual/design/immut.md:335
+#: manual/design/immut.md:355
 #: manual/design/internal.md:69
 #: manual/design/mutable.md:640
 #: manual/design/perf.md:54
@@ -4664,7 +4672,7 @@ msgid "Exact algorithms where the scalar allows them"
 msgstr ""
 
 #: manual/design/immut.md:39
-msgid "`determinant` asks only for `Compare + Num + Div`, not for a field, so it accepts `Int`, `Int64` and `BigInt`. With Bareiss elimination the result is exact over those types. `Num` contributes `abs`, used to pick the pivot, and `Num : Ring` the ring operations; `Div` must be *exact* division whenever the dividend is a multiple of the divisor, which integer division is. Over `Double` the same code runs, but without a tolerance and with intermediate values that grow much faster than in LU (see below); the [`mutable`](mutable.md) package, which targets floating point, uses LU with partial pivoting and a tolerance instead."
+msgid "`determinant` requires the open `DeterminantScalar` strategy trait, which extends `Compare + Num + Div`. `Int`, `Int16`, `Int64` and `BigInt` select `Bareiss`; `Float` and `Double` select `PivotedLU`. The operation bounds alone cannot distinguish exact integer division from rounded floating-point division, so callers must supply this strategy explicitly for custom types. Bareiss preserves exact results over integral domains when division is exact on divisible values and intermediate arithmetic does not overflow. LU uses field-like division and is approximate on floating-point scalars. This local algorithm choice does not change the upstream algebraic laws or bounds."
 msgstr ""
 
 #: manual/design/immut.md:49
@@ -4718,7 +4726,7 @@ msgid "determinant"
 msgstr ""
 
 #: manual/design/immut.md:69
-msgid "Bareiss, exact over integral domains"
+msgid "scalar strategy: Bareiss for integers, LU for floats without tolerance"
 msgstr ""
 
 #: manual/design/immut.md:69
@@ -4838,70 +4846,82 @@ msgid "over the $k + 1$ rows involved (restricted to the chosen columns, which o
 msgstr ""
 
 #: manual/design/immut.md:260
-msgid "**Floating point.** The same bound explains why Bareiss elimination is a poor choice for `Double`. LU computes ratios of consecutive minors, of the size of the entries; Bareiss computes the minors themselves and multiplies two of them before dividing. For $A = 1000 I_{60}$ plus a superdiagonal of ones, $\\det A = 10^{180}$ is representable, but at step $k$ the numerator is about $10^{6(k+1)}$, which overflows after $k \\approx 50$; the method then returns NaN where LU returns $10^{180}$. Nor is there a tolerance: only an exactly zero pivot column is treated as singular."
+msgid "**Floating point.** Bareiss forms products of minors before dividing. For $A = 1000 I_{60}$ plus a superdiagonal of ones, triangularity gives $\\det A = 1000^{60} = 10^{180}$. Bareiss intermediates are leading minors, so the products grow like $1000^{2(k+1)}$ and overflow binary64 even though the final determinant is representable. `Float` and `Double` now select LU with partial pivoting for every size, avoiding this source of minor growth."
+msgstr ""
+
+#: manual/design/immut.md:267
+msgid "Pivoted LU determinant"
 msgstr ""
 
 #: manual/design/immut.md:269
-msgid "E. H. Bareiss, \"Sylvester's identity and multistep integer-preserving Gaussian elimination\", *Mathematics of Computation* 22 (1968), 565–578."
+msgid "The kernel copies the matrix, chooses the largest absolute entry in the remaining pivot column, exchanges rows, and subtracts $a_{ik}/a_{kk}$ times the pivot row from each later row. Row addition preserves the determinant over a commutative field; each row exchange changes its sign. After elimination the matrix is upper triangular, so $\\det A = (-1)^s \\prod_k u_{kk}$ in exact arithmetic, where $s$ counts swaps. This argument requires field-like division and does not apply to truncating integer division; those scalars retain Bareiss."
 msgstr ""
 
-#: manual/design/immut.md:272
-msgid "**Small sizes.** For $n \\le 4$ the package uses closed formulas instead. For $n = 3$ it is the cofactor expansion along the first row; for $n = 4$ it is Laplace's expansion along the first two rows,"
-msgstr ""
-
-#: manual/design/immut.md:281
-msgid "six products of complementary $2 \\times 2$ minors. These formulas use only ring operations, so they are exact over every commutative ring and need no division at all. Over `Int` they are therefore exact modulo $2^{32}$ even when an intermediate value wraps, and the result is the true determinant whenever $|\\det A| < 2^{31}$."
-msgstr ""
-
-#: manual/design/immut.md:287
-msgid "Lazy matrices"
+#: manual/design/immut.md:278
+msgid "There is no absolute or relative zero threshold. An exactly zero selected pivot returns zero; the method does not classify numerical rank. The empty pivot product is one. Inputs are immutable because all elimination occurs on a private array. Floating-point rounding and elimination growth remain. Finite pivots are accumulated with a normalized mantissa and a binary exponent, so their product does not overflow or underflow merely because intermediate pivots have opposing scales; a final result outside the scalar range still overflows or underflows. NaN and infinity follow scalar arithmetic without a checked error. Tests of known triangular and dense factorizations are finite evidence, not a universal accuracy proof."
 msgstr ""
 
 #: manual/design/immut.md:289
+msgid "E. H. Bareiss, \"Sylvester's identity and multistep integer-preserving Gaussian elimination\", *Mathematics of Computation* 22 (1968), 565–578."
+msgstr ""
+
+#: manual/design/immut.md:292
+msgid "**Small sizes.** For $n \\le 4$ the package uses closed formulas instead. For $n = 3$ it is the cofactor expansion along the first row; for $n = 4$ it is Laplace's expansion along the first two rows,"
+msgstr ""
+
+#: manual/design/immut.md:301
+msgid "six products of complementary $2 \\times 2$ minors. These formulas use only ring operations, so they are exact over every commutative ring and need no division at all. Over `Int` they are therefore exact modulo $2^{32}$ even when an intermediate value wraps, and the result is the true determinant whenever $|\\det A| < 2^{31}$."
+msgstr ""
+
+#: manual/design/immut.md:307
+msgid "Lazy matrices"
+msgstr ""
+
+#: manual/design/immut.md:309
 msgid "A `MatrixFn` is a pair $(\\text{shape}, f)$ with $f : [r] \\times [c] \\to T$. Operations compose functions: $\\mathtt{map}(g)$ is $g \\circ f$, transpose is $f \\circ \\mathrm{swap}$, and the product is"
 msgstr ""
 
-#: manual/design/immut.md:297
+#: manual/design/immut.md:317
 msgid "evaluated on demand. Nothing is cached, so reading one entry of a product costs the inner dimension $n$ times the cost of an entry of each factor. For a left-nested chain of $d$ products of $n \\times n$ matrices the cost $C_d$ of one entry satisfies $C_d = n(C_{d-1} + 1)$, so $C_d = \\Theta(n^d)$. Repeated squaring is worse, because both factors of $B \\cdot B$ are the same unevaluated $B$: $C_{t+1} = 2n\\, C_t$, so one entry of $A^{2^t}$ costs $(2n)^t$ reads of $A$, that is $k^{1 + \\log_2 n}$ for $k = 2^t$. Lazy powers are cheap to build and expensive to read."
 msgstr ""
 
-#: manual/design/immut.md:308
+#: manual/design/immut.md:328
 msgid "**Immutability.** No public operation modifies an existing `Matrix`, `Vector` or `MatrixFn`; `set` and `swap_*` return new values."
 msgstr ""
 
-#: manual/design/immut.md:310
+#: manual/design/immut.md:330
 msgid "**Shape invariants.** $r, c \\ge 0$ and the backing vector has exactly $rc$ elements; constructors reject anything else by aborting."
 msgstr ""
 
-#: manual/design/immut.md:312
+#: manual/design/immut.md:332
 msgid "**Bounds.** Every public read checks row and column separately, so a column index that would land inside the next row is rejected rather than read."
 msgstr ""
 
-#: manual/design/immut.md:314
+#: manual/design/immut.md:334
 msgid "**Exactness.** Over `BigInt`, `determinant` and `pow` are exact; over `Int` and `Int64`, `pow` is exact modulo $2^{w}$, and `determinant` is exact unless an intermediate product overflows ($n \\ge 5$) or the determinant itself does not fit ($n \\le 4$; see the Hadamard bound)."
 msgstr ""
 
-#: manual/design/immut.md:318
+#: manual/design/immut.md:338
 msgid "**Empty cases.** $\\det$ and $\\operatorname{tr}$ of the $0 \\times 0$ matrix are $1$ and $0$; $A^0 = I$; a product with inner dimension $0$ is the zero matrix."
 msgstr ""
 
-#: manual/design/immut.md:321
+#: manual/design/immut.md:341
 msgid "**Complexity.** `set`: $O(\\log_{32} N)$; `map`, `+`, `transpose`, `swap_*`: $O(N)$; `matmul`: $rcn$ multiply-adds; `determinant`: $O(n^3)$; `pow`: at most $2\\lfloor\\log_2 k\\rfloor + 1$ products, $O(n^3 \\log k)$."
 msgstr ""
 
-#: manual/design/immut.md:327
-msgid "**Floating-point LU for `immut` determinants.** It would need a field and a tolerance and would lose exactness for integer matrices, the main reason to use this package."
+#: manual/design/immut.md:347
+msgid "**LU for every scalar.** Truncating integer division would invalidate elimination. Explicit scalar strategies preserve Bareiss for exact domains and use LU for floating point without introducing a tolerance policy."
 msgstr ""
 
-#: manual/design/immut.md:330
+#: manual/design/immut.md:350
 msgid "**A runtime backend selector inside `Matrix`.** Backends are separate types ([`backends/default`](backends/default.md)); `Matrix` has one representation."
 msgstr ""
 
-#: manual/design/immut.md:332
+#: manual/design/immut.md:352
 msgid "**Caching in `MatrixFn`.** It would make a pure value hold mutable state and change the cost model silently. Materialize with `Matrix::make` instead."
 msgstr ""
 
-#: manual/design/immut.md:337
+#: manual/design/immut.md:357
 msgid "`immut` does not provide in-place updates, views, inverses, decompositions, eigenvalues, statistics or tolerance-based predicates; those belong to [`mutable`](mutable.md). It does not detect integer overflow, does not offer a checked `MatrixFn` API, and does not implement the [`algebra`](algebra.md) traits itself (the wrappers in `backends/default` do)."
 msgstr ""
 
@@ -5996,106 +6016,110 @@ msgid "Concrete types"
 msgstr ""
 
 #: manual/index.md:85
-msgid "`immut`: `Matrix`, `Vector`, `MatrixFn`, the row accessor `Indexed`, the aliases `VecLib` and `VecCore`, and the top-level `lin_comb`"
+msgid "`immut`: `Matrix`, `Vector`, `MatrixFn`, the row accessor `Indexed`, the aliases `VecLib` and `VecCore`, `DeterminantAlgorithm`, `DeterminantScalar`, and the top-level `lin_comb`"
 msgstr ""
 
-#: manual/index.md:87
+#: manual/index.md:88
 msgid "`mutable`: `Matrix`, `Vector`, the views `RowView`, `ColView`, `Transpose`, the row accessor `Lens`, the trait `Tolerance`, the re-exported `Sqrt`, and the top-level `identity` and `lin_comb`"
 msgstr ""
 
-#: manual/index.md:90
+#: manual/index.md:91
 msgid "`backends/default`: `DenseMatrix`, `DenseVector`, `ImmutableDenseMatrix`, `ImmutableDenseVector`, and the generic helpers `matmul`, `transpose`, `shape_of`"
 msgstr ""
 
-#: manual/index.md:94
+#: manual/index.md:95
 msgid "Numerical routines"
 msgstr ""
 
-#: manual/index.md:96
+#: manual/index.md:97
 msgid "Exact (`immut`, over `Int`, `Int64`, `BigInt`): `determinant` by Bareiss elimination, `pow` by repeated squaring, `trace`, `matmul`"
 msgstr ""
 
-#: manual/index.md:98
+#: manual/index.md:99
+msgid "Floating determinant (`immut`, over `Float`, `Double`): LU with partial pivoting, selected by `DeterminantScalar`, without a zero tolerance"
+msgstr ""
+
+#: manual/index.md:101
 msgid "Floating point (`mutable`, over `Float`, `Double`): `determinant`, `inverse`, `is_invertible` and `rank` by LU with partial pivoting, `reduce_row_elimination`, `cholesky_decomposition`, `is_positive_definite`, `eigen` for symmetric matrices, `power_method`, `mean`, `variance`, `std_dev`, `frobenius_norm`"
 msgstr ""
 
-#: manual/index.md:103
+#: manual/index.md:106
 msgid "Every operation with a runtime failure mode has a checked form returning `Result[_, LinearAlgebraError]` and an `unchecked_*` form that aborts"
 msgstr ""
 
-#: manual/index.md:106
+#: manual/index.md:109
 msgid "Capability layers"
 msgstr ""
 
-#: manual/index.md:110
+#: manual/index.md:113
 msgid "`container`: `VectorReadOps`, `VectorBuildOps`, `VectorPersistentEditOps`, `VectorMutableEditOps`, their `Matrix*` counterparts, and the algorithms `vector_map`, `vector_convert`, `matrix_map`, `matrix_convert`, `matrix_transpose`"
 msgstr ""
 
-#: manual/index.md:114
+#: manual/index.md:117
 msgid "`container/adapters`: one factory per type and capability, such as `mutable_matrix_read_ops`"
 msgstr ""
 
-#: manual/index.md:117
+#: manual/index.md:120
 msgid "Scalars and errors"
 msgstr ""
 
-#: manual/index.md:119
+#: manual/index.md:122
 msgid "`arithmetic`: `Abs`, `ApproxEq`, `CheckedDiv`, `CheckedSqrt`, `CheckedCompare`, and re-exports of `Zero`, `One`, `Inverse`, `Conjugate`, `Sqrt` and the other upstream scalar traits and types"
 msgstr ""
 
-#: manual/index.md:122
+#: manual/index.md:125
 msgid "`error`: `LinearAlgebraError`, `LinearAlgebraErrorKind`, constructors and `is_*` predicates"
 msgstr ""
 
-#: manual/index.md:125
+#: manual/index.md:128
 msgid "Numerical caveats"
 msgstr ""
 
-#: manual/index.md:127
-msgid "The numerical routines of `mutable` decide \"zero\" with one absolute threshold, `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of the input; scale data to order one (`eigen` is the exception: its decisions are relative to the entries). `@immut.Matrix::determinant` is meant for exact scalars, not for floating point. The [mutable design](design/mutable.md) and the [immut design](design/immut.md) derive the algorithms and state these limits precisely."
+#: manual/index.md:130
+msgid "The numerical routines of `mutable` decide \"zero\" with one absolute threshold, `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of the input; scale data to order one (`eigen` is the exception: its decisions are relative to the entries). `@immut.Matrix::determinant` selects Bareiss for integer scalars and pivoted LU for floating point. Its LU path has no zero tolerance and may still round, overflow or underflow; it is not a numerical-rank test. The [mutable design](design/mutable.md) and the [immut design](design/immut.md) derive the algorithms and state these limits precisely."
 msgstr ""
 
-#: manual/index.md:135
+#: manual/index.md:140
 msgid "Where to read next"
 msgstr ""
 
-#: manual/index.md:137
+#: manual/index.md:142
 msgid "New to the package: start with the [mutable tutorial](tutorial/mutable.md) for numerical work on `Double` matrices, or the [immut tutorial](tutorial/immut.md) for value semantics and exact integer results. Read the [error tutorial](tutorial/error.md) next, since every operation that can fail returns a `LinearAlgebraError`."
 msgstr ""
 
-#: manual/index.md:142
+#: manual/index.md:147
 msgid "Using it in a library: read the [algebra tutorial](tutorial/algebra.md) and the [backends/default tutorial](tutorial/backends/default.md) to write generic code, then the [container tutorial](tutorial/container.md) for moving data between representations, and the integration guides ([algebra](integration/algebra.md), [container](integration/container.md)) before publishing implementations for your own types. Keep the API pages at hand; each item lists its errors, edge cases and cost."
 msgstr ""
 
-#: manual/index.md:149
+#: manual/index.md:154
 msgid "Contributing: read the [architecture guide](architecture.md), the [conventions](conventions.md), the design pages of the package you change, and the [internal](tutorial/internal.md) and [consistency](tutorial/consistency.md) tutorials. Benchmarks are covered by the [perf](tutorial/perf.md) pages."
 msgstr ""
 
-#: manual/index.md:155
+#: manual/index.md:160
 msgid "Status in 0.5.0"
 msgstr ""
 
-#: manual/index.md:157
+#: manual/index.md:162
 msgid "`algebra`, the trait layer of `backends/default`, and `container` are experimental; their signatures may change."
 msgstr ""
 
-#: manual/index.md:159
+#: manual/index.md:164
 msgid "Release history is in the [changelog](../../CHANGELOG.md)."
 msgstr ""
 
-#: manual/index.md:163
+#: manual/index.md:168
 msgid "The native OpenBLAS backend (`backends/openblas`, with `BlasMatrix`, `BlasVector` and its `container` adapters) is not part of this release. Its upstream binding, `Kaida-Amethyst/openblas` `0.1.3`, does not compile with MoonBit 0.10. The migrated source, its own documentation and a patch for the binding are preserved in `contrib/openblas_backend`, which is not a package of the module, is not built and is not covered by this manual. Users who need the backend can stay on `0.4.7`."
 msgstr ""
 
-#: manual/index.md:171
+#: manual/index.md:176
 msgid "Validation"
 msgstr ""
 
-#: manual/index.md:173
+#: manual/index.md:178
 msgid "Recommended release checks, from the repository root:"
 msgstr ""
 
-#: manual/index.md:181
+#: manual/index.md:186
 msgid "`run_test.sh` runs `immut` and `consistency`, and `container`, `container/adapters`, `backends/default`, `mutable` and the documentation package `doc_en_us` on all four targets. Set `LINEAR_ALGEBRA_TEST_BENCH=1` to add the benchmark packages."
 msgstr ""
 
@@ -6726,7 +6750,7 @@ msgstr ""
 #: manual/tutorial/container.md:196
 #: manual/tutorial/container/adapters.md:124
 #: manual/tutorial/error.md:199
-#: manual/tutorial/immut.md:168
+#: manual/tutorial/immut.md:171
 #: manual/tutorial/internal.md:96
 #: manual/tutorial/mutable.md:194
 #: manual/tutorial/perf.md:47
@@ -6758,7 +6782,7 @@ msgstr ""
 #: manual/tutorial/container.md:207
 #: manual/tutorial/container/adapters.md:132
 #: manual/tutorial/error.md:210
-#: manual/tutorial/immut.md:187
+#: manual/tutorial/immut.md:189
 #: manual/tutorial/internal.md:103
 #: manual/tutorial/mutable.md:213
 #: manual/tutorial/perf.md:53
@@ -7525,50 +7549,50 @@ msgid "**Converting to `mutable`.** For numerical work such as inverses, decompo
 msgstr ""
 
 #: manual/tutorial/immut.md:160
-msgid "**Your own scalar type.** Any type implementing the `luna-generic` traits works: a rational or modular-integer type with `Num` and `Div` gets exact determinants through Bareiss elimination, and any `Semiring` gets `pow`."
+msgid "**Your own scalar type.** Determinants require `DeterminantScalar` in addition to its inherited `Compare + Num + Div` operations. Select `Bareiss` for an integral domain with exact division on divisible values, or `PivotedLU` for field-like division. A modular ring with zero divisors is not an integral domain. Generic determinant callers must add `T : @immut.DeterminantScalar`; any `Semiring` still gets `pow`."
 msgstr ""
 
-#: manual/tutorial/immut.md:164
+#: manual/tutorial/immut.md:167
 msgid "**Performance.** Reads and single-entry updates cost $O(\\log_{32} N)$. For a long series of edits on a large matrix, a `@mutable.Matrix` working buffer is faster; freeze it into an `immut` value at the end."
 msgstr ""
 
-#: manual/tutorial/immut.md:170
+#: manual/tutorial/immut.md:173
 msgid "**Integer overflow.** `Int` arithmetic wraps. `pow` is then exact modulo $2^{32}$, which is rarely what you want; use `Int64` or `BigInt` for large values."
 msgstr ""
 
-#: manual/tutorial/immut.md:173
+#: manual/tutorial/immut.md:176
 msgid "**Assigning through indexing.** `m[r][c] = x` does not exist here; use `m.set(r, c, x)` and keep the result."
 msgstr ""
 
-#: manual/tutorial/immut.md:175
+#: manual/tutorial/immut.md:178
 msgid "**Subtracting vectors.** `Vector` has no `-` operator; write `u + -v`."
 msgstr ""
 
-#: manual/tutorial/immut.md:176
+#: manual/tutorial/immut.md:179
 msgid "**Reading lazy powers.** Every read of a `MatrixFn` power recomputes the nested products. Materialize first with `Matrix::make(r, c, (i, j) => f[i][j])` if you read many entries."
 msgstr ""
 
-#: manual/tutorial/immut.md:179
+#: manual/tutorial/immut.md:182
 msgid "**Operators abort.** `+`, `-`, `*` abort on shape mismatch; use `matmul` when shapes come from input."
 msgstr ""
 
-#: manual/tutorial/immut.md:181
-msgid "**Floating-point determinants.** `determinant` is built for exact arithmetic. On `Double` matrices of size $5$ and more its intermediate values grow like products of minors and can overflow to NaN while the determinant itself is representable; use `@mutable.Matrix::determinant` for floating-point data."
+#: manual/tutorial/immut.md:184
+msgid "**Floating-point determinants.** `Float` and `Double` use pivoted LU for every size. No tolerance is used to classify a pivot as zero, so this is not a numerical-rank test. Rounding, overflow and underflow remain possible; use an error budget appropriate to the matrix instead of exact equality."
 msgstr ""
 
-#: manual/tutorial/immut.md:189
+#: manual/tutorial/immut.md:191
 msgid "[immut API](../api/immut.md) for every method and its cost."
 msgstr ""
 
-#: manual/tutorial/immut.md:190
+#: manual/tutorial/immut.md:192
 msgid "[immut design](../design/immut.md) for value semantics and the Bareiss derivation."
 msgstr ""
 
-#: manual/tutorial/immut.md:192
+#: manual/tutorial/immut.md:194
 msgid "[mutable tutorial](mutable.md) for in-place numerical work."
 msgstr ""
 
-#: manual/tutorial/immut.md:193
+#: manual/tutorial/immut.md:195
 msgid "[container tutorial](container.md) for moving data between representations."
 msgstr ""
 

@@ -6,6 +6,15 @@ points; older release history lives in this file.
 
 ## Unreleased
 
+### Breaking Changes
+
+- Immutable determinant entry points (`Matrix::determinant`,
+  `Matrix::unchecked_determinant`, `MatrixFn::determinant`) now require
+  `DeterminantScalar` instead of `Compare + Num + Div`. Built-in `Int`,
+  `Int16`, `Int64`, `BigInt`, `Float` and `Double` remain supported. Generic
+  callers must add the bound; custom scalar types must select `Bareiss` or
+  `PivotedLU` through the open trait.
+
 ### Added
 
 - `@mutable.Matrix::matmul` returns a `DimensionMismatch` error for
@@ -23,6 +32,13 @@ points; older release history lives in this file.
   `IntegralHomomorphism::from_integral`.
 
 ### Fixed
+
+- Immutable `Float` and `Double` determinants now use LU with partial
+  pivoting, avoiding Bareiss minor-product overflow on large triangular and
+  dense inputs whose determinant is representable
+  ([#93](https://github.com/Luna-Flow/linear-algebra/issues/93)). Integer
+  determinants keep the Bareiss path; floating-point rounding, elimination
+  growth, and pivot-product overflow or underflow remain possible.
 
 - `@mutable.Transpose::mul` now evaluates each scalar product in the order
   required by matrix multiplication, including for non-commutative scalar
@@ -59,10 +75,8 @@ points; older release history lives in this file.
   products; a lazy `MatrixFn` power costs `(2n)^d` reads per entry;
   `checked_div` reports every zero divisor and `approx_eq` is not reflexive
   on infinities.
-- Documented open defects with warnings: `@immut.Matrix::determinant`
-  overflows to NaN on `Double` matrices whose determinant is representable
-  ([#93](https://github.com/Luna-Flow/linear-algebra/issues/93)), and the
-  `MatMulMatrix` instances of `backends/default` exist for scalar types that
+- Documented open defects with warnings: the `MatMulMatrix` instances of
+  `backends/default` exist for scalar types that
   break the product laws
   ([#94](https://github.com/Luna-Flow/linear-algebra/issues/94)).
 - Translated the revised manual into Chinese and Japanese.

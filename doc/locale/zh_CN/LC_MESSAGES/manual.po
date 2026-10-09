@@ -662,7 +662,7 @@ msgid "`DenseMatrix::inner(m)` returns the wrapped `@mutable.Matrix`, which give
 msgstr "`DenseMatrix::inner(m)` 返回被包装的 `@mutable.Matrix`，借此可以使用完整的 `@mutable` API（视图、分解、受检方法）。"
 
 #: manual/api/backends/default.md:280
-#: manual/api/immut.md:202
+#: manual/api/immut.md:203
 msgid "`row` and `col` return the number of rows and columns."
 msgstr "`row` 和 `col` 返回行数和列数。"
 
@@ -679,7 +679,7 @@ msgid "Entry-wise `+`, `-` and unary `-`."
 msgstr "按元素的 `+`、`-` 和一元 `-`。"
 
 #: manual/api/backends/default.md:315
-#: manual/api/immut.md:360
+#: manual/api/immut.md:361
 msgid "Operands of different shapes abort."
 msgstr "形状不同的操作数会导致中止。"
 
@@ -1404,7 +1404,7 @@ msgid "The examples on this page write every name with its package prefix, such 
 msgstr "本页示例中的每个名称都带上包前缀（如 `@la_error.`），而不使用 `using` 声明：本手册的所有页面会编译进同一个测试包，不同页面的声明会相互冲突。别名 `@la_error` 避免了与 MoonBit 内置 `Error` 词汇的冲突。"
 
 #: manual/api/error.md:28
-#: manual/api/immut.md:48
+#: manual/api/immut.md:49
 #: manual/api/mutable.md:58
 #: manual/api/perf_support.md:34
 msgid "Types"
@@ -1625,19 +1625,19 @@ msgid "The predicates in use, on errors returned by real checked calls:"
 msgstr "在真实受检调用返回的错误上使用这些判断方法："
 
 #: manual/api/error.md:346
-#: manual/api/immut.md:977
+#: manual/api/immut.md:1003
 #: manual/api/mutable.md:1313
 msgid "Deprecated"
 msgstr "已弃用"
 
 #: manual/api/error.md:348
-#: manual/api/immut.md:982
+#: manual/api/immut.md:1008
 #: manual/api/mutable.md:1315
 msgid "Item"
 msgstr "项"
 
 #: manual/api/error.md:348
-#: manual/api/immut.md:982
+#: manual/api/immut.md:1008
 #: manual/api/mutable.md:1315
 msgid "Replacement"
 msgstr "替代方案"
@@ -1688,134 +1688,134 @@ msgid "**Checked and unchecked.** `matmul`, `trace`, `determinant` and `pow` ret
 msgstr "**受检与非受检。** `matmul`、`trace`、`determinant` 和 `pow` 返回 `Result[_, LinearAlgebraError]`。它们对应的 `unchecked_*` 版本以及运算符 `+`、`-`、`*` 在前置条件不满足时中止。两者之间的关系见 [error 设计](../design/error.md)。"
 
 #: manual/api/immut.md:45
-msgid "**Scalars.** Bounds come from `luna-generic`: `Zero`, `One`, `Semiring`, `Num` (a ring with `abs` and `signum`), `Conjugate`."
-msgstr "**标量。** 约束来自 `luna-generic`：`Zero`、`One`、`Semiring`、`Num`（带 `abs` 和 `signum` 的环）、`Conjugate`。"
+msgid "**Scalars.** Bounds come from `luna-generic`: `Zero`, `One`, `Semiring`, `Num` (a ring with `abs` and `signum`), `Conjugate`. Determinants also require this package's `DeterminantScalar` strategy."
+msgstr "**标量。** 约束来自 `luna-generic`：`Zero`、`One`、`Semiring`、`Num`（带 `abs` 和 `signum` 的环）、`Conjugate`。 行列式还要求本包的 `DeterminantScalar` 策略。"
 
-#: manual/api/immut.md:52
+#: manual/api/immut.md:53
 msgid "`Matrix[T]` is an immutable dense $r \\times c$ matrix."
 msgstr "`Matrix[T]` 是不可变的稠密 $r \\times c$ 矩阵。"
 
-#: manual/api/immut.md:58
+#: manual/api/immut.md:59
 msgid "The type is abstract: build it with the constructors below. It implements `Eq`, `Show` (rows printed as `|a, b|` separated by newlines), `Add`, `Sub`, `Neg`, `Mul` (matrix product) under the element constraints of the corresponding methods."
 msgstr "该类型是抽象的：请使用下文的构造函数构建它。在相应方法的元素约束下，它实现了 `Eq`、`Show`（各行打印为 `|a, b|`，以换行分隔）、`Add`、`Sub`、`Neg`、`Mul`（矩阵乘积）。"
 
-#: manual/api/immut.md:65
+#: manual/api/immut.md:66
 msgid "`Indexed[T]` is the row accessor returned by `m[r]`."
 msgstr "`Indexed[T]` 是 `m[r]` 返回的行访问器。"
 
-#: manual/api/immut.md:71
+#: manual/api/immut.md:72
 msgid "It is a function from a column index to an entry; it holds no copy of the row."
 msgstr "它是从列索引到元素的函数；不持有该行的副本。"
 
-#: manual/api/immut.md:75
+#: manual/api/immut.md:76
 msgid "`Indexed::at(row, c)` returns the entry in column `c`; it backs `m[r][c]`."
 msgstr "`Indexed::at(row, c)` 返回第 `c` 列的元素；它是 `m[r][c]` 的底层实现。"
 
-#: manual/api/immut.md:82
+#: manual/api/immut.md:83
 msgid "A column index outside `0..<col()` aborts."
 msgstr "超出 `0..<col()` 的列索引会导致中止。"
 
-#: manual/api/immut.md:86
+#: manual/api/immut.md:87
 msgid "`MatrixFn[T]` is a lazy matrix: a shape and a function $(i, j) \\mapsto a_{ij}$."
 msgstr "`MatrixFn[T]` 是惰性矩阵：由一个形状和一个函数 $(i, j) \\mapsto a_{ij}$ 组成。"
 
-#: manual/api/immut.md:92
+#: manual/api/immut.md:93
 msgid "Entries are computed on every read and never stored. Its methods are listed in [`MatrixFn` operations](#matrixfn-operations)."
 msgstr "元素在每次读取时计算，从不存储。它的方法列在 [`MatrixFn` 操作](#matrixfn-operations)中。"
 
-#: manual/api/immut.md:97
+#: manual/api/immut.md:98
 msgid "`Vector[T]` is an immutable dense vector."
 msgstr "`Vector[T]` 是不可变的稠密向量。"
 
-#: manual/api/immut.md:104
+#: manual/api/immut.md:105
 msgid "It implements `Eq`, `Show` (printed as `|a, b, c|`), `Add`, `Mul` (element-wise), `Neg`, `Debug` and quickcheck's `Arbitrary`."
 msgstr "它实现了 `Eq`、`Show`（打印为 `|a, b, c|`）、`Add`、`Mul`（按元素）、`Neg`、`Debug` 以及 quickcheck 的 `Arbitrary`。"
 
-#: manual/api/immut.md:109
+#: manual/api/immut.md:110
 msgid "`VecLib[T]` is an alias of `Vector[T]`."
 msgstr "`VecLib[T]` 是 `Vector[T]` 的别名。"
 
-#: manual/api/immut.md:118
+#: manual/api/immut.md:119
 msgid "`VecCore[T]` is an alias of the core persistent vector `@moonbitlang/core/immut/vector.Vector[T]` that backs `Vector`."
 msgstr "`VecCore[T]` 是支撑 `Vector` 的核心持久化向量 `@moonbitlang/core/immut/vector.Vector[T]` 的别名。"
 
-#: manual/api/immut.md:125
+#: manual/api/immut.md:126
 msgid "Matrix construction"
 msgstr "矩阵构造"
 
-#: manual/api/immut.md:129
+#: manual/api/immut.md:130
 msgid "`Matrix::make(r, c, f)` builds the $r \\times c$ matrix with entries $a_{ij} = f(i, j)$."
 msgstr "`Matrix::make(r, c, f)` 构建元素为 $a_{ij} = f(i, j)$ 的 $r \\times c$ 矩阵。"
 
-#: manual/api/immut.md:136
+#: manual/api/immut.md:137
 msgid "`f` is called once per entry in row-major order, and not at all when $r = 0$ or $c = 0$. Negative dimensions abort."
 msgstr "`f` 按行主序对每个元素调用一次；当 $r = 0$ 或 $c = 0$ 时完全不会调用。负的维度会导致中止。"
 
-#: manual/api/immut.md:141
+#: manual/api/immut.md:142
 msgid "`Matrix::new(r, c, x)` builds an $r \\times c$ matrix with every entry `x`."
 msgstr "`Matrix::new(r, c, x)` 构建一个所有元素均为 `x` 的 $r \\times c$ 矩阵。"
 
-#: manual/api/immut.md:149
+#: manual/api/immut.md:150
 msgid "`Matrix::from_2d_array(rows)` builds a matrix from nested row arrays."
 msgstr "`Matrix::from_2d_array(rows)` 从按行组织的嵌套数组构造矩阵。"
 
-#: manual/api/immut.md:155
+#: manual/api/immut.md:156
 msgid "`[]` gives $0 \\times 0$; `[[], []]` gives $2 \\times 0$. Rows of different lengths abort. The input is copied."
 msgstr "`[]` 得到 $0 \\times 0$；`[[], []]` 得到 $2 \\times 0$。各行长度不同会导致中止。输入会被复制。"
 
-#: manual/api/immut.md:160
+#: manual/api/immut.md:161
 msgid "`Matrix::from_array(r, c, v)` uses the vector `v` as the row-major entries of an $r \\times c$ matrix."
 msgstr "`Matrix::from_array(r, c, v)` 将向量 `v` 用作 $r \\times c$ 矩阵按行主序排列的元素。"
 
-#: manual/api/immut.md:167
+#: manual/api/immut.md:168
 msgid "Negative dimensions or `v.length() != r * c` abort. No copy is made; `v` is immutable."
 msgstr "负的维度或 `v.length() != r * c` 会导致中止。不会进行复制；`v` 是不可变的。"
 
-#: manual/api/immut.md:172
+#: manual/api/immut.md:173
 msgid "`Matrix::identity(n)` builds the $n \\times n$ identity matrix $I_n$."
 msgstr "`Matrix::identity(n)` 构建 $n \\times n$ 单位矩阵 $I_n$。"
 
-#: manual/api/immut.md:178
+#: manual/api/immut.md:179
 msgid "A negative `n` aborts."
 msgstr "负的 `n` 会导致中止。"
 
-#: manual/api/immut.md:198
+#: manual/api/immut.md:199
 msgid "Shape and access"
 msgstr "形状与访问"
 
-#: manual/api/immut.md:211
+#: manual/api/immut.md:212
 msgid "`Matrix::shape(m)` returns `(row, col)`."
 msgstr "`Matrix::shape(m)` 返回 `(row, col)`。"
 
-#: manual/api/immut.md:219
+#: manual/api/immut.md:220
 msgid "`Matrix::is_square(m)` returns `row() == col()`; a $0 \\times 0$ matrix is square."
 msgstr "`Matrix::is_square(m)` 返回 `row() == col()`；$0 \\times 0$ 矩阵是方阵。"
 
-#: manual/api/immut.md:228
+#: manual/api/immut.md:229
 msgid "`Matrix::null(m)` returns `true` when every entry equals `Zero::zero()`; an empty matrix is null."
 msgstr "当每个元素都等于 `Zero::zero()` 时，`Matrix::null(m)` 返回 `true`；空矩阵视为零矩阵。"
 
-#: manual/api/immut.md:237
+#: manual/api/immut.md:238
 msgid "`Matrix::at(m, r)` returns the accessor for row `r`; it backs `m[r]`."
 msgstr "`Matrix::at(m, r)` 返回第 `r` 行的访问器；它是 `m[r]` 的底层实现。"
 
-#: manual/api/immut.md:244
+#: manual/api/immut.md:245
 msgid "A row index outside `0..<row()` aborts immediately."
 msgstr "超出 `0..<row()` 的行索引会立即导致中止。"
 
-#: manual/api/immut.md:248
+#: manual/api/immut.md:249
 msgid "`Matrix::set(m, r, c, x)` returns a matrix equal to `m` except that entry $(r, c)$ is `x`."
 msgstr "`Matrix::set(m, r, c, x)` 返回一个除元素 $(r, c)$ 为 `x` 外其余都与 `m` 相等的矩阵。"
 
-#: manual/api/immut.md:255
+#: manual/api/immut.md:256
 msgid "`m` is unchanged. Out-of-range indices abort. Cost $O(\\log_{32}(rc))$; the new matrix shares all other storage with `m`."
 msgstr "`m` 保持不变。越界索引会导致中止。开销为 $O(\\log_{32}(rc))$；新矩阵与 `m` 共享其余全部存储。"
 
-#: manual/api/immut.md:260
+#: manual/api/immut.md:261
 msgid "`Matrix::equal(a, b)` compares shapes and entries; it backs `==`."
 msgstr "`Matrix::equal(a, b)` 比较形状和元素；它是 `==` 的底层实现。"
 
-#: manual/api/immut.md:268
+#: manual/api/immut.md:269
 msgid ""
 "`Matrix::to_string(m)` renders the rows as `|a, b|` lines joined by `\\n"
 "`."
@@ -1823,367 +1823,375 @@ msgstr ""
 "`Matrix::to_string(m)` 将各行渲染为 `|a, b|` 形式的行，并以 `\\n"
 "` 连接。"
 
-#: manual/api/immut.md:274
+#: manual/api/immut.md:275
 msgid "An empty matrix renders as the empty string."
 msgstr "空矩阵渲染为空字符串。"
 
-#: manual/api/immut.md:289
+#: manual/api/immut.md:290
 msgid "Element-wise transforms"
 msgstr "按元素变换"
 
-#: manual/api/immut.md:293
+#: manual/api/immut.md:294
 msgid "`Matrix::map(m, f)` applies `f` to every entry; the element type may change."
 msgstr "`Matrix::map(m, f)` 对每个元素应用 `f`；元素类型可以改变。"
 
-#: manual/api/immut.md:301
+#: manual/api/immut.md:302
 msgid "`Matrix::mapi(m, f)` applies `f(i, j, a_ij)` to every entry."
 msgstr "`Matrix::mapi(m, f)` 对每个元素应用 `f(i, j, a_ij)`。"
 
-#: manual/api/immut.md:309
+#: manual/api/immut.md:310
 msgid "`Matrix::scale(m, a)` multiplies every entry on the right by `a`: $(a_{ij} a)$."
 msgstr "`Matrix::scale(m, a)` 将每个元素右乘 `a`：$(a_{ij} a)$。"
 
-#: manual/api/immut.md:317
+#: manual/api/immut.md:318
 msgid "`Matrix::add_constant(m, a)` adds `a` to every entry."
 msgstr "`Matrix::add_constant(m, a)` 给每个元素加上 `a`。"
 
-#: manual/api/immut.md:325
+#: manual/api/immut.md:326
 msgid "`Matrix::adjoint(m)` returns the conjugate transpose $A^{*}$, $(A^{*})_{ij} = \\overline{a_{ji}}$."
 msgstr "`Matrix::adjoint(m)` 返回共轭转置 $A^{*}$，$(A^{*})_{ij} = \\overline{a_{ji}}$。"
 
-#: manual/api/immut.md:332
+#: manual/api/immut.md:333
 msgid "It needs a scalar type that implements `Conjugate`, such as a complex number type; the builtin real types do not."
 msgstr "它需要实现了 `Conjugate` 的标量类型，例如复数类型；内置实数类型没有实现。"
 
-#: manual/api/immut.md:348
+#: manual/api/immut.md:349
 #: manual/api/mutable.md:461
 msgid "Arithmetic"
 msgstr "算术运算"
 
-#: manual/api/immut.md:352
+#: manual/api/immut.md:353
 msgid "Entry-wise $A + B$, $A - B$ and $-A$; these back the operators."
 msgstr "按元素的 $A + B$、$A - B$ 和 $-A$；它们是相应运算符的底层实现。"
 
-#: manual/api/immut.md:364
+#: manual/api/immut.md:365
 msgid "`Matrix::mul(a, b)` is the matrix product behind `a * b`; it is `unchecked_matmul`."
 msgstr "`Matrix::mul(a, b)` 是 `a * b` 背后的矩阵乘积；它就是 `unchecked_matmul`。"
 
-#: manual/api/immut.md:373
+#: manual/api/immut.md:374
 msgid "`Matrix::matmul(a, b)` returns `Ok(AB)` when $\\operatorname{cols}(A) = \\operatorname{rows}(B)$, and `Err` with kind `DimensionMismatch` otherwise."
 msgstr "当 $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ 时，`Matrix::matmul(a, b)` 返回 `Ok(AB)`，否则返回 kind 为 `DimensionMismatch` 的 `Err`。"
 
-#: manual/api/immut.md:381
+#: manual/api/immut.md:382
 msgid "$(AB)_{ik} = \\sum_{j} a_{ij} b_{jk}$, summed in increasing $j$. When the inner dimension is $0$ the result is the zero matrix of shape $\\operatorname{rows}(A) \\times \\operatorname{cols}(B)$, the empty sum. Cost: $rcn$ multiply-adds plus an $O(cn)$ transposed copy of $B$."
 msgstr "$(AB)_{ik} = \\sum_{j} a_{ij} b_{jk}$，按 $j$ 递增的顺序求和。当内部维度为 $0$ 时，结果是形状为 $\\operatorname{rows}(A) \\times \\operatorname{cols}(B)$ 的零矩阵，即空和。开销：$rcn$ 次乘加，外加一次 $O(cn)$ 的 $B$ 转置复制。"
 
-#: manual/api/immut.md:388
+#: manual/api/immut.md:389
 msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ and aborts on incompatible shapes."
 msgstr "`Matrix::unchecked_matmul(a, b)` 返回 $AB$，形状不兼容时中止。"
 
-#: manual/api/immut.md:397
+#: manual/api/immut.md:398
 msgid "`Matrix::pow(a, k)` returns `Ok(A^k)` for a square matrix and $k \\ge 0$, with $A^0 = I$."
 msgstr "对于方阵和 $k \\ge 0$，`Matrix::pow(a, k)` 返回 `Ok(A^k)`，其中 $A^0 = I$。"
 
-#: manual/api/immut.md:404
+#: manual/api/immut.md:405
 msgid "A non-square matrix gives `NonSquareMatrix` (checked first); a negative exponent gives `NegativeExponent`. The power is computed by binary exponentiation with at most $2\\lfloor\\log_2 k\\rfloor + 1$ matrix products."
 msgstr "非方阵得到 `NonSquareMatrix`（优先检查）；负指数得到 `NegativeExponent`。幂通过二进制求幂计算，最多进行 $2\\lfloor\\log_2 k\\rfloor + 1$ 次矩阵乘法。"
 
-#: manual/api/immut.md:410
+#: manual/api/immut.md:411
 msgid "`Matrix::unchecked_pow(a, k)` returns $A^k$ and aborts on a non-square matrix or negative exponent."
 msgstr "`Matrix::unchecked_pow(a, k)` 返回 $A^k$，遇到非方阵或负指数时中止。"
 
-#: manual/api/immut.md:419
+#: manual/api/immut.md:420
 msgid "`Matrix::trace(a)` returns `Ok(tr A)`, $\\sum_i a_{ii}$, for a square matrix, and `NonSquareMatrix` otherwise."
 msgstr "对于方阵，`Matrix::trace(a)` 返回 `Ok(tr A)`，即 $\\sum_i a_{ii}$；否则返回 `NonSquareMatrix`。"
 
-#: manual/api/immut.md:426
+#: manual/api/immut.md:427
 msgid "The trace of the $0 \\times 0$ matrix is `Zero::zero()`."
 msgstr "$0 \\times 0$ 矩阵的迹为 `Zero::zero()`。"
 
-#: manual/api/immut.md:430
+#: manual/api/immut.md:431
 msgid "`Matrix::unchecked_trace(a)` returns $\\operatorname{tr} A$ and aborts on a non-square matrix."
 msgstr "`Matrix::unchecked_trace(a)` 返回 $\\operatorname{tr} A$，遇到非方阵时中止。"
 
-#: manual/api/immut.md:439
+#: manual/api/immut.md:440
 #: manual/api/mutable.md:616
 msgid "`Matrix::determinant(a)` returns `Ok(det A)` for a square matrix and `NonSquareMatrix` otherwise."
 msgstr "对于方阵，`Matrix::determinant(a)` 返回 `Ok(det A)`；否则返回 `NonSquareMatrix`。"
 
-#: manual/api/immut.md:446
-msgid "For $n \\le 4$ it evaluates closed cofactor formulas; for $n \\ge 5$ it runs fraction-free (Bareiss) elimination, choosing as pivot the entry of largest `abs` in the current column, whose divisions are exact in an integral domain. The result is therefore **exact** for `BigInt`, and exact for `Int` and `Int64` as long as no intermediate product overflows (for $n \\le 4$, as long as the determinant itself fits). If a whole pivot column is zero the result is `Zero::zero()` at once. $\\det$ of the $0 \\times 0$ matrix is `One::one()`. Cost $O(n^3)$ arithmetic operations. See the [immut design](../design/immut.md) for the derivation."
-msgstr "当 $n \\le 4$ 时，它使用封闭的余子式公式求值；当 $n \\ge 5$ 时，它执行无分数（Bareiss）消元，在当前列中选取 `abs` 最大的元素作为主元，其中的除法在整环中都是精确的。因此，对于 `BigInt` 结果是**精确的**；对于 `Int` 和 `Int64`，只要中间乘积不溢出（$n \\le 4$ 时只要行列式本身不溢出），结果也是精确的。如果整个主元列为零，立即返回 `Zero::zero()`。$0 \\times 0$ 矩阵的 $\\det$ 为 `One::one()`。开销为 $O(n^3)$ 次算术运算。推导见 [immut 设计](../design/immut.md)。"
+#: manual/api/immut.md:447
+msgid "For the `Bareiss` strategy, $n \\le 4$ evaluates closed cofactor formulas; for $n \\ge 5$ it runs fraction-free (Bareiss) elimination, choosing as pivot the entry of largest `abs` in the current column, whose divisions are exact in an integral domain. The result is therefore **exact** for `BigInt`, and exact for `Int` and `Int64` as long as no intermediate product overflows (for $n \\le 4$, as long as the determinant itself fits). If a whole pivot column is zero the result is `Zero::zero()` at once. $\\det$ of the $0 \\times 0$ matrix is `One::one()`. Cost $O(n^3)$ arithmetic operations. See the [immut design](../design/immut.md) for the derivation."
+msgstr "对于 `Bareiss` 策略，当 $n \\le 4$ 时，它使用封闭的余子式公式求值；当 $n \\ge 5$ 时，它执行无分数（Bareiss）消元，在当前列中选取 `abs` 最大的元素作为主元，其中的除法在整环中都是精确的。因此，对于 `BigInt` 结果是**精确的**；对于 `Int` 和 `Int64`，只要中间乘积不溢出（$n \\le 4$ 时只要行列式本身不溢出），结果也是精确的。如果整个主元列为零，立即返回 `Zero::zero()`。$0 \\times 0$ 矩阵的 $\\det$ 为 `One::one()`。开销为 $O(n^3)$ 次算术运算。推导见 [immut 设计](../design/immut.md)。"
 
-#: manual/api/immut.md:456
-msgid "[!WARNING] For `Double` and `Float` this is not the numerically preferred algorithm. Every intermediate value of Bareiss elimination is a minor of $A$, and the update multiplies two of them, so magnitudes are squared before they are divided back. For $n \\ge 5$ the result overflows to infinity or NaN long before $\\det A$ does: the $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ has $\\det A = 10^{180}$, which `@mutable.Matrix::determinant` returns, while this method returns NaN. There is no tolerance either: only an exactly zero pivot column is detected. Use [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for floating-point matrices. The issue is tracked as [#93](https://github.com/Luna-Flow/linear-algebra/issues/93)."
-msgstr "[!WARNING] 对于 `Double` 和 `Float`，这不是数值上首选的算法。Bareiss 消元的每个中间值都是 $A$ 的一个子式，而每次更新把其中两个相乘，所以数量级先被平方再被除回。当 $n \\ge 5$ 时，结果会远在 $\\det A$ 溢出之前就溢出为无穷或 NaN：对角线为 $1000$、超对角线为 $1$ 的 $60 \\times 60$ 上双对角矩阵有 $\\det A = 10^{180}$，`@mutable.Matrix::determinant` 能返回它，而本方法返回 NaN。它也没有容差：只有恰好为零的主元列才会被识别。浮点矩阵请使用 [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant)。该问题记录在 [#93](https://github.com/Luna-Flow/linear-algebra/issues/93)。"
+#: manual/api/immut.md:458
+msgid "For `PivotedLU` (`Float` and `Double`), every size uses Gaussian elimination with partial pivoting on a private copy, then multiplies the pivots with the row-swap sign. No tolerance is applied: an exactly zero pivot returns zero. This is a determinant computation, not a numerical-rank test. Floating-point rounding and elimination growth remain. Finite pivot products are accumulated with a mantissa and binary exponent to avoid avoidable overflow or underflow; final results still overflow or underflow when outside the scalar range. NaN and infinity follow scalar arithmetic and are propagated. The $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ now returns a finite approximation to $10^{180}$ instead of Bareiss's NaN."
+msgstr "对于 `PivotedLU`（`Float` 和 `Double`），所有大小的矩阵都在私有副本上执行部分选主元的高斯消元，再将主元乘积乘以换行符号。不使用容差：主元严格为零时返回零。这是行列式计算，而不是数值秩判定。浮点舍入和消元增长仍然存在。有限主元乘积使用尾数和二进制指数累积，以避免不必要的上溢或下溢；当最终结果超出标量范围时仍会发生上溢或下溢。NaN 和无穷遵循标量运算并传播。对角线为 $1000$、上副对角线为 $1$ 的 $60 \\times 60$ 上二重对角矩阵现在返回 $10^{180}$ 的有限近似值，而不再返回 Bareiss 的 NaN。"
 
 #: manual/api/immut.md:471
+msgid "`DeterminantScalar` is an open strategy trait extending `Compare + Num + Div`. Its `determinant_algorithm()` method selects `Bareiss` or `PivotedLU`. `Int`, `Int16`, `Int64` and `BigInt` select `Bareiss`; `Float` and `Double` select `PivotedLU` with scaled pivot accumulation. Custom scalars must implement the trait explicitly; the default pivot product uses native scalar multiplication."
+msgstr "`DeterminantScalar` 是继承 `Compare + Num + Div` 的开放策略 trait。其 `determinant_algorithm()` 方法选择 `Bareiss` 或 `PivotedLU`。`Int`、`Int16`、`Int64` 和 `BigInt` 选择 `Bareiss`；`Float` 和 `Double` 选择带缩放主元累积的 `PivotedLU`。自定义标量必须显式实现此 trait；默认的主元乘积使用标量的原生乘法。"
+
+#: manual/api/immut.md:489
+msgid "Choose `Bareiss` for a commutative integral domain with exact division of divisible values, without intermediate overflow. Choose `PivotedLU` for field-like division, accepting rounding for inexact scalars. These obligations are not checked by the compiler. Generic callers must replace `T : Compare + Num + Div` with `T : @immut.DeterminantScalar`."
+msgstr "对于整除时除法精确且中间值不溢出的交换整环，请选择 `Bareiss`。对于类域除法，请选择 `PivotedLU`，并接受非精确标量的舍入。这些条件不由编译器检查。泛型调用方须将 `T : Compare + Num + Div` 替换为 `T : @immut.DeterminantScalar`。"
+
+#: manual/api/immut.md:497
 msgid "`Matrix::unchecked_determinant(a)` returns $\\det A$ and aborts on a non-square matrix."
 msgstr "`Matrix::unchecked_determinant(a)` 返回 $\\det A$，遇到非方阵时中止。"
 
-#: manual/api/immut.md:505
+#: manual/api/immut.md:531
 msgid "The second matrix is a Vandermonde matrix with nodes $2, \\dots, 7$, whose determinant is $\\prod_{i<j}(x_j - x_i) = 1!\\,2!\\,3!\\,4!\\,5! = 34560$."
 msgstr "第二个矩阵是节点为 $2, \\dots, 7$ 的 Vandermonde 矩阵，其行列式为 $\\prod_{i<j}(x_j - x_i) = 1!\\,2!\\,3!\\,4!\\,5! = 34560$。"
 
-#: manual/api/immut.md:508
+#: manual/api/immut.md:534
 msgid "Structural operations"
 msgstr "结构操作"
 
-#: manual/api/immut.md:512
+#: manual/api/immut.md:538
 msgid "`Matrix::transpose(m)` returns the materialized transpose $A^{\\mathsf T}$."
 msgstr "`Matrix::transpose(m)` 返回实化后的转置 $A^{\\mathsf T}$。"
 
-#: manual/api/immut.md:520
+#: manual/api/immut.md:546
 msgid "`Matrix::horizontal_combine(a, b)` places `b` to the right of `a`: the block matrix $[A \\; B]$."
 msgstr "`Matrix::horizontal_combine(a, b)` 将 `b` 放在 `a` 的右侧：得到分块矩阵 $[A \\; B]$。"
 
-#: manual/api/immut.md:527
+#: manual/api/immut.md:553
 msgid "Different row counts abort."
 msgstr "行数不同会导致中止。"
 
-#: manual/api/immut.md:531
+#: manual/api/immut.md:557
 msgid "`Matrix::vertical_combine(a, b)` places `b` below `a`."
 msgstr "`Matrix::vertical_combine(a, b)` 将 `b` 放在 `a` 的下方。"
 
-#: manual/api/immut.md:537
+#: manual/api/immut.md:563
 msgid "Different column counts abort."
 msgstr "列数不同会导致中止。"
 
-#: manual/api/immut.md:541
+#: manual/api/immut.md:567
 msgid "`swap_rows(i, j)` and `swap_cols(i, j)` return a matrix with two rows or two columns exchanged."
 msgstr "`swap_rows(i, j)` 和 `swap_cols(i, j)` 返回交换了两行或两列的矩阵。"
 
-#: manual/api/immut.md:549
+#: manual/api/immut.md:575
 msgid "Out-of-range indices abort. Swapping an index with itself returns `m` itself. Otherwise the whole matrix is rebuilt, $O(rc)$."
 msgstr "越界索引会导致中止。将某个索引与自身交换时直接返回 `m` 本身。否则会重建整个矩阵，开销为 $O(rc)$。"
 
-#: manual/api/immut.md:566
+#: manual/api/immut.md:592
 msgid "Iteration and conversion"
 msgstr "迭代与转换"
 
-#: manual/api/immut.md:570
+#: manual/api/immut.md:596
 msgid "`Matrix::iter(m)` iterates over all entries in row-major order."
 msgstr "`Matrix::iter(m)` 按行主序遍历所有元素。"
 
-#: manual/api/immut.md:578
+#: manual/api/immut.md:604
 msgid "`iter_row(r)` iterates over row `r` left to right; `iter_col(c)` over column `c` top to bottom."
 msgstr "`iter_row(r)` 从左到右遍历第 `r` 行；`iter_col(c)` 从上到下遍历第 `c` 列。"
 
-#: manual/api/immut.md:586
+#: manual/api/immut.md:612
 msgid "Out-of-range indices abort when the iterator is created."
 msgstr "越界索引会在创建迭代器时导致中止。"
 
-#: manual/api/immut.md:590
+#: manual/api/immut.md:616
 msgid "`Matrix::to_array(m)` copies the entries into a flat row-major array."
 msgstr "`Matrix::to_array(m)` 将元素复制到一个按行主序排列的扁平数组中。"
 
-#: manual/api/immut.md:598
+#: manual/api/immut.md:624
 msgid "`Matrix::to_2d_array(m)` copies the entries into nested row arrays."
 msgstr "`Matrix::to_2d_array(m)` 将元素复制到按行组织的嵌套数组中。"
 
-#: manual/api/immut.md:604
+#: manual/api/immut.md:630
 msgid "For an $r \\times 0$ matrix the result has $r$ empty rows."
 msgstr "对于 $r \\times 0$ 矩阵，结果包含 $r$ 个空行。"
 
-#: manual/api/immut.md:616
+#: manual/api/immut.md:642
 msgid "`MatrixFn` operations"
 msgstr "`MatrixFn` 操作"
 
-#: manual/api/immut.md:618
+#: manual/api/immut.md:644
 msgid "All `MatrixFn` operations are lazy: they compose functions and do no work until an entry is read. Shape checks happen eagerly; bounds checks happen on reads."
 msgstr "所有 `MatrixFn` 操作都是惰性的：它们只组合函数，在读取元素之前不做任何计算。形状检查会立即进行；边界检查在读取时进行。"
 
-#: manual/api/immut.md:623
+#: manual/api/immut.md:649
 msgid "`MatrixFn::make(r, c, f)` builds the lazy matrix with entries $f(i, j)$."
 msgstr "`MatrixFn::make(r, c, f)` 构建元素为 $f(i, j)$ 的惰性矩阵。"
 
-#: manual/api/immut.md:629
+#: manual/api/immut.md:655
 msgid "Negative dimensions abort. Reading an entry outside the shape aborts."
 msgstr "负的维度会导致中止。读取形状范围之外的元素会导致中止。"
 
-#: manual/api/immut.md:633
+#: manual/api/immut.md:659
 msgid "`MatrixFn::new(r, c)` builds an $r \\times c$ lazy matrix whose entries are `T::default()`."
 msgstr "`MatrixFn::new(r, c)` 构建一个元素均为 `T::default()` 的 $r \\times c$ 惰性矩阵。"
 
-#: manual/api/immut.md:642
+#: manual/api/immut.md:668
 msgid "`MatrixFn::from_2d_array(rows)` builds a lazy view of nested rows."
 msgstr "`MatrixFn::from_2d_array(rows)` 构建嵌套行数组的惰性视图。"
 
-#: manual/api/immut.md:648
+#: manual/api/immut.md:674
 msgid "Ragged input aborts. The arrays are captured, not copied: later writes to them are visible through the `MatrixFn`."
 msgstr "参差不齐的输入会导致中止。数组会被捕获而不是复制：之后对它们的写入可以通过 `MatrixFn` 观察到。"
 
-#: manual/api/immut.md:653
+#: manual/api/immut.md:679
 msgid "`MatrixFn::identity(n)` is the lazy $n \\times n$ identity."
 msgstr "`MatrixFn::identity(n)` 是惰性的 $n \\times n$ 单位矩阵。"
 
-#: manual/api/immut.md:661
+#: manual/api/immut.md:687
 msgid "`MatrixFn::shape(m)` returns `(rows, cols)`."
 msgstr "`MatrixFn::shape(m)` 返回 `(rows, cols)`。"
 
-#: manual/api/immut.md:669
+#: manual/api/immut.md:695
 msgid "`MatrixFn::at(m, r)` returns the row accessor behind `m[r][c]`."
 msgstr "`MatrixFn::at(m, r)` 返回 `m[r][c]` 背后的行访问器。"
 
-#: manual/api/immut.md:676
+#: manual/api/immut.md:702
 msgid "The row index is checked immediately, the column when it is read."
 msgstr "行索引会立即检查，列索引在读取时检查。"
 
-#: manual/api/immut.md:680
+#: manual/api/immut.md:706
 msgid "`MatrixFn::map(m, f)` composes `f` after every entry."
 msgstr "`MatrixFn::map(m, f)` 在每个元素之后复合 `f`。"
 
-#: manual/api/immut.md:688
+#: manual/api/immut.md:714
 msgid "`map_row(r, f)` and `map_col(c, f)` apply `f` to one row or one column."
 msgstr "`map_row(r, f)` 和 `map_col(c, f)` 对某一行或某一列应用 `f`。"
 
-#: manual/api/immut.md:695
+#: manual/api/immut.md:721
 msgid "Out-of-range indices abort immediately."
 msgstr "越界索引会立即导致中止。"
 
-#: manual/api/immut.md:699
+#: manual/api/immut.md:725
 msgid "`MatrixFn::zip_with(a, b, f)` combines two lazy matrices entry by entry."
 msgstr "`MatrixFn::zip_with(a, b, f)` 逐元素组合两个惰性矩阵。"
 
-#: manual/api/immut.md:705
+#: manual/api/immut.md:731
 msgid "Different shapes abort."
 msgstr "形状不同会导致中止。"
 
-#: manual/api/immut.md:709
+#: manual/api/immut.md:735
 msgid "`MatrixFn::fold(m, init~, f)` reduces all entries in row-major order."
 msgstr "`MatrixFn::fold(m, init~, f)` 按行主序归约所有元素。"
 
-#: manual/api/immut.md:715
+#: manual/api/immut.md:741
 msgid "This forces every entry once."
 msgstr "这会对每个元素求值一次。"
 
-#: manual/api/immut.md:719
+#: manual/api/immut.md:745
 msgid "Lazy entry-wise $A + B$, $A - B$, $-A$ and $A a$."
 msgstr "惰性的按元素 $A + B$、$A - B$、$-A$ 和 $A a$。"
 
-#: manual/api/immut.md:728
+#: manual/api/immut.md:754
 msgid "`MatrixFn` has no public `*` operator; use `pow` or convert to `Matrix`."
 msgstr "`MatrixFn` 没有公开的 `*` 运算符；请使用 `pow` 或转换为 `Matrix`。"
 
-#: manual/api/immut.md:732
+#: manual/api/immut.md:758
 msgid "`MatrixFn::pow(a, k)` returns the lazy power $A^k$ by binary exponentiation."
 msgstr "`MatrixFn::pow(a, k)` 通过二进制求幂返回惰性幂 $A^k$。"
 
-#: manual/api/immut.md:738
+#: manual/api/immut.md:764
 msgid "Non-square input or a negative exponent aborts. Because nothing is cached, reading one entry of $A^{k}$ recomputes the nested products. One entry of the lazy square $B \\cdot B$ reads $2n$ entries of $B$, so one entry of $A^{2^d}$ reads $(2n)^d = k^{1 + \\log_2 n}$ entries of $A$ for $k = 2^d$; read all entries into a `Matrix` with `Matrix::make` if you need more than a few."
 msgstr "非方阵输入或负指数会导致中止。由于不做任何缓存，读取 $A^{k}$ 的一个元素会重新计算嵌套的乘积。惰性平方 $B \\cdot B$ 的一个元素要读取 $B$ 的 $2n$ 个元素，因此对 $k = 2^d$，$A^{2^d}$ 的一个元素要读取 $A$ 的 $(2n)^d = k^{1 + \\log_2 n}$ 个元素；如果需要读取多个元素，请先用 `Matrix::make` 把所有元素读入一个 `Matrix`。"
 
-#: manual/api/immut.md:746
+#: manual/api/immut.md:772
 msgid "`MatrixFn::determinant(a)` materializes the matrix and returns its determinant with the algorithm of `Matrix::determinant`."
 msgstr "`MatrixFn::determinant(a)` 将矩阵实化，并用 `Matrix::determinant` 的算法返回其行列式。"
 
-#: manual/api/immut.md:753
+#: manual/api/immut.md:779
 msgid "A non-square matrix aborts; there is no checked form."
 msgstr "非方阵会导致中止；没有受检形式。"
 
-#: manual/api/immut.md:757
+#: manual/api/immut.md:783
 msgid "Lazy transpose and conjugate transpose."
 msgstr "惰性转置与共轭转置。"
 
-#: manual/api/immut.md:766
+#: manual/api/immut.md:792
 msgid "Lazy row and column exchange; out-of-range indices abort."
 msgstr "惰性的行交换与列交换；越界索引会导致中止。"
 
-#: manual/api/immut.md:775
+#: manual/api/immut.md:801
 msgid "Lazy block concatenation; mismatched row or column counts abort."
 msgstr "惰性分块拼接；行数或列数不匹配会导致中止。"
 
-#: manual/api/immut.md:784
+#: manual/api/immut.md:810
 msgid "`equal` compares shapes and every entry (forcing them); `to_string` renders like `Matrix`."
 msgstr "`equal` 比较形状和每个元素（会对它们求值）；`to_string` 的渲染方式与 `Matrix` 相同。"
 
-#: manual/api/immut.md:808
+#: manual/api/immut.md:834
 #: manual/api/mutable.md:1160
 msgid "Vector"
 msgstr "向量"
 
-#: manual/api/immut.md:812
+#: manual/api/immut.md:838
 msgid "`Vector::from_array(xs)` copies an array into a new vector."
 msgstr "`Vector::from_array(xs)` 将数组复制到一个新向量中。"
 
-#: manual/api/immut.md:820
+#: manual/api/immut.md:846
 msgid "`make(n, x)` builds $n$ copies of `x`; `makei(n, f)` builds $(f(0), \\dots, f(n-1))$."
 msgstr "`make(n, x)` 构建 $n$ 个 `x` 的副本；`makei(n, f)` 构建 $(f(0), \\dots, f(n-1))$。"
 
-#: manual/api/immut.md:830
+#: manual/api/immut.md:856
 msgid "`Vector::length(v)` returns the number of elements."
 msgstr "`Vector::length(v)` 返回元素个数。"
 
-#: manual/api/immut.md:838
+#: manual/api/immut.md:864
 msgid "`Vector::at(v, i)` returns element `i`; it backs `v[i]`. An out-of-range index aborts."
 msgstr "`Vector::at(v, i)` 返回第 `i` 个元素；它是 `v[i]` 的底层实现。越界索引会导致中止。"
 
-#: manual/api/immut.md:848
+#: manual/api/immut.md:874
 msgid "`Vector::set(v, i, x)` returns a vector equal to `v` except at `i`, in $O(\\log_{32} n)$; `v` is unchanged."
 msgstr "`Vector::set(v, i, x)` 以 $O(\\log_{32} n)$ 的开销返回一个除 `i` 处外其余都与 `v` 相等的向量；`v` 保持不变。"
 
-#: manual/api/immut.md:857
+#: manual/api/immut.md:883
 msgid "`Vector::iter(v)` iterates over the elements in order."
 msgstr "`Vector::iter(v)` 按顺序遍历元素。"
 
-#: manual/api/immut.md:865
+#: manual/api/immut.md:891
 msgid "`map(f)` applies `f` to every element; `zip_with(w, f)` combines two vectors element by element and aborts on different lengths."
 msgstr "`map(f)` 对每个元素应用 `f`；`zip_with(w, f)` 逐元素组合两个向量，长度不同时中止。"
 
-#: manual/api/immut.md:875
+#: manual/api/immut.md:901
 msgid "Element-wise $u + v$, Hadamard $u \\odot v$ and $-u$; they back the operators. Different lengths abort."
 msgstr "按元素的 $u + v$、Hadamard 积 $u \\odot v$ 以及 $-u$；它们是相应运算符的底层实现。长度不同会导致中止。"
 
-#: manual/api/immut.md:884
+#: manual/api/immut.md:910
 msgid "`Vector` has no `Sub` implementation; write `u + -v`."
 msgstr "`Vector` 没有实现 `Sub`；请写作 `u + -v`。"
 
-#: manual/api/immut.md:888
+#: manual/api/immut.md:914
 msgid "`Vector::add_constant(v, a)` adds `a` to every element."
 msgstr "`Vector::add_constant(v, a)` 给每个元素加上 `a`。"
 
-#: manual/api/immut.md:896
+#: manual/api/immut.md:922
 msgid "`left_scale(a)` returns $(a v_i)_i$; `right_scale(a)` returns $(v_i a)_i$. They differ only for non-commutative scalars."
 msgstr "`left_scale(a)` 返回 $(a v_i)_i$；`right_scale(a)` 返回 $(v_i a)_i$。两者仅在标量不可交换时有所不同。"
 
-#: manual/api/immut.md:906
+#: manual/api/immut.md:932
 msgid "`Vector::lerp(u, v, t)` returns $(1 - t) u + t v$, with scalars on the left."
 msgstr "`Vector::lerp(u, v, t)` 返回 $(1 - t) u + t v$，标量位于左侧。"
 
-#: manual/api/immut.md:912
+#: manual/api/immut.md:938
 msgid "Different lengths abort."
 msgstr "长度不同会导致中止。"
 
-#: manual/api/immut.md:916
+#: manual/api/immut.md:942
 msgid "`lin_comb(a, u, b, v)` returns $a u + b v$, with scalars on the left."
 msgstr "`lin_comb(a, u, b, v)` 返回 $a u + b v$，标量位于左侧。"
 
-#: manual/api/immut.md:924
+#: manual/api/immut.md:950
 msgid "The vector as a $1 \\times n$ or an $n \\times 1$ matrix."
 msgstr "将向量视为 $1 \\times n$ 或 $n \\times 1$ 矩阵。"
 
-#: manual/api/immut.md:933
+#: manual/api/immut.md:959
 msgid "`Vector::scaled_matrix(v)` returns the diagonal matrix $\\operatorname{diag}(v_0, \\dots, v_{n-1})$."
 msgstr "`Vector::scaled_matrix(v)` 返回对角矩阵 $\\operatorname{diag}(v_0, \\dots, v_{n-1})$。"
 
-#: manual/api/immut.md:942
+#: manual/api/immut.md:968
 msgid "`Vector::tensor_product(u, v)` returns the outer product $u v^{\\mathsf T}$, the $m \\times n$ matrix with entries $u_i v_j$."
 msgstr "`Vector::tensor_product(u, v)` 返回外积 $u v^{\\mathsf T}$，即元素为 $u_i v_j$ 的 $m \\times n$ 矩阵。"
 
-#: manual/api/immut.md:951
+#: manual/api/immut.md:977
 msgid "`equal` compares lengths and elements; `to_string` renders `|a, b, c|`."
 msgstr "`equal` 比较长度和元素；`to_string` 渲染为 `|a, b, c|`。"
 
-#: manual/api/immut.md:979
+#: manual/api/immut.md:1005
 msgid "These method forms exist only for source compatibility; they are hidden from the interface and warn when used."
 msgstr "这些方法形式仅为源码兼容而保留；它们不出现在接口中，使用时会产生警告。"
 
-#: manual/api/immut.md:985
+#: manual/api/immut.md:1011
 #: manual/api/mutable.md:1321
 msgid "string interpolation or `Show::output(x, logger)`"
 msgstr "字符串插值或 `Show::output(x, logger)`"
 
-#: manual/api/immut.md:986
+#: manual/api/immut.md:1012
 #: manual/api/mutable.md:1322
 msgid "`Repr(v)` or `@debug.Debug::to_repr(v)`"
 msgstr "`Repr(v)` 或 `@debug.Debug::to_repr(v)`"
@@ -2545,7 +2553,6 @@ msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ without checking shape comp
 msgstr "`Matrix::unchecked_matmul(a, b)` 返回 $AB$，不检查形状是否兼容。调用者必须保证 $\\operatorname{cols}(A) = \\operatorname{rows}(B)$。"
 
 #: manual/api/mutable.md:533
-#| msgid "[!CAUTION] On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
 msgid "[!CAUTION] The caller must guarantee $\\operatorname{cols}(A) = \\operatorname{rows}(B)$. On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
 msgstr "[!CAUTION] 调用者必须保证 $\\operatorname{cols}(A) = \\operatorname{rows}(B)$。若违反此前提，结果未定义：可能因数组索引错误而中止，也可能静默返回错误的矩阵。需要非中止的形状检查时请使用 `matmul`；接受维度不匹配时中止则可使用 `*`。"
 
@@ -3290,7 +3297,7 @@ msgid "`CORRECTNESS_CHECKLIST.md` records the audited status of the numerical ro
 msgstr "`CORRECTNESS_CHECKLIST.md` 记录数值例程的审计状态。"
 
 #: manual/architecture.md:81
-#: manual/index.md:161
+#: manual/index.md:166
 msgid "Outside the module"
 msgstr "模块之外"
 
@@ -3697,7 +3704,7 @@ msgstr "对于带有反转乘积的对合 $x \\mapsto \\bar{x}$（即 $\\overlin
 #: manual/design/container.md:150
 #: manual/design/container/adapters.md:84
 #: manual/design/error.md:133
-#: manual/design/immut.md:306
+#: manual/design/immut.md:326
 #: manual/design/internal.md:56
 #: manual/design/mutable.md:600
 #: manual/design/perf.md:43
@@ -3766,7 +3773,7 @@ msgstr "N. J. Higham, *Accuracy and Stability of Numerical Algorithms*, 2nd ed.,
 #: manual/design/container.md:165
 #: manual/design/container/adapters.md:96
 #: manual/design/error.md:149
-#: manual/design/immut.md:325
+#: manual/design/immut.md:345
 #: manual/design/internal.md:63
 #: manual/design/mutable.md:628
 #: manual/design/perf.md:48
@@ -3798,7 +3805,7 @@ msgstr "**包含所有运算的单个 `Matrix` trait。** 它会把部分乘法�
 #: manual/design/container.md:177
 #: manual/design/container/adapters.md:104
 #: manual/design/error.md:158
-#: manual/design/immut.md:335
+#: manual/design/immut.md:355
 #: manual/design/internal.md:69
 #: manual/design/mutable.md:640
 #: manual/design/perf.md:54
@@ -4687,8 +4694,8 @@ msgid "Exact algorithms where the scalar allows them"
 msgstr "在标量允许时使用精确算法"
 
 #: manual/design/immut.md:39
-msgid "`determinant` asks only for `Compare + Num + Div`, not for a field, so it accepts `Int`, `Int64` and `BigInt`. With Bareiss elimination the result is exact over those types. `Num` contributes `abs`, used to pick the pivot, and `Num : Ring` the ring operations; `Div` must be *exact* division whenever the dividend is a multiple of the divisor, which integer division is. Over `Double` the same code runs, but without a tolerance and with intermediate values that grow much faster than in LU (see below); the [`mutable`](mutable.md) package, which targets floating point, uses LU with partial pivoting and a tolerance instead."
-msgstr "`determinant` 只要求 `Compare + Num + Div`，而不要求域，因此它接受 `Int`、`Int64` 和 `BigInt`。借助 Bareiss 消元，结果在这些类型上是精确的。`Num` 提供用于选主元的 `abs`，`Num : Ring` 提供环运算；`Div` 必须在被除数是除数的倍数时做*精确*除法，整数除法正是如此。在 `Double` 上同一段代码也能运行，但没有容差，而且中间值的增长比 LU 快得多（见下文）；面向浮点数的 [`mutable`](mutable.md) 包则改用部分选主元的 LU 分解加容差。"
+msgid "`determinant` requires the open `DeterminantScalar` strategy trait, which extends `Compare + Num + Div`. `Int`, `Int16`, `Int64` and `BigInt` select `Bareiss`; `Float` and `Double` select `PivotedLU`. The operation bounds alone cannot distinguish exact integer division from rounded floating-point division, so callers must supply this strategy explicitly for custom types. Bareiss preserves exact results over integral domains when division is exact on divisible values and intermediate arithmetic does not overflow. LU uses field-like division and is approximate on floating-point scalars. This local algorithm choice does not change the upstream algebraic laws or bounds."
+msgstr "`determinant` 要求开放的 `DeterminantScalar` 策略 trait，它继承 `Compare + Num + Div`。`Int`、`Int16`、`Int64` 和 `BigInt` 选择 `Bareiss`；`Float` 和 `Double` 选择 `PivotedLU`。仅凭运算约束无法区分精确整数除法和舍入的浮点除法，因此自定义类型的调用方须显式提供策略。当整除时除法精确且中间运算不溢出，Bareiss 在整环上保持精确结果。LU 使用类域除法，在浮点标量上得到近似值。这一局部算法选择不改变上游的代数定律或约束。"
 
 #: manual/design/immut.md:49
 msgid "Checked short names, unchecked explicit names"
@@ -4741,8 +4748,8 @@ msgid "determinant"
 msgstr "行列式"
 
 #: manual/design/immut.md:69
-msgid "Bareiss, exact over integral domains"
-msgstr "Bareiss，在整环上精确"
+msgid "scalar strategy: Bareiss for integers, LU for floats without tolerance"
+msgstr "标量策略：整数使用 Bareiss，浮点数使用无容差 LU"
 
 #: manual/design/immut.md:69
 msgid "LU with tolerance, floating point"
@@ -4861,70 +4868,82 @@ msgid "over the $k + 1$ rows involved (restricted to the chosen columns, which o
 msgstr "其中乘积取遍所涉及的 $k + 1$ 行（限制在所选的列上，这只会减小范数）。令 $H = \\prod_r \\max(1, \\lVert \\text{row}_r \\rVert_2)$ 取遍所有行；每个这样的乘积都不超过 $H$。递推的分子是两个“两子式之积”的差，因此每个乘积不超过 $H^2$，分子不超过 $2H^2$。这为 `Int` 给出了一个溢出判据：若 $2H^2 < 2^{31}$，则没有中间值溢出，结果是精确的（对 `Int64` 为 $2H^2 < 2^{63}$）。一旦分子发生回绕，精确除法就不再成立，结果是错误的，而不是模 $2^{w}$ 正确。对 `BigInt`，该算法总是精确的；它对至多 $\\log_2(2H^2) + 1$ 位的整数执行 $O(n^3)$ 次算术运算。"
 
 #: manual/design/immut.md:260
-msgid "**Floating point.** The same bound explains why Bareiss elimination is a poor choice for `Double`. LU computes ratios of consecutive minors, of the size of the entries; Bareiss computes the minors themselves and multiplies two of them before dividing. For $A = 1000 I_{60}$ plus a superdiagonal of ones, $\\det A = 10^{180}$ is representable, but at step $k$ the numerator is about $10^{6(k+1)}$, which overflows after $k \\approx 50$; the method then returns NaN where LU returns $10^{180}$. Nor is there a tolerance: only an exactly zero pivot column is treated as singular."
-msgstr "**浮点。** 同一个界也解释了为什么 Bareiss 消元不适合 `Double`。LU 计算的是相邻子式之比，其大小与矩阵元素相当；Bareiss 计算的是子式本身，并在相除之前把其中两个相乘。对 $A = 1000 I_{60}$ 加上一条全为一的超对角线，$\\det A = 10^{180}$ 可以表示，但第 $k$ 步的分子约为 $10^{6(k+1)}$，在 $k \\approx 50$ 之后溢出；此时该方法返回 NaN，而 LU 返回 $10^{180}$。它也没有容差：只有恰好为零的主元列才被视为奇异。"
+msgid "**Floating point.** Bareiss forms products of minors before dividing. For $A = 1000 I_{60}$ plus a superdiagonal of ones, triangularity gives $\\det A = 1000^{60} = 10^{180}$. Bareiss intermediates are leading minors, so the products grow like $1000^{2(k+1)}$ and overflow binary64 even though the final determinant is representable. `Float` and `Double` now select LU with partial pivoting for every size, avoiding this source of minor growth."
+msgstr "**浮点数。** Bareiss 先形成余子式乘积，再做除法。对于 $A = 1000 I_{60}$ 加上由 $1$ 构成的上副对角线，由三角结构得到 $\\det A = 1000^{60} = 10^{180}$。Bareiss 的中间值是顺序主子式，因此乘积按 $1000^{2(k+1)}$ 增长，即使最终行列式可表示，也会溢出 binary64。`Float` 和 `Double` 现在对所有大小都选择部分选主元 LU，从而避开这一余子式增长来源。"
+
+#: manual/design/immut.md:267
+msgid "Pivoted LU determinant"
+msgstr "部分选主元 LU 行列式"
 
 #: manual/design/immut.md:269
+msgid "The kernel copies the matrix, chooses the largest absolute entry in the remaining pivot column, exchanges rows, and subtracts $a_{ik}/a_{kk}$ times the pivot row from each later row. Row addition preserves the determinant over a commutative field; each row exchange changes its sign. After elimination the matrix is upper triangular, so $\\det A = (-1)^s \\prod_k u_{kk}$ in exact arithmetic, where $s$ counts swaps. This argument requires field-like division and does not apply to truncating integer division; those scalars retain Bareiss."
+msgstr "内核复制矩阵，在剩余主元列中选择绝对值最大的元素，交换行，再从后续各行减去主元行的 $a_{ik}/a_{kk}$ 倍。在交换域上，行倍加不改变行列式，每次换行改变符号。消元后矩阵为上三角形，因此在精确算术下有 $\\det A = (-1)^s \\prod_k u_{kk}$，其中 $s$ 为换行次数。这一推导要求类域除法，不适用于截断的整数除法；整数标量保留 Bareiss。"
+
+#: manual/design/immut.md:278
+msgid "There is no absolute or relative zero threshold. An exactly zero selected pivot returns zero; the method does not classify numerical rank. The empty pivot product is one. Inputs are immutable because all elimination occurs on a private array. Floating-point rounding and elimination growth remain. Finite pivots are accumulated with a normalized mantissa and a binary exponent, so their product does not overflow or underflow merely because intermediate pivots have opposing scales; a final result outside the scalar range still overflows or underflows. NaN and infinity follow scalar arithmetic without a checked error. Tests of known triangular and dense factorizations are finite evidence, not a universal accuracy proof."
+msgstr "没有绝对或相对的零阈值。选中的主元严格为零时返回零；此方法不判定数值秩。空主元乘积为一。所有消元都在私有数组上进行，因此输入保持不可变。浮点舍入和消元增长仍然存在。有限主元使用归一化尾数和二进制指数累积，因此不会仅因中间主元尺度相反而发生上溢或下溢；当最终结果超出标量范围时仍会发生上溢或下溢。NaN 和无穷遵循标量运算，不产生受检错误。已知三角及稠密分解的测试是有限证据，不是普遍的精度证明。"
+
+#: manual/design/immut.md:289
 msgid "E. H. Bareiss, \"Sylvester's identity and multistep integer-preserving Gaussian elimination\", *Mathematics of Computation* 22 (1968), 565–578."
 msgstr "E. H. Bareiss, \"Sylvester's identity and multistep integer-preserving Gaussian elimination\", *Mathematics of Computation* 22 (1968), 565–578."
 
-#: manual/design/immut.md:272
+#: manual/design/immut.md:292
 msgid "**Small sizes.** For $n \\le 4$ the package uses closed formulas instead. For $n = 3$ it is the cofactor expansion along the first row; for $n = 4$ it is Laplace's expansion along the first two rows,"
 msgstr "**小规模。** 当 $n \\le 4$ 时，该包改用闭式公式。$n = 3$ 时是沿第一行的余子式展开；$n = 4$ 时是沿前两行的 Laplace 展开，"
 
-#: manual/design/immut.md:281
+#: manual/design/immut.md:301
 msgid "six products of complementary $2 \\times 2$ minors. These formulas use only ring operations, so they are exact over every commutative ring and need no division at all. Over `Int` they are therefore exact modulo $2^{32}$ even when an intermediate value wraps, and the result is the true determinant whenever $|\\det A| < 2^{31}$."
 msgstr "即六个互补 $2 \\times 2$ 子式的乘积。这些公式只使用环运算，因此在每个交换环上都是精确的，完全不需要除法。因此在 `Int` 上，即使某个中间值发生回绕，它们在模 $2^{32}$ 意义下仍然精确；只要 $|\\det A| < 2^{31}$，结果就是真正的行列式。"
 
-#: manual/design/immut.md:287
+#: manual/design/immut.md:307
 msgid "Lazy matrices"
 msgstr "惰性矩阵"
 
-#: manual/design/immut.md:289
+#: manual/design/immut.md:309
 msgid "A `MatrixFn` is a pair $(\\text{shape}, f)$ with $f : [r] \\times [c] \\to T$. Operations compose functions: $\\mathtt{map}(g)$ is $g \\circ f$, transpose is $f \\circ \\mathrm{swap}$, and the product is"
 msgstr "`MatrixFn` 是一个二元组 $(\\text{shape}, f)$，其中 $f : [r] \\times [c] \\to T$。运算即函数复合：$\\mathtt{map}(g)$ 是 $g \\circ f$，转置是 $f \\circ \\mathrm{swap}$，乘积是"
 
-#: manual/design/immut.md:297
+#: manual/design/immut.md:317
 msgid "evaluated on demand. Nothing is cached, so reading one entry of a product costs the inner dimension $n$ times the cost of an entry of each factor. For a left-nested chain of $d$ products of $n \\times n$ matrices the cost $C_d$ of one entry satisfies $C_d = n(C_{d-1} + 1)$, so $C_d = \\Theta(n^d)$. Repeated squaring is worse, because both factors of $B \\cdot B$ are the same unevaluated $B$: $C_{t+1} = 2n\\, C_t$, so one entry of $A^{2^t}$ costs $(2n)^t$ reads of $A$, that is $k^{1 + \\log_2 n}$ for $k = 2^t$. Lazy powers are cheap to build and expensive to read."
 msgstr "按需求值。不做任何缓存，因此读取乘积的一个元素，开销为内维度 $n$ 乘以每个因子一个元素的开销。对于由 $d$ 个 $n \\times n$ 矩阵乘积构成的左嵌套链，一个元素的开销 $C_d$ 满足 $C_d = n(C_{d-1} + 1)$，因此 $C_d = \\Theta(n^d)$。反复平方更糟，因为 $B \\cdot B$ 的两个因子是同一个未求值的 $B$：$C_{t+1} = 2n\\, C_t$，所以 $A^{2^t}$ 的一个元素要读取 $A$ 的 $(2n)^t$ 个元素，即对 $k = 2^t$ 为 $k^{1 + \\log_2 n}$。惰性幂构造起来便宜，读取起来昂贵。"
 
-#: manual/design/immut.md:308
+#: manual/design/immut.md:328
 msgid "**Immutability.** No public operation modifies an existing `Matrix`, `Vector` or `MatrixFn`; `set` and `swap_*` return new values."
 msgstr "**不可变性。** 没有任何公开运算会修改已有的 `Matrix`、`Vector` 或 `MatrixFn`；`set` 和 `swap_*` 返回新值。"
 
-#: manual/design/immut.md:310
+#: manual/design/immut.md:330
 msgid "**Shape invariants.** $r, c \\ge 0$ and the backing vector has exactly $rc$ elements; constructors reject anything else by aborting."
 msgstr "**形状不变量。** $r, c \\ge 0$，且底层向量恰有 $rc$ 个元素；构造函数对其他任何情况都以中止的方式拒绝。"
 
-#: manual/design/immut.md:312
+#: manual/design/immut.md:332
 msgid "**Bounds.** Every public read checks row and column separately, so a column index that would land inside the next row is rejected rather than read."
 msgstr "**边界。** 每个公开读取都分别检查行和列，因此会落入下一行的列索引会被拒绝，而不是被读取。"
 
-#: manual/design/immut.md:314
+#: manual/design/immut.md:334
 msgid "**Exactness.** Over `BigInt`, `determinant` and `pow` are exact; over `Int` and `Int64`, `pow` is exact modulo $2^{w}$, and `determinant` is exact unless an intermediate product overflows ($n \\ge 5$) or the determinant itself does not fit ($n \\le 4$; see the Hadamard bound)."
 msgstr "**精确性。** 在 `BigInt` 上，`determinant` 和 `pow` 是精确的；在 `Int` 和 `Int64` 上，`pow` 在模 $2^{w}$ 意义下精确，`determinant` 除非某个中间乘积溢出（$n \\ge 5$）或行列式本身放不下（$n \\le 4$；见 Hadamard 界），否则是精确的。"
 
-#: manual/design/immut.md:318
+#: manual/design/immut.md:338
 msgid "**Empty cases.** $\\det$ and $\\operatorname{tr}$ of the $0 \\times 0$ matrix are $1$ and $0$; $A^0 = I$; a product with inner dimension $0$ is the zero matrix."
 msgstr "**空情形。** $0 \\times 0$ 矩阵的 $\\det$ 和 $\\operatorname{tr}$ 分别为 $1$ 和 $0$；$A^0 = I$；内维度为 $0$ 的乘积是零矩阵。"
 
-#: manual/design/immut.md:321
+#: manual/design/immut.md:341
 msgid "**Complexity.** `set`: $O(\\log_{32} N)$; `map`, `+`, `transpose`, `swap_*`: $O(N)$; `matmul`: $rcn$ multiply-adds; `determinant`: $O(n^3)$; `pow`: at most $2\\lfloor\\log_2 k\\rfloor + 1$ products, $O(n^3 \\log k)$."
 msgstr "**复杂度。** `set`：$O(\\log_{32} N)$；`map`、`+`、`transpose`、`swap_*`：$O(N)$；`matmul`：$rcn$ 次乘加；`determinant`：$O(n^3)$；`pow`：至多 $2\\lfloor\\log_2 k\\rfloor + 1$ 次乘积，$O(n^3 \\log k)$。"
 
-#: manual/design/immut.md:327
-msgid "**Floating-point LU for `immut` determinants.** It would need a field and a tolerance and would lose exactness for integer matrices, the main reason to use this package."
-msgstr "**`immut` 行列式使用浮点 LU。** 这需要域和容差，并且会失去整数矩阵上的精确性，而这正是使用本包的主要理由。"
+#: manual/design/immut.md:347
+msgid "**LU for every scalar.** Truncating integer division would invalidate elimination. Explicit scalar strategies preserve Bareiss for exact domains and use LU for floating point without introducing a tolerance policy."
+msgstr "**所有标量都使用 LU。** 截断的整数除法会使消元失效。显式标量策略为精确域保留 Bareiss，为浮点数使用 LU，不引入容差策略。"
 
-#: manual/design/immut.md:330
+#: manual/design/immut.md:350
 msgid "**A runtime backend selector inside `Matrix`.** Backends are separate types ([`backends/default`](backends/default.md)); `Matrix` has one representation."
 msgstr "**在 `Matrix` 内部设置运行时后端选择器。** 后端是独立的类型（[`backends/default`](backends/default.md)）；`Matrix` 只有一种表示。"
 
-#: manual/design/immut.md:332
+#: manual/design/immut.md:352
 msgid "**Caching in `MatrixFn`.** It would make a pure value hold mutable state and change the cost model silently. Materialize with `Matrix::make` instead."
 msgstr "**在 `MatrixFn` 中缓存。** 这会让纯值持有可变状态，并悄悄改变开销模型。请改用 `Matrix::make` 物化。"
 
-#: manual/design/immut.md:337
+#: manual/design/immut.md:357
 msgid "`immut` does not provide in-place updates, views, inverses, decompositions, eigenvalues, statistics or tolerance-based predicates; those belong to [`mutable`](mutable.md). It does not detect integer overflow, does not offer a checked `MatrixFn` API, and does not implement the [`algebra`](algebra.md) traits itself (the wrappers in `backends/default` do)."
 msgstr "`immut` 不提供原地更新、视图、逆矩阵、分解、特征值、统计或基于容差的谓词；这些属于 [`mutable`](mutable.md)。它不检测整数溢出，不提供受检的 `MatrixFn` API，自身也不实现 [`algebra`](algebra.md) trait（由 `backends/default` 中的包装类型实现）。"
 
@@ -6031,106 +6050,110 @@ msgid "Concrete types"
 msgstr "具体类型"
 
 #: manual/index.md:85
-msgid "`immut`: `Matrix`, `Vector`, `MatrixFn`, the row accessor `Indexed`, the aliases `VecLib` and `VecCore`, and the top-level `lin_comb`"
-msgstr "`immut`：`Matrix`、`Vector`、`MatrixFn`，行访问器 `Indexed`，别名 `VecLib` 和 `VecCore`，以及顶层函数 `lin_comb`"
+msgid "`immut`: `Matrix`, `Vector`, `MatrixFn`, the row accessor `Indexed`, the aliases `VecLib` and `VecCore`, `DeterminantAlgorithm`, `DeterminantScalar`, and the top-level `lin_comb`"
+msgstr "`immut`：`Matrix`、`Vector`、`MatrixFn`，行访问器 `Indexed`，别名 `VecLib` 和 `VecCore`、`DeterminantAlgorithm`、`DeterminantScalar`，以及顶层函数 `lin_comb`"
 
-#: manual/index.md:87
+#: manual/index.md:88
 msgid "`mutable`: `Matrix`, `Vector`, the views `RowView`, `ColView`, `Transpose`, the row accessor `Lens`, the trait `Tolerance`, the re-exported `Sqrt`, and the top-level `identity` and `lin_comb`"
 msgstr "`mutable`：`Matrix`、`Vector`，视图 `RowView`、`ColView`、`Transpose`，行访问器 `Lens`，trait `Tolerance`，重新导出的 `Sqrt`，以及顶层函数 `identity` 和 `lin_comb`"
 
-#: manual/index.md:90
+#: manual/index.md:91
 msgid "`backends/default`: `DenseMatrix`, `DenseVector`, `ImmutableDenseMatrix`, `ImmutableDenseVector`, and the generic helpers `matmul`, `transpose`, `shape_of`"
 msgstr "`backends/default`：`DenseMatrix`、`DenseVector`、`ImmutableDenseMatrix`、`ImmutableDenseVector`，以及泛型辅助函数 `matmul`、`transpose`、`shape_of`"
 
-#: manual/index.md:94
+#: manual/index.md:95
 msgid "Numerical routines"
 msgstr "数值例程"
 
-#: manual/index.md:96
+#: manual/index.md:97
 msgid "Exact (`immut`, over `Int`, `Int64`, `BigInt`): `determinant` by Bareiss elimination, `pow` by repeated squaring, `trace`, `matmul`"
 msgstr "精确（`immut`，用于 `Int`、`Int64`、`BigInt`）：基于 Bareiss 消元的 `determinant`、基于反复平方的 `pow`、`trace`、`matmul`"
 
-#: manual/index.md:98
+#: manual/index.md:99
+msgid "Floating determinant (`immut`, over `Float`, `Double`): LU with partial pivoting, selected by `DeterminantScalar`, without a zero tolerance"
+msgstr "浮点行列式（`immut`，`Float` 和 `Double`）：由 `DeterminantScalar` 选择部分选主元 LU，无零容差"
+
+#: manual/index.md:101
 msgid "Floating point (`mutable`, over `Float`, `Double`): `determinant`, `inverse`, `is_invertible` and `rank` by LU with partial pivoting, `reduce_row_elimination`, `cholesky_decomposition`, `is_positive_definite`, `eigen` for symmetric matrices, `power_method`, `mean`, `variance`, `std_dev`, `frobenius_norm`"
 msgstr "浮点（`mutable`，用于 `Float`、`Double`）：基于部分选主元 LU 的 `determinant`、`inverse`、`is_invertible` 和 `rank`，以及 `reduce_row_elimination`、`cholesky_decomposition`、`is_positive_definite`、对称矩阵的 `eigen`、`power_method`、`mean`、`variance`、`std_dev`、`frobenius_norm`"
 
-#: manual/index.md:103
+#: manual/index.md:106
 msgid "Every operation with a runtime failure mode has a checked form returning `Result[_, LinearAlgebraError]` and an `unchecked_*` form that aborts"
 msgstr "每个存在运行时失败情形的操作都有一个返回 `Result[_, LinearAlgebraError]` 的受检形式，以及一个会中止的 `unchecked_*` 形式"
 
-#: manual/index.md:106
+#: manual/index.md:109
 msgid "Capability layers"
 msgstr "能力层"
 
-#: manual/index.md:110
+#: manual/index.md:113
 msgid "`container`: `VectorReadOps`, `VectorBuildOps`, `VectorPersistentEditOps`, `VectorMutableEditOps`, their `Matrix*` counterparts, and the algorithms `vector_map`, `vector_convert`, `matrix_map`, `matrix_convert`, `matrix_transpose`"
 msgstr "`container`：`VectorReadOps`、`VectorBuildOps`、`VectorPersistentEditOps`、`VectorMutableEditOps`，它们对应的 `Matrix*` 版本，以及算法 `vector_map`、`vector_convert`、`matrix_map`、`matrix_convert`、`matrix_transpose`"
 
-#: manual/index.md:114
+#: manual/index.md:117
 msgid "`container/adapters`: one factory per type and capability, such as `mutable_matrix_read_ops`"
 msgstr "`container/adapters`：每种类型、每种能力各一个工厂函数，例如 `mutable_matrix_read_ops`"
 
-#: manual/index.md:117
+#: manual/index.md:120
 msgid "Scalars and errors"
 msgstr "标量与错误"
 
-#: manual/index.md:119
+#: manual/index.md:122
 msgid "`arithmetic`: `Abs`, `ApproxEq`, `CheckedDiv`, `CheckedSqrt`, `CheckedCompare`, and re-exports of `Zero`, `One`, `Inverse`, `Conjugate`, `Sqrt` and the other upstream scalar traits and types"
 msgstr "`arithmetic`：`Abs`、`ApproxEq`、`CheckedDiv`、`CheckedSqrt`、`CheckedCompare`，以及重新导出的 `Zero`、`One`、`Inverse`、`Conjugate`、`Sqrt` 和其他上游标量 trait 与类型"
 
-#: manual/index.md:122
+#: manual/index.md:125
 msgid "`error`: `LinearAlgebraError`, `LinearAlgebraErrorKind`, constructors and `is_*` predicates"
 msgstr "`error`：`LinearAlgebraError`、`LinearAlgebraErrorKind`、构造函数和 `is_*` 谓词"
 
-#: manual/index.md:125
+#: manual/index.md:128
 msgid "Numerical caveats"
 msgstr "数值注意事项"
 
-#: manual/index.md:127
-msgid "The numerical routines of `mutable` decide \"zero\" with one absolute threshold, `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of the input; scale data to order one (`eigen` is the exception: its decisions are relative to the entries). `@immut.Matrix::determinant` is meant for exact scalars, not for floating point. The [mutable design](design/mutable.md) and the [immut design](design/immut.md) derive the algorithms and state these limits precisely."
-msgstr "`mutable` 的数值例程用一个绝对阈值 `Tolerance::tolerance()` $= 10^{-11}$ 判断“零”，因此结果依赖于输入的尺度；请把数据缩放到 1 的量级（`eigen` 例外：它的判断相对于矩阵元素）。`@immut.Matrix::determinant` 是为精确标量设计的，不适用于浮点。[mutable 设计](design/mutable.md)和 [immut 设计](design/immut.md)推导了这些算法，并精确说明了这些限制。"
+#: manual/index.md:130
+msgid "The numerical routines of `mutable` decide \"zero\" with one absolute threshold, `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of the input; scale data to order one (`eigen` is the exception: its decisions are relative to the entries). `@immut.Matrix::determinant` selects Bareiss for integer scalars and pivoted LU for floating point. Its LU path has no zero tolerance and may still round, overflow or underflow; it is not a numerical-rank test. The [mutable design](design/mutable.md) and the [immut design](design/immut.md) derive the algorithms and state these limits precisely."
+msgstr "`mutable` 的数值例程以统一的绝对阈值 `Tolerance::tolerance()` $= 10^{-11}$ 判断“零”，结果因此依赖输入尺度；请将数据缩放到一的量级（`eigen` 例外，它相对于元素做判断）。`@immut.Matrix::determinant` 为整数选择 Bareiss，为浮点数选择部分选主元 LU。其 LU 路径没有零容差，仍可能舍入、上溢或下溢，不是数值秩判定。[mutable 设计](design/mutable.md) 和 [immut 设计](design/immut.md) 推导算法并说明这些边界。"
 
-#: manual/index.md:135
+#: manual/index.md:140
 msgid "Where to read next"
 msgstr "接下来读什么"
 
-#: manual/index.md:137
+#: manual/index.md:142
 msgid "New to the package: start with the [mutable tutorial](tutorial/mutable.md) for numerical work on `Double` matrices, or the [immut tutorial](tutorial/immut.md) for value semantics and exact integer results. Read the [error tutorial](tutorial/error.md) next, since every operation that can fail returns a `LinearAlgebraError`."
 msgstr "初次接触本包：若要在 `Double` 矩阵上做数值计算，请从 [mutable 教程](tutorial/mutable.md)开始；若需要值语义和精确的整数结果，请从 [immut 教程](tutorial/immut.md)开始。接着阅读[错误教程](tutorial/error.md)，因为每个可能失败的操作都会返回 `LinearAlgebraError`。"
 
-#: manual/index.md:142
+#: manual/index.md:147
 msgid "Using it in a library: read the [algebra tutorial](tutorial/algebra.md) and the [backends/default tutorial](tutorial/backends/default.md) to write generic code, then the [container tutorial](tutorial/container.md) for moving data between representations, and the integration guides ([algebra](integration/algebra.md), [container](integration/container.md)) before publishing implementations for your own types. Keep the API pages at hand; each item lists its errors, edge cases and cost."
 msgstr "在库中使用：阅读 [algebra 教程](tutorial/algebra.md)和 [backends/default 教程](tutorial/backends/default.md)以编写泛型代码，然后阅读 [container 教程](tutorial/container.md)了解如何在不同表示之间搬运数据；在为自己的类型发布实现之前，请阅读集成指南（[algebra](integration/algebra.md)、[container](integration/container.md)）。把 API 页面放在手边；每一项都列出了它的错误、边界情况和开销。"
 
-#: manual/index.md:149
+#: manual/index.md:154
 msgid "Contributing: read the [architecture guide](architecture.md), the [conventions](conventions.md), the design pages of the package you change, and the [internal](tutorial/internal.md) and [consistency](tutorial/consistency.md) tutorials. Benchmarks are covered by the [perf](tutorial/perf.md) pages."
 msgstr "参与贡献：阅读[架构指南](architecture.md)、[约定](conventions.md)、所修改包的设计页面，以及 [internal](tutorial/internal.md) 和 [consistency](tutorial/consistency.md) 教程。基准测试见 [perf](tutorial/perf.md) 相关页面。"
 
-#: manual/index.md:155
+#: manual/index.md:160
 msgid "Status in 0.5.0"
 msgstr "0.5.0 中的状态"
 
-#: manual/index.md:157
+#: manual/index.md:162
 msgid "`algebra`, the trait layer of `backends/default`, and `container` are experimental; their signatures may change."
 msgstr "`algebra`、`backends/default` 的 trait 层以及 `container` 是实验性的；它们的签名可能变化。"
 
-#: manual/index.md:159
+#: manual/index.md:164
 msgid "Release history is in the [changelog](../../CHANGELOG.md)."
 msgstr "版本历史见[更新日志](../../CHANGELOG.md)。"
 
-#: manual/index.md:163
+#: manual/index.md:168
 msgid "The native OpenBLAS backend (`backends/openblas`, with `BlasMatrix`, `BlasVector` and its `container` adapters) is not part of this release. Its upstream binding, `Kaida-Amethyst/openblas` `0.1.3`, does not compile with MoonBit 0.10. The migrated source, its own documentation and a patch for the binding are preserved in `contrib/openblas_backend`, which is not a package of the module, is not built and is not covered by this manual. Users who need the backend can stay on `0.4.7`."
 msgstr "原生 OpenBLAS 后端（`backends/openblas`，包括 `BlasMatrix`、`BlasVector` 及其 `container` 适配器）不属于本版本。其上游绑定 `Kaida-Amethyst/openblas` `0.1.3` 无法用 MoonBit 0.10 编译。迁移后的源码、它自己的文档以及针对该绑定的补丁保存在 `contrib/openblas_backend` 中；那里不是本模块的包，不参与构建，也不在本手册的范围内。需要该后端的用户可以继续使用 `0.4.7`。"
 
-#: manual/index.md:171
+#: manual/index.md:176
 msgid "Validation"
 msgstr "验证"
 
-#: manual/index.md:173
+#: manual/index.md:178
 msgid "Recommended release checks, from the repository root:"
 msgstr "推荐的发布检查（在仓库根目录运行）："
 
-#: manual/index.md:181
+#: manual/index.md:186
 msgid "`run_test.sh` runs `immut` and `consistency`, and `container`, `container/adapters`, `backends/default`, `mutable` and the documentation package `doc_en_us` on all four targets. Set `LINEAR_ALGEBRA_TEST_BENCH=1` to add the benchmark packages."
 msgstr "`run_test.sh` 运行 `immut` 和 `consistency`，并在全部四个目标上运行 `container`、`container/adapters`、`backends/default`、`mutable` 以及文档包 `doc_en_us`。设置 `LINEAR_ALGEBRA_TEST_BENCH=1` 可加入基准测试包。"
 
@@ -6761,7 +6784,7 @@ msgstr "**受检乘积。** 当失败必须作为值返回时，请转换为具�
 #: manual/tutorial/container.md:196
 #: manual/tutorial/container/adapters.md:124
 #: manual/tutorial/error.md:199
-#: manual/tutorial/immut.md:168
+#: manual/tutorial/immut.md:171
 #: manual/tutorial/internal.md:96
 #: manual/tutorial/mutable.md:194
 #: manual/tutorial/perf.md:47
@@ -6793,7 +6816,7 @@ msgstr "**精确比较浮点结果。** `Double` 矩阵的乘积只在舍入误�
 #: manual/tutorial/container.md:207
 #: manual/tutorial/container/adapters.md:132
 #: manual/tutorial/error.md:210
-#: manual/tutorial/immut.md:187
+#: manual/tutorial/immut.md:189
 #: manual/tutorial/internal.md:103
 #: manual/tutorial/mutable.md:213
 #: manual/tutorial/perf.md:53
@@ -7560,50 +7583,50 @@ msgid "**Converting to `mutable`.** For numerical work such as inverses, decompo
 msgstr "**转换为 `mutable`。** 对于求逆、分解或统计等数值工作，请用 [`container` 适配器](container/adapters.md)转换，再使用 [`mutable`](mutable.md)。"
 
 #: manual/tutorial/immut.md:160
-msgid "**Your own scalar type.** Any type implementing the `luna-generic` traits works: a rational or modular-integer type with `Num` and `Div` gets exact determinants through Bareiss elimination, and any `Semiring` gets `pow`."
-msgstr "**你自己的标量类型。** 任何实现了 `luna-generic` trait 的类型都可以使用：带有 `Num` 和 `Div` 的有理数或模整数类型可通过 Bareiss 消元得到精确行列式，任何 `Semiring` 都可以使用 `pow`。"
+msgid "**Your own scalar type.** Determinants require `DeterminantScalar` in addition to its inherited `Compare + Num + Div` operations. Select `Bareiss` for an integral domain with exact division on divisible values, or `PivotedLU` for field-like division. A modular ring with zero divisors is not an integral domain. Generic determinant callers must add `T : @immut.DeterminantScalar`; any `Semiring` still gets `pow`."
+msgstr "**自定义标量类型。** 行列式除了继承的 `Compare + Num + Div` 运算外，还要求 `DeterminantScalar`。对于整除时除法精确的整环，选择 `Bareiss`；对于类域除法，选择 `PivotedLU`。有零因子的模环不是整环。泛型行列式调用方须增加 `T : @immut.DeterminantScalar`；任何 `Semiring` 仍可使用 `pow`。"
 
-#: manual/tutorial/immut.md:164
+#: manual/tutorial/immut.md:167
 msgid "**Performance.** Reads and single-entry updates cost $O(\\log_{32} N)$. For a long series of edits on a large matrix, a `@mutable.Matrix` working buffer is faster; freeze it into an `immut` value at the end."
 msgstr "**性能。** 读取和单元素更新的开销为 $O(\\log_{32} N)$。对大矩阵做一长串编辑时，用 `@mutable.Matrix` 作为工作缓冲区更快；最后再把它冻结为 `immut` 值。"
 
-#: manual/tutorial/immut.md:170
+#: manual/tutorial/immut.md:173
 msgid "**Integer overflow.** `Int` arithmetic wraps. `pow` is then exact modulo $2^{32}$, which is rarely what you want; use `Int64` or `BigInt` for large values."
 msgstr "**整数溢出。** `Int` 算术会回绕。此时 `pow` 在模 $2^{32}$ 意义下精确，但这很少是你想要的；对大数值请使用 `Int64` 或 `BigInt`。"
 
-#: manual/tutorial/immut.md:173
+#: manual/tutorial/immut.md:176
 msgid "**Assigning through indexing.** `m[r][c] = x` does not exist here; use `m.set(r, c, x)` and keep the result."
 msgstr "**通过索引赋值。** 这里不存在 `m[r][c] = x`；请使用 `m.set(r, c, x)` 并保留结果。"
 
-#: manual/tutorial/immut.md:175
+#: manual/tutorial/immut.md:178
 msgid "**Subtracting vectors.** `Vector` has no `-` operator; write `u + -v`."
 msgstr "**向量相减。** `Vector` 没有 `-` 运算符；请写作 `u + -v`。"
 
-#: manual/tutorial/immut.md:176
+#: manual/tutorial/immut.md:179
 msgid "**Reading lazy powers.** Every read of a `MatrixFn` power recomputes the nested products. Materialize first with `Matrix::make(r, c, (i, j) => f[i][j])` if you read many entries."
 msgstr "**读取惰性幂。** 每次读取 `MatrixFn` 幂都会重新计算嵌套的乘积。如果要读取很多元素，请先用 `Matrix::make(r, c, (i, j) => f[i][j])` 物化。"
 
-#: manual/tutorial/immut.md:179
+#: manual/tutorial/immut.md:182
 msgid "**Operators abort.** `+`, `-`, `*` abort on shape mismatch; use `matmul` when shapes come from input."
 msgstr "**运算符会中止。** `+`、`-`、`*` 在形状不匹配时中止；当形状来自输入时，请使用 `matmul`。"
 
-#: manual/tutorial/immut.md:181
-msgid "**Floating-point determinants.** `determinant` is built for exact arithmetic. On `Double` matrices of size $5$ and more its intermediate values grow like products of minors and can overflow to NaN while the determinant itself is representable; use `@mutable.Matrix::determinant` for floating-point data."
-msgstr "**浮点行列式。** `determinant` 是为精确算术设计的。在规模为 $5$ 及以上的 `Double` 矩阵上，它的中间值像子式之积那样增长，可能在行列式本身仍可表示时就溢出为 NaN；浮点数据请使用 `@mutable.Matrix::determinant`。"
+#: manual/tutorial/immut.md:184
+msgid "**Floating-point determinants.** `Float` and `Double` use pivoted LU for every size. No tolerance is used to classify a pivot as zero, so this is not a numerical-rank test. Rounding, overflow and underflow remain possible; use an error budget appropriate to the matrix instead of exact equality."
+msgstr "**浮点行列式。** `Float` 和 `Double` 对所有大小使用部分选主元 LU。不使用容差来将主元判为零，因此这不是数值秩判定。舍入、上溢和下溢仍可能发生；请依据矩阵设定误差预算，而不是要求精确相等。"
 
-#: manual/tutorial/immut.md:189
+#: manual/tutorial/immut.md:191
 msgid "[immut API](../api/immut.md) for every method and its cost."
 msgstr "[immut API](../api/immut.md)：每个方法及其开销。"
 
-#: manual/tutorial/immut.md:190
+#: manual/tutorial/immut.md:192
 msgid "[immut design](../design/immut.md) for value semantics and the Bareiss derivation."
 msgstr "[immut 设计](../design/immut.md)：值语义与 Bareiss 推导。"
 
-#: manual/tutorial/immut.md:192
+#: manual/tutorial/immut.md:194
 msgid "[mutable tutorial](mutable.md) for in-place numerical work."
 msgstr "[mutable 教程](mutable.md)：原地数值计算。"
 
-#: manual/tutorial/immut.md:193
+#: manual/tutorial/immut.md:195
 msgid "[container tutorial](container.md) for moving data between representations."
 msgstr "[container 教程](container.md)：在不同表示之间搬运数据。"
 
@@ -8055,6 +8078,27 @@ msgstr "[perf_runner 教程](perf_runner.md)：计时运行。"
 #: manual/tutorial/perf_support.md:78
 msgid "[mutable design](../design/mutable.md) for the measured algorithms."
 msgstr "[mutable 设计](../design/mutable.md)：被测量的算法。"
+
+#~ msgid "[!WARNING] For `Double` and `Float` this is not the numerically preferred algorithm. Every intermediate value of Bareiss elimination is a minor of $A$, and the update multiplies two of them, so magnitudes are squared before they are divided back. For $n \\ge 5$ the result overflows to infinity or NaN long before $\\det A$ does: the $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ has $\\det A = 10^{180}$, which `@mutable.Matrix::determinant` returns, while this method returns NaN. There is no tolerance either: only an exactly zero pivot column is detected. Use [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for floating-point matrices. The issue is tracked as [#93](https://github.com/Luna-Flow/linear-algebra/issues/93)."
+#~ msgstr "[!WARNING] 对于 `Double` 和 `Float`，这不是数值上首选的算法。Bareiss 消元的每个中间值都是 $A$ 的一个子式，而每次更新把其中两个相乘，所以数量级先被平方再被除回。当 $n \\ge 5$ 时，结果会远在 $\\det A$ 溢出之前就溢出为无穷或 NaN：对角线为 $1000$、超对角线为 $1$ 的 $60 \\times 60$ 上双对角矩阵有 $\\det A = 10^{180}$，`@mutable.Matrix::determinant` 能返回它，而本方法返回 NaN。它也没有容差：只有恰好为零的主元列才会被识别。浮点矩阵请使用 [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant)。该问题记录在 [#93](https://github.com/Luna-Flow/linear-algebra/issues/93)。"
+
+#~ msgid "`determinant` asks only for `Compare + Num + Div`, not for a field, so it accepts `Int`, `Int64` and `BigInt`. With Bareiss elimination the result is exact over those types. `Num` contributes `abs`, used to pick the pivot, and `Num : Ring` the ring operations; `Div` must be *exact* division whenever the dividend is a multiple of the divisor, which integer division is. Over `Double` the same code runs, but without a tolerance and with intermediate values that grow much faster than in LU (see below); the [`mutable`](mutable.md) package, which targets floating point, uses LU with partial pivoting and a tolerance instead."
+#~ msgstr "`determinant` 只要求 `Compare + Num + Div`，而不要求域，因此它接受 `Int`、`Int64` 和 `BigInt`。借助 Bareiss 消元，结果在这些类型上是精确的。`Num` 提供用于选主元的 `abs`，`Num : Ring` 提供环运算；`Div` 必须在被除数是除数的倍数时做*精确*除法，整数除法正是如此。在 `Double` 上同一段代码也能运行，但没有容差，而且中间值的增长比 LU 快得多（见下文）；面向浮点数的 [`mutable`](mutable.md) 包则改用部分选主元的 LU 分解加容差。"
+
+#~ msgid "Bareiss, exact over integral domains"
+#~ msgstr "Bareiss，在整环上精确"
+
+#~ msgid "**Floating point.** The same bound explains why Bareiss elimination is a poor choice for `Double`. LU computes ratios of consecutive minors, of the size of the entries; Bareiss computes the minors themselves and multiplies two of them before dividing. For $A = 1000 I_{60}$ plus a superdiagonal of ones, $\\det A = 10^{180}$ is representable, but at step $k$ the numerator is about $10^{6(k+1)}$, which overflows after $k \\approx 50$; the method then returns NaN where LU returns $10^{180}$. Nor is there a tolerance: only an exactly zero pivot column is treated as singular."
+#~ msgstr "**浮点。** 同一个界也解释了为什么 Bareiss 消元不适合 `Double`。LU 计算的是相邻子式之比，其大小与矩阵元素相当；Bareiss 计算的是子式本身，并在相除之前把其中两个相乘。对 $A = 1000 I_{60}$ 加上一条全为一的超对角线，$\\det A = 10^{180}$ 可以表示，但第 $k$ 步的分子约为 $10^{6(k+1)}$，在 $k \\approx 50$ 之后溢出；此时该方法返回 NaN，而 LU 返回 $10^{180}$。它也没有容差：只有恰好为零的主元列才被视为奇异。"
+
+#~ msgid "**Floating-point LU for `immut` determinants.** It would need a field and a tolerance and would lose exactness for integer matrices, the main reason to use this package."
+#~ msgstr "**`immut` 行列式使用浮点 LU。** 这需要域和容差，并且会失去整数矩阵上的精确性，而这正是使用本包的主要理由。"
+
+#~ msgid "**Your own scalar type.** Any type implementing the `luna-generic` traits works: a rational or modular-integer type with `Num` and `Div` gets exact determinants through Bareiss elimination, and any `Semiring` gets `pow`."
+#~ msgstr "**你自己的标量类型。** 任何实现了 `luna-generic` trait 的类型都可以使用：带有 `Num` 和 `Div` 的有理数或模整数类型可通过 Bareiss 消元得到精确行列式，任何 `Semiring` 都可以使用 `pow`。"
+
+#~ msgid "**Floating-point determinants.** `determinant` is built for exact arithmetic. On `Double` matrices of size $5$ and more its intermediate values grow like products of minors and can overflow to NaN while the determinant itself is representable; use `@mutable.Matrix::determinant` for floating-point data."
+#~ msgstr "**浮点行列式。** `determinant` 是为精确算术设计的。在规模为 $5$ 及以上的 `Double` 矩阵上，它的中间值像子式之积那样增长，可能在行列式本身仍可表示时就溢出为 NaN；浮点数据请使用 `@mutable.Matrix::determinant`。"
 
 #~ msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ **without validating shapes**."
 #~ msgstr "`Matrix::unchecked_matmul(a, b)` 返回 $AB$，**不验证形状**。"

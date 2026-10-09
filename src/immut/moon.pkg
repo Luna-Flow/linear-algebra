@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/math",
   "moonbitlang/core/debug",
   "Luna-Flow/luna-generic" @lf_alg,
   "moonbitlang/core/quickcheck" @qc_core,
@@ -10,3 +11,8 @@ import {
 import {
   "moonbitlang/quickcheck" @qc,
 } for "wbtest"
+
+import {
+  "Luna-Flow/luna-generic" @lf_alg,
+  "Luna-Flow/linear-algebra/immut",
+} for "test"

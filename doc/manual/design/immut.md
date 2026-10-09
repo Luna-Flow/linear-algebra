@@ -36,15 +36,15 @@ whose cost model is stated rather than hidden.
 
 ### Exact algorithms where the scalar allows them
 
-`determinant` asks only for `Compare + Num + Div`, not for a field, so it
-accepts `Int`, `Int64` and `BigInt`. With Bareiss elimination the result is
-exact over those types. `Num` contributes `abs`, used to pick the pivot, and
-`Num : Ring` the ring operations; `Div` must be *exact* division whenever the
-dividend is a multiple of the divisor, which integer division is. Over
-`Double` the same code runs, but without a tolerance and with intermediate
-values that grow much faster than in LU (see below); the
-[`mutable`](mutable.md) package, which targets floating point, uses LU with
-partial pivoting and a tolerance instead.
+`determinant` requires the open `DeterminantScalar` strategy trait, which
+extends `Compare + Num + Div`. `Int`, `Int16`, `Int64` and `BigInt` select
+`Bareiss`; `Float` and `Double` select `PivotedLU`. The operation bounds alone
+cannot distinguish exact integer division from rounded floating-point
+division, so callers must supply this strategy explicitly for custom types.
+Bareiss preserves exact results over integral domains when division is exact
+on divisible values and intermediate arithmetic does not overflow. LU uses
+field-like division and is approximate on floating-point scalars. This local
+algorithm choice does not change the upstream algebraic laws or bounds.
 
 ### Checked short names, unchecked explicit names
 
@@ -66,7 +66,7 @@ deliberate and listed here:
 | identity | `Matrix::identity(n)` | top-level `identity(n)` |
 | update | `set` returns a new matrix | `set` writes in place |
 | `m[r][c] = x` | not available | available |
-| determinant | Bareiss, exact over integral domains | LU with tolerance, floating point |
+| determinant | scalar strategy: Bareiss for integers, LU for floats without tolerance | LU with tolerance, floating point |
 | decompositions, inverse, statistics | not available | available |
 | `dot` | not on `Vector` (see `ImmutableDenseVector::dot`) | `Vector::dot` |
 
@@ -257,14 +257,34 @@ so the result is wrong rather than correct modulo $2^{w}$. For `BigInt` the
 algorithm is always exact; it uses $O(n^3)$ arithmetic operations on integers
 of at most $\log_2(2H^2) + 1$ bits.
 
-**Floating point.** The same bound explains why Bareiss elimination is a poor
-choice for `Double`. LU computes ratios of consecutive minors, of the size of
-the entries; Bareiss computes the minors themselves and multiplies two of
-them before dividing. For $A = 1000 I_{60}$ plus a superdiagonal of ones,
-$\det A = 10^{180}$ is representable, but at step $k$ the numerator is about
-$10^{6(k+1)}$, which overflows after $k \approx 50$; the method then returns NaN
-where LU returns $10^{180}$. Nor is there a tolerance: only an exactly zero
-pivot column is treated as singular.
+**Floating point.** Bareiss forms products of minors before dividing. For
+$A = 1000 I_{60}$ plus a superdiagonal of ones, triangularity gives
+$\det A = 1000^{60} = 10^{180}$. Bareiss intermediates are leading minors,
+so the products grow like $1000^{2(k+1)}$ and overflow binary64 even though
+the final determinant is representable. `Float` and `Double` now select LU
+with partial pivoting for every size, avoiding this source of minor growth.
+
+### Pivoted LU determinant
+
+The kernel copies the matrix, chooses the largest absolute entry in the
+remaining pivot column, exchanges rows, and subtracts
+$a_{ik}/a_{kk}$ times the pivot row from each later row. Row addition preserves
+the determinant over a commutative field; each row exchange changes its sign.
+After elimination the matrix is upper triangular, so
+$\det A = (-1)^s \prod_k u_{kk}$ in exact arithmetic, where $s$ counts swaps.
+This argument requires field-like division and does not apply to truncating
+integer division; those scalars retain Bareiss.
+
+There is no absolute or relative zero threshold. An exactly zero selected
+pivot returns zero; the method does not classify numerical rank. The empty
+pivot product is one. Inputs are immutable because all elimination occurs on
+a private array. Floating-point rounding and elimination growth remain. Finite
+pivots are accumulated with a normalized mantissa and a binary exponent, so
+their product does not overflow or underflow merely because intermediate
+pivots have opposing scales; a final result outside the scalar range still
+overflows or underflows. NaN and infinity follow scalar arithmetic without a
+checked error. Tests of known triangular and dense
+factorizations are finite evidence, not a universal accuracy proof.
 
 [^bareiss]: E. H. Bareiss, "Sylvester's identity and multistep integer-preserving
 Gaussian elimination", *Mathematics of Computation* 22 (1968), 565–578.
@@ -324,9 +344,9 @@ are cheap to build and expensive to read.
 
 ## Alternatives rejected
 
-- **Floating-point LU for `immut` determinants.** It would need a field and a
-  tolerance and would lose exactness for integer matrices, the main reason to
-  use this package.
+- **LU for every scalar.** Truncating integer division would invalidate
+  elimination. Explicit scalar strategies preserve Bareiss for exact domains
+  and use LU for floating point without introducing a tolerance policy.
 - **A runtime backend selector inside `Matrix`.** Backends are separate types
   ([`backends/default`](backends/default.md)); `Matrix` has one representation.
 - **Caching in `MatrixFn`.** It would make a pure value hold mutable state and
