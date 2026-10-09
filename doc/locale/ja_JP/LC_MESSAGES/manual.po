@@ -2542,7 +2542,7 @@ msgstr "次元が適合しない場合に中断せずエラーとして処理す
 
 #: manual/api/mutable.md:525
 msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ without checking shape compatibility. Its caller must guarantee $\\operatorname{cols}(A) = \\operatorname{rows}(B)$."
-msgstr ""
+msgstr "`Matrix::unchecked_matmul(a, b)` は形状の適合性を検査せずに $AB$ を返します。呼び出し側は $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ を保証しなければなりません。"
 
 #: manual/api/mutable.md:533
 #| msgid "[!CAUTION] On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
