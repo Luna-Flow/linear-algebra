@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/math",
   "moonbitlang/core/debug",
   "Luna-Flow/luna-generic" @lf_alg,
   "moonbitlang/core/quickcheck" @qc_core,

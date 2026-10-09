@@ -149,6 +149,7 @@ pub using @vector {type Vector as VecCore}
 // Traits
 pub(open) trait DeterminantScalar : Compare + @luna-generic.Num + Div {
   fn determinant_algorithm() -> DeterminantAlgorithm
+  fn determinant_product(Array[Self]) -> Self = _
 }
 pub impl DeterminantScalar for Int
 pub impl DeterminantScalar for Int16

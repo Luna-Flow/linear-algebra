@@ -471,7 +471,9 @@ finite approximation to $10^{180}$ instead of Bareiss's NaN.
 `DeterminantScalar` is an open strategy trait extending `Compare + Num + Div`.
 Its `determinant_algorithm()` method selects `Bareiss` or `PivotedLU`.
 `Int`, `Int16`, `Int64` and `BigInt` select `Bareiss`; `Float` and `Double`
-select `PivotedLU`. Custom scalars must implement the trait explicitly.
+select `PivotedLU` with scaled pivot accumulation. Custom scalars must
+implement the trait explicitly; the default pivot product uses native scalar
+multiplication.
 
 ```mbti
 pub(all) enum DeterminantAlgorithm {
@@ -480,6 +482,7 @@ pub(all) enum DeterminantAlgorithm {
 }
 pub(open) trait DeterminantScalar : Compare + @luna-generic.Num + Div {
   fn determinant_algorithm() -> DeterminantAlgorithm
+  fn determinant_product(Array[Self]) -> Self = _
 }
 ```
 
