@@ -1,4 +1,64 @@
 ///|
+struct NonCommutativeScalar {
+  a : Int
+  b : Int
+  c : Int
+  d : Int
+}
+
+///|
+impl Add for NonCommutativeScalar with fn add(x, y) {
+  { a: x.a + y.a, b: x.b + y.b, c: x.c + y.c, d: x.d + y.d, }
+}
+
+///|
+impl Mul for NonCommutativeScalar with fn mul(x, y) {
+  {
+    a: x.a * y.a + x.b * y.c,
+    b: x.a * y.b + x.b * y.d,
+    c: x.c * y.a + x.d * y.c,
+    d: x.c * y.b + x.d * y.d,
+  }
+}
+
+///|
+impl @lf_alg.Zero for NonCommutativeScalar with fn zero() {
+  { a: 0, b: 0, c: 0, d: 0, }
+}
+
+///|
+impl @lf_alg.AddMonoid for NonCommutativeScalar
+
+///|
+test "transpose_multiplication_preserves_noncommutative_scalar_order" {
+  let p = { a: 1, b: 1, c: 0, d: 1, }
+  let q = { a: 1, b: 0, c: 1, d: 1, }
+  let ta = Matrix::from_2d_array([[p]]).to_transpose()
+  let tb = Matrix::from_2d_array([[q]]).to_transpose()
+
+  let actual = (ta * tb).get(0, 0)
+  let expected = p * q
+  inspect(
+    actual.a == expected.a &&
+    actual.b == expected.b &&
+    actual.c == expected.c &&
+    actual.d == expected.d,
+    content="true",
+  )
+}
+
+///|
+test "transpose_multiplication_handles_empty_inner_dimension" {
+  let left = Matrix::make(0, 2, fn(_, _) { 0 }).to_transpose()
+  let right = Matrix::make(3, 0, fn(_, _) { 0 }).to_transpose()
+  let product = left * right
+
+  inspect(product.row(), content="2")
+  inspect(product.col(), content="3")
+  inspect(product, content="|0, 0, 0|\n|0, 0, 0|")
+}
+
+///|
 test "transpose_basic_and_arithmetic" {
   let base = Matrix::from_2d_array([[0, 1, 2], [3, 4, 5]])
   let t = base.to_transpose()

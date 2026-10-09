@@ -578,18 +578,24 @@ wrong.
 
 ### Transpose views and products
 
-`Transpose::mul` computes $A^{\mathsf T} B^{\mathsf T}$ as $(BA)^{\mathsf T}$ by
-reusing the matrix kernel on the wrapped matrices. Entry by entry,
+Let $U$ and $V$ be the matrices wrapped by the two transpose views. Their
+logical product $C = U^{\mathsf T}V^{\mathsf T}$ is defined when
+$U_{\text{rows}}=V_{\text{cols}}$. Its shape is
+$U_{\text{cols}} \times V_{\text{rows}}$, and the matrix product definition
+gives, for $0 \le i < U_{\text{cols}}$ and $0 \le k < V_{\text{rows}}$,
 
 $$
-\big(A^{\mathsf T} B^{\mathsf T}\big)_{ik} = \sum_j a_{ji} b_{kj}, \qquad
-\big((BA)^{\mathsf T}\big)_{ik} = \sum_j b_{kj} a_{ji} ,
+C_{ik} = \sum_{j=0}^{U_{\text{rows}}-1} U_{ji} V_{kj} .
 $$
 
-which agree when the scalars commute. All scalar types with `Tolerance`
-(`Float`, `Double`) commute, but `Transpose::mul` only requires
-`AddMonoid + Mul`; for a non-commutative scalar type the result is the
-product in the wrong order (see the [algebra design](algebra.md)).
+The implementation evaluates this sum in the displayed factor order and stores
+$C^{\mathsf T}$ in the returned `Transpose` wrapper. It requires only
+`AddMonoid + Mul`: `Zero` supplies the empty sum when the inner dimension is
+zero, and no commutativity or distributivity law for scalar multiplication is
+used. The previous shortcut computed $\sum_j V_{kj}U_{ji}$, which is generally
+different when scalar multiplication is non-commutative. The direct loop takes
+$O(U_{\text{cols}}V_{\text{rows}}U_{\text{rows}})$ scalar multiply-adds and
+allocates the output matrix, without copying either input view.
 
 ## Correctness and invariants
 
