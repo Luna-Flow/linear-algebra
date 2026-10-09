@@ -18,6 +18,10 @@ points; older release history lives in this file.
 
 ### Fixed
 
+- Added `@mutable.Matrix::matmul`, which returns a
+  `DimensionMismatch` error for incompatible shapes while preserving the
+  existing unchecked kernel and aborting `*` behavior
+  ([#87](https://github.com/Luna-Flow/linear-algebra/issues/87)).
 - `@mutable.Transpose::mul` now evaluates each scalar product in the order
   required by matrix multiplication, including for non-commutative scalar
   types ([#88](https://github.com/Luna-Flow/linear-algebra/issues/88)).

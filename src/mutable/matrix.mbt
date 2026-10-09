@@ -12,6 +12,18 @@ pub impl[T] HasShape for Matrix[T] with fn shape(self) {
 }
 
 ///|
+/// Multiplies two matrices, returning a dimension mismatch instead of aborting.
+pub fn[T : AddMonoid + Mul] Matrix::matmul(
+  self : Matrix[T],
+  other : Matrix[T],
+) -> Result[Matrix[T], LinearAlgebraError] {
+  match ensure_mul_compatible_checked(self, other) {
+    Ok(_) => Ok(self.unchecked_matmul(other))
+    Err(err) => Err(err)
+  }
+}
+
+///|
 fn[T] Matrix::matrix_index_offset(
   self : Matrix[T],
   row : Int,

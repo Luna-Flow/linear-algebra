@@ -23,4 +23,8 @@ using @debug {trait Debug, type Repr}
 using @la_error {type LinearAlgebraError}
 
 ///|
-using @internal {trait HasShape, ensure_square_checked}
+using @internal {
+  trait HasShape,
+  ensure_square_checked,
+  ensure_mul_compatible_checked,
+}

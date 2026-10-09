@@ -87,6 +87,7 @@ pub fn[T] Matrix::map_inplace(Self[T], (T) -> T) -> Unit
 #alias(map_row_in_place, deprecated)
 pub fn[T] Matrix::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
 pub fn[T, U] Matrix::mapi(Self[T], (Int, Int, T) -> U) -> Self[U]
+pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::matmul(Self[T], Self[T]) -> Result[Self[T], @error.LinearAlgebraError]
 pub fn[T : @luna-generic.Semiring] Matrix::matrix_power(Self[T], Int) -> Result[Self[T], @error.LinearAlgebraError]
 pub fn[T : Compare] Matrix::max_element(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T : @luna-generic.Field] Matrix::mean(Self[T]) -> Result[T, @error.LinearAlgebraError]

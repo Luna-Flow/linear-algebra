@@ -508,12 +508,23 @@ pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::mul(Self[T], Self[T]) -> Self[
 
 It checks $\operatorname{cols}(A) = \operatorname{rows}(B)$ and aborts with
 `Matrix::mul: dimension mismatch` otherwise, then calls `unchecked_matmul`.
-There is no `Result`-returning `matmul` in this package; check shapes first
-or use `@immut.Matrix::matmul`.
+
+### `Matrix::matmul`
+
+`Matrix::matmul(a, b)` returns the product when the shapes are compatible and
+a `DimensionMismatch` error otherwise.
+
+```mbti
+pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::matmul(Self[T], Self[T]) -> Result[Self[T], @error.LinearAlgebraError]
+```
+
+Use this method when incompatible dimensions should be handled without aborting.
 
 ### `Matrix::unchecked_matmul`
 
-`Matrix::unchecked_matmul(a, b)` returns $AB$ **without validating shapes**.
+`Matrix::unchecked_matmul(a, b)` returns $AB$ without checking shape
+compatibility. Its caller must guarantee $\operatorname{cols}(A) =
+\operatorname{rows}(B)$.
 
 ```mbti
 pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::unchecked_matmul(Self[T], Self[T]) -> Self[T]
@@ -522,7 +533,8 @@ pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::unchecked_matmul(Self[T], Self
 > [!CAUTION]
 > The caller must guarantee $\operatorname{cols}(A) = \operatorname{rows}(B)$.
 > On a violation the result is unspecified: it may abort with an array index
-> error or silently return a wrong matrix. Use `*` unless the shapes are known.
+> error or silently return a wrong matrix. Use `matmul` for a non-aborting
+> shape check, or `*` when aborting on mismatch is acceptable.
 
 Cost: $rcn$ multiply-adds. Large products (at least $4 \times 16 \times 16$)
 pack the columns of $B$ contiguously before multiplying.

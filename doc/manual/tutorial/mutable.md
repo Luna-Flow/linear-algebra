@@ -179,8 +179,9 @@ when you need an independent matrix.
 
 **Unchecked forms in hot loops.** After you have established the
 preconditions (for example square matrices built by your own code), the
-`unchecked_*` methods skip validation. Never use `unchecked_matmul` on shapes
-you have not checked: it does not validate and may return a wrong result.
+`unchecked_*` methods skip validation. Use `matmul` when dimensions may be
+incompatible and the caller should handle an error; use `unchecked_matmul`
+only when compatible shapes are already guaranteed.
 
 **Scaling.** The routines decide "zero" with an absolute threshold of
 $10^{-11}$. Scale your data to order one first; otherwise tiny but regular
