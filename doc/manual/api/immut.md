@@ -43,7 +43,8 @@ would clash.
   operators `+`, `-`, `*` abort when the precondition fails. See the
   [error design](../design/error.md) for the law relating the two.
 - **Scalars.** Bounds come from `luna-generic`: `Zero`, `One`, `Semiring`,
-  `Num` (a ring with `abs` and `signum`), `Conjugate`.
+  `Num` (a ring with `abs` and `signum`), `Conjugate`. Determinants also
+  require this package's `DeterminantScalar` strategy.
 
 ## Types
 
@@ -440,10 +441,11 @@ pub fn[T : Add + @luna-generic.Zero] Matrix::unchecked_trace(Self[T]) -> T
 `NonSquareMatrix` otherwise.
 
 ```mbti
-pub fn[T : Compare + @luna-generic.Num + Div] Matrix::determinant(Self[T]) -> Result[T, @error.LinearAlgebraError]
+pub fn[T : DeterminantScalar] Matrix::determinant(Self[T]) -> Result[T, @error.LinearAlgebraError]
 ```
 
-For $n \le 4$ it evaluates closed cofactor formulas; for $n \ge 5$ it runs
+For the `Bareiss` strategy, $n \le 4$ evaluates closed cofactor formulas;
+for $n \ge 5$ it runs
 fraction-free (Bareiss) elimination, choosing as pivot the entry of largest
 `abs` in the current column, whose divisions are exact in an integral domain.
 The result is therefore **exact** for `BigInt`, and exact for `Int` and
@@ -453,18 +455,37 @@ the determinant itself fits). If a whole pivot column is zero the result is
 Cost $O(n^3)$ arithmetic operations. See the
 [immut design](../design/immut.md) for the derivation.
 
-> [!WARNING]
-> For `Double` and `Float` this is not the numerically preferred algorithm.
-> Every intermediate value of Bareiss elimination is a minor of $A$, and the
-> update multiplies two of them, so magnitudes are squared before they are
-> divided back. For $n \ge 5$ the result overflows to infinity or NaN long
-> before $\det A$ does: the $60 \times 60$ upper bidiagonal matrix with
-> diagonal $1000$ and superdiagonal $1$ has $\det A = 10^{180}$, which
-> `@mutable.Matrix::determinant` returns, while this method returns NaN. There
-> is no tolerance either: only an exactly zero pivot column is detected. Use
-> [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for
-> floating-point matrices. The issue is tracked as
-> [#93](https://github.com/Luna-Flow/linear-algebra/issues/93).
+For `PivotedLU` (`Float` and `Double`), every size uses Gaussian elimination
+with partial pivoting on a private copy, then multiplies the pivots with the
+row-swap sign. No tolerance is applied: an exactly zero pivot returns zero.
+This is a determinant computation, not a numerical-rank test. Floating-point
+rounding, elimination growth, and pivot-product overflow or underflow remain
+possible; NaN and infinity are not rejected. The $60 \times 60$ upper
+bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ now returns a
+finite approximation to $10^{180}$ instead of Bareiss's NaN.
+
+### `DeterminantAlgorithm`, `DeterminantScalar`
+
+`DeterminantScalar` is an open strategy trait extending `Compare + Num + Div`.
+Its `determinant_algorithm()` method selects `Bareiss` or `PivotedLU`.
+`Int`, `Int16`, `Int64` and `BigInt` select `Bareiss`; `Float` and `Double`
+select `PivotedLU`. Custom scalars must implement the trait explicitly.
+
+```mbti
+pub(all) enum DeterminantAlgorithm {
+  Bareiss
+  PivotedLU
+}
+pub(open) trait DeterminantScalar : Compare + @luna-generic.Num + Div {
+  fn determinant_algorithm() -> DeterminantAlgorithm
+}
+```
+
+Choose `Bareiss` for a commutative integral domain with exact division of
+divisible values, without intermediate overflow. Choose `PivotedLU` for
+field-like division, accepting rounding for inexact scalars. These obligations
+are not checked by the compiler. Generic callers must replace
+`T : Compare + Num + Div` with `T : @immut.DeterminantScalar`.
 
 ### `Matrix::unchecked_determinant`
 
@@ -472,7 +493,7 @@ Cost $O(n^3)$ arithmetic operations. See the
 matrix.
 
 ```mbti
-pub fn[T : Compare + @luna-generic.Num + Div] Matrix::unchecked_determinant(Self[T]) -> T
+pub fn[T : DeterminantScalar] Matrix::unchecked_determinant(Self[T]) -> T
 ```
 
 ```moonbit check
@@ -747,7 +768,7 @@ into a `Matrix` with `Matrix::make` if you need more than a few.
 with the algorithm of `Matrix::determinant`.
 
 ```mbti
-pub fn[T : Compare + @luna-generic.Num + Div] MatrixFn::determinant(Self[T]) -> T
+pub fn[T : DeterminantScalar] MatrixFn::determinant(Self[T]) -> T
 ```
 
 A non-square matrix aborts; there is no checked form.

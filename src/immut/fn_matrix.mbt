@@ -690,8 +690,8 @@ pub fn[T, U, W] MatrixFn::zip_with(
 }
 
 ///|
-/// Computes the determinant of a square matrix using cofactor expansion along
-/// the first row.
+/// Materializes a square matrix and computes its determinant using the scalar
+/// strategy selected by `DeterminantScalar`.
 ///
 /// Parameters:
 ///
@@ -701,7 +701,7 @@ pub fn[T, U, W] MatrixFn::zip_with(
 ///
 /// Panics if the matrix is not square (number of rows does not equal number of
 /// columns).
-pub fn[T : Compare + Num + Div] MatrixFn::determinant(self : MatrixFn[T]) -> T {
+pub fn[T : DeterminantScalar] MatrixFn::determinant(self : MatrixFn[T]) -> T {
   ensure_square(self)
   let (row, col) = self.grid
   Matrix::make(row, col, fn(i, j) { (self.data)(i, j) }).unchecked_determinant()

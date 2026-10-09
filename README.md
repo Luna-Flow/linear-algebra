@@ -41,7 +41,7 @@ test "linear-algebra in a few lines" {
 
 | Package | Purpose |
 | --- | --- |
-| `immut` | immutable `Matrix`, `Vector` and lazy `MatrixFn`; exact (Bareiss) determinants and powers |
+| `immut` | immutable `Matrix`, `Vector` and lazy `MatrixFn`; Bareiss determinants for integers, pivoted LU for floating point, and powers |
 | `mutable` | in-place `Matrix` and `Vector`, row/column/transpose views; LU, inverse, rank, Cholesky, symmetric eigenvalues, power method, statistics |
 | `error` | `LinearAlgebraError` and `LinearAlgebraErrorKind` for every checked API |
 | `arithmetic` | scalar operation traits (`Abs`, `ApproxEq`, checked division, square root and comparison) and upstream re-exports |

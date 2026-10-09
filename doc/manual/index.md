@@ -83,7 +83,8 @@ Guides and chapters that span packages:
 ### Concrete types
 
 - `immut`: `Matrix`, `Vector`, `MatrixFn`, the row accessor `Indexed`, the
-  aliases `VecLib` and `VecCore`, and the top-level `lin_comb`
+  aliases `VecLib` and `VecCore`, `DeterminantAlgorithm`, `DeterminantScalar`,
+  and the top-level `lin_comb`
 - `mutable`: `Matrix`, `Vector`, the views `RowView`, `ColView`, `Transpose`,
   the row accessor `Lens`, the trait `Tolerance`, the re-exported `Sqrt`, and
   the top-level `identity` and `lin_comb`
@@ -95,6 +96,8 @@ Guides and chapters that span packages:
 
 - Exact (`immut`, over `Int`, `Int64`, `BigInt`): `determinant` by Bareiss
   elimination, `pow` by repeated squaring, `trace`, `matmul`
+- Floating determinant (`immut`, over `Float`, `Double`): LU with partial
+  pivoting, selected by `DeterminantScalar`, without a zero tolerance
 - Floating point (`mutable`, over `Float`, `Double`): `determinant`,
   `inverse`, `is_invertible` and `rank` by LU with partial pivoting,
   `reduce_row_elimination`, `cholesky_decomposition`, `is_positive_definite`,
@@ -127,8 +130,10 @@ Guides and chapters that span packages:
 The numerical routines of `mutable` decide "zero" with one absolute threshold,
 `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of
 the input; scale data to order one (`eigen` is the exception: its decisions are
-relative to the entries). `@immut.Matrix::determinant` is meant for exact
-scalars, not for floating point. The [mutable design](design/mutable.md) and the
+relative to the entries). `@immut.Matrix::determinant` selects Bareiss for
+integer scalars and pivoted LU for floating point. Its LU path has no zero
+tolerance and may still round, overflow or underflow; it is not a numerical-rank
+test. The [mutable design](design/mutable.md) and the
 [immut design](design/immut.md) derive the algorithms and state these limits
 precisely.
 

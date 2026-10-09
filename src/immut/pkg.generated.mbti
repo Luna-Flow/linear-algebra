@@ -5,6 +5,7 @@ import {
   "Luna-Flow/linear-algebra/error",
   "Luna-Flow/linear-algebra/internal",
   "Luna-Flow/luna-generic",
+  "moonbitlang/core/bigint",
   "moonbitlang/core/debug",
   "moonbitlang/core/immut/vector",
   "moonbitlang/core/quickcheck",
@@ -17,6 +18,11 @@ pub fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]
 // Errors
 
 // Types and methods
+pub(all) enum DeterminantAlgorithm {
+  Bareiss
+  PivotedLU
+}
+
 type Indexed[T]
 #alias("_[_]")
 pub fn[T] Indexed::at(Self[T], Int) -> T
@@ -28,7 +34,7 @@ pub fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]
 #alias("_[_]")
 pub fn[T] Matrix::at(Self[T], Int) -> Indexed[T]
 pub fn[T] Matrix::col(Self[T]) -> Int
-pub fn[T : Compare + @luna-generic.Num + Div] Matrix::determinant(Self[T]) -> Result[T, @error.LinearAlgebraError]
+pub fn[T : DeterminantScalar] Matrix::determinant(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T : Eq] Matrix::equal(Self[T], Self[T]) -> Bool
 pub fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
 pub fn[T] Matrix::from_array(Int, Int, Vector[T]) -> Self[T]
@@ -59,7 +65,7 @@ pub fn[T] Matrix::to_array(Self[T]) -> Array[T]
 pub fn[T : Show] Matrix::to_string(Self[T]) -> String
 pub fn[T : Add + @luna-generic.Zero] Matrix::trace(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T] Matrix::transpose(Self[T]) -> Self[T]
-pub fn[T : Compare + @luna-generic.Num + Div] Matrix::unchecked_determinant(Self[T]) -> T
+pub fn[T : DeterminantScalar] Matrix::unchecked_determinant(Self[T]) -> T
 pub fn[T : Mul + Add + @luna-generic.Zero] Matrix::unchecked_matmul(Self[T], Self[T]) -> Self[T]
 pub fn[T : @luna-generic.Semiring] Matrix::unchecked_pow(Self[T], Int) -> Self[T]
 pub fn[T : Add + @luna-generic.Zero] Matrix::unchecked_trace(Self[T]) -> T
@@ -76,7 +82,7 @@ pub fn[T : Add] MatrixFn::add(Self[T], Self[T]) -> Self[T]
 pub fn[T : @luna-generic.Conjugate] MatrixFn::adjoint(Self[T]) -> Self[T]
 #alias("_[_]")
 pub fn[T] MatrixFn::at(Self[T], Int) -> Indexed[T]
-pub fn[T : Compare + @luna-generic.Num + Div] MatrixFn::determinant(Self[T]) -> T
+pub fn[T : DeterminantScalar] MatrixFn::determinant(Self[T]) -> T
 pub fn[T : Eq] MatrixFn::equal(Self[T], Self[T]) -> Bool
 pub fn[T, U] MatrixFn::fold(Self[T], init~ : U, (U, T) -> U) -> U
 pub fn[T] MatrixFn::from_2d_array(Array[Array[T]]) -> Self[T]
@@ -141,3 +147,12 @@ pub impl[T : @quickcheck.Arbitrary] @quickcheck.Arbitrary for Vector[T]
 pub using @vector {type Vector as VecCore}
 
 // Traits
+pub(open) trait DeterminantScalar : Compare + @luna-generic.Num + Div {
+  fn determinant_algorithm() -> DeterminantAlgorithm
+}
+pub impl DeterminantScalar for Int
+pub impl DeterminantScalar for Int16
+pub impl DeterminantScalar for Int64
+pub impl DeterminantScalar for Float
+pub impl DeterminantScalar for Double
+pub impl DeterminantScalar for @bigint.BigInt

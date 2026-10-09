@@ -662,7 +662,7 @@ msgid "`DenseMatrix::inner(m)` returns the wrapped `@mutable.Matrix`, which give
 msgstr "`DenseMatrix::inner(m)` は包んでいる `@mutable.Matrix` を返し、`@mutable` の API 全体（ビュー、分解、検査付きメソッド）が使えるようになります。"
 
 #: manual/api/backends/default.md:280
-#: manual/api/immut.md:202
+#: manual/api/immut.md:203
 msgid "`row` and `col` return the number of rows and columns."
 msgstr "`row` と `col` は行数と列数を返します。"
 
@@ -679,7 +679,7 @@ msgid "Entry-wise `+`, `-` and unary `-`."
 msgstr "要素ごとの `+`、`-`、単項 `-` です。"
 
 #: manual/api/backends/default.md:315
-#: manual/api/immut.md:360
+#: manual/api/immut.md:361
 msgid "Operands of different shapes abort."
 msgstr "形状の異なるオペランドは中断します。"
 
@@ -1404,7 +1404,7 @@ msgid "The examples on this page write every name with its package prefix, such 
 msgstr "このページの例では、`using` 宣言を使わず、すべての名前に `@la_error.` のようなパッケージ接頭辞を付けて書きます。このマニュアルの全ページは一つのテストパッケージにまとめてコンパイルされるため、ページごとの宣言が衝突してしまうからです。別名 `@la_error` は MoonBit 組み込みの `Error` 関連の名前との衝突を避けます。"
 
 #: manual/api/error.md:28
-#: manual/api/immut.md:48
+#: manual/api/immut.md:49
 #: manual/api/mutable.md:58
 #: manual/api/perf_support.md:34
 msgid "Types"
@@ -1625,19 +1625,19 @@ msgid "The predicates in use, on errors returned by real checked calls:"
 msgstr "実際の検査付き呼び出しが返したエラーに述語を使う例:"
 
 #: manual/api/error.md:346
-#: manual/api/immut.md:977
+#: manual/api/immut.md:998
 #: manual/api/mutable.md:1313
 msgid "Deprecated"
 msgstr "非推奨"
 
 #: manual/api/error.md:348
-#: manual/api/immut.md:982
+#: manual/api/immut.md:1003
 #: manual/api/mutable.md:1315
 msgid "Item"
 msgstr "項目"
 
 #: manual/api/error.md:348
-#: manual/api/immut.md:982
+#: manual/api/immut.md:1003
 #: manual/api/mutable.md:1315
 msgid "Replacement"
 msgstr "代替"
@@ -1688,134 +1688,134 @@ msgid "**Checked and unchecked.** `matmul`, `trace`, `determinant` and `pow` ret
 msgstr "**検査付きと検査なし。** `matmul`、`trace`、`determinant`、`pow` は `Result[_, LinearAlgebraError]` を返します。対応する `unchecked_*` と演算子 `+`、`-`、`*` は、事前条件が満たされないと中断します。両者を結ぶ法則は [error の設計](../design/error.md) を参照してください。"
 
 #: manual/api/immut.md:45
-msgid "**Scalars.** Bounds come from `luna-generic`: `Zero`, `One`, `Semiring`, `Num` (a ring with `abs` and `signum`), `Conjugate`."
-msgstr "**スカラー。** 制約は `luna-generic` の `Zero`、`One`、`Semiring`、`Num`（`abs` と `signum` を持つ環）、`Conjugate` から来ます。"
+msgid "**Scalars.** Bounds come from `luna-generic`: `Zero`, `One`, `Semiring`, `Num` (a ring with `abs` and `signum`), `Conjugate`. Determinants also require this package's `DeterminantScalar` strategy."
+msgstr "**スカラー。** 制約は `luna-generic` の `Zero`、`One`、`Semiring`、`Num`（`abs` と `signum` を持つ環）、`Conjugate` から来ます。行列式はこのパッケージの `DeterminantScalar` 戦略も要求します。"
 
-#: manual/api/immut.md:52
+#: manual/api/immut.md:53
 msgid "`Matrix[T]` is an immutable dense $r \\times c$ matrix."
 msgstr "`Matrix[T]` は不変の稠密な $r \\times c$ 行列です。"
 
-#: manual/api/immut.md:58
+#: manual/api/immut.md:59
 msgid "The type is abstract: build it with the constructors below. It implements `Eq`, `Show` (rows printed as `|a, b|` separated by newlines), `Add`, `Sub`, `Neg`, `Mul` (matrix product) under the element constraints of the corresponding methods."
 msgstr "この型は抽象型なので、下記のコンストラクタで作ります。対応するメソッドの要素制約のもとで `Eq`、`Show`（各行を `|a, b|` として改行区切りで表示）、`Add`、`Sub`、`Neg`、`Mul`（行列積）を実装します。"
 
-#: manual/api/immut.md:65
+#: manual/api/immut.md:66
 msgid "`Indexed[T]` is the row accessor returned by `m[r]`."
 msgstr "`Indexed[T]` は `m[r]` が返す行アクセサです。"
 
-#: manual/api/immut.md:71
+#: manual/api/immut.md:72
 msgid "It is a function from a column index to an entry; it holds no copy of the row."
 msgstr "列インデックスから成分への関数であり、行のコピーは持ちません。"
 
-#: manual/api/immut.md:75
+#: manual/api/immut.md:76
 msgid "`Indexed::at(row, c)` returns the entry in column `c`; it backs `m[r][c]`."
 msgstr "`Indexed::at(row, c)` は列 `c` の成分を返し、`m[r][c]` の実体です。"
 
-#: manual/api/immut.md:82
+#: manual/api/immut.md:83
 msgid "A column index outside `0..<col()` aborts."
 msgstr "`0..<col()` の外の列インデックスは中断します。"
 
-#: manual/api/immut.md:86
+#: manual/api/immut.md:87
 msgid "`MatrixFn[T]` is a lazy matrix: a shape and a function $(i, j) \\mapsto a_{ij}$."
 msgstr "`MatrixFn[T]` は遅延行列です。形状と関数 $(i, j) \\mapsto a_{ij}$ の組です。"
 
-#: manual/api/immut.md:92
+#: manual/api/immut.md:93
 msgid "Entries are computed on every read and never stored. Its methods are listed in [`MatrixFn` operations](#matrixfn-operations)."
 msgstr "成分は読み取りのたびに計算され、格納されることはありません。メソッドは [`MatrixFn` の操作](#matrixfn-operations) に一覧があります。"
 
-#: manual/api/immut.md:97
+#: manual/api/immut.md:98
 msgid "`Vector[T]` is an immutable dense vector."
 msgstr "`Vector[T]` は不変の稠密ベクトルです。"
 
-#: manual/api/immut.md:104
+#: manual/api/immut.md:105
 msgid "It implements `Eq`, `Show` (printed as `|a, b, c|`), `Add`, `Mul` (element-wise), `Neg`, `Debug` and quickcheck's `Arbitrary`."
 msgstr "`Eq`、`Show`（`|a, b, c|` と表示）、`Add`、`Mul`（要素ごと）、`Neg`、`Debug`、quickcheck の `Arbitrary` を実装します。"
 
-#: manual/api/immut.md:109
+#: manual/api/immut.md:110
 msgid "`VecLib[T]` is an alias of `Vector[T]`."
 msgstr "`VecLib[T]` は `Vector[T]` のエイリアスです。"
 
-#: manual/api/immut.md:118
+#: manual/api/immut.md:119
 msgid "`VecCore[T]` is an alias of the core persistent vector `@moonbitlang/core/immut/vector.Vector[T]` that backs `Vector`."
 msgstr "`VecCore[T]` は `Vector` を支えるコアの永続ベクトル `@moonbitlang/core/immut/vector.Vector[T]` のエイリアスです。"
 
-#: manual/api/immut.md:125
+#: manual/api/immut.md:126
 msgid "Matrix construction"
 msgstr "行列の構築"
 
-#: manual/api/immut.md:129
+#: manual/api/immut.md:130
 msgid "`Matrix::make(r, c, f)` builds the $r \\times c$ matrix with entries $a_{ij} = f(i, j)$."
 msgstr "`Matrix::make(r, c, f)` は成分が $a_{ij} = f(i, j)$ の $r \\times c$ 行列を作ります。"
 
-#: manual/api/immut.md:136
+#: manual/api/immut.md:137
 msgid "`f` is called once per entry in row-major order, and not at all when $r = 0$ or $c = 0$. Negative dimensions abort."
 msgstr "`f` は各成分について行優先の順で一回ずつ呼ばれ、$r = 0$ または $c = 0$ のときは一度も呼ばれません。負の次元は中断します。"
 
-#: manual/api/immut.md:141
+#: manual/api/immut.md:142
 msgid "`Matrix::new(r, c, x)` builds an $r \\times c$ matrix with every entry `x`."
 msgstr "`Matrix::new(r, c, x)` はすべての成分が `x` の $r \\times c$ 行列を作ります。"
 
-#: manual/api/immut.md:149
+#: manual/api/immut.md:150
 msgid "`Matrix::from_2d_array(rows)` builds a matrix from nested row arrays."
 msgstr "`Matrix::from_2d_array(rows)` は入れ子になった行の配列から行列を作ります。"
 
-#: manual/api/immut.md:155
+#: manual/api/immut.md:156
 msgid "`[]` gives $0 \\times 0$; `[[], []]` gives $2 \\times 0$. Rows of different lengths abort. The input is copied."
 msgstr "`[]` は $0 \\times 0$ に、`[[], []]` は $2 \\times 0$ になります。長さの異なる行は中断します。入力はコピーされます。"
 
-#: manual/api/immut.md:160
+#: manual/api/immut.md:161
 msgid "`Matrix::from_array(r, c, v)` uses the vector `v` as the row-major entries of an $r \\times c$ matrix."
 msgstr "`Matrix::from_array(r, c, v)` はベクトル `v` を $r \\times c$ 行列の行優先の成分として使います。"
 
-#: manual/api/immut.md:167
+#: manual/api/immut.md:168
 msgid "Negative dimensions or `v.length() != r * c` abort. No copy is made; `v` is immutable."
 msgstr "負の次元や `v.length() != r * c` は中断します。コピーはしません。`v` は不変だからです。"
 
-#: manual/api/immut.md:172
+#: manual/api/immut.md:173
 msgid "`Matrix::identity(n)` builds the $n \\times n$ identity matrix $I_n$."
 msgstr "`Matrix::identity(n)` は $n \\times n$ の単位行列 $I_n$ を作ります。"
 
-#: manual/api/immut.md:178
+#: manual/api/immut.md:179
 msgid "A negative `n` aborts."
 msgstr "負の `n` は中断します。"
 
-#: manual/api/immut.md:198
+#: manual/api/immut.md:199
 msgid "Shape and access"
 msgstr "形状とアクセス"
 
-#: manual/api/immut.md:211
+#: manual/api/immut.md:212
 msgid "`Matrix::shape(m)` returns `(row, col)`."
 msgstr "`Matrix::shape(m)` は `(row, col)` を返します。"
 
-#: manual/api/immut.md:219
+#: manual/api/immut.md:220
 msgid "`Matrix::is_square(m)` returns `row() == col()`; a $0 \\times 0$ matrix is square."
 msgstr "`Matrix::is_square(m)` は `row() == col()` を返します。$0 \\times 0$ 行列は正方行列です。"
 
-#: manual/api/immut.md:228
+#: manual/api/immut.md:229
 msgid "`Matrix::null(m)` returns `true` when every entry equals `Zero::zero()`; an empty matrix is null."
 msgstr "`Matrix::null(m)` はすべての成分が `Zero::zero()` に等しいとき `true` を返します。空の行列は零行列とみなされます。"
 
-#: manual/api/immut.md:237
+#: manual/api/immut.md:238
 msgid "`Matrix::at(m, r)` returns the accessor for row `r`; it backs `m[r]`."
 msgstr "`Matrix::at(m, r)` は行 `r` のアクセサを返し、`m[r]` の実体です。"
 
-#: manual/api/immut.md:244
+#: manual/api/immut.md:245
 msgid "A row index outside `0..<row()` aborts immediately."
 msgstr "`0..<row()` の外の行インデックスはただちに中断します。"
 
-#: manual/api/immut.md:248
+#: manual/api/immut.md:249
 msgid "`Matrix::set(m, r, c, x)` returns a matrix equal to `m` except that entry $(r, c)$ is `x`."
 msgstr "`Matrix::set(m, r, c, x)` は成分 $(r, c)$ が `x` である以外は `m` と等しい行列を返します。"
 
-#: manual/api/immut.md:255
+#: manual/api/immut.md:256
 msgid "`m` is unchanged. Out-of-range indices abort. Cost $O(\\log_{32}(rc))$; the new matrix shares all other storage with `m`."
 msgstr "`m` は変化しません。範囲外のインデックスは中断します。コストは $O(\\log_{32}(rc))$ で、新しい行列はそれ以外の格納領域をすべて `m` と共有します。"
 
-#: manual/api/immut.md:260
+#: manual/api/immut.md:261
 msgid "`Matrix::equal(a, b)` compares shapes and entries; it backs `==`."
 msgstr "`Matrix::equal(a, b)` は形状と成分を比較し、`==` の実体です。"
 
-#: manual/api/immut.md:268
+#: manual/api/immut.md:269
 msgid ""
 "`Matrix::to_string(m)` renders the rows as `|a, b|` lines joined by `\\n"
 "`."
@@ -1823,367 +1823,375 @@ msgstr ""
 "`Matrix::to_string(m)` は各行を `|a, b|` の行として `\\n"
 "` でつないで表示します。"
 
-#: manual/api/immut.md:274
+#: manual/api/immut.md:275
 msgid "An empty matrix renders as the empty string."
 msgstr "空の行列は空文字列になります。"
 
-#: manual/api/immut.md:289
+#: manual/api/immut.md:290
 msgid "Element-wise transforms"
 msgstr "要素ごとの変換"
 
-#: manual/api/immut.md:293
+#: manual/api/immut.md:294
 msgid "`Matrix::map(m, f)` applies `f` to every entry; the element type may change."
 msgstr "`Matrix::map(m, f)` はすべての成分に `f` を適用します。要素型は変わってもかまいません。"
 
-#: manual/api/immut.md:301
+#: manual/api/immut.md:302
 msgid "`Matrix::mapi(m, f)` applies `f(i, j, a_ij)` to every entry."
 msgstr "`Matrix::mapi(m, f)` はすべての成分に `f(i, j, a_ij)` を適用します。"
 
-#: manual/api/immut.md:309
+#: manual/api/immut.md:310
 msgid "`Matrix::scale(m, a)` multiplies every entry on the right by `a`: $(a_{ij} a)$."
 msgstr "`Matrix::scale(m, a)` はすべての成分に右から `a` を掛けます: $(a_{ij} a)$。"
 
-#: manual/api/immut.md:317
+#: manual/api/immut.md:318
 msgid "`Matrix::add_constant(m, a)` adds `a` to every entry."
 msgstr "`Matrix::add_constant(m, a)` はすべての成分に `a` を加えます。"
 
-#: manual/api/immut.md:325
+#: manual/api/immut.md:326
 msgid "`Matrix::adjoint(m)` returns the conjugate transpose $A^{*}$, $(A^{*})_{ij} = \\overline{a_{ji}}$."
 msgstr "`Matrix::adjoint(m)` は共役転置 $A^{*}$（$(A^{*})_{ij} = \\overline{a_{ji}}$）を返します。"
 
-#: manual/api/immut.md:332
+#: manual/api/immut.md:333
 msgid "It needs a scalar type that implements `Conjugate`, such as a complex number type; the builtin real types do not."
 msgstr "複素数型のように `Conjugate` を実装したスカラー型が必要です。組み込みの実数型は実装していません。"
 
-#: manual/api/immut.md:348
+#: manual/api/immut.md:349
 #: manual/api/mutable.md:461
 msgid "Arithmetic"
 msgstr "算術"
 
-#: manual/api/immut.md:352
+#: manual/api/immut.md:353
 msgid "Entry-wise $A + B$, $A - B$ and $-A$; these back the operators."
 msgstr "要素ごとの $A + B$、$A - B$、$-A$ で、演算子の実体です。"
 
-#: manual/api/immut.md:364
+#: manual/api/immut.md:365
 msgid "`Matrix::mul(a, b)` is the matrix product behind `a * b`; it is `unchecked_matmul`."
 msgstr "`Matrix::mul(a, b)` は `a * b` の背後にある行列積で、`unchecked_matmul` と同じです。"
 
-#: manual/api/immut.md:373
+#: manual/api/immut.md:374
 msgid "`Matrix::matmul(a, b)` returns `Ok(AB)` when $\\operatorname{cols}(A) = \\operatorname{rows}(B)$, and `Err` with kind `DimensionMismatch` otherwise."
 msgstr "`Matrix::matmul(a, b)` は $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ なら `Ok(AB)` を、そうでなければ種類 `DimensionMismatch` の `Err` を返します。"
 
-#: manual/api/immut.md:381
+#: manual/api/immut.md:382
 msgid "$(AB)_{ik} = \\sum_{j} a_{ij} b_{jk}$, summed in increasing $j$. When the inner dimension is $0$ the result is the zero matrix of shape $\\operatorname{rows}(A) \\times \\operatorname{cols}(B)$, the empty sum. Cost: $rcn$ multiply-adds plus an $O(cn)$ transposed copy of $B$."
 msgstr "$(AB)_{ik} = \\sum_{j} a_{ij} b_{jk}$ を $j$ の昇順に足し合わせます。内側の次元が $0$ のとき、結果は空和である形状 $\\operatorname{rows}(A) \\times \\operatorname{cols}(B)$ の零行列です。コスト: $rcn$ 回の積和と、$B$ の転置コピー $O(cn)$。"
 
-#: manual/api/immut.md:388
+#: manual/api/immut.md:389
 msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ and aborts on incompatible shapes."
 msgstr "`Matrix::unchecked_matmul(a, b)` は $AB$ を返し、形状が両立しないと中断します。"
 
-#: manual/api/immut.md:397
+#: manual/api/immut.md:398
 msgid "`Matrix::pow(a, k)` returns `Ok(A^k)` for a square matrix and $k \\ge 0$, with $A^0 = I$."
 msgstr "`Matrix::pow(a, k)` は正方行列と $k \\ge 0$ に対して `Ok(A^k)` を返します。$A^0 = I$ です。"
 
-#: manual/api/immut.md:404
+#: manual/api/immut.md:405
 msgid "A non-square matrix gives `NonSquareMatrix` (checked first); a negative exponent gives `NegativeExponent`. The power is computed by binary exponentiation with at most $2\\lfloor\\log_2 k\\rfloor + 1$ matrix products."
 msgstr "正方でない行列は `NonSquareMatrix`（最初に検査）、負の指数は `NegativeExponent` になります。べき乗は二進累乗法で、行列積は高々 $2\\lfloor\\log_2 k\\rfloor + 1$ 回です。"
 
-#: manual/api/immut.md:410
+#: manual/api/immut.md:411
 msgid "`Matrix::unchecked_pow(a, k)` returns $A^k$ and aborts on a non-square matrix or negative exponent."
 msgstr "`Matrix::unchecked_pow(a, k)` は $A^k$ を返し、正方でない行列や負の指数では中断します。"
 
-#: manual/api/immut.md:419
+#: manual/api/immut.md:420
 msgid "`Matrix::trace(a)` returns `Ok(tr A)`, $\\sum_i a_{ii}$, for a square matrix, and `NonSquareMatrix` otherwise."
 msgstr "`Matrix::trace(a)` は正方行列に対して `Ok(tr A)`（$\\sum_i a_{ii}$）を、それ以外では `NonSquareMatrix` を返します。"
 
-#: manual/api/immut.md:426
+#: manual/api/immut.md:427
 msgid "The trace of the $0 \\times 0$ matrix is `Zero::zero()`."
 msgstr "$0 \\times 0$ 行列のトレースは `Zero::zero()` です。"
 
-#: manual/api/immut.md:430
+#: manual/api/immut.md:431
 msgid "`Matrix::unchecked_trace(a)` returns $\\operatorname{tr} A$ and aborts on a non-square matrix."
 msgstr "`Matrix::unchecked_trace(a)` は $\\operatorname{tr} A$ を返し、正方でない行列では中断します。"
 
-#: manual/api/immut.md:439
+#: manual/api/immut.md:440
 #: manual/api/mutable.md:616
 msgid "`Matrix::determinant(a)` returns `Ok(det A)` for a square matrix and `NonSquareMatrix` otherwise."
 msgstr "`Matrix::determinant(a)` は正方行列に対して `Ok(det A)` を、それ以外では `NonSquareMatrix` を返します。"
 
-#: manual/api/immut.md:446
-msgid "For $n \\le 4$ it evaluates closed cofactor formulas; for $n \\ge 5$ it runs fraction-free (Bareiss) elimination, choosing as pivot the entry of largest `abs` in the current column, whose divisions are exact in an integral domain. The result is therefore **exact** for `BigInt`, and exact for `Int` and `Int64` as long as no intermediate product overflows (for $n \\le 4$, as long as the determinant itself fits). If a whole pivot column is zero the result is `Zero::zero()` at once. $\\det$ of the $0 \\times 0$ matrix is `One::one()`. Cost $O(n^3)$ arithmetic operations. See the [immut design](../design/immut.md) for the derivation."
-msgstr "$n \\le 4$ では閉じた余因子公式で評価し、$n \\ge 5$ では分数を使わない（Bareiss）消去を行います。ピボットには現在の列で `abs` が最大の要素を選び、除算は整域では常に割り切れます。したがって結果は `BigInt` では**厳密**であり、`Int` と `Int64` でも途中の積がオーバーフローしない限り（$n \\le 4$ では行列式自体が収まる限り）厳密です。ピボット列全体が零なら、ただちに `Zero::zero()` を返します。$0 \\times 0$ 行列の $\\det$ は `One::one()` です。コストは $O(n^3)$ 回の算術演算です。導出は [immut の設計](../design/immut.md) を参照してください。"
+#: manual/api/immut.md:447
+msgid "For the `Bareiss` strategy, $n \\le 4$ evaluates closed cofactor formulas; for $n \\ge 5$ it runs fraction-free (Bareiss) elimination, choosing as pivot the entry of largest `abs` in the current column, whose divisions are exact in an integral domain. The result is therefore **exact** for `BigInt`, and exact for `Int` and `Int64` as long as no intermediate product overflows (for $n \\le 4$, as long as the determinant itself fits). If a whole pivot column is zero the result is `Zero::zero()` at once. $\\det$ of the $0 \\times 0$ matrix is `One::one()`. Cost $O(n^3)$ arithmetic operations. See the [immut design](../design/immut.md) for the derivation."
+msgstr "`Bareiss` 戦略では、$n \\le 4$ では閉じた余因子公式で評価し、$n \\ge 5$ では分数を使わない（Bareiss）消去を行います。ピボットには現在の列で `abs` が最大の要素を選び、除算は整域では常に割り切れます。したがって結果は `BigInt` では**厳密**であり、`Int` と `Int64` でも途中の積がオーバーフローしない限り（$n \\le 4$ では行列式自体が収まる限り）厳密です。ピボット列全体が零なら、ただちに `Zero::zero()` を返します。$0 \\times 0$ 行列の $\\det$ は `One::one()` です。コストは $O(n^3)$ 回の算術演算です。導出は [immut の設計](../design/immut.md) を参照してください。"
 
-#: manual/api/immut.md:456
-msgid "[!WARNING] For `Double` and `Float` this is not the numerically preferred algorithm. Every intermediate value of Bareiss elimination is a minor of $A$, and the update multiplies two of them, so magnitudes are squared before they are divided back. For $n \\ge 5$ the result overflows to infinity or NaN long before $\\det A$ does: the $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ has $\\det A = 10^{180}$, which `@mutable.Matrix::determinant` returns, while this method returns NaN. There is no tolerance either: only an exactly zero pivot column is detected. Use [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for floating-point matrices. The issue is tracked as [#93](https://github.com/Luna-Flow/linear-algebra/issues/93)."
-msgstr "[!WARNING] `Double` と `Float` にとって、これは数値的に望ましいアルゴリズムではありません。Bareiss 消去の途中の値はすべて $A$ の小行列式であり、更新ではそのうち二つを掛けるので、大きさは割り戻される前にいったん二乗されます。$n \\ge 5$ では、$\\det A$ よりはるかに早く結果が無限大や NaN にオーバーフローします。対角が $1000$、上副対角が $1$ の $60 \\times 60$ 上二重対角行列は $\\det A = 10^{180}$ を持ち、`@mutable.Matrix::determinant` はこれを返しますが、このメソッドは NaN を返します。許容誤差もなく、厳密に零のピボット列しか検出しません。浮動小数点の行列には [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) を使ってください。この問題は [#93](https://github.com/Luna-Flow/linear-algebra/issues/93) で追跡しています。"
+#: manual/api/immut.md:458
+msgid "For `PivotedLU` (`Float` and `Double`), every size uses Gaussian elimination with partial pivoting on a private copy, then multiplies the pivots with the row-swap sign. No tolerance is applied: an exactly zero pivot returns zero. This is a determinant computation, not a numerical-rank test. Floating-point rounding, elimination growth, and pivot-product overflow or underflow remain possible; NaN and infinity are not rejected. The $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ now returns a finite approximation to $10^{180}$ instead of Bareiss's NaN."
+msgstr "`PivotedLU`（`Float` と `Double`）では、すべてのサイズで私有コピーに部分ピボット選択付きガウス消去を行い、ピボットの積に行交換の符号を掛けます。許容誤差は使わず、厳密に零のピボットでは零を返します。これは行列式の計算であり、数値ランクの判定ではありません。浮動小数点の丸め、消去中の成長、ピボット積のオーバーフローやアンダーフローは起こり得ます。NaN と無限大は拒否しません。対角が $1000$、上副対角が $1$ の $60 \\times 60$ 上二重対角行列は、Bareiss の NaN に代わって $10^{180}$ の有限な近似値を返します。"
 
-#: manual/api/immut.md:471
+#: manual/api/immut.md:469
+msgid "`DeterminantScalar` is an open strategy trait extending `Compare + Num + Div`. Its `determinant_algorithm()` method selects `Bareiss` or `PivotedLU`. `Int`, `Int16`, `Int64` and `BigInt` select `Bareiss`; `Float` and `Double` select `PivotedLU`. Custom scalars must implement the trait explicitly."
+msgstr "`DeterminantScalar` は `Compare + Num + Div` を継承するオープンな戦略 trait です。`determinant_algorithm()` は `Bareiss` または `PivotedLU` を選択します。`Int`、`Int16`、`Int64`、`BigInt` は `Bareiss` を、`Float` と `Double` は `PivotedLU` を選びます。独自のスカラー型はこの trait を明示的に実装する必要があります。"
+
+#: manual/api/immut.md:484
+msgid "Choose `Bareiss` for a commutative integral domain with exact division of divisible values, without intermediate overflow. Choose `PivotedLU` for field-like division, accepting rounding for inexact scalars. These obligations are not checked by the compiler. Generic callers must replace `T : Compare + Num + Div` with `T : @immut.DeterminantScalar`."
+msgstr "割り切れる値の除算が厳密で、中間値がオーバーフローしない可換整域には `Bareiss` を選びます。体に準じた除算には `PivotedLU` を選び、非厳密なスカラーの丸めを許容します。これらの条件はコンパイラでは検査されません。汎用コードでは `T : Compare + Num + Div` を `T : @immut.DeterminantScalar` に置き換えます。"
+
+#: manual/api/immut.md:492
 msgid "`Matrix::unchecked_determinant(a)` returns $\\det A$ and aborts on a non-square matrix."
 msgstr "`Matrix::unchecked_determinant(a)` は $\\det A$ を返し、正方でない行列では中断します。"
 
-#: manual/api/immut.md:505
+#: manual/api/immut.md:526
 msgid "The second matrix is a Vandermonde matrix with nodes $2, \\dots, 7$, whose determinant is $\\prod_{i<j}(x_j - x_i) = 1!\\,2!\\,3!\\,4!\\,5! = 34560$."
 msgstr "二つ目の行列は節点 $2, \\dots, 7$ の Vandermonde 行列で、その行列式は $\\prod_{i<j}(x_j - x_i) = 1!\\,2!\\,3!\\,4!\\,5! = 34560$ です。"
 
-#: manual/api/immut.md:508
+#: manual/api/immut.md:529
 msgid "Structural operations"
 msgstr "構造的な操作"
 
-#: manual/api/immut.md:512
+#: manual/api/immut.md:533
 msgid "`Matrix::transpose(m)` returns the materialized transpose $A^{\\mathsf T}$."
 msgstr "`Matrix::transpose(m)` は実体化された転置 $A^{\\mathsf T}$ を返します。"
 
-#: manual/api/immut.md:520
+#: manual/api/immut.md:541
 msgid "`Matrix::horizontal_combine(a, b)` places `b` to the right of `a`: the block matrix $[A \\; B]$."
 msgstr "`Matrix::horizontal_combine(a, b)` は `b` を `a` の右に並べたブロック行列 $[A \\; B]$ を作ります。"
 
-#: manual/api/immut.md:527
+#: manual/api/immut.md:548
 msgid "Different row counts abort."
 msgstr "行数が異なると中断します。"
 
-#: manual/api/immut.md:531
+#: manual/api/immut.md:552
 msgid "`Matrix::vertical_combine(a, b)` places `b` below `a`."
 msgstr "`Matrix::vertical_combine(a, b)` は `b` を `a` の下に並べます。"
 
-#: manual/api/immut.md:537
+#: manual/api/immut.md:558
 msgid "Different column counts abort."
 msgstr "列数が異なると中断します。"
 
-#: manual/api/immut.md:541
+#: manual/api/immut.md:562
 msgid "`swap_rows(i, j)` and `swap_cols(i, j)` return a matrix with two rows or two columns exchanged."
 msgstr "`swap_rows(i, j)` と `swap_cols(i, j)` は二つの行または列を入れ替えた行列を返します。"
 
-#: manual/api/immut.md:549
+#: manual/api/immut.md:570
 msgid "Out-of-range indices abort. Swapping an index with itself returns `m` itself. Otherwise the whole matrix is rebuilt, $O(rc)$."
 msgstr "範囲外のインデックスは中断します。同じインデックス同士の入れ替えは `m` 自身を返します。それ以外では行列全体を作り直し、$O(rc)$ かかります。"
 
-#: manual/api/immut.md:566
+#: manual/api/immut.md:587
 msgid "Iteration and conversion"
 msgstr "反復と変換"
 
-#: manual/api/immut.md:570
+#: manual/api/immut.md:591
 msgid "`Matrix::iter(m)` iterates over all entries in row-major order."
 msgstr "`Matrix::iter(m)` はすべての成分を行優先の順にたどります。"
 
-#: manual/api/immut.md:578
+#: manual/api/immut.md:599
 msgid "`iter_row(r)` iterates over row `r` left to right; `iter_col(c)` over column `c` top to bottom."
 msgstr "`iter_row(r)` は行 `r` を左から右へ、`iter_col(c)` は列 `c` を上から下へたどります。"
 
-#: manual/api/immut.md:586
+#: manual/api/immut.md:607
 msgid "Out-of-range indices abort when the iterator is created."
 msgstr "範囲外のインデックスはイテレータを作る時点で中断します。"
 
-#: manual/api/immut.md:590
+#: manual/api/immut.md:611
 msgid "`Matrix::to_array(m)` copies the entries into a flat row-major array."
 msgstr "`Matrix::to_array(m)` は成分を平坦な行優先の配列にコピーします。"
 
-#: manual/api/immut.md:598
+#: manual/api/immut.md:619
 msgid "`Matrix::to_2d_array(m)` copies the entries into nested row arrays."
 msgstr "`Matrix::to_2d_array(m)` は成分を入れ子の行配列にコピーします。"
 
-#: manual/api/immut.md:604
+#: manual/api/immut.md:625
 msgid "For an $r \\times 0$ matrix the result has $r$ empty rows."
 msgstr "$r \\times 0$ 行列では、結果は $r$ 個の空の行になります。"
 
-#: manual/api/immut.md:616
+#: manual/api/immut.md:637
 msgid "`MatrixFn` operations"
 msgstr "`MatrixFn` の操作"
 
-#: manual/api/immut.md:618
+#: manual/api/immut.md:639
 msgid "All `MatrixFn` operations are lazy: they compose functions and do no work until an entry is read. Shape checks happen eagerly; bounds checks happen on reads."
 msgstr "`MatrixFn` の操作はすべて遅延的です。関数を合成するだけで、成分が読まれるまで何も計算しません。形状の検査はすぐに行い、境界の検査は読み取り時に行います。"
 
-#: manual/api/immut.md:623
+#: manual/api/immut.md:644
 msgid "`MatrixFn::make(r, c, f)` builds the lazy matrix with entries $f(i, j)$."
 msgstr "`MatrixFn::make(r, c, f)` は成分が $f(i, j)$ の遅延行列を作ります。"
 
-#: manual/api/immut.md:629
+#: manual/api/immut.md:650
 msgid "Negative dimensions abort. Reading an entry outside the shape aborts."
 msgstr "負の次元は中断します。形状の外の成分を読むと中断します。"
 
-#: manual/api/immut.md:633
+#: manual/api/immut.md:654
 msgid "`MatrixFn::new(r, c)` builds an $r \\times c$ lazy matrix whose entries are `T::default()`."
 msgstr "`MatrixFn::new(r, c)` は成分が `T::default()` の $r \\times c$ 遅延行列を作ります。"
 
-#: manual/api/immut.md:642
+#: manual/api/immut.md:663
 msgid "`MatrixFn::from_2d_array(rows)` builds a lazy view of nested rows."
 msgstr "`MatrixFn::from_2d_array(rows)` は入れ子の行に対する遅延ビューを作ります。"
 
-#: manual/api/immut.md:648
+#: manual/api/immut.md:669
 msgid "Ragged input aborts. The arrays are captured, not copied: later writes to them are visible through the `MatrixFn`."
 msgstr "行の長さがそろっていない入力は中断します。配列はコピーされず捕捉されるので、あとからの書き込みは `MatrixFn` を通して見えます。"
 
-#: manual/api/immut.md:653
+#: manual/api/immut.md:674
 msgid "`MatrixFn::identity(n)` is the lazy $n \\times n$ identity."
 msgstr "`MatrixFn::identity(n)` は遅延的な $n \\times n$ 単位行列です。"
 
-#: manual/api/immut.md:661
+#: manual/api/immut.md:682
 msgid "`MatrixFn::shape(m)` returns `(rows, cols)`."
 msgstr "`MatrixFn::shape(m)` は `(rows, cols)` を返します。"
 
-#: manual/api/immut.md:669
+#: manual/api/immut.md:690
 msgid "`MatrixFn::at(m, r)` returns the row accessor behind `m[r][c]`."
 msgstr "`MatrixFn::at(m, r)` は `m[r][c]` の背後にある行アクセサを返します。"
 
-#: manual/api/immut.md:676
+#: manual/api/immut.md:697
 msgid "The row index is checked immediately, the column when it is read."
 msgstr "行インデックスはすぐに、列インデックスは読み取り時に検査されます。"
 
-#: manual/api/immut.md:680
+#: manual/api/immut.md:701
 msgid "`MatrixFn::map(m, f)` composes `f` after every entry."
 msgstr "`MatrixFn::map(m, f)` は各成分のあとに `f` を合成します。"
 
-#: manual/api/immut.md:688
+#: manual/api/immut.md:709
 msgid "`map_row(r, f)` and `map_col(c, f)` apply `f` to one row or one column."
 msgstr "`map_row(r, f)` と `map_col(c, f)` は一つの行または列に `f` を適用します。"
 
-#: manual/api/immut.md:695
+#: manual/api/immut.md:716
 msgid "Out-of-range indices abort immediately."
 msgstr "範囲外のインデックスはただちに中断します。"
 
-#: manual/api/immut.md:699
+#: manual/api/immut.md:720
 msgid "`MatrixFn::zip_with(a, b, f)` combines two lazy matrices entry by entry."
 msgstr "`MatrixFn::zip_with(a, b, f)` は二つの遅延行列を成分ごとに組み合わせます。"
 
-#: manual/api/immut.md:705
+#: manual/api/immut.md:726
 msgid "Different shapes abort."
 msgstr "形状が異なると中断します。"
 
-#: manual/api/immut.md:709
+#: manual/api/immut.md:730
 msgid "`MatrixFn::fold(m, init~, f)` reduces all entries in row-major order."
 msgstr "`MatrixFn::fold(m, init~, f)` はすべての成分を行優先の順で畳み込みます。"
 
-#: manual/api/immut.md:715
+#: manual/api/immut.md:736
 msgid "This forces every entry once."
 msgstr "これによりすべての成分が一回ずつ評価されます。"
 
-#: manual/api/immut.md:719
+#: manual/api/immut.md:740
 msgid "Lazy entry-wise $A + B$, $A - B$, $-A$ and $A a$."
 msgstr "遅延的な要素ごとの $A + B$、$A - B$、$-A$、$A a$ です。"
 
-#: manual/api/immut.md:728
+#: manual/api/immut.md:749
 msgid "`MatrixFn` has no public `*` operator; use `pow` or convert to `Matrix`."
 msgstr "`MatrixFn` には公開された `*` 演算子がありません。`pow` を使うか `Matrix` に変換してください。"
 
-#: manual/api/immut.md:732
+#: manual/api/immut.md:753
 msgid "`MatrixFn::pow(a, k)` returns the lazy power $A^k$ by binary exponentiation."
 msgstr "`MatrixFn::pow(a, k)` は二進累乗法で遅延的なべき乗 $A^k$ を返します。"
 
-#: manual/api/immut.md:738
+#: manual/api/immut.md:759
 msgid "Non-square input or a negative exponent aborts. Because nothing is cached, reading one entry of $A^{k}$ recomputes the nested products. One entry of the lazy square $B \\cdot B$ reads $2n$ entries of $B$, so one entry of $A^{2^d}$ reads $(2n)^d = k^{1 + \\log_2 n}$ entries of $A$ for $k = 2^d$; read all entries into a `Matrix` with `Matrix::make` if you need more than a few."
 msgstr "正方でない入力や負の指数は中断します。何もキャッシュしないので、$A^{k}$ の要素を一つ読むたびに入れ子の積が再計算されます。遅延平方 $B \\cdot B$ の要素一つは $B$ の要素を $2n$ 個読むので、$k = 2^d$ のとき $A^{2^d}$ の要素一つは $A$ の要素を $(2n)^d = k^{1 + \\log_2 n}$ 個読みます。いくつも読む場合は、先に `Matrix::make` で全要素を `Matrix` に読み込んでください。"
 
-#: manual/api/immut.md:746
+#: manual/api/immut.md:767
 msgid "`MatrixFn::determinant(a)` materializes the matrix and returns its determinant with the algorithm of `Matrix::determinant`."
 msgstr "`MatrixFn::determinant(a)` は行列を実体化し、`Matrix::determinant` のアルゴリズムで行列式を返します。"
 
-#: manual/api/immut.md:753
+#: manual/api/immut.md:774
 msgid "A non-square matrix aborts; there is no checked form."
 msgstr "正方でない行列は中断します。検査付きの形はありません。"
 
-#: manual/api/immut.md:757
+#: manual/api/immut.md:778
 msgid "Lazy transpose and conjugate transpose."
 msgstr "遅延的な転置と共役転置です。"
 
-#: manual/api/immut.md:766
+#: manual/api/immut.md:787
 msgid "Lazy row and column exchange; out-of-range indices abort."
 msgstr "遅延的な行と列の入れ替えです。範囲外のインデックスは中断します。"
 
-#: manual/api/immut.md:775
+#: manual/api/immut.md:796
 msgid "Lazy block concatenation; mismatched row or column counts abort."
 msgstr "遅延的なブロック連結です。行数または列数が合わないと中断します。"
 
-#: manual/api/immut.md:784
+#: manual/api/immut.md:805
 msgid "`equal` compares shapes and every entry (forcing them); `to_string` renders like `Matrix`."
 msgstr "`equal` は形状とすべての成分を（評価して）比較し、`to_string` は `Matrix` と同じ形で表示します。"
 
-#: manual/api/immut.md:808
+#: manual/api/immut.md:829
 #: manual/api/mutable.md:1160
 msgid "Vector"
 msgstr "ベクトル"
 
-#: manual/api/immut.md:812
+#: manual/api/immut.md:833
 msgid "`Vector::from_array(xs)` copies an array into a new vector."
 msgstr "`Vector::from_array(xs)` は配列を新しいベクトルにコピーします。"
 
-#: manual/api/immut.md:820
+#: manual/api/immut.md:841
 msgid "`make(n, x)` builds $n$ copies of `x`; `makei(n, f)` builds $(f(0), \\dots, f(n-1))$."
 msgstr "`make(n, x)` は `x` の $n$ 個のコピーを、`makei(n, f)` は $(f(0), \\dots, f(n-1))$ を作ります。"
 
-#: manual/api/immut.md:830
+#: manual/api/immut.md:851
 msgid "`Vector::length(v)` returns the number of elements."
 msgstr "`Vector::length(v)` は要素数を返します。"
 
-#: manual/api/immut.md:838
+#: manual/api/immut.md:859
 msgid "`Vector::at(v, i)` returns element `i`; it backs `v[i]`. An out-of-range index aborts."
 msgstr "`Vector::at(v, i)` は要素 `i` を返し、`v[i]` の実体です。範囲外のインデックスは中断します。"
 
-#: manual/api/immut.md:848
+#: manual/api/immut.md:869
 msgid "`Vector::set(v, i, x)` returns a vector equal to `v` except at `i`, in $O(\\log_{32} n)$; `v` is unchanged."
 msgstr "`Vector::set(v, i, x)` は `i` 以外が `v` と等しいベクトルを $O(\\log_{32} n)$ で返します。`v` は変化しません。"
 
-#: manual/api/immut.md:857
+#: manual/api/immut.md:878
 msgid "`Vector::iter(v)` iterates over the elements in order."
 msgstr "`Vector::iter(v)` は要素を順にたどります。"
 
-#: manual/api/immut.md:865
+#: manual/api/immut.md:886
 msgid "`map(f)` applies `f` to every element; `zip_with(w, f)` combines two vectors element by element and aborts on different lengths."
 msgstr "`map(f)` はすべての要素に `f` を適用し、`zip_with(w, f)` は二つのベクトルを要素ごとに組み合わせます（長さが異なると中断します）。"
 
-#: manual/api/immut.md:875
+#: manual/api/immut.md:896
 msgid "Element-wise $u + v$, Hadamard $u \\odot v$ and $-u$; they back the operators. Different lengths abort."
 msgstr "要素ごとの $u + v$、Hadamard 積 $u \\odot v$、$-u$ で、演算子の実体です。長さが異なると中断します。"
 
-#: manual/api/immut.md:884
+#: manual/api/immut.md:905
 msgid "`Vector` has no `Sub` implementation; write `u + -v`."
 msgstr "`Vector` は `Sub` を実装していません。`u + -v` と書いてください。"
 
-#: manual/api/immut.md:888
+#: manual/api/immut.md:909
 msgid "`Vector::add_constant(v, a)` adds `a` to every element."
 msgstr "`Vector::add_constant(v, a)` はすべての要素に `a` を加えます。"
 
-#: manual/api/immut.md:896
+#: manual/api/immut.md:917
 msgid "`left_scale(a)` returns $(a v_i)_i$; `right_scale(a)` returns $(v_i a)_i$. They differ only for non-commutative scalars."
 msgstr "`left_scale(a)` は $(a v_i)_i$ を、`right_scale(a)` は $(v_i a)_i$ を返します。両者が異なるのは非可換なスカラーの場合だけです。"
 
-#: manual/api/immut.md:906
+#: manual/api/immut.md:927
 msgid "`Vector::lerp(u, v, t)` returns $(1 - t) u + t v$, with scalars on the left."
 msgstr "`Vector::lerp(u, v, t)` は $(1 - t) u + t v$ を返します。スカラーは左から掛けます。"
 
-#: manual/api/immut.md:912
+#: manual/api/immut.md:933
 msgid "Different lengths abort."
 msgstr "長さが異なると中断します。"
 
-#: manual/api/immut.md:916
+#: manual/api/immut.md:937
 msgid "`lin_comb(a, u, b, v)` returns $a u + b v$, with scalars on the left."
 msgstr "`lin_comb(a, u, b, v)` は $a u + b v$ を返します。スカラーは左から掛けます。"
 
-#: manual/api/immut.md:924
+#: manual/api/immut.md:945
 msgid "The vector as a $1 \\times n$ or an $n \\times 1$ matrix."
 msgstr "ベクトルを $1 \\times n$ または $n \\times 1$ の行列として表したものです。"
 
-#: manual/api/immut.md:933
+#: manual/api/immut.md:954
 msgid "`Vector::scaled_matrix(v)` returns the diagonal matrix $\\operatorname{diag}(v_0, \\dots, v_{n-1})$."
 msgstr "`Vector::scaled_matrix(v)` は対角行列 $\\operatorname{diag}(v_0, \\dots, v_{n-1})$ を返します。"
 
-#: manual/api/immut.md:942
+#: manual/api/immut.md:963
 msgid "`Vector::tensor_product(u, v)` returns the outer product $u v^{\\mathsf T}$, the $m \\times n$ matrix with entries $u_i v_j$."
 msgstr "`Vector::tensor_product(u, v)` は外積 $u v^{\\mathsf T}$、つまり成分が $u_i v_j$ の $m \\times n$ 行列を返します。"
 
-#: manual/api/immut.md:951
+#: manual/api/immut.md:972
 msgid "`equal` compares lengths and elements; `to_string` renders `|a, b, c|`."
 msgstr "`equal` は長さと要素を比較し、`to_string` は `|a, b, c|` と表示します。"
 
-#: manual/api/immut.md:979
+#: manual/api/immut.md:1000
 msgid "These method forms exist only for source compatibility; they are hidden from the interface and warn when used."
 msgstr "これらのメソッド形式はソース互換性のためだけに存在します。インターフェースからは隠されており、使用すると警告が出ます。"
 
-#: manual/api/immut.md:985
+#: manual/api/immut.md:1006
 #: manual/api/mutable.md:1321
 msgid "string interpolation or `Show::output(x, logger)`"
 msgstr "文字列補間または `Show::output(x, logger)`"
 
-#: manual/api/immut.md:986
+#: manual/api/immut.md:1007
 #: manual/api/mutable.md:1322
 msgid "`Repr(v)` or `@debug.Debug::to_repr(v)`"
 msgstr "`Repr(v)` または `@debug.Debug::to_repr(v)`"
@@ -2545,7 +2553,6 @@ msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ without checking shape comp
 msgstr "`Matrix::unchecked_matmul(a, b)` は形状の適合性を検査せずに $AB$ を返します。呼び出し側は $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ を保証しなければなりません。"
 
 #: manual/api/mutable.md:533
-#| msgid "[!CAUTION] On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
 msgid "[!CAUTION] The caller must guarantee $\\operatorname{cols}(A) = \\operatorname{rows}(B)$. On a violation the result is unspecified: it may abort with an array index error or silently return a wrong matrix. Use `matmul` for a non-aborting shape check, or `*` when aborting on mismatch is acceptable."
 msgstr "[!CAUTION] 呼び出し側は $\\operatorname{cols}(A) = \\operatorname{rows}(B)$ を保証しなければなりません。この前提に違反した場合の結果は規定されておらず、配列インデックスエラーで中断することも、誤った行列を黙って返すこともあります。中断しない形状検査には `matmul` を使い、不一致時の中断を許容できる場合は `*` を使ってください。"
 
@@ -3290,7 +3297,7 @@ msgid "`CORRECTNESS_CHECKLIST.md` records the audited status of the numerical ro
 msgstr "`CORRECTNESS_CHECKLIST.md` には、数値ルーチンの監査状況が記録されています。"
 
 #: manual/architecture.md:81
-#: manual/index.md:161
+#: manual/index.md:166
 msgid "Outside the module"
 msgstr "モジュールの外"
 
@@ -3697,7 +3704,7 @@ msgstr "積の順序を反転させる対合 $x \\mapsto \\bar{x}$、つまり $
 #: manual/design/container.md:150
 #: manual/design/container/adapters.md:84
 #: manual/design/error.md:133
-#: manual/design/immut.md:306
+#: manual/design/immut.md:324
 #: manual/design/internal.md:56
 #: manual/design/mutable.md:600
 #: manual/design/perf.md:43
@@ -3766,7 +3773,7 @@ msgstr "N. J. Higham, *Accuracy and Stability of Numerical Algorithms*, 2nd ed.,
 #: manual/design/container.md:165
 #: manual/design/container/adapters.md:96
 #: manual/design/error.md:149
-#: manual/design/immut.md:325
+#: manual/design/immut.md:343
 #: manual/design/internal.md:63
 #: manual/design/mutable.md:628
 #: manual/design/perf.md:48
@@ -3798,7 +3805,7 @@ msgstr "**すべての演算を持つ 1 つの `Matrix` trait。** 部分的な�
 #: manual/design/container.md:177
 #: manual/design/container/adapters.md:104
 #: manual/design/error.md:158
-#: manual/design/immut.md:335
+#: manual/design/immut.md:353
 #: manual/design/internal.md:69
 #: manual/design/mutable.md:640
 #: manual/design/perf.md:54
@@ -4687,8 +4694,8 @@ msgid "Exact algorithms where the scalar allows them"
 msgstr "スカラーが許すところでは厳密なアルゴリズム"
 
 #: manual/design/immut.md:39
-msgid "`determinant` asks only for `Compare + Num + Div`, not for a field, so it accepts `Int`, `Int64` and `BigInt`. With Bareiss elimination the result is exact over those types. `Num` contributes `abs`, used to pick the pivot, and `Num : Ring` the ring operations; `Div` must be *exact* division whenever the dividend is a multiple of the divisor, which integer division is. Over `Double` the same code runs, but without a tolerance and with intermediate values that grow much faster than in LU (see below); the [`mutable`](mutable.md) package, which targets floating point, uses LU with partial pivoting and a tolerance instead."
-msgstr "`determinant` は体を要求せず `Compare + Num + Div` だけを要求するので、`Int`、`Int64`、`BigInt` を受け付けます。Bareiss 消去により、これらの型での結果は厳密です。`Num` はピボット選択に使う `abs` を、`Num : Ring` は環の演算を提供します。`Div` は被除数が除数の倍数であるときに*割り切れる*除算でなければならず、整数除算はそうなっています。`Double` でも同じコードは動きますが、許容誤差はなく、途中の値は LU よりずっと速く大きくなります（後述）。浮動小数点を対象とする [`mutable`](mutable.md) パッケージは、代わりに部分ピボット選択付き LU と許容誤差を使います。"
+msgid "`determinant` requires the open `DeterminantScalar` strategy trait, which extends `Compare + Num + Div`. `Int`, `Int16`, `Int64` and `BigInt` select `Bareiss`; `Float` and `Double` select `PivotedLU`. The operation bounds alone cannot distinguish exact integer division from rounded floating-point division, so callers must supply this strategy explicitly for custom types. Bareiss preserves exact results over integral domains when division is exact on divisible values and intermediate arithmetic does not overflow. LU uses field-like division and is approximate on floating-point scalars. This local algorithm choice does not change the upstream algebraic laws or bounds."
+msgstr "`determinant` は `Compare + Num + Div` を継承するオープンな `DeterminantScalar` 戦略 trait を要求します。`Int`、`Int16`、`Int64`、`BigInt` は `Bareiss` を、`Float` と `Double` は `PivotedLU` を選びます。運算の制約だけでは厳密な整数除算と丸めを伴う浮動小数点除算を区別できないため、独自型には戦略を明示します。整除が厳密で中間計算がオーバーフローしない整域上では Bareiss は厳密な結果を保ちます。LU は体に準じた除算を用い、浮動小数点では近似値になります。この局所的な算法の選択は上流の代数法則や制約を変更しません。"
 
 #: manual/design/immut.md:49
 msgid "Checked short names, unchecked explicit names"
@@ -4741,8 +4748,8 @@ msgid "determinant"
 msgstr "行列式"
 
 #: manual/design/immut.md:69
-msgid "Bareiss, exact over integral domains"
-msgstr "Bareiss、整域上で厳密"
+msgid "scalar strategy: Bareiss for integers, LU for floats without tolerance"
+msgstr "スカラー戦略：整数は Bareiss、浮動小数点は許容誤差なしの LU"
 
 #: manual/design/immut.md:69
 msgid "LU with tolerance, floating point"
@@ -4861,70 +4868,82 @@ msgid "over the $k + 1$ rows involved (restricted to the chosen columns, which o
 msgstr "ここで積は関係する $k + 1$ 行にわたります（選んだ列に制限しても、ノルムは小さくなるだけです）。すべての行にわたって $H = \\prod_r \\max(1, \\lVert \\text{row}_r \\rVert_2)$ とおくと、このような積はどれも $H$ 以下です。漸化式の分子は「二つの小行列式の積」二つの差なので、各積は $H^2$ 以下、分子は $2H^2$ 以下です。これから `Int` のオーバーフロー判定が得られます。$2H^2 < 2^{31}$ なら途中の値はオーバーフローせず、結果は厳密です（`Int64` では $2H^2 < 2^{63}$）。分子が一度ラップアラウンドすると割り切れる除算が成り立たなくなるので、結果は $2^{w}$ を法として正しいのではなく、誤りになります。`BigInt` ではアルゴリズムは常に厳密で、高々 $\\log_2(2H^2) + 1$ ビットの整数に対して $O(n^3)$ 回の算術演算を行います。"
 
 #: manual/design/immut.md:260
-msgid "**Floating point.** The same bound explains why Bareiss elimination is a poor choice for `Double`. LU computes ratios of consecutive minors, of the size of the entries; Bareiss computes the minors themselves and multiplies two of them before dividing. For $A = 1000 I_{60}$ plus a superdiagonal of ones, $\\det A = 10^{180}$ is representable, but at step $k$ the numerator is about $10^{6(k+1)}$, which overflows after $k \\approx 50$; the method then returns NaN where LU returns $10^{180}$. Nor is there a tolerance: only an exactly zero pivot column is treated as singular."
-msgstr "**浮動小数点。** 同じ評価から、Bareiss 消去が `Double` に向かない理由がわかります。LU が計算するのは隣り合う小行列式の比で、その大きさは要素と同程度です。Bareiss は小行列式そのものを計算し、割る前にそのうち二つを掛けます。$A = 1000 I_{60}$ に 1 の上副対角を加えた行列では $\\det A = 10^{180}$ は表現できますが、第 $k$ ステップの分子は約 $10^{6(k+1)}$ で、$k \\approx 50$ を過ぎるとオーバーフローします。このとき LU は $10^{180}$ を返すのに、この方法は NaN を返します。許容誤差もなく、厳密に零のピボット列だけが特異とみなされます。"
+msgid "**Floating point.** Bareiss forms products of minors before dividing. For $A = 1000 I_{60}$ plus a superdiagonal of ones, triangularity gives $\\det A = 1000^{60} = 10^{180}$. Bareiss intermediates are leading minors, so the products grow like $1000^{2(k+1)}$ and overflow binary64 even though the final determinant is representable. `Float` and `Double` now select LU with partial pivoting for every size, avoiding this source of minor growth."
+msgstr "**浮動小数点。** Bareiss は小行列式の積を形成してから除算します。$A = 1000 I_{60}$ に $1$ の上副対角を加えた行列は三角構造により $\\det A = 1000^{60} = 10^{180}$ です。Bareiss の中間値は先頭主小行列式なので、積は $1000^{2(k+1)}$ のように増加し、最終行列式が表現可能でも binary64 をオーバーフローさせます。`Float` と `Double` はすべてのサイズで部分ピボット選択付き LU を使い、この小行列式の成長を避けます。"
+
+#: manual/design/immut.md:267
+msgid "Pivoted LU determinant"
+msgstr "部分ピボット選択付き LU 行列式"
 
 #: manual/design/immut.md:269
+msgid "The kernel copies the matrix, chooses the largest absolute entry in the remaining pivot column, exchanges rows, and subtracts $a_{ik}/a_{kk}$ times the pivot row from each later row. Row addition preserves the determinant over a commutative field; each row exchange changes its sign. After elimination the matrix is upper triangular, so $\\det A = (-1)^s \\prod_k u_{kk}$ in exact arithmetic, where $s$ counts swaps. This argument requires field-like division and does not apply to truncating integer division; those scalars retain Bareiss."
+msgstr "カーネルは行列をコピーし、残りのピボット列で絶対値最大の要素を選び、行を交換して、後続の各行からピボット行の $a_{ik}/a_{kk}$ 倍を引きます。可換体上では行の倍加は行列式を保ち、各行交換は符号を反転させます。消去後は上三角行列なので、厳密な算術では $\\det A = (-1)^s \\prod_k u_{kk}$ となり、$s$ は交換回数です。この議論は体に準じた除算を要し、切り捨てる整数除算には適用できないため、整数には Bareiss を保ちます。"
+
+#: manual/design/immut.md:278
+msgid "There is no absolute or relative zero threshold. An exactly zero selected pivot returns zero; the method does not classify numerical rank. The empty pivot product is one. Inputs are immutable because all elimination occurs on a private array. Floating-point rounding and elimination growth remain, and the sequential pivot product may overflow or underflow even when the final mathematical determinant is representable. NaN and infinity follow scalar arithmetic without a checked error. Tests of known triangular and dense factorizations are finite evidence, not a universal accuracy proof."
+msgstr "絶対または相対の零閾値はありません。選んだピボットが厳密に零なら零を返し、数値ランクは判定しません。空のピボット積は一です。消去は私有配列上で行うため入力は不変です。浮動小数点の丸めと消去中の成長は残り、逐次的なピボット積は最終的な数学上の行列式が表現可能でもオーバーフローやアンダーフローを起こし得ます。NaN と無限大はスカラー演算に従い、検査付きエラーにはしません。既知の三角分解と密な分解のテストは有限の証拠であり、普遍的な精度証明ではありません。"
+
+#: manual/design/immut.md:287
 msgid "E. H. Bareiss, \"Sylvester's identity and multistep integer-preserving Gaussian elimination\", *Mathematics of Computation* 22 (1968), 565–578."
 msgstr "E. H. Bareiss, \"Sylvester's identity and multistep integer-preserving Gaussian elimination\", *Mathematics of Computation* 22 (1968), 565–578."
 
-#: manual/design/immut.md:272
+#: manual/design/immut.md:290
 msgid "**Small sizes.** For $n \\le 4$ the package uses closed formulas instead. For $n = 3$ it is the cofactor expansion along the first row; for $n = 4$ it is Laplace's expansion along the first two rows,"
 msgstr "**小さなサイズ。** $n \\le 4$ では、このパッケージは代わりに閉じた公式を使います。$n = 3$ では第一行に沿った余因子展開、$n = 4$ では最初の二行に沿った Laplace 展開"
 
-#: manual/design/immut.md:281
+#: manual/design/immut.md:299
 msgid "six products of complementary $2 \\times 2$ minors. These formulas use only ring operations, so they are exact over every commutative ring and need no division at all. Over `Int` they are therefore exact modulo $2^{32}$ even when an intermediate value wraps, and the result is the true determinant whenever $|\\det A| < 2^{31}$."
 msgstr "つまり相補的な $2 \\times 2$ 小行列式の六つの積です。これらの公式は環の演算しか使わないので、どの可換環でも厳密で、除算は一切不要です。したがって `Int` では途中の値がラップアラウンドしても $2^{32}$ を法として厳密であり、$|\\det A| < 2^{31}$ であれば結果は本当の行列式です。"
 
-#: manual/design/immut.md:287
+#: manual/design/immut.md:305
 msgid "Lazy matrices"
 msgstr "遅延行列"
 
-#: manual/design/immut.md:289
+#: manual/design/immut.md:307
 msgid "A `MatrixFn` is a pair $(\\text{shape}, f)$ with $f : [r] \\times [c] \\to T$. Operations compose functions: $\\mathtt{map}(g)$ is $g \\circ f$, transpose is $f \\circ \\mathrm{swap}$, and the product is"
 msgstr "`MatrixFn` は $f : [r] \\times [c] \\to T$ を伴う組 $(\\text{shape}, f)$ です。演算は関数を合成します。$\\mathtt{map}(g)$ は $g \\circ f$、転置は $f \\circ \\mathrm{swap}$、積は"
 
-#: manual/design/immut.md:297
+#: manual/design/immut.md:315
 msgid "evaluated on demand. Nothing is cached, so reading one entry of a product costs the inner dimension $n$ times the cost of an entry of each factor. For a left-nested chain of $d$ products of $n \\times n$ matrices the cost $C_d$ of one entry satisfies $C_d = n(C_{d-1} + 1)$, so $C_d = \\Theta(n^d)$. Repeated squaring is worse, because both factors of $B \\cdot B$ are the same unevaluated $B$: $C_{t+1} = 2n\\, C_t$, so one entry of $A^{2^t}$ costs $(2n)^t$ reads of $A$, that is $k^{1 + \\log_2 n}$ for $k = 2^t$. Lazy powers are cheap to build and expensive to read."
 msgstr "が必要に応じて評価されます。何もキャッシュしないので、積の要素を一つ読むコストは、内側の次元 $n$ に各因子の要素一つのコストを掛けたものです。$n \\times n$ 行列の積を $d$ 回左に入れ子にした鎖では、要素一つのコスト $C_d$ は $C_d = n(C_{d-1} + 1)$ を満たすので $C_d = \\Theta(n^d)$ です。繰り返し二乗はさらに悪く、$B \\cdot B$ の二つの因子は同じ未評価の $B$ なので $C_{t+1} = 2n\\, C_t$ となり、$A^{2^t}$ の要素一つに $A$ を $(2n)^t$ 回、つまり $k = 2^t$ に対して $k^{1 + \\log_2 n}$ 回読みます。遅延べきは作るのは安く、読むのは高価です。"
 
-#: manual/design/immut.md:308
+#: manual/design/immut.md:326
 msgid "**Immutability.** No public operation modifies an existing `Matrix`, `Vector` or `MatrixFn`; `set` and `swap_*` return new values."
 msgstr "**不変性。** 既存の `Matrix`、`Vector`、`MatrixFn` を変更する公開操作はありません。`set` と `swap_*` は新しい値を返します。"
 
-#: manual/design/immut.md:310
+#: manual/design/immut.md:328
 msgid "**Shape invariants.** $r, c \\ge 0$ and the backing vector has exactly $rc$ elements; constructors reject anything else by aborting."
 msgstr "**形状の不変条件。** $r, c \\ge 0$ であり、内部のベクトルはちょうど $rc$ 個の要素を持ちます。コンストラクタはそれ以外を中断によって拒否します。"
 
-#: manual/design/immut.md:312
+#: manual/design/immut.md:330
 msgid "**Bounds.** Every public read checks row and column separately, so a column index that would land inside the next row is rejected rather than read."
 msgstr "**範囲。** すべての公開読み取りは行と列を別々に検査するので、次の行の中に入ってしまう列インデックスは読み取られずに拒否されます。"
 
-#: manual/design/immut.md:314
+#: manual/design/immut.md:332
 msgid "**Exactness.** Over `BigInt`, `determinant` and `pow` are exact; over `Int` and `Int64`, `pow` is exact modulo $2^{w}$, and `determinant` is exact unless an intermediate product overflows ($n \\ge 5$) or the determinant itself does not fit ($n \\le 4$; see the Hadamard bound)."
 msgstr "**厳密性。** `BigInt` では `determinant` と `pow` は厳密です。`Int` と `Int64` では `pow` は $2^{w}$ を法として厳密で、`determinant` は途中の積がオーバーフローする場合（$n \\ge 5$）や行列式自体が収まらない場合（$n \\le 4$。Hadamard の評価を参照）を除いて厳密です。"
 
-#: manual/design/immut.md:318
+#: manual/design/immut.md:336
 msgid "**Empty cases.** $\\det$ and $\\operatorname{tr}$ of the $0 \\times 0$ matrix are $1$ and $0$; $A^0 = I$; a product with inner dimension $0$ is the zero matrix."
 msgstr "**空のケース。** $0 \\times 0$ 行列の $\\det$ と $\\operatorname{tr}$ は $1$ と $0$ です。$A^0 = I$ です。内側の次元が $0$ の積は零行列です。"
 
-#: manual/design/immut.md:321
+#: manual/design/immut.md:339
 msgid "**Complexity.** `set`: $O(\\log_{32} N)$; `map`, `+`, `transpose`, `swap_*`: $O(N)$; `matmul`: $rcn$ multiply-adds; `determinant`: $O(n^3)$; `pow`: at most $2\\lfloor\\log_2 k\\rfloor + 1$ products, $O(n^3 \\log k)$."
 msgstr "**計算量。** `set`：$O(\\log_{32} N)$。`map`、`+`、`transpose`、`swap_*`：$O(N)$。`matmul`：$rcn$ 回の積和。`determinant`：$O(n^3)$。`pow`：高々 $2\\lfloor\\log_2 k\\rfloor + 1$ 回の積、$O(n^3 \\log k)$。"
 
-#: manual/design/immut.md:327
-msgid "**Floating-point LU for `immut` determinants.** It would need a field and a tolerance and would lose exactness for integer matrices, the main reason to use this package."
-msgstr "**`immut` の行列式に浮動小数点 LU を使う。** 体と許容誤差が必要になり、このパッケージを使う主な理由である整数行列での厳密性が失われます。"
+#: manual/design/immut.md:345
+msgid "**LU for every scalar.** Truncating integer division would invalidate elimination. Explicit scalar strategies preserve Bareiss for exact domains and use LU for floating point without introducing a tolerance policy."
+msgstr "**すべてのスカラーに LU を使うこと。** 切り捨てる整数除算では消去が正しくなりません。明示的な戦略により厳密な領域には Bareiss を保ち、浮動小数点には許容誤差方針を導入せず LU を使います。"
 
-#: manual/design/immut.md:330
+#: manual/design/immut.md:348
 msgid "**A runtime backend selector inside `Matrix`.** Backends are separate types ([`backends/default`](backends/default.md)); `Matrix` has one representation."
 msgstr "**`Matrix` の内部での実行時バックエンドセレクタ。** バックエンドは別々の型（[`backends/default`](backends/default.md)）であり、`Matrix` の表現は 1 つです。"
 
-#: manual/design/immut.md:332
+#: manual/design/immut.md:350
 msgid "**Caching in `MatrixFn`.** It would make a pure value hold mutable state and change the cost model silently. Materialize with `Matrix::make` instead."
 msgstr "**`MatrixFn` でのキャッシュ。** 純粋な値が可変な状態を持つことになり、コストモデルが黙って変わります。代わりに `Matrix::make` で実体化してください。"
 
-#: manual/design/immut.md:337
+#: manual/design/immut.md:355
 msgid "`immut` does not provide in-place updates, views, inverses, decompositions, eigenvalues, statistics or tolerance-based predicates; those belong to [`mutable`](mutable.md). It does not detect integer overflow, does not offer a checked `MatrixFn` API, and does not implement the [`algebra`](algebra.md) traits itself (the wrappers in `backends/default` do)."
 msgstr "`immut` はインプレース更新、ビュー、逆行列、分解、固有値、統計量、許容誤差に基づく述語を提供しません。それらは [`mutable`](mutable.md) の担当です。整数オーバーフローを検出せず、検査付きの `MatrixFn` API も提供せず、[`algebra`](algebra.md) の trait も自身では実装しません（`backends/default` のラッパーが実装します）。"
 
@@ -6031,106 +6050,110 @@ msgid "Concrete types"
 msgstr "具体型"
 
 #: manual/index.md:85
-msgid "`immut`: `Matrix`, `Vector`, `MatrixFn`, the row accessor `Indexed`, the aliases `VecLib` and `VecCore`, and the top-level `lin_comb`"
-msgstr "`immut`：`Matrix`、`Vector`、`MatrixFn`、行アクセサ `Indexed`、別名 `VecLib` と `VecCore`、およびトップレベルの `lin_comb`"
+msgid "`immut`: `Matrix`, `Vector`, `MatrixFn`, the row accessor `Indexed`, the aliases `VecLib` and `VecCore`, `DeterminantAlgorithm`, `DeterminantScalar`, and the top-level `lin_comb`"
+msgstr "`immut`：`Matrix`、`Vector`、`MatrixFn`、行アクセサ `Indexed`、別名 `VecLib` と `VecCore`、`DeterminantAlgorithm`、`DeterminantScalar`、およびトップレベルの `lin_comb`"
 
-#: manual/index.md:87
+#: manual/index.md:88
 msgid "`mutable`: `Matrix`, `Vector`, the views `RowView`, `ColView`, `Transpose`, the row accessor `Lens`, the trait `Tolerance`, the re-exported `Sqrt`, and the top-level `identity` and `lin_comb`"
 msgstr "`mutable`：`Matrix`、`Vector`、ビュー `RowView`、`ColView`、`Transpose`、行アクセサ `Lens`、trait `Tolerance`、再エクスポートされた `Sqrt`、およびトップレベルの `identity` と `lin_comb`"
 
-#: manual/index.md:90
+#: manual/index.md:91
 msgid "`backends/default`: `DenseMatrix`, `DenseVector`, `ImmutableDenseMatrix`, `ImmutableDenseVector`, and the generic helpers `matmul`, `transpose`, `shape_of`"
 msgstr "`backends/default`：`DenseMatrix`、`DenseVector`、`ImmutableDenseMatrix`、`ImmutableDenseVector`、および汎用の補助関数 `matmul`、`transpose`、`shape_of`"
 
-#: manual/index.md:94
+#: manual/index.md:95
 msgid "Numerical routines"
 msgstr "数値ルーチン"
 
-#: manual/index.md:96
+#: manual/index.md:97
 msgid "Exact (`immut`, over `Int`, `Int64`, `BigInt`): `determinant` by Bareiss elimination, `pow` by repeated squaring, `trace`, `matmul`"
 msgstr "厳密（`immut`、`Int`、`Int64`、`BigInt` 上）：Bareiss 消去による `determinant`、繰り返し二乗による `pow`、`trace`、`matmul`"
 
-#: manual/index.md:98
+#: manual/index.md:99
+msgid "Floating determinant (`immut`, over `Float`, `Double`): LU with partial pivoting, selected by `DeterminantScalar`, without a zero tolerance"
+msgstr "浮動小数点の行列式（`immut`、`Float` と `Double`）：`DeterminantScalar` が部分ピボット選択付き LU を選び、零の許容誤差は使いません"
+
+#: manual/index.md:101
 msgid "Floating point (`mutable`, over `Float`, `Double`): `determinant`, `inverse`, `is_invertible` and `rank` by LU with partial pivoting, `reduce_row_elimination`, `cholesky_decomposition`, `is_positive_definite`, `eigen` for symmetric matrices, `power_method`, `mean`, `variance`, `std_dev`, `frobenius_norm`"
 msgstr "浮動小数点（`mutable`、`Float`、`Double` 上）：部分ピボット選択付き LU による `determinant`、`inverse`、`is_invertible`、`rank`、および `reduce_row_elimination`、`cholesky_decomposition`、`is_positive_definite`、対称行列の `eigen`、`power_method`、`mean`、`variance`、`std_dev`、`frobenius_norm`"
 
-#: manual/index.md:103
+#: manual/index.md:106
 msgid "Every operation with a runtime failure mode has a checked form returning `Result[_, LinearAlgebraError]` and an `unchecked_*` form that aborts"
 msgstr "実行時に失敗しうる操作にはすべて、`Result[_, LinearAlgebraError]` を返す検査付きの形と、中断する `unchecked_*` の形がある"
 
-#: manual/index.md:106
+#: manual/index.md:109
 msgid "Capability layers"
 msgstr "能力層"
 
-#: manual/index.md:110
+#: manual/index.md:113
 msgid "`container`: `VectorReadOps`, `VectorBuildOps`, `VectorPersistentEditOps`, `VectorMutableEditOps`, their `Matrix*` counterparts, and the algorithms `vector_map`, `vector_convert`, `matrix_map`, `matrix_convert`, `matrix_transpose`"
 msgstr "`container`：`VectorReadOps`、`VectorBuildOps`、`VectorPersistentEditOps`、`VectorMutableEditOps`、それぞれに対応する `Matrix*`、およびアルゴリズム `vector_map`、`vector_convert`、`matrix_map`、`matrix_convert`、`matrix_transpose`"
 
-#: manual/index.md:114
+#: manual/index.md:117
 msgid "`container/adapters`: one factory per type and capability, such as `mutable_matrix_read_ops`"
 msgstr "`container/adapters`：型と能力ごとに一つのファクトリ。たとえば `mutable_matrix_read_ops`"
 
-#: manual/index.md:117
+#: manual/index.md:120
 msgid "Scalars and errors"
 msgstr "スカラーとエラー"
 
-#: manual/index.md:119
+#: manual/index.md:122
 msgid "`arithmetic`: `Abs`, `ApproxEq`, `CheckedDiv`, `CheckedSqrt`, `CheckedCompare`, and re-exports of `Zero`, `One`, `Inverse`, `Conjugate`, `Sqrt` and the other upstream scalar traits and types"
 msgstr "`arithmetic`：`Abs`、`ApproxEq`、`CheckedDiv`、`CheckedSqrt`、`CheckedCompare`、および `Zero`、`One`、`Inverse`、`Conjugate`、`Sqrt` やその他の上流のスカラー trait と型の再エクスポート"
 
-#: manual/index.md:122
+#: manual/index.md:125
 msgid "`error`: `LinearAlgebraError`, `LinearAlgebraErrorKind`, constructors and `is_*` predicates"
 msgstr "`error`：`LinearAlgebraError`、`LinearAlgebraErrorKind`、コンストラクタと `is_*` 述語"
 
-#: manual/index.md:125
+#: manual/index.md:128
 msgid "Numerical caveats"
 msgstr "数値計算上の注意"
 
-#: manual/index.md:127
-msgid "The numerical routines of `mutable` decide \"zero\" with one absolute threshold, `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of the input; scale data to order one (`eigen` is the exception: its decisions are relative to the entries). `@immut.Matrix::determinant` is meant for exact scalars, not for floating point. The [mutable design](design/mutable.md) and the [immut design](design/immut.md) derive the algorithms and state these limits precisely."
-msgstr "`mutable` の数値ルーチンは一つの絶対しきい値 `Tolerance::tolerance()` $= 10^{-11}$ で「零」を判定するので、結果は入力のスケールに依存します。データは 1 程度の大きさにスケーリングしてください（例外は `eigen` で、その判定は要素に対して相対的です）。`@immut.Matrix::determinant` は浮動小数点ではなく厳密なスカラーのためのものです。[mutable の設計](design/mutable.md) と [immut の設計](design/immut.md) がアルゴリズムを導出し、これらの限界を正確に述べています。"
+#: manual/index.md:130
+msgid "The numerical routines of `mutable` decide \"zero\" with one absolute threshold, `Tolerance::tolerance()` $= 10^{-11}$, so their results depend on the scale of the input; scale data to order one (`eigen` is the exception: its decisions are relative to the entries). `@immut.Matrix::determinant` selects Bareiss for integer scalars and pivoted LU for floating point. Its LU path has no zero tolerance and may still round, overflow or underflow; it is not a numerical-rank test. The [mutable design](design/mutable.md) and the [immut design](design/immut.md) derive the algorithms and state these limits precisely."
+msgstr "`mutable` の数値処理は単一の絶対閾値 `Tolerance::tolerance()` $= 10^{-11}$ で「零」を判定するため、結果は入力の尺度に依存します。データを一程度にスケールしてください（`eigen` は要素に対する相対判定なので例外です）。`@immut.Matrix::determinant` は整数に Bareiss、浮動小数点に部分ピボット選択付き LU を選びます。LU 経路に零の許容誤差はなく、丸めやオーバーフロー、アンダーフローは起こり得ます。数値ランクの判定ではありません。[mutable 設計](design/mutable.md) と [immut 設計](design/immut.md) で算法と限界を示します。"
 
-#: manual/index.md:135
+#: manual/index.md:140
 msgid "Where to read next"
 msgstr "次に読むもの"
 
-#: manual/index.md:137
+#: manual/index.md:142
 msgid "New to the package: start with the [mutable tutorial](tutorial/mutable.md) for numerical work on `Double` matrices, or the [immut tutorial](tutorial/immut.md) for value semantics and exact integer results. Read the [error tutorial](tutorial/error.md) next, since every operation that can fail returns a `LinearAlgebraError`."
 msgstr "このパッケージが初めての場合：`Double` 行列で数値計算をするなら [mutable のチュートリアル](tutorial/mutable.md) から、値の意味論と厳密な整数の結果が欲しいなら [immut のチュートリアル](tutorial/immut.md) から始めてください。次に [error のチュートリアル](tutorial/error.md) を読んでください。失敗しうる操作はすべて `LinearAlgebraError` を返すからです。"
 
-#: manual/index.md:142
+#: manual/index.md:147
 msgid "Using it in a library: read the [algebra tutorial](tutorial/algebra.md) and the [backends/default tutorial](tutorial/backends/default.md) to write generic code, then the [container tutorial](tutorial/container.md) for moving data between representations, and the integration guides ([algebra](integration/algebra.md), [container](integration/container.md)) before publishing implementations for your own types. Keep the API pages at hand; each item lists its errors, edge cases and cost."
 msgstr "ライブラリで使う場合：汎用コードを書くには [algebra のチュートリアル](tutorial/algebra.md) と [backends/default のチュートリアル](tutorial/backends/default.md) を、表現の間でデータを移すには [container のチュートリアル](tutorial/container.md) を読み、自分の型の実装を公開する前に統合ガイド（[algebra](integration/algebra.md)、[container](integration/container.md)）を読んでください。API ページは手元に置いておきましょう。各項目にエラー、境界条件、コストが載っています。"
 
-#: manual/index.md:149
+#: manual/index.md:154
 msgid "Contributing: read the [architecture guide](architecture.md), the [conventions](conventions.md), the design pages of the package you change, and the [internal](tutorial/internal.md) and [consistency](tutorial/consistency.md) tutorials. Benchmarks are covered by the [perf](tutorial/perf.md) pages."
 msgstr "貢献する場合：[アーキテクチャガイド](architecture.md)、[規約](conventions.md)、変更するパッケージの設計ページ、そして [internal](tutorial/internal.md) と [consistency](tutorial/consistency.md) のチュートリアルを読んでください。ベンチマークは [perf](tutorial/perf.md) のページで扱います。"
 
-#: manual/index.md:155
+#: manual/index.md:160
 msgid "Status in 0.5.0"
 msgstr "0.5.0 での状況"
 
-#: manual/index.md:157
+#: manual/index.md:162
 msgid "`algebra`, the trait layer of `backends/default`, and `container` are experimental; their signatures may change."
 msgstr "`algebra`、`backends/default` の trait 層、`container` は実験的で、シグネチャが変わることがあります。"
 
-#: manual/index.md:159
+#: manual/index.md:164
 msgid "Release history is in the [changelog](../../CHANGELOG.md)."
 msgstr "リリース履歴は [変更履歴](../../CHANGELOG.md) にあります。"
 
-#: manual/index.md:163
+#: manual/index.md:168
 msgid "The native OpenBLAS backend (`backends/openblas`, with `BlasMatrix`, `BlasVector` and its `container` adapters) is not part of this release. Its upstream binding, `Kaida-Amethyst/openblas` `0.1.3`, does not compile with MoonBit 0.10. The migrated source, its own documentation and a patch for the binding are preserved in `contrib/openblas_backend`, which is not a package of the module, is not built and is not covered by this manual. Users who need the backend can stay on `0.4.7`."
 msgstr "ネイティブの OpenBLAS バックエンド（`backends/openblas`。`BlasMatrix`、`BlasVector` とその `container` アダプタを含む）はこのリリースに含まれません。上流のバインディング `Kaida-Amethyst/openblas` `0.1.3` が MoonBit 0.10 でコンパイルできないためです。移行済みのソース、その独自のドキュメント、バインディング用のパッチは `contrib/openblas_backend` に保存されています。これはモジュールのパッケージではなく、ビルドされず、このマニュアルの対象外です。このバックエンドが必要な利用者は `0.4.7` に留まることができます。"
 
-#: manual/index.md:171
+#: manual/index.md:176
 msgid "Validation"
 msgstr "検証"
 
-#: manual/index.md:173
+#: manual/index.md:178
 msgid "Recommended release checks, from the repository root:"
 msgstr "推奨されるリリース前の確認（リポジトリのルートで実行）："
 
-#: manual/index.md:181
+#: manual/index.md:186
 msgid "`run_test.sh` runs `immut` and `consistency`, and `container`, `container/adapters`, `backends/default`, `mutable` and the documentation package `doc_en_us` on all four targets. Set `LINEAR_ALGEBRA_TEST_BENCH=1` to add the benchmark packages."
 msgstr "`run_test.sh` は `immut` と `consistency` を実行し、さらに `container`、`container/adapters`、`backends/default`、`mutable`、ドキュメントのパッケージ `doc_en_us` を四つのターゲットすべてで実行します。`LINEAR_ALGEBRA_TEST_BENCH=1` を設定するとベンチマークのパッケージも加わります。"
 
@@ -6761,7 +6784,7 @@ msgstr "**検査付きの積。** 失敗を値にしなければならない場�
 #: manual/tutorial/container.md:196
 #: manual/tutorial/container/adapters.md:124
 #: manual/tutorial/error.md:199
-#: manual/tutorial/immut.md:168
+#: manual/tutorial/immut.md:171
 #: manual/tutorial/internal.md:96
 #: manual/tutorial/mutable.md:194
 #: manual/tutorial/perf.md:47
@@ -6793,7 +6816,7 @@ msgstr "**浮動小数点の結果を厳密に比較する。** `Double` 行列�
 #: manual/tutorial/container.md:207
 #: manual/tutorial/container/adapters.md:132
 #: manual/tutorial/error.md:210
-#: manual/tutorial/immut.md:187
+#: manual/tutorial/immut.md:189
 #: manual/tutorial/internal.md:103
 #: manual/tutorial/mutable.md:213
 #: manual/tutorial/perf.md:53
@@ -7560,50 +7583,50 @@ msgid "**Converting to `mutable`.** For numerical work such as inverses, decompo
 msgstr "**`mutable` への変換。** 逆行列、分解、統計量のような数値計算には、[`container` のアダプタ](container/adapters.md) で変換して [`mutable`](mutable.md) を使ってください。"
 
 #: manual/tutorial/immut.md:160
-msgid "**Your own scalar type.** Any type implementing the `luna-generic` traits works: a rational or modular-integer type with `Num` and `Div` gets exact determinants through Bareiss elimination, and any `Semiring` gets `pow`."
-msgstr "**自作のスカラー型。** `luna-generic` の trait を実装する型なら何でも動作します。`Num` と `Div` を持つ有理数型や剰余整数型は Bareiss 消去法で厳密な行列式が得られ、任意の `Semiring` で `pow` が使えます。"
+msgid "**Your own scalar type.** Determinants require `DeterminantScalar` in addition to its inherited `Compare + Num + Div` operations. Select `Bareiss` for an integral domain with exact division on divisible values, or `PivotedLU` for field-like division. A modular ring with zero divisors is not an integral domain. Generic determinant callers must add `T : @immut.DeterminantScalar`; any `Semiring` still gets `pow`."
+msgstr "**独自のスカラー型。** 行列式は継承する `Compare + Num + Div` の演算に加えて `DeterminantScalar` を要求します。整除が厳密な整域には `Bareiss` を、体に準じた除算には `PivotedLU` を選びます。零因子を持つ剰余環は整域ではありません。汎用の行列式呼び出しには `T : @immut.DeterminantScalar` を追加します。`Semiring` の `pow` は引き続き使えます。"
 
-#: manual/tutorial/immut.md:164
+#: manual/tutorial/immut.md:167
 msgid "**Performance.** Reads and single-entry updates cost $O(\\log_{32} N)$. For a long series of edits on a large matrix, a `@mutable.Matrix` working buffer is faster; freeze it into an `immut` value at the end."
 msgstr "**性能。** 読み取りと単一要素の更新のコストは $O(\\log_{32} N)$ です。大きな行列に長い一連の編集を行う場合は、`@mutable.Matrix` の作業用バッファのほうが高速です。最後に `immut` の値として凍結してください。"
 
-#: manual/tutorial/immut.md:170
+#: manual/tutorial/immut.md:173
 msgid "**Integer overflow.** `Int` arithmetic wraps. `pow` is then exact modulo $2^{32}$, which is rarely what you want; use `Int64` or `BigInt` for large values."
 msgstr "**整数オーバーフロー。** `Int` の算術はラップアラウンドします。その場合 `pow` は $2^{32}$ を法として厳密になりますが、それが望みどおりであることはまれです。大きな値には `Int64` か `BigInt` を使ってください。"
 
-#: manual/tutorial/immut.md:173
+#: manual/tutorial/immut.md:176
 msgid "**Assigning through indexing.** `m[r][c] = x` does not exist here; use `m.set(r, c, x)` and keep the result."
 msgstr "**インデックスを通じた代入。** ここには `m[r][c] = x` はありません。`m.set(r, c, x)` を使い、その結果を保持してください。"
 
-#: manual/tutorial/immut.md:175
+#: manual/tutorial/immut.md:178
 msgid "**Subtracting vectors.** `Vector` has no `-` operator; write `u + -v`."
 msgstr "**ベクトルの減算。** `Vector` には `-` 演算子がありません。`u + -v` と書いてください。"
 
-#: manual/tutorial/immut.md:176
+#: manual/tutorial/immut.md:179
 msgid "**Reading lazy powers.** Every read of a `MatrixFn` power recomputes the nested products. Materialize first with `Matrix::make(r, c, (i, j) => f[i][j])` if you read many entries."
 msgstr "**遅延したべき乗の読み取り。** `MatrixFn` のべき乗を読むたびに、入れ子になった積が再計算されます。多くの要素を読む場合は、先に `Matrix::make(r, c, (i, j) => f[i][j])` で実体化してください。"
 
-#: manual/tutorial/immut.md:179
+#: manual/tutorial/immut.md:182
 msgid "**Operators abort.** `+`, `-`, `*` abort on shape mismatch; use `matmul` when shapes come from input."
 msgstr "**演算子は中断する。** `+`、`-`、`*` は形状の不一致で中断します。形状が入力から来る場合は `matmul` を使ってください。"
 
-#: manual/tutorial/immut.md:181
-msgid "**Floating-point determinants.** `determinant` is built for exact arithmetic. On `Double` matrices of size $5$ and more its intermediate values grow like products of minors and can overflow to NaN while the determinant itself is representable; use `@mutable.Matrix::determinant` for floating-point data."
-msgstr "**浮動小数点の行列式。** `determinant` は厳密な算術のために作られています。サイズ $5$ 以上の `Double` 行列では途中の値が小行列式の積のように大きくなり、行列式自体は表現できるのに NaN へオーバーフローすることがあります。浮動小数点のデータには `@mutable.Matrix::determinant` を使ってください。"
+#: manual/tutorial/immut.md:184
+msgid "**Floating-point determinants.** `Float` and `Double` use pivoted LU for every size. No tolerance is used to classify a pivot as zero, so this is not a numerical-rank test. Rounding, overflow and underflow remain possible; use an error budget appropriate to the matrix instead of exact equality."
+msgstr "**浮動小数点の行列式。** `Float` と `Double` はすべてのサイズで部分ピボット選択付き LU を使います。ピボットの零判定に許容誤差は使わず、数値ランク判定ではありません。丸め、オーバーフロー、アンダーフローは起こり得るため、厳密な等値ではなく行列に合った誤差の許容範囲を使います。"
 
-#: manual/tutorial/immut.md:189
+#: manual/tutorial/immut.md:191
 msgid "[immut API](../api/immut.md) for every method and its cost."
 msgstr "すべてのメソッドとそのコストについては [immut API](../api/immut.md)。"
 
-#: manual/tutorial/immut.md:190
+#: manual/tutorial/immut.md:192
 msgid "[immut design](../design/immut.md) for value semantics and the Bareiss derivation."
 msgstr "値の意味論と Bareiss の導出については [immut の設計](../design/immut.md)。"
 
-#: manual/tutorial/immut.md:192
+#: manual/tutorial/immut.md:194
 msgid "[mutable tutorial](mutable.md) for in-place numerical work."
 msgstr "インプレースの数値計算については [mutable のチュートリアル](mutable.md)。"
 
-#: manual/tutorial/immut.md:193
+#: manual/tutorial/immut.md:195
 msgid "[container tutorial](container.md) for moving data between representations."
 msgstr "表現の間でデータを移すには [container のチュートリアル](container.md)。"
 
@@ -8055,6 +8078,27 @@ msgstr "計時付きの実行については [perf_runner のチュートリア�
 #: manual/tutorial/perf_support.md:78
 msgid "[mutable design](../design/mutable.md) for the measured algorithms."
 msgstr "計測対象のアルゴリズムについては [mutable の設計](../design/mutable.md)。"
+
+#~ msgid "[!WARNING] For `Double` and `Float` this is not the numerically preferred algorithm. Every intermediate value of Bareiss elimination is a minor of $A$, and the update multiplies two of them, so magnitudes are squared before they are divided back. For $n \\ge 5$ the result overflows to infinity or NaN long before $\\det A$ does: the $60 \\times 60$ upper bidiagonal matrix with diagonal $1000$ and superdiagonal $1$ has $\\det A = 10^{180}$, which `@mutable.Matrix::determinant` returns, while this method returns NaN. There is no tolerance either: only an exactly zero pivot column is detected. Use [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) for floating-point matrices. The issue is tracked as [#93](https://github.com/Luna-Flow/linear-algebra/issues/93)."
+#~ msgstr "[!WARNING] `Double` と `Float` にとって、これは数値的に望ましいアルゴリズムではありません。Bareiss 消去の途中の値はすべて $A$ の小行列式であり、更新ではそのうち二つを掛けるので、大きさは割り戻される前にいったん二乗されます。$n \\ge 5$ では、$\\det A$ よりはるかに早く結果が無限大や NaN にオーバーフローします。対角が $1000$、上副対角が $1$ の $60 \\times 60$ 上二重対角行列は $\\det A = 10^{180}$ を持ち、`@mutable.Matrix::determinant` はこれを返しますが、このメソッドは NaN を返します。許容誤差もなく、厳密に零のピボット列しか検出しません。浮動小数点の行列には [`@mutable.Matrix::determinant`](mutable.md#matrixdeterminant) を使ってください。この問題は [#93](https://github.com/Luna-Flow/linear-algebra/issues/93) で追跡しています。"
+
+#~ msgid "`determinant` asks only for `Compare + Num + Div`, not for a field, so it accepts `Int`, `Int64` and `BigInt`. With Bareiss elimination the result is exact over those types. `Num` contributes `abs`, used to pick the pivot, and `Num : Ring` the ring operations; `Div` must be *exact* division whenever the dividend is a multiple of the divisor, which integer division is. Over `Double` the same code runs, but without a tolerance and with intermediate values that grow much faster than in LU (see below); the [`mutable`](mutable.md) package, which targets floating point, uses LU with partial pivoting and a tolerance instead."
+#~ msgstr "`determinant` は体を要求せず `Compare + Num + Div` だけを要求するので、`Int`、`Int64`、`BigInt` を受け付けます。Bareiss 消去により、これらの型での結果は厳密です。`Num` はピボット選択に使う `abs` を、`Num : Ring` は環の演算を提供します。`Div` は被除数が除数の倍数であるときに*割り切れる*除算でなければならず、整数除算はそうなっています。`Double` でも同じコードは動きますが、許容誤差はなく、途中の値は LU よりずっと速く大きくなります（後述）。浮動小数点を対象とする [`mutable`](mutable.md) パッケージは、代わりに部分ピボット選択付き LU と許容誤差を使います。"
+
+#~ msgid "Bareiss, exact over integral domains"
+#~ msgstr "Bareiss、整域上で厳密"
+
+#~ msgid "**Floating point.** The same bound explains why Bareiss elimination is a poor choice for `Double`. LU computes ratios of consecutive minors, of the size of the entries; Bareiss computes the minors themselves and multiplies two of them before dividing. For $A = 1000 I_{60}$ plus a superdiagonal of ones, $\\det A = 10^{180}$ is representable, but at step $k$ the numerator is about $10^{6(k+1)}$, which overflows after $k \\approx 50$; the method then returns NaN where LU returns $10^{180}$. Nor is there a tolerance: only an exactly zero pivot column is treated as singular."
+#~ msgstr "**浮動小数点。** 同じ評価から、Bareiss 消去が `Double` に向かない理由がわかります。LU が計算するのは隣り合う小行列式の比で、その大きさは要素と同程度です。Bareiss は小行列式そのものを計算し、割る前にそのうち二つを掛けます。$A = 1000 I_{60}$ に 1 の上副対角を加えた行列では $\\det A = 10^{180}$ は表現できますが、第 $k$ ステップの分子は約 $10^{6(k+1)}$ で、$k \\approx 50$ を過ぎるとオーバーフローします。このとき LU は $10^{180}$ を返すのに、この方法は NaN を返します。許容誤差もなく、厳密に零のピボット列だけが特異とみなされます。"
+
+#~ msgid "**Floating-point LU for `immut` determinants.** It would need a field and a tolerance and would lose exactness for integer matrices, the main reason to use this package."
+#~ msgstr "**`immut` の行列式に浮動小数点 LU を使う。** 体と許容誤差が必要になり、このパッケージを使う主な理由である整数行列での厳密性が失われます。"
+
+#~ msgid "**Your own scalar type.** Any type implementing the `luna-generic` traits works: a rational or modular-integer type with `Num` and `Div` gets exact determinants through Bareiss elimination, and any `Semiring` gets `pow`."
+#~ msgstr "**自作のスカラー型。** `luna-generic` の trait を実装する型なら何でも動作します。`Num` と `Div` を持つ有理数型や剰余整数型は Bareiss 消去法で厳密な行列式が得られ、任意の `Semiring` で `pow` が使えます。"
+
+#~ msgid "**Floating-point determinants.** `determinant` is built for exact arithmetic. On `Double` matrices of size $5$ and more its intermediate values grow like products of minors and can overflow to NaN while the determinant itself is representable; use `@mutable.Matrix::determinant` for floating-point data."
+#~ msgstr "**浮動小数点の行列式。** `determinant` は厳密な算術のために作られています。サイズ $5$ 以上の `Double` 行列では途中の値が小行列式の積のように大きくなり、行列式自体は表現できるのに NaN へオーバーフローすることがあります。浮動小数点のデータには `@mutable.Matrix::determinant` を使ってください。"
 
 #~ msgid "`Matrix::unchecked_matmul(a, b)` returns $AB$ **without validating shapes**."
 #~ msgstr "`Matrix::unchecked_matmul(a, b)` は **形状を検証せずに** $AB$ を返します。"
