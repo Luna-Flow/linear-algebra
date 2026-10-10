@@ -59,4 +59,4 @@ jobs:
           mkdir -p "$HOME/.moon"
           trap 'rm -f "$HOME/.moon/credentials.json"' EXIT
           printf '%s' "$SECRET" > "$HOME/.moon/credentials.json"
-          moon publish --frozen
+          moon publish
