@@ -6,82 +6,7 @@ points; older release history lives in this file.
 
 ## Unreleased
 
-### Breaking Changes
-
-- Immutable determinant entry points (`Matrix::determinant`,
-  `Matrix::unchecked_determinant`, `MatrixFn::determinant`) now require
-  `DeterminantScalar` instead of `Compare + Num + Div`. Built-in `Int`,
-  `Int16`, `Int64`, `BigInt`, `Float` and `Double` remain supported. Generic
-  callers must add the bound; custom scalar types must select `Bareiss` or
-  `PivotedLU` through the open trait.
-
-### Added
-
-- `@mutable.Matrix::matmul` returns a `DimensionMismatch` error for
-  incompatible shapes; the unchecked kernel and the aborting `*` are unchanged
-  ([#87](https://github.com/Luna-Flow/linear-algebra/issues/87)).
-
-### Changed
-
-- Bumped `Luna-Flow/luna-generic` from `0.3.3` to `0.4.0` and
-  `Luna-Flow/arithmetic` from `0.2.2` to `0.5.0`. The public interface is
-  unchanged. Under luna-generic `0.4.0`, `Float::inv` and `Double::inv` abort
-  with an explicit message on zero instead of a bare abort.
-- The white-box tests of `mutable` convert integer fixtures with
-  `@lf_alg.lift_to` instead of the deprecated
-  `IntegralHomomorphism::from_integral`.
-
-### Fixed
-
-- Immutable `Float` and `Double` determinants now use LU with partial
-  pivoting, avoiding Bareiss minor-product overflow on large triangular and
-  dense inputs whose determinant is representable
-  ([#93](https://github.com/Luna-Flow/linear-algebra/issues/93)). Integer
-  determinants keep the Bareiss path; floating-point rounding, elimination
-  growth, and pivot-product overflow or underflow remain possible.
-
-- `@mutable.Transpose::mul` now evaluates each scalar product in the order
-  required by matrix multiplication, including for non-commutative scalar
-  types ([#88](https://github.com/Luna-Flow/linear-algebra/issues/88)).
-- `@mutable.Matrix::eigen` for `2 x 2` input no longer aborts with "complex
-  eigenvalues" on symmetric matrices with large entries, no longer merges
-  eigenvalues closer than about `6e-6`, never returns a singular eigenvector
-  matrix, and pairs eigenvectors with the right eigenvalues on every target
-  ([#90](https://github.com/Luna-Flow/linear-algebra/issues/90)).
-- `@mutable.Matrix::eigen` for `n >= 3` deflates relative to the diagonal
-  instead of below an absolute `1e-11`, so matrices with small entries get
-  correct eigenvalues ([#91](https://github.com/Luna-Flow/linear-algebra/issues/91)).
-- The structural shortcuts of `inverse`, `cholesky_decomposition`,
-  `determinant` (and, on `js`, `rank` and `eigen`) are taken only for matrices
-  that have the structure exactly
-  ([#92](https://github.com/Luna-Flow/linear-algebra/issues/92)).
-
-### Documentation
-
-- Brought the manual to the Luna Flow documentation standard: every API page
-  opens with Purpose and Importing sections, every tutorial with an
-  "I want to / Use" table, every design page has a constraints section and
-  the order goal, constraints, decisions, mathematics, invariants,
-  alternatives, boundaries. The overview lists the pages per package, the
-  exported items, numerical caveats, reading paths and validation commands.
-- Reviewed the mathematics against the code. The `mutable` design page now
-  derives `PA = LU`, the growth bound, the closed-form determinant error,
-  Cholesky and Sylvester's criterion, Householder reflectors, the Wilkinson
-  shift and the power-method residual bound; the `immut` design page derives
-  Bareiss elimination from Sylvester's identity. Corrected claims: the LU
-  backward error carries a factor `n^2`, not `n`; the `eigen` backward error
-  includes the absolute thresholds; `power_method` does two matrix-vector
-  products per iteration; `pow` performs `floor(log2 k) + popcount(k)`
-  products; a lazy `MatrixFn` power costs `(2n)^d` reads per entry;
-  `checked_div` reports every zero divisor and `approx_eq` is not reflexive
-  on infinities.
-- Documented open defects with warnings: the `MatMulMatrix` instances of
-  `backends/default` exist for scalar types that
-  break the product laws
-  ([#94](https://github.com/Luna-Flow/linear-algebra/issues/94)).
-- Translated the revised manual into Chinese and Japanese.
-
-## 0.5.0 - 2026-10-07
+## 0.5.0 - 2026-10-10
 
 Current repository release. MoonBit 0.10 migration and temporary withdrawal of
 the OpenBLAS backend. This is a breaking release in the `0.x` line.
@@ -124,6 +49,19 @@ the OpenBLAS backend. This is a breaking release in the `0.x` line.
   `Luna-Flow/linear-algebra/perf_support`; use the public `Case` /
   `PreparedCase` APIs and the fixture loaders instead.
 
+- Immutable determinant entry points (`Matrix::determinant`,
+  `Matrix::unchecked_determinant`, `MatrixFn::determinant`) now require
+  `DeterminantScalar` instead of `Compare + Num + Div`. Built-in `Int`,
+  `Int16`, `Int64`, `BigInt`, `Float` and `Double` remain supported. Generic
+  callers must add the bound; custom scalar types must select `Bareiss` or
+  `PivotedLU` through the open trait.
+
+### Added
+
+- `@mutable.Matrix::matmul` returns a `DimensionMismatch` error for
+  incompatible shapes; the unchecked kernel and the aborting `*` are unchanged
+  ([#87](https://github.com/Luna-Flow/linear-algebra/issues/87)).
+
 ### Changed
 
 - Migrated to MoonBit 0.10 (`moon.mod` / `moon.pkg` manifests, current
@@ -136,6 +74,39 @@ the OpenBLAS backend. This is a breaking release in the `0.x` line.
   the compiled manual examples build and run on `wasm-gc`, `js`, `native`, and
   `wasm`; `run_test.sh` now includes it on all four targets. CI and publish
   workflows no longer install `libopenblas-dev`.
+
+- Bumped `Luna-Flow/luna-generic` from `0.3.3` to `0.4.0` and
+  `Luna-Flow/arithmetic` from `0.2.2` to `0.5.0`. The public interface is
+  unchanged. Under luna-generic `0.4.0`, `Float::inv` and `Double::inv` abort
+  with an explicit message on zero instead of a bare abort.
+- The white-box tests of `mutable` convert integer fixtures with
+  `@lf_alg.lift_to` instead of the deprecated
+  `IntegralHomomorphism::from_integral`.
+
+### Fixed
+
+- Immutable `Float` and `Double` determinants now use LU with partial
+  pivoting, avoiding Bareiss minor-product overflow on large triangular and
+  dense inputs whose determinant is representable
+  ([#93](https://github.com/Luna-Flow/linear-algebra/issues/93)). Integer
+  determinants keep the Bareiss path; floating-point rounding, elimination
+  growth, and pivot-product overflow or underflow remain possible.
+
+- `@mutable.Transpose::mul` now evaluates each scalar product in the order
+  required by matrix multiplication, including for non-commutative scalar
+  types ([#88](https://github.com/Luna-Flow/linear-algebra/issues/88)).
+- `@mutable.Matrix::eigen` for `2 x 2` input no longer aborts with "complex
+  eigenvalues" on symmetric matrices with large entries, no longer merges
+  eigenvalues closer than about `6e-6`, never returns a singular eigenvector
+  matrix, and pairs eigenvectors with the right eigenvalues on every target
+  ([#90](https://github.com/Luna-Flow/linear-algebra/issues/90)).
+- `@mutable.Matrix::eigen` for `n >= 3` deflates relative to the diagonal
+  instead of below an absolute `1e-11`, so matrices with small entries get
+  correct eigenvalues ([#91](https://github.com/Luna-Flow/linear-algebra/issues/91)).
+- The structural shortcuts of `inverse`, `cholesky_decomposition`,
+  `determinant` (and, on `js`, `rank` and `eigen`) are taken only for matrices
+  that have the structure exactly
+  ([#92](https://github.com/Luna-Flow/linear-algebra/issues/92)).
 
 ### Documentation
 
@@ -151,6 +122,29 @@ the OpenBLAS backend. This is a breaking release in the `0.x` line.
 - A new `architecture.md` guide describes the package layers and dependencies.
 - All manual examples use current idioms and compile as tests of
   `src/doc_en_us`.
+
+- Brought the manual to the Luna Flow documentation standard: every API page
+  opens with Purpose and Importing sections, every tutorial with an
+  "I want to / Use" table, every design page has a constraints section and
+  the order goal, constraints, decisions, mathematics, invariants,
+  alternatives, boundaries. The overview lists the pages per package, the
+  exported items, numerical caveats, reading paths and validation commands.
+- Reviewed the mathematics against the code. The `mutable` design page now
+  derives `PA = LU`, the growth bound, the closed-form determinant error,
+  Cholesky and Sylvester's criterion, Householder reflectors, the Wilkinson
+  shift and the power-method residual bound; the `immut` design page derives
+  Bareiss elimination from Sylvester's identity. Corrected claims: the LU
+  backward error carries a factor `n^2`, not `n`; the `eigen` backward error
+  includes the absolute thresholds; `power_method` does two matrix-vector
+  products per iteration; `pow` performs `floor(log2 k) + popcount(k)`
+  products; a lazy `MatrixFn` power costs `(2n)^d` reads per entry;
+  `checked_div` reports every zero divisor and `approx_eq` is not reflexive
+  on infinities.
+- Documented open defects with warnings: the `MatMulMatrix` instances of
+  `backends/default` exist for scalar types that
+  break the product laws
+  ([#94](https://github.com/Luna-Flow/linear-algebra/issues/94)).
+- Translated the revised manual into Chinese and Japanese.
 
 ## 0.4.7 - 2026-07-11
 
