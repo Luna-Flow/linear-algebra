@@ -178,8 +178,8 @@ fn double_array_json(values : Array[Double]) -> String {
 
 ///|
 fn dense_matrix(
-  rows : Int,
-  cols : Int,
+  rows : Int32,
+  cols : Int32,
   rng : Array[UInt64],
   lo : Double,
   hi : Double,
@@ -193,7 +193,7 @@ fn dense_matrix(
 
 ///|
 fn dense_vector(
-  size : Int,
+  size : Int32,
   rng : Array[UInt64],
   lo : Double,
   hi : Double,
@@ -216,7 +216,7 @@ fn diagonal_matrix(diag : Array[Double]) -> Array[Double] {
 }
 
 ///|
-fn identity_matrix(size : Int, scale : Double) -> Array[Double] {
+fn identity_matrix(size : Int32, scale : Double) -> Array[Double] {
   let data = Array::make(size * size, 0.0)
   for i = 0; i < size; i = i + 1 {
     data[i * size + i] = scale
@@ -225,7 +225,7 @@ fn identity_matrix(size : Int, scale : Double) -> Array[Double] {
 }
 
 ///|
-fn transpose(rows : Int, cols : Int, data : Array[Double]) -> Array[Double] {
+fn transpose(rows : Int32, cols : Int32, data : Array[Double]) -> Array[Double] {
   let out = Array::make(rows * cols, 0.0)
   for i = 0; i < rows; i = i + 1 {
     let row_offset = i * cols
@@ -238,9 +238,9 @@ fn transpose(rows : Int, cols : Int, data : Array[Double]) -> Array[Double] {
 
 ///|
 fn matmul(
-  a_rows : Int,
-  a_cols : Int,
-  b_cols : Int,
+  a_rows : Int32,
+  a_cols : Int32,
+  b_cols : Int32,
   a : Array[Double],
   b : Array[Double],
 ) -> Array[Double] {
@@ -279,7 +279,7 @@ fn scale_matrix(data : Array[Double], factor : Double) -> Array[Double] {
 
 ///|
 fn make_symmetric(
-  size : Int,
+  size : Int32,
   rng : Array[UInt64],
   scale : Double,
 ) -> Array[Double] {
@@ -296,7 +296,7 @@ fn make_symmetric(
 
 ///|
 fn make_spd(
-  size : Int,
+  size : Int32,
   rng : Array[UInt64],
   diagonal_bias : Double,
 ) -> Array[Double] {
@@ -306,7 +306,7 @@ fn make_spd(
 }
 
 ///|
-fn make_near_singular(size : Int, rng : Array[UInt64]) -> Array[Double] {
+fn make_near_singular(size : Int32, rng : Array[UInt64]) -> Array[Double] {
   let data = dense_matrix(size, size, rng, -0.5, 0.5)
   for col = 0; col < size; col = col + 1 {
     let value = data[col]
@@ -320,7 +320,7 @@ fn make_near_singular(size : Int, rng : Array[UInt64]) -> Array[Double] {
 }
 
 ///|
-fn make_rank_deficient(size : Int, rng : Array[UInt64]) -> Array[Double] {
+fn make_rank_deficient(size : Int32, rng : Array[UInt64]) -> Array[Double] {
   let data = dense_matrix(size, size, rng, -0.8, 0.8)
   let dst_row_offset = (size - 1) * size
   for col = 0; col < size; col = col + 1 {
@@ -331,8 +331,8 @@ fn make_rank_deficient(size : Int, rng : Array[UInt64]) -> Array[Double] {
 
 ///|
 fn make_rect_rank_deficient(
-  rows : Int,
-  cols : Int,
+  rows : Int32,
+  cols : Int32,
   rng : Array[UInt64],
 ) -> Array[Double] {
   let data = dense_matrix(rows, cols, rng, -0.8, 0.8)
@@ -349,7 +349,7 @@ fn make_rect_rank_deficient(
 }
 
 ///|
-fn make_upper_triangular(size : Int, rng : Array[UInt64]) -> Array[Double] {
+fn make_upper_triangular(size : Int32, rng : Array[UInt64]) -> Array[Double] {
   let data = Array::make(size * size, 0.0)
   for i = 0; i < size; i = i + 1 {
     let row_offset = i * size
@@ -366,7 +366,7 @@ fn make_upper_triangular(size : Int, rng : Array[UInt64]) -> Array[Double] {
 
 ///|
 fn make_dominant_symmetric(
-  size : Int,
+  size : Int32,
   rng : Array[UInt64],
   noise_scale : Double,
 ) -> Array[Double] {
@@ -381,7 +381,7 @@ fn make_dominant_symmetric(
 
 ///|
 fn make_dense_shifted(
-  size : Int,
+  size : Int32,
   rng : Array[UInt64],
   identity_scale : Double,
 ) -> Array[Double] {
@@ -393,8 +393,8 @@ fn make_dense_shifted(
 
 ///|
 fn make_projector_like(
-  rows : Int,
-  cols : Int,
+  rows : Int32,
+  cols : Int32,
   rng : Array[UInt64],
 ) -> Array[Double] {
   let data = dense_matrix(rows, cols, rng, -0.25, 0.25)
@@ -411,8 +411,8 @@ fn make_projector_like(
 
 ///|
 fn make_block_pattern(
-  rows : Int,
-  cols : Int,
+  rows : Int32,
+  cols : Int32,
   rng : Array[UInt64],
 ) -> Array[Double] {
   let data = dense_matrix(rows, cols, rng, -0.15, 0.15)
@@ -428,7 +428,7 @@ fn make_block_pattern(
 }
 
 ///|
-fn make_clustered_symmetric(size : Int, rng : Array[UInt64]) -> Array[Double] {
+fn make_clustered_symmetric(size : Int32, rng : Array[UInt64]) -> Array[Double] {
   let diag = []
   for i = 0; i < size; i = i + 1 {
     let cluster = 1.0 + (i % 4).to_double() * 0.03
@@ -440,7 +440,7 @@ fn make_clustered_symmetric(size : Int, rng : Array[UInt64]) -> Array[Double] {
 }
 
 ///|
-fn make_small_gap_symmetric(size : Int, rng : Array[UInt64]) -> Array[Double] {
+fn make_small_gap_symmetric(size : Int32, rng : Array[UInt64]) -> Array[Double] {
   let diag = []
   for i = 0; i < size; i = i + 1 {
     diag.push(1.0 + i.to_double() * 0.002)

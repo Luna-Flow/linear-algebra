@@ -189,9 +189,9 @@ test "immut matrix construction" {
     @immut.Vector::from_array([1, 2, 3, 4]),
   )
   inspect(b, content="|1, 2|\n|3, 4|")
-  let i3 : @immut.Matrix[Int] = @immut.Matrix::identity(3)
+  let i3 : @immut.Matrix[Int32] = @immut.Matrix::identity(3)
   inspect(i3, content="|1, 0, 0|\n|0, 1, 0|\n|0, 0, 1|")
-  let empty : @immut.Matrix[Int] = @immut.Matrix::from_2d_array([[], []])
+  let empty : @immut.Matrix[Int32] = @immut.Matrix::from_2d_array([[], []])
   debug_inspect(empty.shape(), content="(2, 0)")
 }
 ```

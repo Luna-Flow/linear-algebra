@@ -90,7 +90,7 @@ fn custom_fixture_json(case_item : @support.Case) -> String {
 }
 
 ///|
-fn float_array_json(length : Int, value : Double) -> String {
+fn float_array_json(length : Int32, value : Double) -> String {
   let mut out = "["
   for i = 0; i < length; i = i + 1 {
     if i > 0 {

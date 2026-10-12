@@ -7096,7 +7096,7 @@ msgid "Add a law as a property"
 msgstr ""
 
 #: manual/tutorial/consistency.md:46
-msgid "Use `quick_check_fn` with tuples of small integers, and return a `Bool` that compares both sides of the law in both packages. Integers keep the comparison exact."
+msgid "Use `check` with tuples of small integers, and return a `Bool` that compares both sides of the law in both packages. Integers keep the comparison exact."
 msgstr ""
 
 #: manual/tutorial/consistency.md:50

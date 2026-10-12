@@ -14,9 +14,9 @@ pub struct Case {
   mutation_policy : String
   size_tier : String
   cost_model : String
-  rows : Int
-  cols : Int
-  rhs_cols : Int
+  rows : Int32
+  cols : Int32
+  rhs_cols : Int32
 }
 
 ///|
@@ -214,9 +214,9 @@ priv struct CaseFixtureInputs {
 
 ///|
 priv struct CaseFixtureShape {
-  rows : Int
-  cols : Int
-  rhs_cols : Int
+  rows : Int32
+  cols : Int32
+  rhs_cols : Int32
 } derive(FromJson)
 
 ///|
@@ -337,7 +337,7 @@ fn checksum_double(value : Double) -> UInt64 {
 }
 
 ///|
-fn checksum_int(value : Int) -> UInt64 {
+fn checksum_int(value : Int32) -> UInt64 {
   mix(seed_checksum(), value.reinterpret_as_uint().to_uint64())
 }
 

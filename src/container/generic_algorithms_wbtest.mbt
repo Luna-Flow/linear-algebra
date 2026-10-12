@@ -5,8 +5,8 @@ struct TestVector[T] {
 
 ///|
 struct TestMatrix[T] {
-  rows : Int
-  cols : Int
+  rows : Int32
+  cols : Int32
   data : Array[T]
 }
 
@@ -74,7 +74,7 @@ fn[T] test_matrix_build_ops() -> MatrixBuildOps[TestMatrix[T], T] {
 
 ///|
 test "generic vector map converts scalar and container types" {
-  let source : TestVector[Int] = { data: [1, 2, 3], }
+  let source : TestVector[Int32] = { data: [1, 2, 3], }
   let output : TestVector[String] = vector_map(
     source,
     test_vector_read_ops(),
@@ -89,19 +89,19 @@ test "generic vector map converts scalar and container types" {
 
 ///|
 test "generic matrix map and transpose preserve coordinate order" {
-  let source : TestMatrix[Int] = {
+  let source : TestMatrix[Int32] = {
     rows: 2,
     cols: 3,
     data: [0, 1, 2, 10, 11, 12],
   }
-  let mapped : TestMatrix[Int] = matrix_map(
+  let mapped : TestMatrix[Int32] = matrix_map(
     source,
     test_matrix_read_ops(),
     test_matrix_build_ops(),
     fn(value) { value + 100 },
   ).unwrap()
   debug_inspect(mapped.data, content="[100, 101, 102, 110, 111, 112]")
-  let transposed : TestMatrix[Int] = matrix_transpose(
+  let transposed : TestMatrix[Int32] = matrix_transpose(
     source,
     test_matrix_read_ops(),
     test_matrix_build_ops(),
@@ -112,7 +112,7 @@ test "generic matrix map and transpose preserve coordinate order" {
 
 ///|
 test "generic algorithms reject malformed dimensions before building" {
-  let bad_vector : VectorReadOps[TestVector[Int], Int] = VectorReadOps::new(
+  let bad_vector : VectorReadOps[TestVector[Int32], Int32] = VectorReadOps::new(
     fn(_) { -1 },
     fn(_, _) { Ok(0) },
   )
@@ -120,7 +120,7 @@ test "generic algorithms reject malformed dimensions before building" {
     Err(error) => inspect(error.is_negative_dimension(), content="true")
     Ok(_) => fail("expected negative vector length error")
   }
-  let bad_matrix : MatrixReadOps[TestMatrix[Int], Int] = MatrixReadOps::new(
+  let bad_matrix : MatrixReadOps[TestMatrix[Int32], Int32] = MatrixReadOps::new(
     fn(_) { (-1, 2) },
     fn(_, _, _) { Ok(0) },
   )
@@ -138,7 +138,7 @@ test "generic algorithms reject malformed dimensions before building" {
 ///|
 test "generic algorithms propagate read errors without building" {
   let mut builds = 0
-  let read : VectorReadOps[TestVector[Int], Int] = VectorReadOps::new(
+  let read : VectorReadOps[TestVector[Int32], Int32] = VectorReadOps::new(
     fn(_) { 2 },
     fn(_, index) {
       if index == 1 {
@@ -150,7 +150,7 @@ test "generic algorithms propagate read errors without building" {
       }
     },
   )
-  let build : VectorBuildOps[TestVector[Int], Int] = VectorBuildOps::new(fn(
+  let build : VectorBuildOps[TestVector[Int32], Int32] = VectorBuildOps::new(fn(
     length,
     initializer,
   ) {

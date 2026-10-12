@@ -117,7 +117,7 @@ test {
       #||30, 40|
     ),
   )
-  let m5 : MatrixFn[Int] = MatrixFn::identity(5)
+  let m5 : MatrixFn[Int32] = MatrixFn::identity(5)
   inspect(
     m5,
     content=(
@@ -131,7 +131,7 @@ test {
   inspect(m4.determinant(), content="4")
   inspect(m1.determinant(), content="-2")
   inspect(m5.determinant(), content="1")
-  let m = Matrix::make(3, 3, fn(i, _) -> Int { i }).pow(10).unwrap()
+  let m = Matrix::make(3, 3, fn(i, _) -> Int32 { i }).pow(10).unwrap()
   inspect(
     m,
     content=(
@@ -167,7 +167,7 @@ test "matrix_fold" {
 ///|
 test "matrix_creation" {
   // Test new (default)
-  let m_def : MatrixFn[Int] = MatrixFn::new(2, 2)
+  let m_def : MatrixFn[Int32] = MatrixFn::new(2, 2)
   inspect(m_def, content="|0, 0|\n|0, 0|")
 
   // Test make (functional)
@@ -177,9 +177,9 @@ test "matrix_creation" {
 
 ///|
 test "matrix_empty_edge_cases" {
-  let empty : MatrixFn[Int] = MatrixFn::from_2d_array([])
+  let empty : MatrixFn[Int32] = MatrixFn::from_2d_array([])
   inspect(empty, content="")
-  let zero_col : MatrixFn[Int] = MatrixFn::from_2d_array([[], []])
+  let zero_col : MatrixFn[Int32] = MatrixFn::from_2d_array([[], []])
   inspect(zero_col, content="||\n||")
   let product = MatrixFn::make(2, 0, fn(_, _) { 1 }) *
     MatrixFn::make(0, 3, fn(_, _) { 1 })
@@ -193,19 +193,19 @@ test "panic matrix_fn_from_2d_array/ragged_rows" {
 
 ///|
 test "panic matrix_fn_make/negative_dimensions" {
-  let matrix : MatrixFn[Int] = MatrixFn::make(-1, 2, fn(i, j) { i + j })
+  let matrix : MatrixFn[Int32] = MatrixFn::make(-1, 2, fn(i, j) { i + j })
   ignore(matrix)
 }
 
 ///|
 test "panic matrix_fn_new/negative_dimensions" {
-  let matrix : MatrixFn[Int] = MatrixFn::new(2, -1)
+  let matrix : MatrixFn[Int32] = MatrixFn::new(2, -1)
   ignore(matrix)
 }
 
 ///|
 test "panic matrix_fn_identity/negative_size" {
-  let matrix : MatrixFn[Int] = MatrixFn::identity(-1)
+  let matrix : MatrixFn[Int32] = MatrixFn::identity(-1)
   ignore(matrix)
 }
 

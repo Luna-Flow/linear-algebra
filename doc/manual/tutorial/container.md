@@ -36,7 +36,7 @@ Freeze a mutable working matrix into an immutable value:
 ///|
 test "freeze a mutable matrix" {
   let work = @mutable.Matrix::from_2d_array([[1, 2], [3, 4]])
-  let frozen : @immut.Matrix[Int] = @container.matrix_convert(
+  let frozen : @immut.Matrix[Int32] = @container.matrix_convert(
     work,
     @container_adapters.mutable_matrix_read_ops(),
     @container_adapters.immutable_matrix_build_ops(),
@@ -75,7 +75,7 @@ test "integer pixels to normalized doubles" {
 ///|
 test "transpose a dense wrapper into an immutable matrix" {
   let source = @default.DenseMatrix::from_2d_array([[1, 2, 3]])
-  let column : @immut.Matrix[Int] = @container.matrix_transpose(
+  let column : @immut.Matrix[Int32] = @container.matrix_transpose(
     source,
     @container_adapters.dense_matrix_read_ops(),
     @container_adapters.immutable_matrix_build_ops(),
@@ -116,8 +116,8 @@ two dictionaries once; every generic algorithm then accepts the type:
 ```moonbit check
 ///|
 struct ContTutSparse {
-  len : Int
-  entries : Array[(Int, Double)]
+  len : Int32
+  entries : Array[(Int32, Double)]
 }
 
 ///|

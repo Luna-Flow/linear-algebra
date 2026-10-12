@@ -18,7 +18,7 @@
 /// Returns a `Lens[T]` object for accessing elements in the specified row by 
 /// column index.
 #alias("_[_]")
-pub fn[T] Transpose::at(self : Transpose[T], row : Int) -> Lens[T] {
+pub fn[T] Transpose::at(self : Transpose[T], row : Int32) -> Lens[T] {
   Lens::{
     data: self.0,
     fst: self.0.matrix_checked_col(row),
@@ -27,15 +27,15 @@ pub fn[T] Transpose::at(self : Transpose[T], row : Int) -> Lens[T] {
 }
 
 ///|
-pub fn[T] Transpose::get(self : Transpose[T], row : Int, col : Int) -> T {
+pub fn[T] Transpose::get(self : Transpose[T], row : Int32, col : Int32) -> T {
   self.0.get(col, row)
 }
 
 ///|
 pub fn[T] Transpose::set(
   self : Transpose[T],
-  row : Int,
-  col : Int,
+  row : Int32,
+  col : Int32,
   elem : T,
 ) -> Unit {
   self.0.set(col, row, elem)
@@ -234,7 +234,7 @@ pub impl[T : Eq] Eq for Transpose[T] with fn equal(a, b) {
 /// inspect(t.row(), content="4")  // Original matrix has 4 columns, so transpose has 4 rows
 /// ```
 ///
-pub fn[T] Transpose::row(self : Transpose[T]) -> Int {
+pub fn[T] Transpose::row(self : Transpose[T]) -> Int32 {
   self.0.col
 }
 
@@ -256,7 +256,7 @@ pub fn[T] Transpose::row(self : Transpose[T]) -> Int {
 /// inspect(transpose.col(), content="3")
 /// ```
 ///
-pub fn[T] Transpose::col(self : Transpose[T]) -> Int {
+pub fn[T] Transpose::col(self : Transpose[T]) -> Int32 {
   self.0.row
 }
 
@@ -291,7 +291,7 @@ pub fn[T] Transpose::each(self : Transpose[T], f : (T) -> Unit) -> Unit {
 /// * `f` : A function that takes the linear index and the element value. The
 ///   linear index is calculated in row-major order of the transpose (which
 ///   corresponds to column-major order of the underlying matrix).
-pub fn[T] Transpose::eachi(self : Transpose[T], f : (Int, T) -> Unit) -> Unit {
+pub fn[T] Transpose::eachi(self : Transpose[T], f : (Int32, T) -> Unit) -> Unit {
   self.0.each_row_col((i, j, v) => f(j * self.0.row + i, v))
 }
 
@@ -309,7 +309,7 @@ pub fn[T] Transpose::eachi(self : Transpose[T], f : (Int, T) -> Unit) -> Unit {
 /// the number of rows).
 pub fn[T] Transpose::each_row(
   self : Transpose[T],
-  row : Int,
+  row : Int32,
   f : (T) -> Unit,
 ) -> Unit {
   self.0.each_col(row, f)
@@ -332,8 +332,8 @@ pub fn[T] Transpose::each_row(
 /// the number of rows).
 pub fn[T] Transpose::eachi_row(
   self : Transpose[T],
-  row : Int,
-  f : (Int, T) -> Unit,
+  row : Int32,
+  f : (Int32, T) -> Unit,
 ) -> Unit {
   self.0.eachi_col(row, f)
 }
@@ -352,7 +352,7 @@ pub fn[T] Transpose::eachi_row(
 /// the number of columns).
 pub fn[T] Transpose::each_col(
   self : Transpose[T],
-  col : Int,
+  col : Int32,
   f : (T) -> Unit,
 ) -> Unit {
   self.0.each_row(col, f)
@@ -373,8 +373,8 @@ pub fn[T] Transpose::each_col(
 /// number of columns).
 pub fn[T] Transpose::eachi_col(
   self : Transpose[T],
-  col : Int,
-  f : (Int, T) -> Unit,
+  col : Int32,
+  f : (Int32, T) -> Unit,
 ) -> Unit {
   self.0.eachi_row(col, f)
 }
@@ -390,7 +390,7 @@ pub fn[T] Transpose::eachi_col(
 ///   value. Called for each element in the transpose matrix.
 pub fn[T] Transpose::each_row_col(
   self : Transpose[T],
-  f : (Int, Int, T) -> Unit,
+  f : (Int32, Int32, T) -> Unit,
 ) -> Unit {
   self.0.each_row_col((i, j, v) => f(j, i, v))
 }
@@ -558,7 +558,7 @@ pub fn[T] Transpose::map_inplace(self : Transpose[T], f : (T) -> T) -> Unit {
 #alias(map_col_in_place, deprecated)
 pub fn[T] Transpose::map_col_inplace(
   self : Transpose[T],
-  col : Int,
+  col : Int32,
   f : (T) -> T,
 ) -> Unit {
   self.0.map_row_inplace(col, f)
@@ -589,7 +589,7 @@ pub fn[T] Transpose::map_col_inplace(
 #alias(map_row_in_place, deprecated)
 pub fn[T] Transpose::map_row_inplace(
   self : Transpose[T],
-  row : Int,
+  row : Int32,
   f : (T) -> T,
 ) -> Unit {
   self.0.map_col_inplace(row, f)
@@ -609,7 +609,7 @@ pub fn[T] Transpose::map_row_inplace(
 /// number of rows in the transpose matrix).
 ///
 ///
-pub fn[T] Transpose::row_to_array(self : Transpose[T], row : Int) -> Array[T] {
+pub fn[T] Transpose::row_to_array(self : Transpose[T], row : Int32) -> Array[T] {
   self.0.col_to_array(row)
 }
 
@@ -626,7 +626,7 @@ pub fn[T] Transpose::row_to_array(self : Transpose[T], row : Int) -> Array[T] {
 ///
 /// Panics if the column index is out of bounds.
 ///
-pub fn[T] Transpose::col_to_array(self : Transpose[T], col : Int) -> Array[T] {
+pub fn[T] Transpose::col_to_array(self : Transpose[T], col : Int32) -> Array[T] {
   self.0.row_to_array(col)
 }
 
@@ -642,7 +642,10 @@ pub fn[T] Transpose::col_to_array(self : Transpose[T], col : Int) -> Array[T] {
 /// Returns a `Vector[T]` containing the elements from the specified row of the
 /// transposed matrix.
 ///
-pub fn[T] Transpose::row_to_vector(self : Transpose[T], row : Int) -> Vector[T] {
+pub fn[T] Transpose::row_to_vector(
+  self : Transpose[T],
+  row : Int32,
+) -> Vector[T] {
   self.0.col_to_vector(row)
 }
 
@@ -675,7 +678,10 @@ pub fn[T] Transpose::row_to_vector(self : Transpose[T], row : Int) -> Vector[T] 
 /// inspect(col_vec, content="|0, 1|")
 /// ```
 ///
-pub fn[T] Transpose::col_to_vector(self : Transpose[T], col : Int) -> Vector[T] {
+pub fn[T] Transpose::col_to_vector(
+  self : Transpose[T],
+  col : Int32,
+) -> Vector[T] {
   self.0.row_to_vector(col)
 }
 
@@ -767,7 +773,11 @@ pub fn[T : Mul] Transpose::scale(self : Transpose[T], cst : T) -> Transpose[T] {
 /// * `r1` : The index of the first row to swap.
 /// * `r2` : The index of the second row to swap.
 ///
-pub fn[T] Transpose::swap_rows(self : Transpose[T], r1 : Int, r2 : Int) -> Unit {
+pub fn[T] Transpose::swap_rows(
+  self : Transpose[T],
+  r1 : Int32,
+  r2 : Int32,
+) -> Unit {
   self.0.swap_cols(r1, r2)
 }
 
@@ -780,7 +790,11 @@ pub fn[T] Transpose::swap_rows(self : Transpose[T], r1 : Int, r2 : Int) -> Unit 
 /// * `c1` : The index of the first column to swap.
 /// * `c2` : The index of the second column to swap.
 ///
-pub fn[T] Transpose::swap_cols(self : Transpose[T], c1 : Int, c2 : Int) -> Unit {
+pub fn[T] Transpose::swap_cols(
+  self : Transpose[T],
+  c1 : Int32,
+  c2 : Int32,
+) -> Unit {
   self.0.swap_rows(c1, c2)
 }
 

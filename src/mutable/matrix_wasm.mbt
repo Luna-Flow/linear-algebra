@@ -49,7 +49,7 @@
 /// inspect(matrix.row(), content="2")
 /// ```
 ///
-pub fn[T] Matrix::row(self : Matrix[T]) -> Int {
+pub fn[T] Matrix::row(self : Matrix[T]) -> Int32 {
   self.row
 }
 
@@ -71,7 +71,7 @@ pub fn[T] Matrix::row(self : Matrix[T]) -> Int {
 /// inspect(m.col(), content="3")
 /// ```
 ///
-pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
+pub fn[T] Matrix::col(self : Matrix[T]) -> Int32 {
   self.col
 }
 
@@ -172,7 +172,7 @@ pub fn[T, U] Matrix::map(self : Matrix[T], f : (T) -> U) -> Matrix[U] {
 ///
 pub fn[T, U] Matrix::mapi(
   self : Matrix[T],
-  f : (Int, Int, T) -> U,
+  f : (Int32, Int32, T) -> U,
 ) -> Matrix[U] {
   let row = self.row
   let col = self.col
@@ -260,7 +260,7 @@ pub fn[T] Matrix::to_transpose(self : Matrix[T]) -> Transpose[T] {
 #alias(map_row_in_place, deprecated)
 pub fn[T] Matrix::map_row_inplace(
   self : Matrix[T],
-  row : Int,
+  row : Int32,
   f : (T) -> T,
 ) -> Unit {
   let offset = self.matrix_row_offset(row)
@@ -292,7 +292,7 @@ pub fn[T] Matrix::map_row_inplace(
 #alias(map_col_in_place, deprecated)
 pub fn[T] Matrix::map_col_inplace(
   self : Matrix[T],
-  col : Int,
+  col : Int32,
   f : (T) -> T,
 ) -> Unit {
   let checked_col = self.matrix_checked_col(col)
@@ -326,7 +326,7 @@ pub fn[T] Matrix::each(self : Matrix[T], f : (T) -> Unit) -> Unit {
 /// * `f` : A function that takes an index and an element value. The index
 ///   represents the linear position in the underlying array (calculated as `row
 ///   * col_count + col`).
-pub fn[T] Matrix::eachi(self : Matrix[T], f : (Int, T) -> Unit) -> Unit {
+pub fn[T] Matrix::eachi(self : Matrix[T], f : (Int32, T) -> Unit) -> Unit {
   self.data.eachi(f)
 }
 
@@ -342,7 +342,7 @@ pub fn[T] Matrix::eachi(self : Matrix[T], f : (Int, T) -> Unit) -> Unit {
 ///   each element in the matrix.
 pub fn[T] Matrix::each_row_col(
   self : Matrix[T],
-  f : (Int, Int, T) -> Unit,
+  f : (Int32, Int32, T) -> Unit,
 ) -> Unit {
   let rows = self.row
   let cols = self.col
@@ -365,7 +365,7 @@ pub fn[T] Matrix::each_row_col(
 /// * `f` : The function to apply to each element in the row.
 pub fn[T] Matrix::each_row(
   self : Matrix[T],
-  row : Int,
+  row : Int32,
   f : (T) -> Unit,
 ) -> Unit {
   let offset = self.matrix_row_offset(row)
@@ -402,8 +402,8 @@ pub fn[T] Matrix::each_row(
 ///
 pub fn[T] Matrix::eachi_row(
   self : Matrix[T],
-  row : Int,
-  f : (Int, T) -> Unit,
+  row : Int32,
+  f : (Int32, T) -> Unit,
 ) -> Unit {
   let offset = self.matrix_row_offset(row)
   let data = self.data
@@ -423,7 +423,7 @@ pub fn[T] Matrix::eachi_row(
 /// * `f` : The function to apply to each element in the column.
 pub fn[T] Matrix::each_col(
   self : Matrix[T],
-  col : Int,
+  col : Int32,
   f : (T) -> Unit,
 ) -> Unit {
   let checked_col = self.matrix_checked_col(col)
@@ -461,8 +461,8 @@ pub fn[T] Matrix::each_col(
 ///
 pub fn[T] Matrix::eachi_col(
   self : Matrix[T],
-  col : Int,
-  f : (Int, T) -> Unit,
+  col : Int32,
+  f : (Int32, T) -> Unit,
 ) -> Unit {
   let checked_col = self.matrix_checked_col(col)
   for i in 0..<self.row {
@@ -518,7 +518,11 @@ pub fn[T] Matrix::copy(self : Matrix[T]) -> Matrix[T] {
 /// inspect(sum_matrix, content="|0, 1, 2|\n|1, 2, 3|")
 /// ```
 ///
-pub fn[A] Matrix::make(row : Int, col : Int, f : (Int, Int) -> A) -> Matrix[A] {
+pub fn[A] Matrix::make(
+  row : Int32,
+  col : Int32,
+  f : (Int32, Int32) -> A,
+) -> Matrix[A] {
   guard row >= 0 && col >= 0 else {
     abort("Matrix dimensions must be non-negative")
   }
@@ -555,7 +559,7 @@ pub fn[A] Matrix::make(row : Int, col : Int, f : (Int, Int) -> A) -> Matrix[A] {
 /// inspect(m, content="|42, 42, 42|\n|42, 42, 42|")
 /// ```
 ///
-pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
+pub fn[T] Matrix::new(row : Int32, col : Int32, elem : T) -> Matrix[T] {
   guard row >= 0 && col >= 0 else {
     abort("Matrix dimensions must be non-negative")
   }
@@ -611,12 +615,17 @@ pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
 }
 
 ///|
-pub fn[T] Matrix::get(self : Matrix[T], row : Int, col : Int) -> T {
+pub fn[T] Matrix::get(self : Matrix[T], row : Int32, col : Int32) -> T {
   self.data[self.matrix_index_offset(row, col)]
 }
 
 ///|
-pub fn[T] Matrix::set(self : Matrix[T], row : Int, col : Int, elem : T) -> Unit {
+pub fn[T] Matrix::set(
+  self : Matrix[T],
+  row : Int32,
+  col : Int32,
+  elem : T,
+) -> Unit {
   self.data[self.matrix_index_offset(row, col)] = elem
 }
 
@@ -643,8 +652,8 @@ pub fn[T] Matrix::set(self : Matrix[T], row : Int, col : Int, elem : T) -> Unit 
 /// ```
 ///
 pub fn[T] Matrix::from_array(
-  row : Int,
-  col : Int,
+  row : Int32,
+  col : Int32,
   data : Array[T],
 ) -> Matrix[T] {
   guard row >= 0 && col >= 0 else {
@@ -684,7 +693,7 @@ pub fn[T] Matrix::from_array(
 /// ```
 ///
 #alias("_[_]")
-pub fn[T] Matrix::at(self : Matrix[T], row : Int) -> Lens[T] {
+pub fn[T] Matrix::at(self : Matrix[T], row : Int32) -> Lens[T] {
   ignore(self.matrix_row_offset(row))
   { data: self, fst: row, is_transpose: false, }
 }
@@ -700,7 +709,7 @@ pub fn[T] Matrix::at(self : Matrix[T], row : Int) -> Lens[T] {
 /// Returns the value at the specified column index.
 ///
 #alias("_[_]")
-pub fn[T] Lens::at(self : Lens[T], snd : Int) -> T {
+pub fn[T] Lens::at(self : Lens[T], snd : Int32) -> T {
   if self.is_transpose {
     self.data.get(snd, self.fst)
   } else {
@@ -723,7 +732,7 @@ pub fn[T] Lens::at(self : Lens[T], snd : Int) -> T {
 /// let m = Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
 ///
 #alias("_[_]=_")
-pub fn[T] Lens::set(self : Lens[T], snd : Int, elem : T) -> Unit {
+pub fn[T] Lens::set(self : Lens[T], snd : Int32, elem : T) -> Unit {
   if self.is_transpose {
     self.data.set(snd, self.fst, elem)
   } else {
@@ -785,14 +794,18 @@ pub fn[T : AddMonoid + Mul] Matrix::unchecked_matmul(
 }
 
 ///|
-fn should_use_packed_rhs_matmul(row : Int, col : Int, inner : Int) -> Bool {
+fn should_use_packed_rhs_matmul(
+  row : Int32,
+  col : Int32,
+  inner : Int32,
+) -> Bool {
   row >= 4 && col >= 16 && inner >= 16 && row * col * inner >= 4096
 }
 
 ///|
 fn[T] pack_rhs_columns(
-  inner : Int,
-  col : Int,
+  inner : Int32,
+  col : Int32,
   other_data : Array[T],
 ) -> Array[T] {
   let packed = Array::make(inner * col, other_data[0])
@@ -807,9 +820,9 @@ fn[T] pack_rhs_columns(
 
 ///|
 fn[T : AddMonoid + Mul] matmul_packed_rhs_into(
-  row : Int,
-  col : Int,
-  inner : Int,
+  row : Int32,
+  col : Int32,
+  inner : Int32,
   self_data : Array[T],
   packed_rhs : Array[T],
   data : Array[T],
@@ -885,9 +898,9 @@ fn[T : AddMonoid + Mul] matmul_packed_rhs_into(
 
 ///|
 fn[T : AddMonoid + Mul] matmul_unrolled_into(
-  row : Int,
-  col : Int,
-  inner : Int,
+  row : Int32,
+  col : Int32,
+  inner : Int32,
   self_data : Array[T],
   other_data : Array[T],
   data : Array[T],
@@ -1071,7 +1084,7 @@ pub fn[T : Add] Matrix::add_constant(self : Matrix[T], cst : T) -> Matrix[T] {
 /// inspect(id, content="|1, 0, 0|\n|0, 1, 0|\n|0, 0, 1|")
 /// ```
 ///
-pub fn[T : Zero + One] identity(size : Int) -> Matrix[T] {
+pub fn[T : Zero + One] identity(size : Int32) -> Matrix[T] {
   Matrix::make(size, size, fn(i, j) {
     guard i == j else { Zero::zero() }
     One::one()
@@ -1159,7 +1172,7 @@ pub fn[T] Matrix::transpose(self : Matrix[T]) -> Matrix[T] {
 /// inspect(m, content="|4, 5, 6|\n|1, 2, 3|")
 /// ```
 ///
-pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Unit {
+pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int32, r2 : Int32) -> Unit {
   ignore(self.matrix_row_offset(r1))
   ignore(self.matrix_row_offset(r2))
   let c = self.col
@@ -1195,7 +1208,7 @@ pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Unit {
 /// inspect(m, content="|3, 2, 1|\n|6, 5, 4|")
 /// ```
 ///
-pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Unit {
+pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int32, c2 : Int32) -> Unit {
   let checked_c1 = self.matrix_checked_col(c1)
   let checked_c2 = self.matrix_checked_col(c2)
   let r = self.row
@@ -1234,7 +1247,7 @@ pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Unit {
 ///
 pub fn[T : Semiring] Matrix::pow(
   self : Matrix[T],
-  power : Int,
+  power : Int32,
 ) -> Result[Matrix[T], LinearAlgebraError] {
   match ensure_square_checked(self) {
     Ok(_) => ()
@@ -1253,7 +1266,7 @@ pub fn[T : Semiring] Matrix::pow(
 ///|
 pub fn[T : Semiring] Matrix::unchecked_pow(
   self : Matrix[T],
-  power : Int,
+  power : Int32,
 ) -> Matrix[T] {
   guard self.is_square() else {
     abort("Matrix must be square to calculate powers")
@@ -1512,7 +1525,7 @@ pub fn[T] Matrix::vertical_combine(
 /// inspect(col1, content="[2, 5]")
 /// ```
 ///
-pub fn[T] Matrix::col_to_array(self : Matrix[T], col : Int) -> Array[T] {
+pub fn[T] Matrix::col_to_array(self : Matrix[T], col : Int32) -> Array[T] {
   let checked_col = self.matrix_checked_col(col)
   let row_count = self.row
   let col_count = self.col
@@ -1550,7 +1563,7 @@ pub fn[T] Matrix::to_array(self : Matrix[T]) -> Array[T] {
 }
 
 ///|
-pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int) -> Array[T] {
+pub fn[T] Matrix::row_to_array(self : Matrix[T], row : Int32) -> Array[T] {
   let row_offset = self.matrix_row_offset(row)
   let col_count = self.col
   if col_count == 0 {
@@ -1616,7 +1629,7 @@ pub fn[T] Matrix::to_2d_array(self : Matrix[T]) -> Array[Array[T]] {
 /// inspect(row_vector, content="|4, 5, 6|")
 /// ```
 ///
-pub fn[T] Matrix::row_to_vector(self : Matrix[T], row : Int) -> Vector[T] {
+pub fn[T] Matrix::row_to_vector(self : Matrix[T], row : Int32) -> Vector[T] {
   self.row_to_array(row)
 }
 
@@ -1640,7 +1653,7 @@ pub fn[T] Matrix::row_to_vector(self : Matrix[T], row : Int) -> Vector[T] {
 /// inspect(col1, content="|2, 5|")
 /// ```
 ///
-pub fn[T] Matrix::col_to_vector(self : Matrix[T], col : Int) -> Vector[T] {
+pub fn[T] Matrix::col_to_vector(self : Matrix[T], col : Int32) -> Vector[T] {
   self.col_to_array(col)
 }
 
@@ -1686,7 +1699,7 @@ pub fn[T] Matrix::to_vector(self : Matrix[T]) -> Vector[T] {
 /// ```
 pub fn[T : Compare + Field + Num + Tolerance] Matrix::rank(
   self : Matrix[T],
-) -> Int {
+) -> Int32 {
   let mut rank = 0
   let reduced = self.copy()
   let row_count = reduced.row
@@ -1834,7 +1847,7 @@ pub fn[T] Matrix::iter(self : Matrix[T]) -> Iter[T] {
 ///   println(elem) // prints: 4, 5, 6
 /// }
 /// ```
-pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
+pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int32) -> Iter[T] {
   let start = self.matrix_row_offset(row)
   let end = start + self.col
   self.data[start:end].iter()
@@ -1859,7 +1872,7 @@ pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
 ///   println(elem) // prints: 2, 5
 /// }
 /// ```
-pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
+pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int32) -> Iter[T] {
   ignore(self.matrix_checked_col(col))
   self.transpose().iter_row(col)
 }
@@ -2216,7 +2229,7 @@ fn[T : Compare + Field + Num + Sqrt + Tolerance] qr_decomposition(
 /// Panics if the matrix is not square or empty.
 pub fn[T : Compare + Field + Num + Tolerance] Matrix::power_method(
   self : Matrix[T],
-  max_iterations : Int,
+  max_iterations : Int32,
 ) -> (T, Vector[T])? {
   guard self.is_square() else {
     abort("Matrix must be square for power method")
@@ -3037,7 +3050,7 @@ pub fn[T : Compare + Field + Num + Sqrt + Tolerance] Matrix::is_positive_definit
 ///
 pub fn[T : Semiring] Matrix::matrix_power(
   self : Matrix[T],
-  n : Int,
+  n : Int32,
 ) -> Result[Matrix[T], LinearAlgebraError] {
   self.pow(n)
 }
@@ -3045,7 +3058,7 @@ pub fn[T : Semiring] Matrix::matrix_power(
 ///|
 pub fn[T : Semiring] Matrix::unchecked_matrix_power(
   self : Matrix[T],
-  n : Int,
+  n : Int32,
 ) -> Matrix[T] {
   self.unchecked_pow(n)
 }

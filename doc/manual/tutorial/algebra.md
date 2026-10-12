@@ -140,10 +140,10 @@ declare the levels:
 ```moonbit check
 ///|
 struct AlgTutMat2 {
-  a : Int
-  b : Int
-  c : Int
-  d : Int
+  a : Int32
+  b : Int32
+  c : Int32
+  d : Int32
 }
 
 ///|

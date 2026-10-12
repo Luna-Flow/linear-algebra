@@ -379,12 +379,12 @@ One source, three targets, and a checked edit through a view:
 test "adapters connect every representation" {
   let m = @mutable.Matrix::from_2d_array([[1, 2], [3, 4]])
   let read = @container_adapters.mutable_matrix_read_ops()
-  let dense : @default.DenseMatrix[Int] = @container.matrix_convert(
+  let dense : @default.DenseMatrix[Int32] = @container.matrix_convert(
     m,
     read,
     @container_adapters.dense_matrix_build_ops(),
   ).unwrap()
-  let frozen : @default.ImmutableDenseMatrix[Int] = @container.matrix_convert(
+  let frozen : @default.ImmutableDenseMatrix[Int32] = @container.matrix_convert(
     m,
     read,
     @container_adapters.immutable_dense_matrix_build_ops(),

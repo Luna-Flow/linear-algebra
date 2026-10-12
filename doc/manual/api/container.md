@@ -226,7 +226,7 @@ A dictionary for a plain `Array[Int]`, used through its fields:
 
 ```moonbit check
 ///|
-fn cont_api_array_read() -> @container.VectorReadOps[Array[Int], Int] {
+fn cont_api_array_read() -> @container.VectorReadOps[Array[Int32], Int32] {
   @container.VectorReadOps::new(xs => xs.length(), (xs, i) => {
     guard i >= 0 && i < xs.length() else {
       return Err(
@@ -321,7 +321,7 @@ The three matrix algorithms with the repository adapters:
 test "map, convert and transpose across representations" {
   let source = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
   let read = @container_adapters.mutable_matrix_read_ops()
-  let doubled : @immut.Matrix[Int] = @container.matrix_map(
+  let doubled : @immut.Matrix[Int32] = @container.matrix_map(
     source,
     read,
     @container_adapters.immutable_matrix_build_ops(),
@@ -335,13 +335,13 @@ test "map, convert and transpose across representations" {
     x => "<\{x}>",
   ).unwrap()
   inspect(as_text[1][2], content="<6>")
-  let t : @immut.Matrix[Int] = @container.matrix_transpose(
+  let t : @immut.Matrix[Int32] = @container.matrix_transpose(
     source,
     read,
     @container_adapters.immutable_matrix_build_ops(),
   ).unwrap()
   inspect(t, content="|1, 4|\n|2, 5|\n|3, 6|")
-  let copy : @mutable.Matrix[Int] = @container.matrix_convert(
+  let copy : @mutable.Matrix[Int32] = @container.matrix_convert(
     t,
     @container_adapters.immutable_matrix_read_ops(),
     @container_adapters.mutable_matrix_build_ops(),
@@ -356,14 +356,14 @@ The vector algorithms work the same way:
 ///|
 test "vector map and convert" {
   let v = @immut.Vector::from_array([1, 2, 3])
-  let squares : @mutable.Vector[Int] = @container.vector_map(
+  let squares : @mutable.Vector[Int32] = @container.vector_map(
     v,
     @container_adapters.immutable_vector_read_ops(),
     @container_adapters.mutable_vector_build_ops(),
     x => x * x,
   ).unwrap()
   inspect(squares, content="|1, 4, 9|")
-  let back : @immut.Vector[Int] = @container.vector_convert(
+  let back : @immut.Vector[Int32] = @container.vector_convert(
     squares,
     @container_adapters.mutable_vector_read_ops(),
     @container_adapters.immutable_vector_build_ops(),

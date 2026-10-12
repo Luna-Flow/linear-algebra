@@ -4,8 +4,8 @@
 /// `row` and `col` store the shape. `data` stores elements in row-major order
 /// using the package's immutable vector backing type.
 struct Matrix[T] {
-  row : Int
-  col : Int
+  row : Int32
+  col : Int32
   data : VecLib[T]
 } derive(Eq)
 
@@ -38,15 +38,15 @@ pub impl[T] HasShape for Matrix[T] with fn shape(self) {
 /// ```
 ///
 struct Indexed[T] {
-  index : (Int) -> T
+  index : (Int32) -> T
 }
 
 ///|
 fn[T] Matrix::matrix_index_offset(
   self : Matrix[T],
-  row : Int,
-  col : Int,
-) -> Int {
+  row : Int32,
+  col : Int32,
+) -> Int32 {
   @internal.ensure_index_in_bounds(self, row, col)
   row * self.col + col
 }
@@ -67,7 +67,7 @@ fn[T] Matrix::matrix_index_offset(
 /// inspect(m.row(), content="2")
 /// ```
 ///
-pub fn[T] Matrix::row(self : Matrix[T]) -> Int {
+pub fn[T] Matrix::row(self : Matrix[T]) -> Int32 {
   self.row
 }
 
@@ -87,7 +87,7 @@ pub fn[T] Matrix::row(self : Matrix[T]) -> Int {
 /// inspect(m.col(), content="3")
 /// ```
 ///
-pub fn[T] Matrix::col(self : Matrix[T]) -> Int {
+pub fn[T] Matrix::col(self : Matrix[T]) -> Int32 {
   self.col
 }
 
@@ -193,7 +193,7 @@ pub fn[T, U] Matrix::map(self : Matrix[T], f : (T) -> U) -> Matrix[U] {
 /// ```
 pub fn[T, U] Matrix::mapi(
   self : Matrix[T],
-  f : (Int, Int, T) -> U,
+  f : (Int32, Int32, T) -> U,
 ) -> Matrix[U] {
   let row = self.row
   let col = self.col
@@ -217,7 +217,11 @@ pub fn[T, U] Matrix::mapi(
 /// )
 /// ```
 /// 
-pub fn[T] Matrix::make(row : Int, col : Int, f : (Int, Int) -> T) -> Matrix[T] {
+pub fn[T] Matrix::make(
+  row : Int32,
+  col : Int32,
+  f : (Int32, Int32) -> T,
+) -> Matrix[T] {
   guard row >= 0 && col >= 0 else {
     abort("Matrix dimensions must be non-negative")
   }
@@ -241,7 +245,7 @@ pub fn[T] Matrix::make(row : Int, col : Int, f : (Int, Int) -> T) -> Matrix[T] {
 /// )
 /// ```
 /// 
-pub fn[T] Matrix::new(row : Int, col : Int, elem : T) -> Matrix[T] {
+pub fn[T] Matrix::new(row : Int32, col : Int32, elem : T) -> Matrix[T] {
   Matrix::make(row, col, (_, _) => elem)
 }
 
@@ -299,8 +303,8 @@ pub fn[T] Matrix::from_2d_array(arr : Array[Array[T]]) -> Matrix[T] {
 /// ```
 ///
 pub fn[T] Matrix::from_array(
-  row : Int,
-  col : Int,
+  row : Int32,
+  col : Int32,
   arr : VecLib[T],
 ) -> Matrix[T] {
   guard row >= 0 && col >= 0 else {
@@ -320,7 +324,7 @@ pub fn[T] Matrix::from_array(
 /// - `self`: The matrix to get the indexed type from.
 /// - `row`: The row index to get the data from.
 #alias("_[_]")
-pub fn[T] Matrix::at(self : Matrix[T], row : Int) -> Indexed[T] {
+pub fn[T] Matrix::at(self : Matrix[T], row : Int32) -> Indexed[T] {
   @internal.ensure_row_in_bounds(self, row)
   { index: c => self.data[self.matrix_index_offset(row, c)], }
 }
@@ -340,7 +344,7 @@ pub fn[T] Matrix::at(self : Matrix[T], row : Int) -> Indexed[T] {
 /// ```
 /// 
 #alias("_[_]")
-pub fn[T] Indexed::at(self : Indexed[T], col : Int) -> T {
+pub fn[T] Indexed::at(self : Indexed[T], col : Int32) -> T {
   (self.index)(col)
 }
 
@@ -373,8 +377,8 @@ pub fn[T] Indexed::at(self : Indexed[T], col : Int) -> T {
 /// ```
 pub fn[T] Matrix::set(
   self : Matrix[T],
-  i : Int,
-  j : Int,
+  i : Int32,
+  j : Int32,
   elem : T,
 ) -> Matrix[T] {
   {
@@ -583,7 +587,7 @@ pub fn[T : Add] Matrix::add_constant(self : Matrix[T], cst : T) -> Matrix[T] {
 ///   #||0, 0, 1|
 /// )
 /// ```
-pub fn[T : One + Zero] Matrix::identity(size : Int) -> Matrix[T] {
+pub fn[T : One + Zero] Matrix::identity(size : Int32) -> Matrix[T] {
   Matrix::make(size, size, fn(i, j) {
     guard i == j else { Zero::zero() }
     One::one()
@@ -730,7 +734,7 @@ pub fn[T] Matrix::iter(self : Matrix[T]) -> Iter[T] {
 ///   println(elem) // prints: 4, 5, 6
 /// }
 /// ```
-pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
+pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int32) -> Iter[T] {
   guard row >= 0 && row < self.row else { abort("Row index out of bounds") }
   let start = row * self.col
   let end = start + self.col
@@ -765,7 +769,7 @@ pub fn[T] Matrix::iter_row(self : Matrix[T], row : Int) -> Iter[T] {
 ///   println(elem) // prints: 2, 5
 /// }
 /// ```
-pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int) -> Iter[T] {
+pub fn[T] Matrix::iter_col(self : Matrix[T], col : Int32) -> Iter[T] {
   guard col >= 0 && col < self.col else { abort("Column index out of bounds") }
   let mut i = 0
   Iter::new(() => {
@@ -839,9 +843,9 @@ pub fn[T] Matrix::to_2d_array(self : Matrix[T]) -> Array[Array[T]] {
 ///|
 fn[T] swap_dense_rows(
   data : Array[T],
-  row_size : Int,
-  r1 : Int,
-  r2 : Int,
+  row_size : Int32,
+  r1 : Int32,
+  r2 : Int32,
 ) -> Unit {
   if r1 == r2 {
     return
@@ -972,7 +976,7 @@ pub fn[T : DeterminantScalar] Matrix::unchecked_determinant(
 /// ```
 pub fn[T : Semiring] Matrix::pow(
   self : Matrix[T],
-  power : Int,
+  power : Int32,
 ) -> Result[Matrix[T], LinearAlgebraError] {
   match ensure_square_checked(self) {
     Ok(_) => ()
@@ -991,7 +995,7 @@ pub fn[T : Semiring] Matrix::pow(
 ///|
 pub fn[T : Semiring] Matrix::unchecked_pow(
   self : Matrix[T],
-  power : Int,
+  power : Int32,
 ) -> Matrix[T] {
   ensure_square(self)
   guard power >= 0 else {
@@ -1102,7 +1106,11 @@ pub fn[T] Matrix::vertical_combine(
 ///   #||1, 2|
 /// )
 /// ```
-pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
+pub fn[T] Matrix::swap_rows(
+  self : Matrix[T],
+  r1 : Int32,
+  r2 : Int32,
+) -> Matrix[T] {
   guard r1 < self.row && r2 < self.row else {
     abort("Matrix::swap_rows: index out of bounds")
   }
@@ -1142,7 +1150,11 @@ pub fn[T] Matrix::swap_rows(self : Matrix[T], r1 : Int, r2 : Int) -> Matrix[T] {
 ///   #||4, 3|
 /// )
 /// ```
-pub fn[T] Matrix::swap_cols(self : Matrix[T], c1 : Int, c2 : Int) -> Matrix[T] {
+pub fn[T] Matrix::swap_cols(
+  self : Matrix[T],
+  c1 : Int32,
+  c2 : Int32,
+) -> Matrix[T] {
   guard c1 < self.col && c2 < self.col else {
     abort("Matrix::swap_cols: index out of bounds")
   }

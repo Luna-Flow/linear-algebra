@@ -1,5 +1,5 @@
 ///|
-struct ExactScalar(Int) derive(Eq, Compare)
+struct ExactScalar(Int32) derive(Eq, Compare)
 
 ///|
 pub extend ExactScalar with Eq::{equal, not_equal}

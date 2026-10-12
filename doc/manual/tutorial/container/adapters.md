@@ -51,7 +51,7 @@ A row view is a vector source, so any vector target can receive it:
 ///|
 test "copy a row view into an immutable vector" {
   let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-  let row : @immut.Vector[Int] = @container.vector_convert(
+  let row : @immut.Vector[Int32] = @container.vector_convert(
     m.row_view(1),
     @container_adapters.mutable_row_view_read_ops(),
     @container_adapters.immutable_vector_build_ops(),
@@ -70,7 +70,7 @@ The transpose view of `@mutable.Matrix` is a matrix source, so
 ///|
 test "materialize a transpose view" {
   let m = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-  let t : @immut.Matrix[Int] = @container.matrix_convert(
+  let t : @immut.Matrix[Int32] = @container.matrix_convert(
     m.to_transpose(),
     @container_adapters.mutable_transpose_read_ops(),
     @container_adapters.immutable_matrix_build_ops(),

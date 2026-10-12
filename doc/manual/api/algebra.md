@@ -106,13 +106,13 @@ reads them back in generic form.
 ```moonbit check
 ///|
 struct AlgApiToyMatrix {
-  rows : Int
-  cols : Int
+  rows : Int32
+  cols : Int32
 }
 
 ///|
 struct AlgApiToyVector {
-  size : Int
+  size : Int32
 }
 
 ///|
@@ -182,7 +182,7 @@ type.
 ```moonbit check
 ///|
 struct AlgApiMulVec {
-  value : Int
+  value : Int32
 }
 
 ///|
@@ -310,7 +310,7 @@ all operations are total, and uses a generic Gram-matrix helper.
 ```moonbit check
 ///|
 struct AlgApiScalarMatrix {
-  value : Int
+  value : Int32
 }
 
 ///|

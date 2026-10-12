@@ -85,9 +85,9 @@ Compute $\operatorname{tr}(A^{k})$ only when both steps succeed. An early
 ```moonbit check
 ///|
 fn err_tut_trace_of_power(
-  a : @immut.Matrix[Int],
-  k : Int,
-) -> Result[Int, @la_error.LinearAlgebraError] {
+  a : @immut.Matrix[Int32],
+  k : Int32,
+) -> Result[Int32, @la_error.LinearAlgebraError] {
   let p = match a.pow(k) {
     Ok(p) => p
     Err(e) => return Err(e)
@@ -116,9 +116,9 @@ Use the constructors to return errors of the shared kinds:
 ```moonbit check
 ///|
 fn err_tut_column_sum(
-  m : @mutable.Matrix[Int],
-  col : Int,
-) -> Result[Int, @la_error.LinearAlgebraError] {
+  m : @mutable.Matrix[Int32],
+  col : Int32,
+) -> Result[Int32, @la_error.LinearAlgebraError] {
   guard col >= 0 && col < m.col() else {
     return Err(
       @la_error.LinearAlgebraError::index_out_of_bounds(

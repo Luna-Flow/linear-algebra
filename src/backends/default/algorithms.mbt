@@ -1,6 +1,6 @@
 ///|
 /// Returns the shape of any shaped object.
-pub fn[M : @algebra.MatrixShape] shape_of(matrix : M) -> (Int, Int) {
+pub fn[M : @algebra.MatrixShape] shape_of(matrix : M) -> (Int32, Int32) {
   @algebra.MatrixShape::shape(matrix)
 }
 

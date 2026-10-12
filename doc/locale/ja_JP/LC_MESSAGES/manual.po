@@ -7130,8 +7130,8 @@ msgid "Add a law as a property"
 msgstr "法則をプロパティとして追加する"
 
 #: manual/tutorial/consistency.md:46
-msgid "Use `quick_check_fn` with tuples of small integers, and return a `Bool` that compares both sides of the law in both packages. Integers keep the comparison exact."
-msgstr "小さな整数のタプルを使って `quick_check_fn` を使い、両パッケージで法則の両辺を比較する `Bool` を返します。整数を使えば比較は厳密に保たれます。"
+msgid "Use `check` with tuples of small integers, and return a `Bool` that compares both sides of the law in both packages. Integers keep the comparison exact."
+msgstr "小さな整数のタプルを使って `check` を使い、両パッケージで法則の両辺を比較する `Bool` を返します。整数を使えば比較は厳密に保たれます。"
 
 #: manual/tutorial/consistency.md:50
 msgid "The same idea works in your own code. This check, compiled with the manual, compares the two packages on a product:"
