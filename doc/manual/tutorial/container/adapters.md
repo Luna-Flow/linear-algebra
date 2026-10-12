@@ -16,7 +16,7 @@ type of your own, read the [container tutorial](../container.md) instead.
 ## Quick start
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.5.0
+moon add Luna-Flow/linear-algebra@0.5.1
 ```
 
 ```moonbit nocheck

@@ -3314,8 +3314,8 @@ msgid "Repository conventions"
 msgstr "仓库约定"
 
 #: manual/conventions.md:3
-msgid "These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.5.0`**."
-msgstr "这些规则是 Luna-Flow 文档标准在 linear-algebra 中的补充。手册描述当前分支中的真实实现；当前文档基线为 **`0.5.0`**。"
+msgid "These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.5.1`**."
+msgstr "这些规则是 Luna-Flow 文档标准在 linear-algebra 中的补充。手册描述当前分支中的真实实现；当前文档基线为 **`0.5.1`**。"
 
 #: manual/conventions.md:5
 msgid "Pages and chapters"
@@ -5730,16 +5730,16 @@ msgid "linear-algebra"
 msgstr "linear-algebra"
 
 #: manual/index.md:3
-msgid "This manual documents release `0.5.0` of `Luna-Flow/linear-algebra`."
-msgstr "本手册记录 `Luna-Flow/linear-algebra` 的 `0.5.0` 版本。"
+msgid "This manual documents release `0.5.1` of `Luna-Flow/linear-algebra`."
+msgstr "本手册记录 `Luna-Flow/linear-algebra` 的 `0.5.1` 版本。"
 
 #: manual/index.md:7
 msgid "`Luna-Flow/linear-algebra` is the linear-algebra layer of Luna Flow. It provides dense matrices and vectors in two execution models, value-oriented (`immut`) and in-place (`mutable`), numerical routines for floating-point matrices, exact algorithms for integer matrices, and small capability layers (`algebra`, `container`) that let generic algorithms run on any matrix or vector type that implements them."
 msgstr "`Luna-Flow/linear-algebra` 是 Luna Flow 的线性代数层。它以两种执行模型——面向值的（`immut`）和原地的（`mutable`）——提供稠密矩阵和向量，为浮点矩阵提供数值例程，为整数矩阵提供精确算法，并提供小型能力层（`algebra`、`container`），让泛型算法可以运行在任何实现了它们的矩阵或向量类型上。"
 
 #: manual/index.md:14
-msgid "Release `0.5.0` centers on three changes:"
-msgstr "`0.5.0` 版本围绕三项变化："
+msgid "Release `0.5.1` centers on three changes:"
+msgstr "`0.5.1` 版本围绕三项变化："
 
 #: manual/index.md:16
 msgid "The module builds with the MoonBit 0.10 toolchain and its `moon.mod` / `moon.pkg` manifests."
@@ -5762,8 +5762,8 @@ msgid "Then import the packages you use in your `moon.pkg`:"
 msgstr "然后在 `moon.pkg` 中导入你使用的包："
 
 #: manual/index.md:42
-msgid "Generic code over scalar types also needs the upstream packages `Luna-Flow/luna-generic` (`0.4.0`) and `Luna-Flow/arithmetic` (`0.5.0`). The module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds without warnings with `moon check --target all`. All packages support the `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file per target, and the benchmark packages run on `native`."
-msgstr "针对标量类型的泛型代码还需要上游包 `Luna-Flow/luna-generic`（`0.4.0`）和 `Luna-Flow/arithmetic`（`0.5.0`）。本模块需要 MoonBit 0.10 或更新的工具链（`moonc` ≥ 0.10），并且在 `moon check --target all` 下构建无警告。所有包都支持 `wasm-gc`、`js`、`wasm` 和 `native` 目标；`mutable` 为每个目标提供了一个调优的内核文件，基准测试包在 `native` 上运行。"
+msgid "Generic code over scalar types also needs the upstream packages `Luna-Flow/luna-generic` (`0.4.0`) and `Luna-Flow/arithmetic` (`0.5.1`). The module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds without warnings with `moon check --target all`. All packages support the `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file per target, and the benchmark packages run on `native`."
+msgstr "针对标量类型的泛型代码还需要上游包 `Luna-Flow/luna-generic`（`0.4.0`）和 `Luna-Flow/arithmetic`（`0.5.1`）。本模块需要 MoonBit 0.10 或更新的工具链（`moonc` ≥ 0.10），并且在 `moon check --target all` 下构建无警告。所有包都支持 `wasm-gc`、`js`、`wasm` 和 `native` 目标；`mutable` 为每个目标提供了一个调优的内核文件，基准测试包在 `native` 上运行。"
 
 #: manual/index.md:49
 msgid "Pages"
@@ -6130,8 +6130,8 @@ msgid "Contributing: read the [architecture guide](architecture.md), the [conven
 msgstr "参与贡献：阅读[架构指南](architecture.md)、[约定](conventions.md)、所修改包的设计页面，以及 [internal](tutorial/internal.md) 和 [consistency](tutorial/consistency.md) 教程。基准测试见 [perf](tutorial/perf.md) 相关页面。"
 
 #: manual/index.md:160
-msgid "Status in 0.5.0"
-msgstr "0.5.0 中的状态"
+msgid "Status in 0.5.1"
+msgstr "0.5.1 中的状态"
 
 #: manual/index.md:162
 msgid "`algebra`, the trait layer of `backends/default`, and `container` are experimental; their signatures may change."

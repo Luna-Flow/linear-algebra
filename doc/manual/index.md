@@ -1,6 +1,6 @@
 # linear-algebra
 
-This manual documents release `0.5.0` of `Luna-Flow/linear-algebra`.
+This manual documents release `0.5.1` of `Luna-Flow/linear-algebra`.
 
 ## Overview
 
@@ -11,7 +11,7 @@ matrices, exact algorithms for integer matrices, and small capability layers
 (`algebra`, `container`) that let generic algorithms run on any matrix or
 vector type that implements them.
 
-Release `0.5.0` centers on three changes:
+Release `0.5.1` centers on three changes:
 
 - The module builds with the MoonBit 0.10 toolchain and its `moon.mod` /
   `moon.pkg` manifests.
@@ -25,7 +25,7 @@ Release `0.5.0` centers on three changes:
 ## Install
 
 ```bash
-moon add Luna-Flow/linear-algebra@0.5.0
+moon add Luna-Flow/linear-algebra@0.5.1
 ```
 
 Then import the packages you use in your `moon.pkg`:
@@ -40,7 +40,7 @@ import {
 ```
 
 Generic code over scalar types also needs the upstream packages
-`Luna-Flow/luna-generic` (`0.4.0`) and `Luna-Flow/arithmetic` (`0.5.0`). The
+`Luna-Flow/luna-generic` (`0.4.0`) and `Luna-Flow/arithmetic` (`0.5.1`). The
 module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds
 without warnings with `moon check --target all`. All packages support the
 `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file
@@ -157,7 +157,7 @@ precisely.
   [consistency](tutorial/consistency.md) tutorials. Benchmarks are covered by
   the [perf](tutorial/perf.md) pages.
 
-## Status in 0.5.0
+## Status in 0.5.1
 
 - `algebra`, the trait layer of `backends/default`, and `container` are
   experimental; their signatures may change.

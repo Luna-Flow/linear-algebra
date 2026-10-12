@@ -17,7 +17,7 @@ data. The reasoning behind the package is in the [immut design](../design/immut.
 ## Quick start
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.5.0
+moon add Luna-Flow/linear-algebra@0.5.1
 ```
 
 ```moonbit nocheck

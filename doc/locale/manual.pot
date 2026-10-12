@@ -3308,7 +3308,7 @@ msgid "Repository conventions"
 msgstr ""
 
 #: manual/conventions.md:3
-msgid "These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.5.0`**."
+msgid "These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.5.1`**."
 msgstr ""
 
 #: manual/conventions.md:5
@@ -5696,7 +5696,7 @@ msgid "linear-algebra"
 msgstr ""
 
 #: manual/index.md:3
-msgid "This manual documents release `0.5.0` of `Luna-Flow/linear-algebra`."
+msgid "This manual documents release `0.5.1` of `Luna-Flow/linear-algebra`."
 msgstr ""
 
 #: manual/index.md:7
@@ -5704,7 +5704,7 @@ msgid "`Luna-Flow/linear-algebra` is the linear-algebra layer of Luna Flow. It p
 msgstr ""
 
 #: manual/index.md:14
-msgid "Release `0.5.0` centers on three changes:"
+msgid "Release `0.5.1` centers on three changes:"
 msgstr ""
 
 #: manual/index.md:16
@@ -5728,7 +5728,7 @@ msgid "Then import the packages you use in your `moon.pkg`:"
 msgstr ""
 
 #: manual/index.md:42
-msgid "Generic code over scalar types also needs the upstream packages `Luna-Flow/luna-generic` (`0.4.0`) and `Luna-Flow/arithmetic` (`0.5.0`). The module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds without warnings with `moon check --target all`. All packages support the `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file per target, and the benchmark packages run on `native`."
+msgid "Generic code over scalar types also needs the upstream packages `Luna-Flow/luna-generic` (`0.4.0`) and `Luna-Flow/arithmetic` (`0.5.1`). The module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds without warnings with `moon check --target all`. All packages support the `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file per target, and the benchmark packages run on `native`."
 msgstr ""
 
 #: manual/index.md:49
@@ -6096,7 +6096,7 @@ msgid "Contributing: read the [architecture guide](architecture.md), the [conven
 msgstr ""
 
 #: manual/index.md:160
-msgid "Status in 0.5.0"
+msgid "Status in 0.5.1"
 msgstr ""
 
 #: manual/index.md:162

@@ -17,7 +17,7 @@ in the [backends/default design](../../design/backends/default.md).
 ## Quick start
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.5.0
+moon add Luna-Flow/linear-algebra@0.5.1
 ```
 
 ```moonbit nocheck

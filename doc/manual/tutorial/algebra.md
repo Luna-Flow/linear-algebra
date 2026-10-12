@@ -20,7 +20,7 @@ to know MoonBit generics; the mathematics is kept light and explained in the
 Add the module and the packages you use:
 
 ```sh
-moon add Luna-Flow/linear-algebra@0.5.0
+moon add Luna-Flow/linear-algebra@0.5.1
 ```
 
 ```moonbit nocheck
