@@ -3314,8 +3314,8 @@ msgid "Repository conventions"
 msgstr "リポジトリの規約"
 
 #: manual/conventions.md:3
-msgid "These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.5.0`**."
-msgstr "これらの規則は、Luna-Flow のドキュメント標準を linear-algebra 向けに補うものです。マニュアルは現在のブランチの実装を記述し、現在の文書基準は **`0.5.0`** です。"
+msgid "These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.5.1`**."
+msgstr "これらの規則は、Luna-Flow のドキュメント標準を linear-algebra 向けに補うものです。マニュアルは現在のブランチの実装を記述し、現在の文書基準は **`0.5.1`** です。"
 
 #: manual/conventions.md:5
 msgid "Pages and chapters"
@@ -5730,16 +5730,16 @@ msgid "linear-algebra"
 msgstr "linear-algebra"
 
 #: manual/index.md:3
-msgid "This manual documents release `0.5.0` of `Luna-Flow/linear-algebra`."
-msgstr "このマニュアルは `Luna-Flow/linear-algebra` のリリース `0.5.0` を説明します。"
+msgid "This manual documents release `0.5.1` of `Luna-Flow/linear-algebra`."
+msgstr "このマニュアルは `Luna-Flow/linear-algebra` のリリース `0.5.1` を説明します。"
 
 #: manual/index.md:7
 msgid "`Luna-Flow/linear-algebra` is the linear-algebra layer of Luna Flow. It provides dense matrices and vectors in two execution models, value-oriented (`immut`) and in-place (`mutable`), numerical routines for floating-point matrices, exact algorithms for integer matrices, and small capability layers (`algebra`, `container`) that let generic algorithms run on any matrix or vector type that implements them."
 msgstr "`Luna-Flow/linear-algebra` は Luna Flow の線形代数層です。値指向（`immut`）とその場更新（`mutable`）の二つの実行モデルで密な行列とベクトルを提供し、浮動小数点行列の数値ルーチン、整数行列の厳密なアルゴリズム、そして汎用アルゴリズムをそれを実装した任意の行列・ベクトル型の上で動かすための小さな能力層（`algebra`、`container`）を提供します。"
 
 #: manual/index.md:14
-msgid "Release `0.5.0` centers on three changes:"
-msgstr "リリース `0.5.0` の中心は次の三つの変更です。"
+msgid "Release `0.5.1` centers on three changes:"
+msgstr "リリース `0.5.1` の中心は次の三つの変更です。"
 
 #: manual/index.md:16
 msgid "The module builds with the MoonBit 0.10 toolchain and its `moon.mod` / `moon.pkg` manifests."
@@ -5762,8 +5762,8 @@ msgid "Then import the packages you use in your `moon.pkg`:"
 msgstr "次に、使うパッケージを `moon.pkg` でインポートします。"
 
 #: manual/index.md:42
-msgid "Generic code over scalar types also needs the upstream packages `Luna-Flow/luna-generic` (`0.4.0`) and `Luna-Flow/arithmetic` (`0.5.0`). The module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds without warnings with `moon check --target all`. All packages support the `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file per target, and the benchmark packages run on `native`."
-msgstr "スカラー型についての汎用コードには、上流のパッケージ `Luna-Flow/luna-generic`（`0.4.0`）と `Luna-Flow/arithmetic`（`0.5.0`）も必要です。このモジュールには MoonBit 0.10 以降のツールチェーン（`moonc` ≥ 0.10）が必要で、`moon check --target all` で警告なしにビルドできます。すべてのパッケージが `wasm-gc`、`js`、`wasm`、`native` の各ターゲットに対応しています。`mutable` はターゲットごとに調整したカーネルファイルを持ち、ベンチマークのパッケージは `native` で動きます。"
+msgid "Generic code over scalar types also needs the upstream packages `Luna-Flow/luna-generic` (`0.4.0`) and `Luna-Flow/arithmetic` (`0.5.1`). The module needs the MoonBit toolchain 0.10 or later (`moonc` ≥ 0.10) and builds without warnings with `moon check --target all`. All packages support the `wasm-gc`, `js`, `wasm` and `native` targets; `mutable` has a tuned kernel file per target, and the benchmark packages run on `native`."
+msgstr "スカラー型についての汎用コードには、上流のパッケージ `Luna-Flow/luna-generic`（`0.4.0`）と `Luna-Flow/arithmetic`（`0.5.1`）も必要です。このモジュールには MoonBit 0.10 以降のツールチェーン（`moonc` ≥ 0.10）が必要で、`moon check --target all` で警告なしにビルドできます。すべてのパッケージが `wasm-gc`、`js`、`wasm`、`native` の各ターゲットに対応しています。`mutable` はターゲットごとに調整したカーネルファイルを持ち、ベンチマークのパッケージは `native` で動きます。"
 
 #: manual/index.md:49
 msgid "Pages"
@@ -6130,8 +6130,8 @@ msgid "Contributing: read the [architecture guide](architecture.md), the [conven
 msgstr "貢献する場合：[アーキテクチャガイド](architecture.md)、[規約](conventions.md)、変更するパッケージの設計ページ、そして [internal](tutorial/internal.md) と [consistency](tutorial/consistency.md) のチュートリアルを読んでください。ベンチマークは [perf](tutorial/perf.md) のページで扱います。"
 
 #: manual/index.md:160
-msgid "Status in 0.5.0"
-msgstr "0.5.0 での状況"
+msgid "Status in 0.5.1"
+msgstr "0.5.1 での状況"
 
 #: manual/index.md:162
 msgid "`algebra`, the trait layer of `backends/default`, and `container` are experimental; their signatures may change."

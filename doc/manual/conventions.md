@@ -1,6 +1,6 @@
 # Repository conventions
 
-These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.5.0`**.
+These rules extend the Luna-Flow documentation standard for linear-algebra. The manual describes the current implementation on the branch; the current documentation baseline is **`0.5.1`**.
 
 ## Pages and chapters
 

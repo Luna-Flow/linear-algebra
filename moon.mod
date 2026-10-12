@@ -1,6 +1,6 @@
 name = "Luna-Flow/linear-algebra"
 
-version = "0.5.0"
+version = "0.5.1"
 
 import {
   "Luna-Flow/arithmetic@0.5.1",
