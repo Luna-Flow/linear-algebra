@@ -202,7 +202,7 @@ pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
 /// inspect(v, content="|42, 42, 42|")
 /// ```
 ///
-pub fn[T] Vector::make(n : Int, elem : T) -> Vector[T] {
+pub fn[T] Vector::make(n : Int32, elem : T) -> Vector[T] {
   Vector::{ data: @core_vector.make(n, elem), }
 }
 
@@ -226,7 +226,7 @@ pub fn[T] Vector::make(n : Int, elem : T) -> Vector[T] {
 /// inspect(v, content="|0, 2, 4, 6, 8|")
 /// ```
 ///
-pub fn[T] Vector::makei(n : Int, f : (Int) -> T) -> Vector[T] {
+pub fn[T] Vector::makei(n : Int32, f : (Int32) -> T) -> Vector[T] {
   Vector::{ data: @core_vector.makei(n, f), }
 }
 
@@ -246,7 +246,7 @@ pub fn[T] Vector::makei(n : Int, f : (Int) -> T) -> Vector[T] {
 /// inspect(v.length(), content="5")
 /// ```
 ///
-pub fn[T] Vector::length(self : Vector[T]) -> Int {
+pub fn[T] Vector::length(self : Vector[T]) -> Int32 {
   self.data.length()
 }
 
@@ -271,7 +271,7 @@ pub fn[T] Vector::length(self : Vector[T]) -> Int {
 /// ```
 ///
 #alias("_[_]")
-pub fn[T] Vector::at(self : Vector[T], i : Int) -> T {
+pub fn[T] Vector::at(self : Vector[T], i : Int32) -> T {
   self.data[i]
 }
 
@@ -296,7 +296,7 @@ pub fn[T] Vector::at(self : Vector[T], i : Int) -> T {
 /// inspect(updated, content="|1, 10, 3|")
 /// ```
 ///
-pub fn[T] Vector::set(self : Vector[T], i : Int, x : T) -> Vector[T] {
+pub fn[T] Vector::set(self : Vector[T], i : Int32, x : T) -> Vector[T] {
   Vector::{ data: self.data.set(i, x), }
 }
 

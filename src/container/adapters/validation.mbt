@@ -1,7 +1,7 @@
 ///|
 fn check_vector_index(
-  length : Int,
-  index : Int,
+  length : Int32,
+  index : Int32,
 ) -> Result[Unit, @la_error.LinearAlgebraError] {
   guard index >= 0 && index < length else {
     return Err(
@@ -15,10 +15,10 @@ fn check_vector_index(
 
 ///|
 fn check_matrix_index(
-  rows : Int,
-  cols : Int,
-  row : Int,
-  col : Int,
+  rows : Int32,
+  cols : Int32,
+  row : Int32,
+  col : Int32,
 ) -> Result[Unit, @la_error.LinearAlgebraError] {
   guard row >= 0 && row < rows else {
     return Err(
@@ -39,7 +39,7 @@ fn check_matrix_index(
 
 ///|
 fn check_vector_length(
-  length : Int,
+  length : Int32,
 ) -> Result[Unit, @la_error.LinearAlgebraError] {
   guard length >= 0 else {
     return Err(
@@ -53,8 +53,8 @@ fn check_vector_length(
 
 ///|
 fn check_matrix_shape(
-  rows : Int,
-  cols : Int,
+  rows : Int32,
+  cols : Int32,
 ) -> Result[Unit, @la_error.LinearAlgebraError] {
   guard rows >= 0 && cols >= 0 else {
     return Err(

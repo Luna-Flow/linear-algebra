@@ -78,8 +78,8 @@ the example exercises a real cross-implementation boundary.
 ```moonbit check
 ///|
 struct EcosystemOwnedMatrix[T] {
-  rows : Int
-  cols : Int
+  rows : Int32
+  cols : Int32
   data : Array[T]
 }
 
@@ -129,12 +129,12 @@ fn[T] ecosystem_owned_matrix_build_ops() -> @container.MatrixBuildOps[
 
 ///|
 test "external container adapters preserve actual matrix semantics" {
-  let source : EcosystemOwnedMatrix[Int] = (ecosystem_owned_matrix_build_ops().tabulate)(
+  let source : EcosystemOwnedMatrix[Int32] = (ecosystem_owned_matrix_build_ops().tabulate)(
     2,
     3,
     (row, col) => row * 10 + col,
   ).unwrap()
-  let target : @immut.Matrix[Int] = @container.matrix_transpose(
+  let target : @immut.Matrix[Int32] = @container.matrix_transpose(
     source,
     ecosystem_owned_matrix_read_ops(),
     @container_adapters.immutable_matrix_build_ops(),
@@ -144,7 +144,7 @@ test "external container adapters preserve actual matrix semantics" {
     Err(error) => inspect(error.is_index_out_of_bounds(), content="true")
     Ok(_) => fail("negative row must fail")
   }
-  let degenerate : EcosystemOwnedMatrix[Int] = (ecosystem_owned_matrix_build_ops().tabulate)(
+  let degenerate : EcosystemOwnedMatrix[Int32] = (ecosystem_owned_matrix_build_ops().tabulate)(
     0,
     3,
     (_, _) => 0,

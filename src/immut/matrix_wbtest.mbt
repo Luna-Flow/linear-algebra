@@ -1,5 +1,5 @@
 ///|
-struct AdjointReal(Int)
+struct AdjointReal(Int32)
 
 ///|
 impl Conjugate for AdjointReal with fn conjugate(self) {
@@ -62,7 +62,7 @@ test {
 
 ///|
 test "from_2d_array/empty" {
-  let m : Matrix[Int] = Matrix::from_2d_array([])
+  let m : Matrix[Int32] = Matrix::from_2d_array([])
   inspect(m.row(), content="0")
   inspect(m.col(), content="0")
   debug_inspect(m.to_array(), content="[]")
@@ -70,7 +70,7 @@ test "from_2d_array/empty" {
 
 ///|
 test "from_2d_array/zero_col" {
-  let m : Matrix[Int] = Matrix::from_2d_array([[], []])
+  let m : Matrix[Int32] = Matrix::from_2d_array([[], []])
   inspect(m.row(), content="2")
   inspect(m.col(), content="0")
   debug_inspect(m.to_array(), content="[]")
@@ -265,7 +265,7 @@ test {
       #||30, 40|
     ),
   )
-  let m5 : Matrix[Int] = Matrix::identity(5)
+  let m5 : Matrix[Int32] = Matrix::identity(5)
   inspect(
     m5,
     content=(
@@ -294,7 +294,7 @@ test {
     [0, 0, 0, -1, 2],
   ])
   inspect(toeplitz.determinant().unwrap(), content="6")
-  let m = Matrix::make(3, 3, fn(i, _) -> Int { i }).pow(10).unwrap()
+  let m = Matrix::make(3, 3, fn(i, _) -> Int32 { i }).pow(10).unwrap()
   inspect(
     m,
     content=(
@@ -380,8 +380,8 @@ test "matrix_transpose" {
 
 ///|
 test "matrix_zero_inner_dimension_multiplication" {
-  let left : Matrix[Int] = Matrix::from_2d_array([[], []])
-  let right : Matrix[Int] = Matrix::from_2d_array([])
+  let left : Matrix[Int32] = Matrix::from_2d_array([[], []])
+  let right : Matrix[Int32] = Matrix::from_2d_array([])
   let product = left * right
   inspect(product.row(), content="2")
   inspect(product.col(), content="0")
@@ -397,7 +397,7 @@ test "panic matrix_from_array/invalid_length" {
 
 ///|
 test "panic matrix_make/negative_row" {
-  let matrix : Matrix[Int] = Matrix::make(-1, 2, fn(i, j) { i + j })
+  let matrix : Matrix[Int32] = Matrix::make(-1, 2, fn(i, j) { i + j })
   ignore(matrix)
 }
 
@@ -444,7 +444,7 @@ test "panic matrix_set/col_out_of_bounds" {
 
 ///|
 test "panic zero_col_matrix_index/out_of_bounds" {
-  let m : Matrix[Int] = Matrix::from_2d_array([[], []])
+  let m : Matrix[Int32] = Matrix::from_2d_array([[], []])
   ignore(m[0][0])
 }
 
@@ -554,18 +554,22 @@ test "matrix_non_square_ops" {
 
 ///|
 fn small_square_matrix(
-  a00 : Int,
-  a01 : Int,
-  a10 : Int,
-  a11 : Int,
-) -> Matrix[Int] {
+  a00 : Int32,
+  a01 : Int32,
+  a10 : Int32,
+  a11 : Int32,
+) -> Matrix[Int32] {
   Matrix::from_2d_array([[a00, a01], [a10, a11]])
 }
 
 ///|
 test "matrix_addition_associativity/property" {
   fn prop(
-    input : ((Int, Int, Int, Int), (Int, Int, Int, Int), (Int, Int, Int, Int)),
+    input : (
+      (Int32, Int32, Int32, Int32),
+      (Int32, Int32, Int32, Int32),
+      (Int32, Int32, Int32, Int32),
+    ),
   ) {
     let ((a00, a01, a10, a11), (b00, b01, b10, b11), (c00, c01, c10, c11)) = input
     let a = small_square_matrix(a00, a01, a10, a11)
@@ -574,13 +578,17 @@ test "matrix_addition_associativity/property" {
     a + b + c == a + (b + c)
   }
 
-  @qc.quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
 test "matrix_multiplication_associativity/property" {
   fn prop(
-    input : ((Int, Int, Int, Int), (Int, Int, Int, Int), (Int, Int, Int, Int)),
+    input : (
+      (Int32, Int32, Int32, Int32),
+      (Int32, Int32, Int32, Int32),
+      (Int32, Int32, Int32, Int32),
+    ),
   ) {
     let ((a00, a01, a10, a11), (b00, b01, b10, b11), (c00, c01, c10, c11)) = input
     let a = small_square_matrix(a00, a01, a10, a11)
@@ -589,13 +597,17 @@ test "matrix_multiplication_associativity/property" {
     a * b * c == a * (b * c)
   }
 
-  @qc.quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
 test "matrix_distributivity/property" {
   fn prop(
-    input : ((Int, Int, Int, Int), (Int, Int, Int, Int), (Int, Int, Int, Int)),
+    input : (
+      (Int32, Int32, Int32, Int32),
+      (Int32, Int32, Int32, Int32),
+      (Int32, Int32, Int32, Int32),
+    ),
   ) {
     let ((a00, a01, a10, a11), (b00, b01, b10, b11), (c00, c01, c10, c11)) = input
     let a = small_square_matrix(a00, a01, a10, a11)
@@ -604,12 +616,14 @@ test "matrix_distributivity/property" {
     a * (b + c) == a * b + a * c && (a + b) * c == a * c + b * c
   }
 
-  @qc.quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
 test "transpose_and_trace_laws/property" {
-  fn prop(input : ((Int, Int, Int, Int), (Int, Int, Int, Int))) {
+  fn prop(
+    input : ((Int32, Int32, Int32, Int32), (Int32, Int32, Int32, Int32)),
+  ) {
     let ((a00, a01, a10, a11), (b00, b01, b10, b11)) = input
     let a = small_square_matrix(a00, a01, a10, a11)
     let b = small_square_matrix(b00, b01, b10, b11)
@@ -618,7 +632,7 @@ test "transpose_and_trace_laws/property" {
     a.transpose().trace().unwrap() == a.trace().unwrap()
   }
 
-  @qc.quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|

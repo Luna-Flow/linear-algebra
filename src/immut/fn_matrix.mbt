@@ -13,8 +13,8 @@
 /// * `grid` : Tuple containing the dimensions (number of rows, number of
 ///   columns).
 struct MatrixFn[T] {
-  data : (Int, Int) -> T
-  grid : (Int, Int)
+  data : (Int32, Int32) -> T
+  grid : (Int32, Int32)
 }
 
 ///|
@@ -42,7 +42,7 @@ pub impl[T] HasShape for MatrixFn[T] with fn shape(self) {
 /// ```
 ///
 #alias("_[_]")
-pub fn[T] MatrixFn::at(self : MatrixFn[T], i : Int) -> Indexed[T] {
+pub fn[T] MatrixFn::at(self : MatrixFn[T], i : Int32) -> Indexed[T] {
   @internal.ensure_row_in_bounds(self, i)
   { index: c => (self.data)(i, c), }
 }
@@ -129,7 +129,7 @@ pub fn[T, U] MatrixFn::fold(
 /// )
 /// ```
 ///
-pub fn[T : Default] MatrixFn::new(row : Int, col : Int) -> MatrixFn[T] {
+pub fn[T : Default] MatrixFn::new(row : Int32, col : Int32) -> MatrixFn[T] {
   MatrixFn::make(row, col, fn(_, _) { T::default() })
 }
 
@@ -228,7 +228,7 @@ pub impl[T : Show] Show for MatrixFn[T] with fn output(self, logger) {
 ///
 pub fn[T] MatrixFn::map_row(
   self : MatrixFn[T],
-  row : Int,
+  row : Int32,
   f : (T) -> T,
 ) -> MatrixFn[T] {
   let (rows, cols) = self.grid
@@ -266,7 +266,7 @@ pub fn[T] MatrixFn::map_row(
 ///
 pub fn[T] MatrixFn::map_col(
   self : MatrixFn[T],
-  col : Int,
+  col : Int32,
   f : (T) -> T,
 ) -> MatrixFn[T] {
   let (rows, cols) = self.grid
@@ -339,9 +339,9 @@ pub fn[T] MatrixFn::transpose(self : MatrixFn[T]) -> MatrixFn[T] {
 /// ```
 ///
 pub fn[T] MatrixFn::make(
-  row : Int,
-  col : Int,
-  f : (Int, Int) -> T,
+  row : Int32,
+  col : Int32,
+  f : (Int32, Int32) -> T,
 ) -> MatrixFn[T] {
   guard row >= 0 && col >= 0 else {
     abort("Matrix dimensions must be non-negative")
@@ -487,7 +487,7 @@ pub fn[T : Mul] MatrixFn::scale(self : MatrixFn[T], cst : T) -> MatrixFn[T] {
 /// )
 /// ```
 ///
-pub fn[T : One + Zero] MatrixFn::identity(size : Int) -> MatrixFn[T] {
+pub fn[T : One + Zero] MatrixFn::identity(size : Int32) -> MatrixFn[T] {
   MatrixFn::make(size, size, fn(i, j) {
     guard i == j else { Zero::zero() }
     One::one()
@@ -507,7 +507,7 @@ pub fn[T : One + Zero] MatrixFn::identity(size : Int) -> MatrixFn[T] {
 /// Returns the matrix raised to the specified power.
 pub fn[T : Semiring] MatrixFn::pow(
   self : MatrixFn[T],
-  power : Int,
+  power : Int32,
 ) -> MatrixFn[T] {
   guard self.grid.0 == self.grid.1 else {
     abort("Matrix must be square to calculate powers")
@@ -564,8 +564,8 @@ pub fn[T : Conjugate] MatrixFn::adjoint(self : MatrixFn[T]) -> MatrixFn[T] {
 ///
 pub fn[T] MatrixFn::swap_cols(
   self : MatrixFn[T],
-  r1 : Int,
-  r2 : Int,
+  r1 : Int32,
+  r2 : Int32,
 ) -> MatrixFn[T] {
   self.transpose().swap_rows(r1, r2).transpose()
 }
@@ -594,8 +594,8 @@ pub fn[T] MatrixFn::swap_cols(
 ///
 pub fn[T] MatrixFn::swap_rows(
   self : MatrixFn[T],
-  r1 : Int,
-  r2 : Int,
+  r1 : Int32,
+  r2 : Int32,
 ) -> MatrixFn[T] {
   let (r, c) = self.grid
   guard r1 < r && r2 < r && r1 >= 0 && r2 >= 0 else {

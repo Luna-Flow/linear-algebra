@@ -1,8 +1,8 @@
 ///|
 priv struct LuDecomposition[T] {
   lu : Matrix[T]
-  permutation : Array[Int]
-  swap_count : Int
+  permutation : Array[Int32]
+  swap_count : Int32
   singular : Bool
 }
 

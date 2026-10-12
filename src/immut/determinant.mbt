@@ -16,7 +16,7 @@ pub(open) trait DeterminantScalar: Compare + Num + Div {
 }
 
 ///|
-pub impl DeterminantScalar for Int with fn determinant_algorithm() {
+pub impl DeterminantScalar for Int32 with fn determinant_algorithm() {
   Bareiss
 }
 
@@ -73,7 +73,7 @@ pub impl DeterminantScalar for Float with fn determinant_product(pivots) {
 /// Zero and nonfinite values bypass normalization and use scalar arithmetic.
 fn[T : Compare + Num + Div] normalized_pivot_product(
   pivots : Array[T],
-) -> (T, Int) {
+) -> (T, Int32) {
   let one = One::one()
   let two = one + one
   let half = one / two

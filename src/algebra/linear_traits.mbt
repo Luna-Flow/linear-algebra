@@ -4,13 +4,13 @@
 /// `shape` deliberately lives below algebraic operations. Dynamic matrices can
 /// expose dimensions without claiming closed addition or multiplication laws.
 pub(open) trait MatrixShape {
-  fn shape(Self) -> (Int, Int)
+  fn shape(Self) -> (Int32, Int32)
 }
 
 ///|
 /// Vector shape capability.
 pub(open) trait VectorShape {
-  fn length(Self) -> Int
+  fn length(Self) -> Int32
 }
 
 ///|

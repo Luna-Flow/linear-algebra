@@ -1,5 +1,5 @@
 ///|
-struct AdjointReal(Int)
+struct AdjointReal(Int32)
 
 ///|
 impl Conjugate for AdjointReal with fn conjugate(self) {
@@ -18,25 +18,25 @@ impl Show for AdjointReal with fn output(self, logger) {
 
 ///|
 fn float_matrix_2x2(
-  a00 : Int,
-  a01 : Int,
-  a10 : Int,
-  a11 : Int,
+  a00 : Int32,
+  a01 : Int32,
+  a10 : Int32,
+  a11 : Int32,
 ) -> Matrix[Double] {
-  let matrix : Matrix[Int] = Matrix::from_2d_array([[a00, a01], [a10, a11]])
+  let matrix : Matrix[Int32] = Matrix::from_2d_array([[a00, a01], [a10, a11]])
   matrix.map(fn(n) { @lf_alg.lift_to(n) })
 }
 
 ///|
 fn float_matrix_3x2(
-  a00 : Int,
-  a01 : Int,
-  a10 : Int,
-  a11 : Int,
-  a20 : Int,
-  a21 : Int,
+  a00 : Int32,
+  a01 : Int32,
+  a10 : Int32,
+  a11 : Int32,
+  a20 : Int32,
+  a21 : Int32,
 ) -> Matrix[Double] {
-  let matrix : Matrix[Int] = Matrix::from_2d_array([
+  let matrix : Matrix[Int32] = Matrix::from_2d_array([
     [a00, a01],
     [a10, a11],
     [a20, a21],
@@ -60,14 +60,14 @@ fn matrices_close(a : Matrix[Double], b : Matrix[Double], tol : Double) -> Bool 
 }
 
 ///|
-fn nonzero_double(n : Int) -> Double {
+fn nonzero_double(n : Int32) -> Double {
   Double::from_int(if n >= 0 { n + 1 } else { n - 1 })
 }
 
 ///|
 /// Keeps generated integers in the small range these absolute-tolerance
 /// properties were written for (quickcheck now samples the full `Int` range).
-fn small_int(n : Int) -> Int {
+fn small_int(n : Int32) -> Int32 {
   n % 100
 }
 
@@ -360,7 +360,7 @@ test "matrix_combine/empty_shapes" {
 
 ///|
 test "from_2d_array/zero_col" {
-  let m : Matrix[Int] = Matrix::from_2d_array([[], []])
+  let m : Matrix[Int32] = Matrix::from_2d_array([[], []])
   inspect(m.row(), content="2")
   inspect(m.col(), content="0")
   debug_inspect(m.to_array(), content="[]")
@@ -441,7 +441,7 @@ test "trace of matrix" {
   inspect(trace2, content="15") // 1 + 5 + 9 = 15
 
   // Test identity matrix
-  let id : Matrix[Int] = identity(3)
+  let id : Matrix[Int32] = identity(3)
   let trace_id = id.trace().unwrap()
   inspect(trace_id, content="3") // 1 + 1 + 1 = 3
 
@@ -1136,7 +1136,7 @@ test "matrix_empty_edge_cases" {
 
 ///|
 test "panic matrix_make/negative_row" {
-  let matrix : Matrix[Int] = Matrix::make(-1, 2, fn(i, j) { i + j })
+  let matrix : Matrix[Int32] = Matrix::make(-1, 2, fn(i, j) { i + j })
   ignore(matrix)
 }
 
@@ -1152,7 +1152,7 @@ test "panic matrix_from_array/negative_dimensions" {
 
 ///|
 test "panic identity/negative_size" {
-  let matrix : Matrix[Int] = identity(-1)
+  let matrix : Matrix[Int32] = identity(-1)
   ignore(matrix)
 }
 
@@ -1430,13 +1430,17 @@ test "reduce_row_elimination/treats_near_zero_pivot_as_zero" {
 
 ///|
 test "matrix_multiplication_associativity/property" {
-  fn as_matrix(input : (Int, Int, Int, Int)) -> Matrix[Int] {
+  fn as_matrix(input : (Int32, Int32, Int32, Int32)) -> Matrix[Int32] {
     let (a00, a01, a10, a11) = input
     Matrix::from_2d_array([[a00, a01], [a10, a11]])
   }
 
   fn prop(
-    input : ((Int, Int, Int, Int), (Int, Int, Int, Int), (Int, Int, Int, Int)),
+    input : (
+      (Int32, Int32, Int32, Int32),
+      (Int32, Int32, Int32, Int32),
+      (Int32, Int32, Int32, Int32),
+    ),
   ) {
     let (a_in, b_in, c_in) = input
     let a = as_matrix(a_in)
@@ -1445,12 +1449,12 @@ test "matrix_multiplication_associativity/property" {
     (a * b * c).to_array() == (a * (b * c)).to_array()
   }
 
-  @qc.quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
 test "qr_decomposition_reconstructs_input/property" {
-  fn prop(input : ((Int, Int), (Int, Int), (Int, Int))) {
+  fn prop(input : ((Int32, Int32), (Int32, Int32), (Int32, Int32))) {
     let ((a00, a01), (a10, a11), (a20, a21)) = input
     let matrix = float_matrix_3x2(a00, a01, a10, a11, a20, a21)
     let (q, r) = qr_decomposition(matrix.copy())
@@ -1459,12 +1463,12 @@ test "qr_decomposition_reconstructs_input/property" {
     matrices_close(q.transpose() * q, identity_2, 1.0e-4)
   }
 
-  @qc.quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
 test "eigenvalues_match_trace_and_determinant_for_diagonal_3x3/property" {
-  fn prop(input : (Int, Int, Int)) {
+  fn prop(input : (Int32, Int32, Int32)) {
     let (d0, d1, d2) = input
     let (d0, d1, d2) = (small_int(d0), small_int(d1), small_int(d2))
     let matrix = Matrix::from_2d_array([
@@ -1479,12 +1483,12 @@ test "eigenvalues_match_trace_and_determinant_for_diagonal_3x3/property" {
     (product - matrix.determinant().unwrap()).abs() < 1.0e-4
   }
 
-  @qc.quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
 test "eigenvalues_match_trace_and_determinant_for_symmetric_2x2/property" {
-  fn prop(input : (Int, Int, Int)) {
+  fn prop(input : (Int32, Int32, Int32)) {
     let (a00, a01, a11) = input
     let (a00, a01, a11) = (small_int(a00), small_int(a01), small_int(a11))
     let matrix = float_matrix_2x2(a00, a01, a01, a11)
@@ -1495,12 +1499,12 @@ test "eigenvalues_match_trace_and_determinant_for_symmetric_2x2/property" {
     1.0e-4
   }
 
-  @qc.quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
 test "cholesky_reconstructs_spd_matrix/property" {
-  fn prop(input : ((Int, Int), (Int, Int))) {
+  fn prop(input : ((Int32, Int32), (Int32, Int32))) {
     let ((b00, b01), (b10, b11)) = input
     let basis = float_matrix_2x2(
       small_int(b00),
@@ -1516,12 +1520,12 @@ test "cholesky_reconstructs_spd_matrix/property" {
     matrices_close(l * l.transpose(), spd, 1.0e-4) && spd.is_positive_definite()
   }
 
-  @qc.quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
 test "upper_triangular_inverse_det_rank_align/property" {
-  fn prop(input : ((Int, Int, Int), (Int, Int, Int))) {
+  fn prop(input : ((Int32, Int32, Int32), (Int32, Int32, Int32))) {
     let ((d0, d1, d2), (u01, u02, u12)) = input
     let (d0, d1, d2) = (small_int(d0), small_int(d1), small_int(d2))
     let (u01, u02, u12) = (small_int(u01), small_int(u02), small_int(u12))
@@ -1539,12 +1543,12 @@ test "upper_triangular_inverse_det_rank_align/property" {
     matrices_close(matrix * inv.unwrap(), identity_3, 1.0e-4)
   }
 
-  @qc.quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
 test "row_swap_flips_determinant_preserves_rank/property" {
-  fn prop(input : (Int, Int, Int, Int)) {
+  fn prop(input : (Int32, Int32, Int32, Int32)) {
     let (a00, a01, a10, a11) = input
     let matrix = float_matrix_2x2(a00, a01, a10, a11)
     let swapped = matrix.copy()
@@ -1554,7 +1558,7 @@ test "row_swap_flips_determinant_preserves_rank/property" {
     swapped.rank() == matrix.rank()
   }
 
-  @qc.quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|

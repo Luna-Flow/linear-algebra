@@ -49,16 +49,17 @@ test "matrix read adapters check corners and degenerate shapes" {
 ///|
 test "build adapters preserve shapes and coordinate ordering" {
   let vector_calls = []
-  let vector : @mutable.Vector[Int] = (mutable_vector_build_ops().tabulate)(4, fn(
-    index,
-  ) {
-    vector_calls.push(index)
-    index * 2
-  }).unwrap()
+  let vector : @mutable.Vector[Int32] = (mutable_vector_build_ops().tabulate)(
+    4,
+    fn(index) {
+      vector_calls.push(index)
+      index * 2
+    },
+  ).unwrap()
   debug_inspect(vector_calls, content="[0, 1, 2, 3]")
   inspect(vector, content="|0, 2, 4, 6|")
   let matrix_calls = []
-  let matrix : @immut.Matrix[Int] = (immutable_matrix_build_ops().tabulate)(
+  let matrix : @immut.Matrix[Int32] = (immutable_matrix_build_ops().tabulate)(
     2,
     3,
     fn(row, col) {
@@ -71,18 +72,18 @@ test "build adapters preserve shapes and coordinate ordering" {
     content="[(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2)]",
   )
   inspect(matrix, content="|0, 1, 2|\n|10, 11, 12|")
-  let empty_vector : @immut.Vector[Int] = (immutable_vector_build_ops().tabulate)(
+  let empty_vector : @immut.Vector[Int32] = (immutable_vector_build_ops().tabulate)(
     0,
     fn(_) { 0 },
   ).unwrap()
   inspect(empty_vector.length(), content="0")
-  let zero_rows : @immut.Matrix[Int] = (immutable_matrix_build_ops().tabulate)(
+  let zero_rows : @immut.Matrix[Int32] = (immutable_matrix_build_ops().tabulate)(
     0,
     3,
     fn(_, _) { 0 },
   ).unwrap()
   debug_inspect((zero_rows.row(), zero_rows.col()), content="(0, 3)")
-  let zero_cols : @mutable.Matrix[Int] = (mutable_matrix_build_ops().tabulate)(
+  let zero_cols : @mutable.Matrix[Int32] = (mutable_matrix_build_ops().tabulate)(
     2,
     0,
     fn(_, _) { 0 },
@@ -167,7 +168,7 @@ test "generic maps cross dense implementations and scalar types" {
   ).unwrap()
   inspect(immutable_target, content="|10, 20, 30|")
   let matrix_source = @immut.Matrix::make(2, 3, fn(row, col) { row * 10 + col })
-  let matrix_target : @mutable.Matrix[Int] = @container.matrix_map(
+  let matrix_target : @mutable.Matrix[Int32] = @container.matrix_map(
     matrix_source,
     immutable_matrix_read_ops(),
     mutable_matrix_build_ops(),
@@ -179,21 +180,21 @@ test "generic maps cross dense implementations and scalar types" {
 ///|
 test "generic transpose supports cross implementation and degenerate shapes" {
   let rectangular = @mutable.Matrix::from_2d_array([[1, 2, 3], [4, 5, 6]])
-  let transposed : @immut.Matrix[Int] = @container.matrix_transpose(
+  let transposed : @immut.Matrix[Int32] = @container.matrix_transpose(
     rectangular,
     mutable_matrix_read_ops(),
     immutable_matrix_build_ops(),
   ).unwrap()
   inspect(transposed, content="|1, 4|\n|2, 5|\n|3, 6|")
   let square = @immut.Matrix::from_2d_array([[1, 2], [3, 4]])
-  let square_output : @mutable.Matrix[Int] = @container.matrix_transpose(
+  let square_output : @mutable.Matrix[Int32] = @container.matrix_transpose(
     square,
     immutable_matrix_read_ops(),
     mutable_matrix_build_ops(),
   ).unwrap()
   inspect(square_output, content="|1, 3|\n|2, 4|")
   let zero_rows = @immut.Matrix::make(0, 3, fn(_, _) { 0 })
-  let zero_rows_output : @mutable.Matrix[Int] = @container.matrix_transpose(
+  let zero_rows_output : @mutable.Matrix[Int32] = @container.matrix_transpose(
     zero_rows,
     immutable_matrix_read_ops(),
     mutable_matrix_build_ops(),
@@ -203,7 +204,7 @@ test "generic transpose supports cross implementation and degenerate shapes" {
     content="(3, 0)",
   )
   let zero_cols = @mutable.Matrix::new(2, 0, 0)
-  let zero_cols_output : @immut.Matrix[Int] = @container.matrix_transpose(
+  let zero_cols_output : @immut.Matrix[Int32] = @container.matrix_transpose(
     zero_cols,
     mutable_matrix_read_ops(),
     immutable_matrix_build_ops(),
@@ -217,7 +218,7 @@ test "generic transpose supports cross implementation and degenerate shapes" {
 ///|
 test "named conversion crosses default wrapper ownership models" {
   let source = @default.DenseMatrix::from_2d_array([[1, 2], [3, 4]])
-  let target : @default.ImmutableDenseMatrix[Int] = @container.matrix_convert(
+  let target : @default.ImmutableDenseMatrix[Int32] = @container.matrix_convert(
     source,
     dense_matrix_read_ops(),
     immutable_dense_matrix_build_ops(),

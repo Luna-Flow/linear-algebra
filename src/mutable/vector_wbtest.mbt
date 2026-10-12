@@ -2,7 +2,7 @@
 using @debug {debug_inspect}
 
 ///|
-using @qc {quick_check_fn, trait Shrink}
+using @qc_core {trait Shrink}
 
 ///|
 impl[T] Shrink for Vector[T] with fn shrink(_) -> Iter[Vector[T]] {
@@ -31,11 +31,11 @@ impl[T] Shrink for Vector[T] with fn shrink(_) -> Iter[Vector[T]] {
 /// ```
 ///
 test "a + a = 2 * a" {
-  fn prop(v : Vector[Int]) {
+  fn prop(v : Vector[Int32]) {
     v + v == v.left_scale(2)
   }
 
-  quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
@@ -64,17 +64,17 @@ test "a + a = 2 * a" {
 /// ```
 ///
 test "a + b = b + a" {
-  fn prop(a : Vector[Int], b) {
+  fn prop(a : Vector[Int32], b) {
     a + b == b + a
   }
 
-  fn check(x : (Vector[Int], Vector[Int])) {
+  fn check(x : (Vector[Int32], Vector[Int32])) {
     let (a, b) = x
     guard a.length() == b.length() else { true }
     prop(a, b)
   }
 
-  quick_check_fn(check)
+  @qc_core.check(check)
 }
 
 ///|
@@ -99,17 +99,17 @@ test "a + b = b + a" {
 /// ```
 ///
 test "a * b * c = a * (b * c)" {
-  fn prop(a : Vector[Int], b, c) {
+  fn prop(a : Vector[Int32], b, c) {
     a * b * c == a * (b * c)
   }
 
-  fn check(x : (Vector[Int], Vector[Int], Vector[Int])) {
+  fn check(x : (Vector[Int32], Vector[Int32], Vector[Int32])) {
     let (a, b, c) = x
     guard a.length() == b.length() && b.length() == c.length() else { true }
     prop(a, b, c)
   }
 
-  quick_check_fn(check)
+  @qc_core.check(check)
 }
 
 ///|
@@ -135,18 +135,18 @@ test "a * b * c = a * (b * c)" {
 /// vectors.
 ///
 test "S_v * p = v * p" {
-  fn prop(v : Vector[Int], p : Vector[Int]) {
+  fn prop(v : Vector[Int32], p : Vector[Int32]) {
     let m = v.scaled_matrix()
     m * p.to_col_matrix() == (v * p).to_col_matrix()
   }
 
-  fn check(x : (Vector[Int], Vector[Int])) {
+  fn check(x : (Vector[Int32], Vector[Int32])) {
     let (v, p) = x
     guard v.length() == p.length() else { true }
     prop(v, p)
   }
 
-  quick_check_fn(check)
+  @qc_core.check(check)
 }
 
 ///|
@@ -310,7 +310,7 @@ test "vector_dot_product" {
   let v2 = Vector::from_array([4, 5, 6])
   // 1*4 + 2*5 + 3*6 = 4 + 10 + 18 = 32
   inspect(v1.dot(v2), content="32")
-  let v_zero_len : Vector[Int] = Vector::make(0, 0)
+  let v_zero_len : Vector[Int32] = Vector::make(0, 0)
   inspect(v_zero_len.dot(v_zero_len), content="0")
 }
 

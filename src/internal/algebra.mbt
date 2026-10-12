@@ -1,6 +1,6 @@
 ///|
 pub(open) trait HasShape {
-  fn shape(Self) -> (Int, Int)
+  fn shape(Self) -> (Int32, Int32)
 }
 
 ///|
@@ -27,7 +27,7 @@ pub fn[M : HasShape] ensure_square(matrix : M) -> Unit {
 ///|
 pub fn[M : HasShape] ensure_row_in_bounds_checked(
   matrix : M,
-  row : Int,
+  row : Int32,
 ) -> Result[Unit, @la_error.LinearAlgebraError] {
   let (rows, _) = HasShape::shape(matrix)
   guard row >= 0 && row < rows else {
@@ -41,7 +41,7 @@ pub fn[M : HasShape] ensure_row_in_bounds_checked(
 }
 
 ///|
-pub fn[M : HasShape] ensure_row_in_bounds(matrix : M, row : Int) -> Unit {
+pub fn[M : HasShape] ensure_row_in_bounds(matrix : M, row : Int32) -> Unit {
   match ensure_row_in_bounds_checked(matrix, row) {
     Ok(_) => ()
     Err(_) => abort("Row index out of bounds")
@@ -51,7 +51,7 @@ pub fn[M : HasShape] ensure_row_in_bounds(matrix : M, row : Int) -> Unit {
 ///|
 pub fn[M : HasShape] ensure_col_in_bounds_checked(
   matrix : M,
-  col : Int,
+  col : Int32,
 ) -> Result[Unit, @la_error.LinearAlgebraError] {
   let (_, cols) = HasShape::shape(matrix)
   guard col >= 0 && col < cols else {
@@ -65,7 +65,7 @@ pub fn[M : HasShape] ensure_col_in_bounds_checked(
 }
 
 ///|
-pub fn[M : HasShape] ensure_col_in_bounds(matrix : M, col : Int) -> Unit {
+pub fn[M : HasShape] ensure_col_in_bounds(matrix : M, col : Int32) -> Unit {
   match ensure_col_in_bounds_checked(matrix, col) {
     Ok(_) => ()
     Err(_) => abort("Column index out of bounds")
@@ -75,8 +75,8 @@ pub fn[M : HasShape] ensure_col_in_bounds(matrix : M, col : Int) -> Unit {
 ///|
 pub fn[M : HasShape] ensure_index_in_bounds_checked(
   matrix : M,
-  row : Int,
-  col : Int,
+  row : Int32,
+  col : Int32,
 ) -> Result[Unit, @la_error.LinearAlgebraError] {
   match ensure_row_in_bounds_checked(matrix, row) {
     Ok(_) => ()
@@ -92,8 +92,8 @@ pub fn[M : HasShape] ensure_index_in_bounds_checked(
 ///|
 pub fn[M : HasShape] ensure_index_in_bounds(
   matrix : M,
-  row : Int,
-  col : Int,
+  row : Int32,
+  col : Int32,
 ) -> Unit {
   ensure_row_in_bounds(matrix, row)
   ensure_col_in_bounds(matrix, col)

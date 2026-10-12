@@ -1,6 +1,6 @@
 ///|
 struct ScalarMatrix {
-  value : Int
+  value : Int32
 }
 
 ///|

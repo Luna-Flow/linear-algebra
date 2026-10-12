@@ -34,7 +34,7 @@ pub(open) trait CheckedSqrt {
 /// Checked comparison capability using a value-level operation name aligned
 /// with the architecture documentation.
 pub(open) trait CheckedCompare {
-  fn checked_compare(Self, Self) -> Result[Int, ArithmeticError]
+  fn checked_compare(Self, Self) -> Result[Int32, ArithmeticError]
 }
 
 ///|
@@ -48,7 +48,7 @@ pub impl ApproxEq for Double with fn approx_eq(a, b) {
 }
 
 ///|
-pub impl ApproxEq for Int with fn approx_eq(a, b) {
+pub impl ApproxEq for Int32 with fn approx_eq(a, b) {
   a == b
 }
 
@@ -63,7 +63,7 @@ pub impl Abs for Double with fn abs(self) {
 }
 
 ///|
-pub impl Abs for Int with fn abs(self) {
+pub impl Abs for Int32 with fn abs(self) {
   @lf_alg.Num::abs(self)
 }
 

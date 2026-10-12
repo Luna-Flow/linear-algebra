@@ -43,7 +43,7 @@ test "anti_trace stays aligned" {
 
 ### Add a law as a property
 
-Use `quick_check_fn` with tuples of small integers, and return a `Bool` that
+Use `check` with tuples of small integers, and return a `Bool` that
 compares both sides of the law in both packages. Integers keep the comparison
 exact.
 

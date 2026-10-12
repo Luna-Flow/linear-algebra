@@ -1,8 +1,8 @@
 ///|
 /// Shared matrix type for all mutable backends.
 struct Matrix[T] {
-  row : Int
-  col : Int
+  row : Int32
+  col : Int32
   data : Array[T]
 } derive(Eq)
 
@@ -26,21 +26,21 @@ pub fn[T : AddMonoid + Mul] Matrix::matmul(
 ///|
 fn[T] Matrix::matrix_index_offset(
   self : Matrix[T],
-  row : Int,
-  col : Int,
-) -> Int {
+  row : Int32,
+  col : Int32,
+) -> Int32 {
   @internal.ensure_index_in_bounds(self, row, col)
   row * self.col + col
 }
 
 ///|
-fn[T] Matrix::matrix_row_offset(self : Matrix[T], row : Int) -> Int {
+fn[T] Matrix::matrix_row_offset(self : Matrix[T], row : Int32) -> Int32 {
   @internal.ensure_row_in_bounds(self, row)
   row * self.col
 }
 
 ///|
-fn[T] Matrix::matrix_checked_col(self : Matrix[T], col : Int) -> Int {
+fn[T] Matrix::matrix_checked_col(self : Matrix[T], col : Int32) -> Int32 {
   @internal.ensure_col_in_bounds(self, col)
   col
 }
@@ -48,6 +48,6 @@ fn[T] Matrix::matrix_checked_col(self : Matrix[T], col : Int) -> Int {
 ///|
 struct Lens[T] {
   data : Matrix[T]
-  fst : Int
+  fst : Int32
   is_transpose : Bool
 }

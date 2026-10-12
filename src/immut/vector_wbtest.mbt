@@ -1,5 +1,5 @@
 ///|
-using @qc {quick_check_fn, trait Shrink}
+using @qc_core {trait Shrink}
 
 ///|
 impl[T] Shrink for Vector[T] with fn shrink(_) -> Iter[Vector[T]] {
@@ -64,15 +64,15 @@ test "to matrix" {
 /// vector's iterator implementation correctly exposes all elements in order,
 /// and that `from_array()` correctly reconstructs the vector structure.
 ///
-/// The test uses property-based testing with `quick_check_fn` to verify this
+/// The test uses property-based testing with `check` to verify this
 /// identity property holds for randomly generated vectors of integers.
 ///
 test "from . to = identity" {
-  fn prop(v : Vector[Int]) {
+  fn prop(v : Vector[Int32]) {
     v == Vector::from_array(v.iter().to_array())
   }
 
-  quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
@@ -101,11 +101,11 @@ test "from . to = identity" {
 /// ```
 ///
 test "a + a = 2 * a" {
-  fn prop(v : Vector[Int]) {
+  fn prop(v : Vector[Int32]) {
     v + v == v.left_scale(2)
   }
 
-  quick_check_fn(prop)
+  @qc_core.check(prop)
 }
 
 ///|
@@ -133,17 +133,17 @@ test "a + a = 2 * a" {
 /// ```
 ///
 test "a + b = b + a" {
-  fn prop(a : Vector[Int], b) {
+  fn prop(a : Vector[Int32], b) {
     a + b == b + a
   }
 
-  fn check(x : (Vector[Int], Vector[Int])) {
+  fn check(x : (Vector[Int32], Vector[Int32])) {
     let (a, b) = x
     guard a.length() == b.length() else { true }
     prop(a, b)
   }
 
-  quick_check_fn(check)
+  @qc_core.check(check)
 }
 
 ///|
@@ -164,17 +164,17 @@ test "a + b = b + a" {
 /// mathematical expectations.
 ///
 test "a * b * c = a * (b * c)" {
-  fn prop(a : Vector[Int], b, c) {
+  fn prop(a : Vector[Int32], b, c) {
     a * b * c == a * (b * c)
   }
 
-  fn check(x : (Vector[Int], Vector[Int], Vector[Int])) {
+  fn check(x : (Vector[Int32], Vector[Int32], Vector[Int32])) {
     let (a, b, c) = x
     guard a.length() == b.length() && b.length() == c.length() else { true }
     prop(a, b, c)
   }
 
-  quick_check_fn(check)
+  @qc_core.check(check)
 }
 
 ///|
@@ -185,7 +185,7 @@ test "a * b * c = a * (b * c)" {
 /// ⊙ p, where S\_v is a scaled (diagonal) matrix constructed from vector v, p
 /// is another vector, and ⊙ represents element-wise multiplication.
 ///
-/// The test uses property-based testing with `quick_check_fn` to verify this
+/// The test uses property-based testing with `check` to verify this
 /// relationship holds across many randomly generated vector pairs of equal
 /// length. This validates the correctness of the `scaled_matrix` implementation
 /// and ensures it behaves as expected when used in matrix-vector
@@ -196,18 +196,18 @@ test "a * b * c = a * (b * c)" {
 /// should produce the same result as element-wise multiplication of v and p.
 ///
 test "S_v * p = v * p" {
-  fn prop(v : Vector[Int], p : Vector[Int]) {
+  fn prop(v : Vector[Int32], p : Vector[Int32]) {
     let m = v.scaled_matrix()
     m * p.to_col_matrix() == (v * p).to_col_matrix()
   }
 
-  fn check(x : (Vector[Int], Vector[Int])) {
+  fn check(x : (Vector[Int32], Vector[Int32])) {
     let (a, b) = x
     guard a.length() == b.length() else { true }
     prop(a, b)
   }
 
-  quick_check_fn(check)
+  @qc_core.check(check)
 }
 
 ///|

@@ -71,22 +71,22 @@ fn find_case_path_arg(args : Array[String]) -> String? {
 }
 
 ///|
-fn find_repeat_arg(args : Array[String]) -> Int {
+fn find_repeat_arg(args : Array[String]) -> Int32 {
   find_flag_arg(args, "--repeat").unwrap_or(1)
 }
 
 ///|
-fn find_samples_arg(args : Array[String]) -> Int {
+fn find_samples_arg(args : Array[String]) -> Int32 {
   find_flag_arg(args, "--samples").unwrap_or(0)
 }
 
 ///|
-fn find_warmup_arg(args : Array[String]) -> Int {
+fn find_warmup_arg(args : Array[String]) -> Int32 {
   find_flag_arg(args, "--warmup").unwrap_or(0)
 }
 
 ///|
-fn find_flag_arg(args : Array[String], flag : String) -> Int? {
+fn find_flag_arg(args : Array[String], flag : String) -> Int32? {
   for i = 0; i + 1 < args.length(); i = i + 1 {
     if args[i] == flag {
       return Some(parse_int_arg(flag, args[i + 1]))
@@ -96,7 +96,7 @@ fn find_flag_arg(args : Array[String], flag : String) -> Int? {
 }
 
 ///|
-fn parse_int_arg(flag : String, value : String) -> Int {
+fn parse_int_arg(flag : String, value : String) -> Int32 {
   try @string.parse_int(value) catch {
     _ => abort("invalid value for " + flag + ": " + value)
   } noraise {
@@ -107,7 +107,7 @@ fn parse_int_arg(flag : String, value : String) -> Int {
 ///|
 fn run_repeat(
   case_item : @support.PreparedCase,
-  repeat : Int,
+  repeat : Int32,
   scratch : Bool,
 ) -> UInt64 {
   let scratch_cases = prepare_repeat_cases(case_item, repeat, scratch)
@@ -117,8 +117,8 @@ fn run_repeat(
 ///|
 fn run_warmup(
   case_item : @support.PreparedCase,
-  repeat : Int,
-  warmup_count : Int,
+  repeat : Int32,
+  warmup_count : Int32,
   scratch : Bool,
 ) -> Unit {
   for _ in 0..<warmup_count {
@@ -129,10 +129,10 @@ fn run_warmup(
 ///|
 fn collect_samples(
   case_item : @support.PreparedCase,
-  repeat : Int,
-  sample_count : Int,
+  repeat : Int32,
+  sample_count : Int32,
   scratch : Bool,
-) -> Array[Int] {
+) -> Array[Int32] {
   let samples = []
   for _ in 0..<sample_count {
     let scratch_cases = prepare_repeat_cases(case_item, repeat, scratch)
@@ -148,7 +148,7 @@ fn collect_samples(
 ///|
 fn prepare_repeat_cases(
   case_item : @support.PreparedCase,
-  repeat : Int,
+  repeat : Int32,
   scratch : Bool,
 ) -> Array[@support.PreparedCase] {
   let out = []
@@ -175,8 +175,8 @@ fn run_prepared_cases(cases : Array[@support.PreparedCase]) -> UInt64 {
 ///|
 fn benchmark_payload(
   case_item : @support.Case,
-  samples : Array[Int],
-  repeat : Int,
+  samples : Array[Int32],
+  repeat : Int32,
 ) -> String {
   "{\"kind\":\"benchmark\",\"dataset_version\":\"" +
   @support.dataset_version +
@@ -214,7 +214,7 @@ fn benchmark_payload(
 }
 
 ///|
-fn int_array_json(values : Array[Int]) -> String {
+fn int_array_json(values : Array[Int32]) -> String {
   let mut out = "["
   for i = 0; i < values.length(); i = i + 1 {
     if i > 0 {

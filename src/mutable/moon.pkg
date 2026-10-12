@@ -9,7 +9,6 @@ import {
 
 import {
   "Luna-Flow/luna-generic" @lf_alg,
-  "moonbitlang/quickcheck" @qc,
 } for "wbtest"
 
 options(

@@ -253,7 +253,7 @@ pub fn[T] Vector::to_row_matrix(self : Vector[T]) -> Matrix[T] {
 /// inspect(v.length(), content="5")
 /// ```
 ///
-pub fn[A] Vector::length(self : Vector[A]) -> Int {
+pub fn[A] Vector::length(self : Vector[A]) -> Int32 {
   self.0.length()
 }
 
@@ -280,7 +280,7 @@ pub fn[A] Vector::length(self : Vector[A]) -> Int {
 /// inspect(evens, content="|2, 4, 6, 8|")
 /// ```
 ///
-pub fn[A] Vector::makei(n : Int, f : (Int) -> A) -> Vector[A] {
+pub fn[A] Vector::makei(n : Int32, f : (Int32) -> A) -> Vector[A] {
   Vector(Array::makei(n, f))
 }
 
@@ -302,7 +302,7 @@ pub fn[A] Vector::makei(n : Int, f : (Int) -> A) -> Vector[A] {
 /// inspect(v, content="|42, 42, 42|")
 /// ```
 ///
-pub fn[A] Vector::make(n : Int, elem : A) -> Vector[A] {
+pub fn[A] Vector::make(n : Int32, elem : A) -> Vector[A] {
   Vector(Array::make(n, elem))
 }
 
@@ -349,7 +349,7 @@ pub fn[A] Vector::copy(self : Vector[A]) -> Vector[A] {
 /// ```
 ///
 #alias("_[_]")
-pub fn[A] Vector::at(self : Vector[A], index : Int) -> A {
+pub fn[A] Vector::at(self : Vector[A], index : Int32) -> A {
   // Direct indexed access to the underlying 1D array.
   self.0[index]
 }
@@ -375,7 +375,7 @@ pub fn[A] Vector::at(self : Vector[A], index : Int) -> A {
 /// ```
 ///
 #alias("_[_]=_")
-pub fn[A] Vector::set(self : Vector[A], index : Int, value : A) -> Unit {
+pub fn[A] Vector::set(self : Vector[A], index : Int32, value : A) -> Unit {
   // Direct indexed update to the underlying 1D array.
   self.0[index] = value
 }

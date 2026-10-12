@@ -6,6 +6,18 @@ points; older release history lives in this file.
 
 ## Unreleased
 
+### Changed
+
+- Builds with the latest MoonBit toolchain (moon 0.1.20261012, moonc 0.10.15):
+  `Luna-Flow/arithmetic` is raised to 0.5.1 and `moonbitlang/x` to 0.5.5
+  (the earlier versions depend on packages that ship the legacy `moon.mod.json`,
+  which the new toolchain rejects), and the sources follow the formatter of that
+  toolchain.
+- The `moonbitlang/quickcheck` dependency is removed (its published 0.14.0 ships
+  the legacy `moon.mod.json`). The property tests call `check` of the
+  `moonbitlang/core/quickcheck` package bundled with MoonBit core; the library's
+  `Arbitrary` implementations for `Vector` already used that package.
+
 ## 0.5.0 - 2026-10-10
 
 Current repository release. MoonBit 0.10 migration and temporary withdrawal of

@@ -77,7 +77,7 @@ closed and removes runtime shape failure from the example.
 ```moonbit check
 ///|
 struct EcosystemScalarMatrix {
-  value : Int
+  value : Int32
 }
 
 ///|

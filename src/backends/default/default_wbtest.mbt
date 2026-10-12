@@ -10,11 +10,11 @@ fn[V : @algebra.VecMulVector] vector_mul(left : V, right : V) -> V {
 
 ///|
 test "default backend exposes mutable and immutable dense matrix shapes" {
-  let mutable_matrix : DenseMatrix[Int] = DenseMatrix::from_2d_array([
+  let mutable_matrix : DenseMatrix[Int32] = DenseMatrix::from_2d_array([
     [1, 2],
     [3, 4],
   ])
-  let immutable_matrix : ImmutableDenseMatrix[Int] = ImmutableDenseMatrix::from_2d_array([
+  let immutable_matrix : ImmutableDenseMatrix[Int32] = ImmutableDenseMatrix::from_2d_array([
       [1, 2],
       [3, 4],
     ],
@@ -53,8 +53,8 @@ test "default immutable dense vector dispatches vector-like operations" {
 
 ///|
 test "default backend matrix algorithms use matrix-like operations" {
-  let a : DenseMatrix[Int] = DenseMatrix::from_2d_array([[1, 2], [3, 4]])
-  let b : DenseMatrix[Int] = DenseMatrix::from_2d_array([[0, 1], [1, 0]])
+  let a : DenseMatrix[Int32] = DenseMatrix::from_2d_array([[1, 2], [3, 4]])
+  let b : DenseMatrix[Int32] = DenseMatrix::from_2d_array([[0, 1], [1, 0]])
   let vector = DenseVector::from_array([5, 6])
   let (product_rows, product_cols) = shape_of(matmul(a, b))
   inspect(product_rows, content="2")

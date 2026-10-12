@@ -1,14 +1,14 @@
 ///|
 /// Storage-independent checked observation of a matrix.
 pub struct MatrixReadOps[M, T] {
-  shape : (M) -> (Int, Int)
-  get : (M, Int, Int) -> Result[T, @la_error.LinearAlgebraError]
+  shape : (M) -> (Int32, Int32)
+  get : (M, Int32, Int32) -> Result[T, @la_error.LinearAlgebraError]
 }
 
 ///|
 pub fn[M, T] MatrixReadOps::new(
-  shape : (M) -> (Int, Int),
-  get : (M, Int, Int) -> Result[T, @la_error.LinearAlgebraError],
+  shape : (M) -> (Int32, Int32),
+  get : (M, Int32, Int32) -> Result[T, @la_error.LinearAlgebraError],
 ) -> MatrixReadOps[M, T] {
   { shape, get, }
 }
@@ -16,7 +16,7 @@ pub fn[M, T] MatrixReadOps::new(
 ///|
 /// Storage-independent checked construction of a matrix.
 pub struct MatrixBuildOps[M, T] {
-  tabulate : (Int, Int, (Int, Int) -> T) -> Result[
+  tabulate : (Int32, Int32, (Int32, Int32) -> T) -> Result[
     M,
     @la_error.LinearAlgebraError,
   ]
@@ -24,7 +24,7 @@ pub struct MatrixBuildOps[M, T] {
 
 ///|
 pub fn[M, T] MatrixBuildOps::new(
-  tabulate : (Int, Int, (Int, Int) -> T) -> Result[
+  tabulate : (Int32, Int32, (Int32, Int32) -> T) -> Result[
     M,
     @la_error.LinearAlgebraError,
   ],
@@ -38,12 +38,12 @@ pub fn[M, T] MatrixBuildOps::new(
 /// `set` returns a new matrix and must not mutate the source through shared
 /// backing storage.
 pub struct MatrixPersistentEditOps[M, T] {
-  set : (M, Int, Int, T) -> Result[M, @la_error.LinearAlgebraError]
+  set : (M, Int32, Int32, T) -> Result[M, @la_error.LinearAlgebraError]
 }
 
 ///|
 pub fn[M, T] MatrixPersistentEditOps::new(
-  set : (M, Int, Int, T) -> Result[M, @la_error.LinearAlgebraError],
+  set : (M, Int32, Int32, T) -> Result[M, @la_error.LinearAlgebraError],
 ) -> MatrixPersistentEditOps[M, T] {
   { set, }
 }
@@ -53,12 +53,12 @@ pub fn[M, T] MatrixPersistentEditOps::new(
 ///
 /// `set` modifies the supplied matrix and returns no replacement container.
 pub struct MatrixMutableEditOps[M, T] {
-  set : (M, Int, Int, T) -> Result[Unit, @la_error.LinearAlgebraError]
+  set : (M, Int32, Int32, T) -> Result[Unit, @la_error.LinearAlgebraError]
 }
 
 ///|
 pub fn[M, T] MatrixMutableEditOps::new(
-  set : (M, Int, Int, T) -> Result[Unit, @la_error.LinearAlgebraError],
+  set : (M, Int32, Int32, T) -> Result[Unit, @la_error.LinearAlgebraError],
 ) -> MatrixMutableEditOps[M, T] {
   { set, }
 }
