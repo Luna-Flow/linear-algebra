@@ -6,21 +6,21 @@ import {
 }
 
 // Values
-pub fn[M : HasShape] ensure_col_in_bounds(M, Int) -> Unit
+pub fn[M : HasShape] ensure_col_in_bounds(M, Int32) -> Unit
 
-pub fn[M : HasShape] ensure_col_in_bounds_checked(M, Int) -> Result[Unit, @error.LinearAlgebraError]
+pub fn[M : HasShape] ensure_col_in_bounds_checked(M, Int32) -> Result[Unit, @error.LinearAlgebraError]
 
-pub fn[M : HasShape] ensure_index_in_bounds(M, Int, Int) -> Unit
+pub fn[M : HasShape] ensure_index_in_bounds(M, Int32, Int32) -> Unit
 
-pub fn[M : HasShape] ensure_index_in_bounds_checked(M, Int, Int) -> Result[Unit, @error.LinearAlgebraError]
+pub fn[M : HasShape] ensure_index_in_bounds_checked(M, Int32, Int32) -> Result[Unit, @error.LinearAlgebraError]
 
 pub fn[A : HasShape, B : HasShape] ensure_mul_compatible(A, B) -> Unit
 
 pub fn[A : HasShape, B : HasShape] ensure_mul_compatible_checked(A, B) -> Result[Unit, @error.LinearAlgebraError]
 
-pub fn[M : HasShape] ensure_row_in_bounds(M, Int) -> Unit
+pub fn[M : HasShape] ensure_row_in_bounds(M, Int32) -> Unit
 
-pub fn[M : HasShape] ensure_row_in_bounds_checked(M, Int) -> Result[Unit, @error.LinearAlgebraError]
+pub fn[M : HasShape] ensure_row_in_bounds_checked(M, Int32) -> Result[Unit, @error.LinearAlgebraError]
 
 pub fn[A : HasShape, B : HasShape] ensure_same_shape(A, B) -> Unit
 
@@ -38,5 +38,5 @@ pub fn[M : HasShape] ensure_square_checked(M) -> Result[Unit, @error.LinearAlgeb
 
 // Traits
 pub(open) trait HasShape {
-  fn shape(Self) -> (Int, Int)
+  fn shape(Self) -> (Int32, Int32)
 }

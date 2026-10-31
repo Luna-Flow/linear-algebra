@@ -12,7 +12,7 @@ import {
 }
 
 // Values
-pub fn[T : @luna-generic.Zero + @luna-generic.One] identity(Int) -> Matrix[T]
+pub fn[T : @luna-generic.Zero + @luna-generic.One] identity(Int32) -> Matrix[T]
 
 pub fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]
 
@@ -21,17 +21,17 @@ pub fn[T : Add + Mul] lin_comb(T, Vector[T], T, Vector[T]) -> Vector[T]
 // Types and methods
 pub struct ColView[T] {
   data : Matrix[T]
-  col : Int
+  col : Int32
 }
 pub fn[T] ColView::each(Self[T], (T) -> Unit) -> Unit
-pub fn[T] ColView::eachi(Self[T], (Int, T) -> Unit) -> Unit
+pub fn[T] ColView::eachi(Self[T], (Int32, T) -> Unit) -> Unit
 #alias("_[_]")
-pub fn[T] ColView::get(Self[T], Int) -> T
+pub fn[T] ColView::get(Self[T], Int32) -> T
 pub fn[T] ColView::iter(Self[T]) -> Iter[T]
-pub fn[T] ColView::length(Self[T]) -> Int
+pub fn[T] ColView::length(Self[T]) -> Int32
 pub fn[T] ColView::map_inplace(Self[T], (T) -> T) -> Unit
 #alias("_[_]=_")
-pub fn[T] ColView::set(Self[T], Int, T) -> Unit
+pub fn[T] ColView::set(Self[T], Int32, T) -> Unit
 pub fn[T] ColView::to_array(Self[T]) -> Array[T]
 pub fn[T : Show] ColView::to_string(Self[T]) -> String
 pub fn[T] ColView::to_vector(Self[T]) -> Vector[T]
@@ -39,36 +39,36 @@ pub impl[T : Show] Show for ColView[T]
 
 type Lens[T]
 #alias("_[_]")
-pub fn[T] Lens::at(Self[T], Int) -> T
+pub fn[T] Lens::at(Self[T], Int32) -> T
 #alias("_[_]=_")
-pub fn[T] Lens::set(Self[T], Int, T) -> Unit
+pub fn[T] Lens::set(Self[T], Int32, T) -> Unit
 
 type Matrix[T] derive(Eq)
 pub fn[T : Add] Matrix::add(Self[T], Self[T]) -> Self[T]
 pub fn[T : Add] Matrix::add_constant(Self[T], T) -> Self[T]
 pub fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]
 #alias("_[_]")
-pub fn[T] Matrix::at(Self[T], Int) -> Lens[T]
+pub fn[T] Matrix::at(Self[T], Int32) -> Lens[T]
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + @arithmetic.Sqrt + Tolerance] Matrix::cholesky_decomposition(Self[T]) -> Self[T]?
-pub fn[T] Matrix::col(Self[T]) -> Int
-pub fn[T] Matrix::col_to_array(Self[T], Int) -> Array[T]
-pub fn[T] Matrix::col_to_vector(Self[T], Int) -> Vector[T]
-pub fn[T] Matrix::col_view(Self[T], Int) -> ColView[T]
+pub fn[T] Matrix::col(Self[T]) -> Int32
+pub fn[T] Matrix::col_to_array(Self[T], Int32) -> Array[T]
+pub fn[T] Matrix::col_to_vector(Self[T], Int32) -> Vector[T]
+pub fn[T] Matrix::col_view(Self[T], Int32) -> ColView[T]
 pub fn[T] Matrix::copy(Self[T]) -> Self[T]
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::determinant(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T] Matrix::each(Self[T], (T) -> Unit) -> Unit
-pub fn[T] Matrix::each_col(Self[T], Int, (T) -> Unit) -> Unit
-pub fn[T] Matrix::each_row(Self[T], Int, (T) -> Unit) -> Unit
-pub fn[T] Matrix::each_row_col(Self[T], (Int, Int, T) -> Unit) -> Unit
-pub fn[T] Matrix::eachi(Self[T], (Int, T) -> Unit) -> Unit
-pub fn[T] Matrix::eachi_col(Self[T], Int, (Int, T) -> Unit) -> Unit
-pub fn[T] Matrix::eachi_row(Self[T], Int, (Int, T) -> Unit) -> Unit
+pub fn[T] Matrix::each_col(Self[T], Int32, (T) -> Unit) -> Unit
+pub fn[T] Matrix::each_row(Self[T], Int32, (T) -> Unit) -> Unit
+pub fn[T] Matrix::each_row_col(Self[T], (Int32, Int32, T) -> Unit) -> Unit
+pub fn[T] Matrix::eachi(Self[T], (Int32, T) -> Unit) -> Unit
+pub fn[T] Matrix::eachi_col(Self[T], Int32, (Int32, T) -> Unit) -> Unit
+pub fn[T] Matrix::eachi_row(Self[T], Int32, (Int32, T) -> Unit) -> Unit
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + @arithmetic.Sqrt + Tolerance] Matrix::eigen(Self[T]) -> (Vector[T], Self[T])
 pub fn[T : Eq] Matrix::equal(Self[T], Self[T]) -> Bool
 pub fn[T : @luna-generic.AddMonoid + Mul + @arithmetic.Sqrt] Matrix::frobenius_norm(Self[T]) -> T
 pub fn[T] Matrix::from_2d_array(Array[Array[T]]) -> Self[T]
-pub fn[T] Matrix::from_array(Int, Int, Array[T]) -> Self[T]
-pub fn[T] Matrix::get(Self[T], Int, Int) -> T
+pub fn[T] Matrix::from_array(Int32, Int32, Array[T]) -> Self[T]
+pub fn[T] Matrix::get(Self[T], Int32, Int32) -> T
 pub fn[T] Matrix::horizontal_combine(Self[T], Self[T]) -> Self[T]
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::inverse(Self[T]) -> Result[Self[T], @error.LinearAlgebraError]
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::is_invertible(Self[T]) -> Result[Bool, @error.LinearAlgebraError]
@@ -76,42 +76,42 @@ pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + @arithmetic.Sqrt 
 pub fn[T] Matrix::is_square(Self[T]) -> Bool
 pub fn[T : Compare + @luna-generic.Num + Tolerance] Matrix::is_symmetric(Self[T]) -> Bool
 pub fn[T] Matrix::iter(Self[T]) -> Iter[T]
-pub fn[T] Matrix::iter_col(Self[T], Int) -> Iter[T]
-pub fn[T] Matrix::iter_row(Self[T], Int) -> Iter[T]
-pub fn[A] Matrix::make(Int, Int, (Int, Int) -> A) -> Self[A]
+pub fn[T] Matrix::iter_col(Self[T], Int32) -> Iter[T]
+pub fn[T] Matrix::iter_row(Self[T], Int32) -> Iter[T]
+pub fn[A] Matrix::make(Int32, Int32, (Int32, Int32) -> A) -> Self[A]
 pub fn[T, U] Matrix::map(Self[T], (T) -> U) -> Self[U]
 #alias(map_col_in_place, deprecated)
-pub fn[T] Matrix::map_col_inplace(Self[T], Int, (T) -> T) -> Unit
+pub fn[T] Matrix::map_col_inplace(Self[T], Int32, (T) -> T) -> Unit
 #alias(map_in_place, deprecated)
 pub fn[T] Matrix::map_inplace(Self[T], (T) -> T) -> Unit
 #alias(map_row_in_place, deprecated)
-pub fn[T] Matrix::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
-pub fn[T, U] Matrix::mapi(Self[T], (Int, Int, T) -> U) -> Self[U]
+pub fn[T] Matrix::map_row_inplace(Self[T], Int32, (T) -> T) -> Unit
+pub fn[T, U] Matrix::mapi(Self[T], (Int32, Int32, T) -> U) -> Self[U]
 pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::matmul(Self[T], Self[T]) -> Result[Self[T], @error.LinearAlgebraError]
-pub fn[T : @luna-generic.Semiring] Matrix::matrix_power(Self[T], Int) -> Result[Self[T], @error.LinearAlgebraError]
+pub fn[T : @luna-generic.Semiring] Matrix::matrix_power(Self[T], Int32) -> Result[Self[T], @error.LinearAlgebraError]
 pub fn[T : Compare] Matrix::max_element(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T : @luna-generic.Field] Matrix::mean(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T : Compare] Matrix::min_element(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::mul(Self[T], Self[T]) -> Self[T]
 pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::mul_vec(Self[T], Vector[T]) -> Result[Vector[T], @error.LinearAlgebraError]
 pub fn[T : Neg] Matrix::neg(Self[T]) -> Self[T]
-pub fn[T] Matrix::new(Int, Int, T) -> Self[T]
+pub fn[T] Matrix::new(Int32, Int32, T) -> Self[T]
 pub fn[T : Compare + @luna-generic.Zero] Matrix::null(Self[T]) -> Bool
-pub fn[T : @luna-generic.Semiring] Matrix::pow(Self[T], Int) -> Result[Self[T], @error.LinearAlgebraError]
-pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::power_method(Self[T], Int) -> (T, Vector[T])?
-pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::rank(Self[T]) -> Int
+pub fn[T : @luna-generic.Semiring] Matrix::pow(Self[T], Int32) -> Result[Self[T], @error.LinearAlgebraError]
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::power_method(Self[T], Int32) -> (T, Vector[T])?
+pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::rank(Self[T]) -> Int32
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::reduce_row_elimination(Self[T]) -> Self[T]
-pub fn[T] Matrix::row(Self[T]) -> Int
-pub fn[T] Matrix::row_to_array(Self[T], Int) -> Array[T]
-pub fn[T] Matrix::row_to_vector(Self[T], Int) -> Vector[T]
-pub fn[T] Matrix::row_view(Self[T], Int) -> RowView[T]
+pub fn[T] Matrix::row(Self[T]) -> Int32
+pub fn[T] Matrix::row_to_array(Self[T], Int32) -> Array[T]
+pub fn[T] Matrix::row_to_vector(Self[T], Int32) -> Vector[T]
+pub fn[T] Matrix::row_view(Self[T], Int32) -> RowView[T]
 pub fn[T : Mul] Matrix::scale(Self[T], T) -> Self[T]
-pub fn[T] Matrix::set(Self[T], Int, Int, T) -> Unit
-pub fn[T] Matrix::shape(Self[T]) -> (Int, Int)
+pub fn[T] Matrix::set(Self[T], Int32, Int32, T) -> Unit
+pub fn[T] Matrix::shape(Self[T]) -> (Int32, Int32)
 pub fn[T : @luna-generic.Field + @arithmetic.Sqrt] Matrix::std_dev(Self[T]) -> Result[T, @error.LinearAlgebraError]
 pub fn[T : Add + Neg] Matrix::sub(Self[T], Self[T]) -> Self[T]
-pub fn[T] Matrix::swap_cols(Self[T], Int, Int) -> Unit
-pub fn[T] Matrix::swap_rows(Self[T], Int, Int) -> Unit
+pub fn[T] Matrix::swap_cols(Self[T], Int32, Int32) -> Unit
+pub fn[T] Matrix::swap_rows(Self[T], Int32, Int32) -> Unit
 pub fn[T] Matrix::to_2d_array(Self[T]) -> Array[Array[T]]
 pub fn[T] Matrix::to_array(Self[T]) -> Array[T]
 pub fn[T : Show] Matrix::to_string(Self[T]) -> String
@@ -123,12 +123,12 @@ pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::unchecked_inverse(Self[T]) -> Self[T]?
 pub fn[T : Compare + @luna-generic.Field + @luna-generic.Num + Tolerance] Matrix::unchecked_is_invertible(Self[T]) -> Bool
 pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::unchecked_matmul(Self[T], Self[T]) -> Self[T]
-pub fn[T : @luna-generic.Semiring] Matrix::unchecked_matrix_power(Self[T], Int) -> Self[T]
+pub fn[T : @luna-generic.Semiring] Matrix::unchecked_matrix_power(Self[T], Int32) -> Self[T]
 pub fn[T : Compare] Matrix::unchecked_max_element(Self[T]) -> T
 pub fn[T : @luna-generic.Field] Matrix::unchecked_mean(Self[T]) -> T
 pub fn[T : Compare] Matrix::unchecked_min_element(Self[T]) -> T
 pub fn[T : @luna-generic.AddMonoid + Mul] Matrix::unchecked_mul_vec(Self[T], Vector[T]) -> Vector[T]
-pub fn[T : @luna-generic.Semiring] Matrix::unchecked_pow(Self[T], Int) -> Self[T]
+pub fn[T : @luna-generic.Semiring] Matrix::unchecked_pow(Self[T], Int32) -> Self[T]
 pub fn[T : @luna-generic.Field + @arithmetic.Sqrt] Matrix::unchecked_std_dev(Self[T]) -> T
 pub fn[T : @luna-generic.AddMonoid] Matrix::unchecked_trace(Self[T]) -> T
 pub fn[T : @luna-generic.Field] Matrix::unchecked_variance(Self[T]) -> T
@@ -143,17 +143,17 @@ pub impl[T : Add + Neg] Sub for Matrix[T]
 
 pub struct RowView[T] {
   data : Matrix[T]
-  row : Int
+  row : Int32
 }
 pub fn[T] RowView::each(Self[T], (T) -> Unit) -> Unit
-pub fn[T] RowView::eachi(Self[T], (Int, T) -> Unit) -> Unit
+pub fn[T] RowView::eachi(Self[T], (Int32, T) -> Unit) -> Unit
 #alias("_[_]")
-pub fn[T] RowView::get(Self[T], Int) -> T
+pub fn[T] RowView::get(Self[T], Int32) -> T
 pub fn[T] RowView::iter(Self[T]) -> Iter[T]
-pub fn[T] RowView::length(Self[T]) -> Int
+pub fn[T] RowView::length(Self[T]) -> Int32
 pub fn[T] RowView::map_inplace(Self[T], (T) -> T) -> Unit
 #alias("_[_]=_")
-pub fn[T] RowView::set(Self[T], Int, T) -> Unit
+pub fn[T] RowView::set(Self[T], Int32, T) -> Unit
 pub fn[T] RowView::to_array(Self[T]) -> Array[T]
 pub fn[T : Show] RowView::to_string(Self[T]) -> String
 pub fn[T] RowView::to_vector(Self[T]) -> Vector[T]
@@ -163,39 +163,39 @@ pub struct Transpose[T](Matrix[T])
 pub fn[T : Add] Transpose::add(Self[T], Self[T]) -> Self[T]
 pub fn[T : Add] Transpose::add_constant(Self[T], T) -> Self[T]
 #alias("_[_]")
-pub fn[T] Transpose::at(Self[T], Int) -> Lens[T]
-pub fn[T] Transpose::col(Self[T]) -> Int
-pub fn[T] Transpose::col_to_array(Self[T], Int) -> Array[T]
-pub fn[T] Transpose::col_to_vector(Self[T], Int) -> Vector[T]
+pub fn[T] Transpose::at(Self[T], Int32) -> Lens[T]
+pub fn[T] Transpose::col(Self[T]) -> Int32
+pub fn[T] Transpose::col_to_array(Self[T], Int32) -> Array[T]
+pub fn[T] Transpose::col_to_vector(Self[T], Int32) -> Vector[T]
 pub fn[T] Transpose::copy(Self[T]) -> Self[T]
 pub fn[T] Transpose::each(Self[T], (T) -> Unit) -> Unit
-pub fn[T] Transpose::each_col(Self[T], Int, (T) -> Unit) -> Unit
-pub fn[T] Transpose::each_row(Self[T], Int, (T) -> Unit) -> Unit
-pub fn[T] Transpose::each_row_col(Self[T], (Int, Int, T) -> Unit) -> Unit
-pub fn[T] Transpose::eachi(Self[T], (Int, T) -> Unit) -> Unit
-pub fn[T] Transpose::eachi_col(Self[T], Int, (Int, T) -> Unit) -> Unit
-pub fn[T] Transpose::eachi_row(Self[T], Int, (Int, T) -> Unit) -> Unit
+pub fn[T] Transpose::each_col(Self[T], Int32, (T) -> Unit) -> Unit
+pub fn[T] Transpose::each_row(Self[T], Int32, (T) -> Unit) -> Unit
+pub fn[T] Transpose::each_row_col(Self[T], (Int32, Int32, T) -> Unit) -> Unit
+pub fn[T] Transpose::eachi(Self[T], (Int32, T) -> Unit) -> Unit
+pub fn[T] Transpose::eachi_col(Self[T], Int32, (Int32, T) -> Unit) -> Unit
+pub fn[T] Transpose::eachi_row(Self[T], Int32, (Int32, T) -> Unit) -> Unit
 pub fn[T : Eq] Transpose::equal(Self[T], Self[T]) -> Bool
-pub fn[T] Transpose::get(Self[T], Int, Int) -> T
+pub fn[T] Transpose::get(Self[T], Int32, Int32) -> T
 pub fn[T] Transpose::horizontal_combine(Self[T], Self[T]) -> Self[T]
 pub fn[T] Transpose::map(Self[T], (T) -> T) -> Self[T]
 #alias(map_col_in_place, deprecated)
-pub fn[T] Transpose::map_col_inplace(Self[T], Int, (T) -> T) -> Unit
+pub fn[T] Transpose::map_col_inplace(Self[T], Int32, (T) -> T) -> Unit
 #alias(map_in_place, deprecated)
 pub fn[T] Transpose::map_inplace(Self[T], (T) -> T) -> Unit
 #alias(map_row_in_place, deprecated)
-pub fn[T] Transpose::map_row_inplace(Self[T], Int, (T) -> T) -> Unit
+pub fn[T] Transpose::map_row_inplace(Self[T], Int32, (T) -> T) -> Unit
 pub fn[T] Transpose::materialize(Self[T]) -> Matrix[T]
 pub fn[T : @luna-generic.AddMonoid + Mul] Transpose::mul(Self[T], Self[T]) -> Self[T]
 pub fn[T : Neg] Transpose::neg(Self[T]) -> Self[T]
-pub fn[T] Transpose::row(Self[T]) -> Int
-pub fn[T] Transpose::row_to_array(Self[T], Int) -> Array[T]
-pub fn[T] Transpose::row_to_vector(Self[T], Int) -> Vector[T]
+pub fn[T] Transpose::row(Self[T]) -> Int32
+pub fn[T] Transpose::row_to_array(Self[T], Int32) -> Array[T]
+pub fn[T] Transpose::row_to_vector(Self[T], Int32) -> Vector[T]
 pub fn[T : Mul] Transpose::scale(Self[T], T) -> Self[T]
-pub fn[T] Transpose::set(Self[T], Int, Int, T) -> Unit
+pub fn[T] Transpose::set(Self[T], Int32, Int32, T) -> Unit
 pub fn[T : Add + Neg] Transpose::sub(Self[T], Self[T]) -> Self[T]
-pub fn[T] Transpose::swap_cols(Self[T], Int, Int) -> Unit
-pub fn[T] Transpose::swap_rows(Self[T], Int, Int) -> Unit
+pub fn[T] Transpose::swap_cols(Self[T], Int32, Int32) -> Unit
+pub fn[T] Transpose::swap_rows(Self[T], Int32, Int32) -> Unit
 pub fn[T : Show] Transpose::to_string(Self[T]) -> String
 pub fn[T] Transpose::transpose(Self[T]) -> Matrix[T]
 pub fn[T] Transpose::vertical_combine(Self[T], Self[T]) -> Self[T]
@@ -210,7 +210,7 @@ pub struct Vector[A](Array[A])
 pub fn[T : Add] Vector::add(Self[T], Self[T]) -> Self[T]
 pub fn[T : Add] Vector::add_constant(Self[T], T) -> Self[T]
 #alias("_[_]")
-pub fn[A] Vector::at(Self[A], Int) -> A
+pub fn[A] Vector::at(Self[A], Int32) -> A
 pub fn[A] Vector::copy(Self[A]) -> Self[A]
 pub fn[T : @luna-generic.AddMonoid + Mul] Vector::dot(Self[T], Self[T]) -> T
 pub fn[T : Eq] Vector::equal(Self[T], Self[T]) -> Bool
@@ -219,11 +219,11 @@ pub fn[T] Vector::iter(Self[T]) -> Iter[T]
 pub fn[A : Mul] Vector::left_scale(Self[A], A) -> Self[A]
 #alias(left_scale_in_place, deprecated)
 pub fn[A : Mul] Vector::left_scale_inplace(Self[A], A) -> Unit
-pub fn[A] Vector::length(Self[A]) -> Int
+pub fn[A] Vector::length(Self[A]) -> Int32
 pub fn[T : @luna-generic.MulMonoid + Add + Neg] Vector::lerp(Self[T], Self[T], T) -> Self[T]
 pub fn[T : Mul + Add + @luna-generic.Zero] Vector::lin_comb(Array[T], Array[Self[T]]) -> Self[T]
-pub fn[A] Vector::make(Int, A) -> Self[A]
-pub fn[A] Vector::makei(Int, (Int) -> A) -> Self[A]
+pub fn[A] Vector::make(Int32, A) -> Self[A]
+pub fn[A] Vector::makei(Int32, (Int32) -> A) -> Self[A]
 pub fn[A, B] Vector::map(Self[A], (A) -> B) -> Self[B]
 #alias(map_in_place, deprecated)
 pub fn[A] Vector::map_inplace(Self[A], (A) -> A) -> Unit
@@ -234,7 +234,7 @@ pub fn[A : Mul] Vector::right_scale(Self[A], A) -> Self[A]
 pub fn[A : Mul] Vector::right_scale_inplace(Self[A], A) -> Unit
 pub fn[T : @luna-generic.Zero] Vector::scaled_matrix(Self[T]) -> Matrix[T]
 #alias("_[_]=_")
-pub fn[A] Vector::set(Self[A], Int, A) -> Unit
+pub fn[A] Vector::set(Self[A], Int32, A) -> Unit
 pub fn[T : Mul] Vector::tensor_product(Self[T], Self[T]) -> Matrix[T]
 pub fn[T] Vector::to_col_matrix(Self[T]) -> Matrix[T]
 pub fn[T] Vector::to_row_matrix(Self[T]) -> Matrix[T]

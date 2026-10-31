@@ -5,7 +5,7 @@ version = "0.5.1"
 import {
   "Luna-Flow/arithmetic@0.5.1",
   "Luna-Flow/luna-generic@0.4.0",
-  "moonbitlang/x@0.5.5",
+  "moonbitlang/x@0.5.7",
 }
 
 readme = "README.md"

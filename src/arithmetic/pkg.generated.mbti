@@ -52,19 +52,19 @@ pub using @luna-generic {trait Zero}
 pub(open) trait Abs {
   fn abs(Self) -> Self
 }
-pub impl Abs for Int
+pub impl Abs for Int32
 pub impl Abs for Float
 pub impl Abs for Double
 
 pub(open) trait ApproxEq {
   fn approx_eq(Self, Self) -> Bool
 }
-pub impl ApproxEq for Int
+pub impl ApproxEq for Int32
 pub impl ApproxEq for Float
 pub impl ApproxEq for Double
 
 pub(open) trait CheckedCompare {
-  fn checked_compare(Self, Self) -> Result[Int, @Luna-Flow/arithmetic.ArithmeticError]
+  fn checked_compare(Self, Self) -> Result[Int32, @Luna-Flow/arithmetic.ArithmeticError]
 }
 pub impl CheckedCompare for Float
 pub impl CheckedCompare for Double

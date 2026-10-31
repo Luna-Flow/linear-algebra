@@ -46,9 +46,9 @@ pub struct Case {
   mutation_policy : String
   size_tier : String
   cost_model : String
-  rows : Int
-  cols : Int
-  rhs_cols : Int
+  rows : Int32
+  cols : Int32
+  rhs_cols : Int32
 }
 
 pub struct PreparedCase {

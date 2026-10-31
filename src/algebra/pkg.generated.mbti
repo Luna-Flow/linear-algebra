@@ -20,7 +20,7 @@ pub(open) trait MatMulMatrix : AdditiveMatrix + Mul {
 }
 
 pub(open) trait MatrixShape {
-  fn shape(Self) -> (Int, Int)
+  fn shape(Self) -> (Int32, Int32)
 }
 
 pub(open) trait TransposeMatrix : MatrixShape {
@@ -31,5 +31,5 @@ pub(open) trait VecMulVector : AdditiveVector + Mul {
 }
 
 pub(open) trait VectorShape {
-  fn length(Self) -> Int
+  fn length(Self) -> Int32
 }
