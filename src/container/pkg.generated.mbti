@@ -20,46 +20,46 @@ pub fn[V1, V2, A, B] vector_map(V1, VectorReadOps[V1, A], VectorBuildOps[V2, B],
 
 // Types and methods
 pub struct MatrixBuildOps[M, T] {
-  tabulate : (Int, Int, (Int, Int) -> T) -> Result[M, @error.LinearAlgebraError]
+  tabulate : (Int32, Int32, (Int32, Int32) -> T) -> Result[M, @error.LinearAlgebraError]
 }
-pub fn[M, T] MatrixBuildOps::new((Int, Int, (Int, Int) -> T) -> Result[M, @error.LinearAlgebraError]) -> Self[M, T]
+pub fn[M, T] MatrixBuildOps::new((Int32, Int32, (Int32, Int32) -> T) -> Result[M, @error.LinearAlgebraError]) -> Self[M, T]
 
 pub struct MatrixMutableEditOps[M, T] {
-  set : (M, Int, Int, T) -> Result[Unit, @error.LinearAlgebraError]
+  set : (M, Int32, Int32, T) -> Result[Unit, @error.LinearAlgebraError]
 }
-pub fn[M, T] MatrixMutableEditOps::new((M, Int, Int, T) -> Result[Unit, @error.LinearAlgebraError]) -> Self[M, T]
+pub fn[M, T] MatrixMutableEditOps::new((M, Int32, Int32, T) -> Result[Unit, @error.LinearAlgebraError]) -> Self[M, T]
 
 pub struct MatrixPersistentEditOps[M, T] {
-  set : (M, Int, Int, T) -> Result[M, @error.LinearAlgebraError]
+  set : (M, Int32, Int32, T) -> Result[M, @error.LinearAlgebraError]
 }
-pub fn[M, T] MatrixPersistentEditOps::new((M, Int, Int, T) -> Result[M, @error.LinearAlgebraError]) -> Self[M, T]
+pub fn[M, T] MatrixPersistentEditOps::new((M, Int32, Int32, T) -> Result[M, @error.LinearAlgebraError]) -> Self[M, T]
 
 pub struct MatrixReadOps[M, T] {
-  shape : (M) -> (Int, Int)
-  get : (M, Int, Int) -> Result[T, @error.LinearAlgebraError]
+  shape : (M) -> (Int32, Int32)
+  get : (M, Int32, Int32) -> Result[T, @error.LinearAlgebraError]
 }
-pub fn[M, T] MatrixReadOps::new((M) -> (Int, Int), (M, Int, Int) -> Result[T, @error.LinearAlgebraError]) -> Self[M, T]
+pub fn[M, T] MatrixReadOps::new((M) -> (Int32, Int32), (M, Int32, Int32) -> Result[T, @error.LinearAlgebraError]) -> Self[M, T]
 
 pub struct VectorBuildOps[V, T] {
-  tabulate : (Int, (Int) -> T) -> Result[V, @error.LinearAlgebraError]
+  tabulate : (Int32, (Int32) -> T) -> Result[V, @error.LinearAlgebraError]
 }
-pub fn[V, T] VectorBuildOps::new((Int, (Int) -> T) -> Result[V, @error.LinearAlgebraError]) -> Self[V, T]
+pub fn[V, T] VectorBuildOps::new((Int32, (Int32) -> T) -> Result[V, @error.LinearAlgebraError]) -> Self[V, T]
 
 pub struct VectorMutableEditOps[V, T] {
-  set : (V, Int, T) -> Result[Unit, @error.LinearAlgebraError]
+  set : (V, Int32, T) -> Result[Unit, @error.LinearAlgebraError]
 }
-pub fn[V, T] VectorMutableEditOps::new((V, Int, T) -> Result[Unit, @error.LinearAlgebraError]) -> Self[V, T]
+pub fn[V, T] VectorMutableEditOps::new((V, Int32, T) -> Result[Unit, @error.LinearAlgebraError]) -> Self[V, T]
 
 pub struct VectorPersistentEditOps[V, T] {
-  set : (V, Int, T) -> Result[V, @error.LinearAlgebraError]
+  set : (V, Int32, T) -> Result[V, @error.LinearAlgebraError]
 }
-pub fn[V, T] VectorPersistentEditOps::new((V, Int, T) -> Result[V, @error.LinearAlgebraError]) -> Self[V, T]
+pub fn[V, T] VectorPersistentEditOps::new((V, Int32, T) -> Result[V, @error.LinearAlgebraError]) -> Self[V, T]
 
 pub struct VectorReadOps[V, T] {
-  length : (V) -> Int
-  get : (V, Int) -> Result[T, @error.LinearAlgebraError]
+  length : (V) -> Int32
+  get : (V, Int32) -> Result[T, @error.LinearAlgebraError]
 }
-pub fn[V, T] VectorReadOps::new((V) -> Int, (V, Int) -> Result[T, @error.LinearAlgebraError]) -> Self[V, T]
+pub fn[V, T] VectorReadOps::new((V) -> Int32, (V, Int32) -> Result[T, @error.LinearAlgebraError]) -> Self[V, T]
 
 // Type aliases
 
