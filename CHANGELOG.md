@@ -6,6 +6,12 @@ points; older release history lives in this file.
 
 ## Unreleased
 
+## 0.5.2 - 2026-10-31
+
+### Changed
+
+- Dependencies: moonbitlang/x 0.5.7 (was 0.5.5). Interfaces regenerated with moon 0.1.20261028.
+
 ## 0.5.1 - 2026-10-13
 
 ### Changed
