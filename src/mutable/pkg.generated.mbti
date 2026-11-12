@@ -43,7 +43,8 @@ pub fn[T] Lens::at(Self[T], Int32) -> T
 #alias("_[_]=_")
 pub fn[T] Lens::set(Self[T], Int32, T) -> Unit
 
-type Matrix[T] derive(Eq)
+#derive(Eq)
+type Matrix[T]
 pub fn[T : Add] Matrix::add(Self[T], Self[T]) -> Self[T]
 pub fn[T : Add] Matrix::add_constant(Self[T], T) -> Self[T]
 pub fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]

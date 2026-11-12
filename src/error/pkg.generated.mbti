@@ -10,10 +10,11 @@ import {
 // Errors
 
 // Types and methods
+#derive(Eq)
 pub struct LinearAlgebraError {
   kind : LinearAlgebraErrorKind
   message : String
-} derive(Eq)
+}
 pub fn LinearAlgebraError::arithmetic_failure(@arithmetic.ArithmeticError) -> Self
 pub fn LinearAlgebraError::dimension_mismatch(String) -> Self
 pub fn LinearAlgebraError::empty_matrix(String) -> Self
@@ -38,6 +39,7 @@ pub fn LinearAlgebraError::non_square_matrix(String) -> Self
 pub fn LinearAlgebraError::ragged_rows(String) -> Self
 pub fn LinearAlgebraError::singular_matrix(String) -> Self
 
+#derive(Eq)
 pub enum LinearAlgebraErrorKind {
   DimensionMismatch
   IndexOutOfBounds
@@ -50,7 +52,7 @@ pub enum LinearAlgebraErrorKind {
   SingularMatrix
   NonConvergence
   ArithmeticFailure(@arithmetic.ArithmeticError)
-} derive(Eq)
+}
 pub fn LinearAlgebraErrorKind::equal(Self, Self) -> Bool
 
 // Type aliases

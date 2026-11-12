@@ -207,19 +207,22 @@ fn string_array_contains(values : Array[String], target : String) -> Bool {
 }
 
 ///|
+#derive(FromJson)
 priv struct CaseFixtureInputs {
   data_a : Array[Double]
   data_b : Array[Double]
-} derive(FromJson)
+}
 
 ///|
+#derive(FromJson)
 priv struct CaseFixtureShape {
   rows : Int32
   cols : Int32
   rhs_cols : Int32
-} derive(FromJson)
+}
 
 ///|
+#derive(FromJson)
 priv struct CaseFixtureFile {
   dataset_version : String
   case_id : String
@@ -234,7 +237,7 @@ priv struct CaseFixtureFile {
   cost_model : String
   shape : CaseFixtureShape
   inputs : CaseFixtureInputs
-} derive(FromJson)
+}
 
 ///|
 priv struct LoadedCaseFixture {

@@ -1,10 +1,11 @@
 ///|
 /// Shared matrix type for all mutable backends.
+#derive(Eq)
 struct Matrix[T] {
   row : Int32
   col : Int32
   data : Array[T]
-} derive(Eq)
+}
 
 ///|
 pub impl[T] HasShape for Matrix[T] with fn shape(self) {

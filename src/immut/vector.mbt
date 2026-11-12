@@ -17,9 +17,10 @@
 /// inspect(v3, content="|3, 6, 9|")
 /// ```
 ///
+#derive(Eq)
 struct Vector[T] {
   data : VecCore[T]
-} derive(Eq)
+}
 
 ///|
 pub type VecCore[T] = @core_vector.Vector[T]

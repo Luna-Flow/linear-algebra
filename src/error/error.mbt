@@ -1,4 +1,5 @@
 ///|
+#derive(Eq)
 pub enum LinearAlgebraErrorKind {
   DimensionMismatch
   IndexOutOfBounds
@@ -11,13 +12,14 @@ pub enum LinearAlgebraErrorKind {
   SingularMatrix
   NonConvergence
   ArithmeticFailure(@lf_arith.ArithmeticError)
-} derive(Eq)
+}
 
 ///|
+#derive(Eq)
 pub struct LinearAlgebraError {
   kind : LinearAlgebraErrorKind
   message : String
-} derive(Eq)
+}
 
 ///|
 pub fn LinearAlgebraError::dimension_mismatch(
