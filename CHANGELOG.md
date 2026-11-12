@@ -6,8 +6,11 @@ points; older release history lives in this file.
 
 ## Unreleased
 
+## 0.5.3 - 2026-11-12
+
 ### Changed
 
+- Dependencies: `Luna-Flow/arithmetic` 0.5.2 (was 0.5.1).
 - Require MoonBit `moonc` 0.10.20 or later, verified with `moon 0.1.20261104` and `moonc v0.10.20`: `derive(...)` clauses are now `#derive(...)` attributes, which older 0.10 compilers ignore. No public API changed.
 
 ## 0.5.2 - 2026-10-31

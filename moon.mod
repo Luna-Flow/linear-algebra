@@ -1,9 +1,9 @@
 name = "Luna-Flow/linear-algebra"
 
-version = "0.5.2"
+version = "0.5.3"
 
 import {
-  "Luna-Flow/arithmetic@0.5.1",
+  "Luna-Flow/arithmetic@0.5.2",
   "Luna-Flow/luna-generic@0.4.0",
   "moonbitlang/x@0.5.7",
 }
