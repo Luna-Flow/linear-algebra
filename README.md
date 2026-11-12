@@ -58,7 +58,7 @@ does not compile with MoonBit 0.10. The source and re-enable steps are kept in
 
 ## Toolchain
 
-MoonBit with `moonc` 0.10 or newer. The module builds without warnings with
+MoonBit with `moonc` 0.10.20 or later (verified with `moon 0.1.20261104` and `moonc v0.10.20`; older 0.10 compilers ignore `#derive`). The module builds without warnings with
 `moon check --target all` and is tested on `wasm-gc`, `js`, `wasm` and
 `native`. It depends on `Luna-Flow/luna-generic` `0.4.0` and
 `Luna-Flow/arithmetic` `0.5.1`.
