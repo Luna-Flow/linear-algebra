@@ -18,7 +18,7 @@ can handle. The background is in the [arithmetic design](../design/arithmetic.md
 
 ```sh
 moon add Luna-Flow/linear-algebra@0.5.1
-moon add Luna-Flow/arithmetic@0.5.1
+moon add Luna-Flow/arithmetic@0.5.2
 ```
 
 ```moonbit nocheck
