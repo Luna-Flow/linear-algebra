@@ -3,11 +3,12 @@
 ///
 /// `row` and `col` store the shape. `data` stores elements in row-major order
 /// using the package's immutable vector backing type.
+#derive(Eq)
 struct Matrix[T] {
   row : Int32
   col : Int32
   data : VecLib[T]
-} derive(Eq)
+}
 
 ///|
 pub impl[T] HasShape for Matrix[T] with fn shape(self) {

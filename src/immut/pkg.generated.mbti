@@ -27,7 +27,8 @@ type Indexed[T]
 #alias("_[_]")
 pub fn[T] Indexed::at(Self[T], Int32) -> T
 
-type Matrix[T] derive(Eq)
+#derive(Eq)
+type Matrix[T]
 pub fn[T : Add] Matrix::add(Self[T], Self[T]) -> Self[T]
 pub fn[T : Add] Matrix::add_constant(Self[T], T) -> Self[T]
 pub fn[T : @luna-generic.Conjugate] Matrix::adjoint(Self[T]) -> Self[T]
@@ -112,7 +113,8 @@ pub impl[T : Show] Show for MatrixFn[T]
 pub impl[T : Add + Neg] Sub for MatrixFn[T]
 
 #alias(VecLib)
-type Vector[T] derive(Eq)
+#derive(Eq)
+type Vector[T]
 pub fn[T : Add] Vector::add(Self[T], Self[T]) -> Self[T]
 pub fn[T : Add] Vector::add_constant(Self[T], T) -> Self[T]
 #alias("_[_]")
